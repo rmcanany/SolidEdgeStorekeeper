@@ -5,13 +5,13 @@
   <span class="description">Robert McAnany 2025</span>
 </div>
 
+## INTRODUCTION
+
+Solid Edge Storekeeper is a utility for creating and organizing standard parts.  It is free and open source.  To try it out, see the [<ins>**Installation**</ins>](#installation) and [<ins>**Setup**</ins>](#setup) sections below.  Before you do, please take a moment to review the following section to learn what it does and how to use it.
+
 ## DESCRIPTION
 
-Solid Edge Storekeeper is a utility for creating and organizing standard parts.  It is free and open source.  To install, either [<ins>**Clone**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/#readme) the GitHub repo, or download the latest [<ins>**Release**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/releases/).
-
-A short discussion on what the program does and how to use it follows.  Please note that some setup is required before using it.  That is covered in the **SETTINGS** section below.  If you clone the project, you'll still need a Release to get the data and templates.  Oh, those templates were created in SE2024.  You'll need that version or later to use them.
-
-The program handles two types of standard parts.  One consists of items like fasteners.  These are defined in dimension tables, accessed using a tree search, and created as needed.  The other encompasses vendor-type items like pneumatic fittings.  Each of these has its own model file and is accessed by property search.
+The program handles two types of standard parts.  One consists of items like fasteners.  These are defined in dimension tables, accessed using a tree search, and created as needed.  The other consists of vendor-type items like pneumatic fittings.  Each of these has its own model file and is accessed by property search.
 
 <p align="center">
   <img src="media/tree_search.png">
@@ -27,7 +27,7 @@ For vendor-type parts, use **Property Search**.  Enter the search terms, then cl
 
 That's pretty much all there is to know about vendor type parts.  For the others, a bit more information follows.
 
-Fasteners, retainers and common structural shapes in both ANSI and ISO formats are included.  You can customize the contents and organization of the list to fit your needs.  You can add new categories -- see the Custom Demo example to get started.
+Fasteners, retainers and common structural shapes in both ANSI and ISO formats are included.  You can customize the contents and organization of the list to fit your needs.  You can even add new categories -- see the Custom Demo example to get started.
 
 You can set the file names according to your preference.  You can specify the material or any other SE file property.  File names and properties can accept formulas as input.  So you can do stuff like:
 
@@ -41,7 +41,21 @@ Unlike web-based offerings, the program is integrated with your parts library an
 
 There is no database.  Everything is done in Excel.  Adding new parts or categories is straightforward.  If you upgrade Solid Edge to a new version, no changes to the program or its data are required.
 
-The program will never have every possible stardard part in existence, but it can be improved.  That's where you come in!  Contributions are welcome.  Please message me on the Forum, or raise an Issue on GitHub.  I can provide some guidance on how to get started.
+The program will never have every possible stardard part in existence, but it can be improved.  That's where you come in!  Contributions are welcome.  Please message me on the Forum, or raise an Issue on GitHub, for guidance on how to get started.
+
+## INSTALLATION
+
+The preferred method is to clone the project and compile it yourself.  (If you clone, you'll still need a Release to get the data and templates.)  The other option is to use the [<ins>**Latest Release**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/releases). It will be the top entry on the page. 
+
+<p align="center">
+  <img src="media/release_page.png">
+</p>
+
+Click the file `SolidEdgeStorekeeper-VYYYY.N.zip`.  You may have to expand the Assets dropdown to see it.  Your browser should prompt you to save it. 
+
+Choose a convenient location on your machine. Extract the zip file (right-click > Extract All).  Verify the directory is not read-only (right-click > Properties).  The program needs write access to function properly.  
+
+Double-click `Storekeeper.exe` to run.  The first time you do, you may get a `Windows Protected Your PC` message.  You can click `More Info` followed by `Run Anyway` to launch the program. 
 
 ## SETTINGS
 
@@ -55,7 +69,7 @@ The other settings for tree search are accessed on the Options dialog.  Click ![
   <img src="media/tree_search_options.png">
 </p>
 
-- **TEMPLATE DIRECTORY** The templates are SE part files that have variable-table-driven geometry to create new parts of a given type.  By default they are stored in the `Preferences\Templates` folder.  As mentioned above, the templates were created in SE2024.  They will only work if you're using that version or newer.
+- **TEMPLATE DIRECTORY** The templates are SE part files that have variable-table-driven geometry to create new parts of a given type.  By default they are stored in the `Preferences\Templates` folder.  Note, the templates were created in SE2024.  They will only work if you're using that version or newer.
 - **DATA DIRECTORY** The spreadsheet contains the variables required for each size of each type of part.  By default, it is stored in the `Preferences\Data` directory.  
 - **MATERIAL TABLE** The material table is usually your normal SE material table.  However, for a quick test of the program, an alternative is to use `Storekeeper.mtl` from `Preferences\Templates`.  Copy it to your Solid Edge `Preferences\Materials` directory to make it available.  If you decide to continue using the program, you would eventually want to reconcile material names, face styles, etc. with your own standards. 
 - **OPTIONS**
