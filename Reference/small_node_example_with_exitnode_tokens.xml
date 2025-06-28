@@ -1,0 +1,21 @@
+<Solid_Edge_Storekeeper>
+<Prop0 Type="SomeProp">Value0</Prop0>
+<Fastener>
+<Prop2 Type="Formula">%{System.Material}</Prop2>
+<SHCS>
+<Template Type="Template">shcs.par</Template>
+</SHCS>
+<FHCS>
+<Template Type="Template">fhcs.par</Template>
+</FHCS>
+</Fastener>
+<Structure>
+<Prop2 Type="Formula">%{System.Material}</Prop2>
+<Angle>
+<Template Type="Template">angle.par</Template>
+</Angle>
+<Tube>
+<Template Type="Template">tube.par</Template>
+</Tube>
+</Structure>
+</Solid_Edge_Storekeeper>
