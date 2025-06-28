@@ -7,7 +7,7 @@
 
 ## DESCRIPTION
 
-Solid Edge Storekeeper is a utility for creating and organizing standard parts.  It is free and open source.  To install, either [<ins>**Clone**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/) the GitHub repo, or download the latest [<ins>**Release**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/releases/).
+Solid Edge Storekeeper is a utility for creating and organizing standard parts.  It is free and open source.  To install, either [<ins>**Clone**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/#readme) the GitHub repo, or download the latest [<ins>**Release**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/releases/).
 
 A short discussion on what the program does and how to use it follows.  Please note that some setup is required before using it.  That is covered in the **SETTINGS** section below.  If you clone the project, you'll still need a Release to get the data and templates.  Oh, those templates were created in SE2024.  You'll need that version or later to use them.
 
