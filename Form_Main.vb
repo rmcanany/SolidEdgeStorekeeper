@@ -54,6 +54,8 @@ Public Class Form_Main
     Private Property AsmDoc As SolidEdgeAssembly.AssemblyDocument
     Private Property TemplateDoc As SolidEdgeFramework.SolidEdgeDocument
     Private Property AssemblyPasteComplete As Boolean
+    Private Property NodeCount As Integer
+
 
     ' https://community.sw.siemens.com/s/question/0D5Vb00000Krsy5KAB/handling-events-how-to-use-help-example
     ' https://github.com/SolidEdgeCommunity/Samples/blob/master/General/EventHandling/vb/EventHandling/MainForm.vb
@@ -116,7 +118,7 @@ Public Class Form_Main
             'UP.CheckForNewerVersion(Me.Version)
         End If
 
-        TextBoxStatus.Text = ""
+        TextBoxStatus.Text = $"{NodeCount} items available"
 
         Splash.Close()
 
@@ -1081,6 +1083,8 @@ Public Class Form_Main
 
         TreeView1.BeginUpdate()
 
+        NodeCount = 0
+
         'Dim xmlnode As Xml.XmlNode = XmlDoc.ChildNodes(0)
         Dim xmlnode As Xml.XmlNode = XmlDoc.ChildNodes(1)
         TreeView1.Nodes.Clear()
@@ -1098,6 +1102,8 @@ Public Class Form_Main
         Dim xNode As Xml.XmlNode
         Dim tNode As TreeNode
         Dim childNodes As Xml.XmlNodeList
+
+        NodeCount += 1
 
         Dim StatusMessage As String = inTreeNode.Text
         Dim ParentNode As TreeNode = inTreeNode.Parent
