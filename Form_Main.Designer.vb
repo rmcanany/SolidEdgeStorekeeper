@@ -206,7 +206,7 @@ Partial Class Form_Main
         ' ButtonClose
         ' 
         ButtonClose.Anchor = AnchorStyles.Bottom
-        ButtonClose.Location = New Point(338, 123)
+        ButtonClose.Location = New Point(257, 123)
         ButtonClose.Name = "ButtonClose"
         ButtonClose.Size = New Size(75, 23)
         ButtonClose.TabIndex = 2
@@ -408,9 +408,10 @@ Partial Class Form_Main
         TableLayoutPanel3.ColumnStyles.Add(New ColumnStyle(SizeType.Percent, 100F))
         TableLayoutPanel3.ColumnStyles.Add(New ColumnStyle())
         TableLayoutPanel3.ColumnStyles.Add(New ColumnStyle())
-        TableLayoutPanel3.Controls.Add(ButtonClose, 2, 0)
-        TableLayoutPanel3.Controls.Add(ButtonHelp, 1, 0)
+        TableLayoutPanel3.ColumnStyles.Add(New ColumnStyle(SizeType.Absolute, 20F))
         TableLayoutPanel3.Controls.Add(PictureBox1, 0, 0)
+        TableLayoutPanel3.Controls.Add(ButtonHelp, 2, 0)
+        TableLayoutPanel3.Controls.Add(ButtonClose, 1, 0)
         TableLayoutPanel3.Dock = DockStyle.Fill
         TableLayoutPanel3.Location = New Point(3, 466)
         TableLayoutPanel3.Name = "TableLayoutPanel3"
@@ -422,7 +423,7 @@ Partial Class Form_Main
         ' ButtonHelp
         ' 
         ButtonHelp.Anchor = AnchorStyles.Bottom
-        ButtonHelp.Location = New Point(257, 123)
+        ButtonHelp.Location = New Point(338, 123)
         ButtonHelp.Name = "ButtonHelp"
         ButtonHelp.Size = New Size(75, 23)
         ButtonHelp.TabIndex = 3

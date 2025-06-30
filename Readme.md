@@ -43,6 +43,8 @@ The program will never have every possible stardard part in existence, but it ca
 
 You can either [<ins>**Clone the Project**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper), or download the [<ins>**Latest Release**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/releases). The latest release will be the top entry on the page. If you clone, see below to get the data and templates.
 
+Please note there is some setup required before using the program.  See the **Setup** section below for details.
+
 ### Downloading the Latest Release
 
 <p align="center">
@@ -78,20 +80,28 @@ The other settings for tree search are accessed on the Options dialog.  Click ![
   <img src="media/tree_search_options.png">
 </p>
 
-- **TEMPLATE DIRECTORY** The templates are SE part files that have variable-table-driven geometry to create new parts of a given type.  By default they are stored in the `Preferences\Templates` folder.  Note, the templates were created in SE2024.  They will only work if you're using that version or newer.
-- **DATA DIRECTORY** The spreadsheet contains the variables required for each size of each type of part.  By default, it is stored in the `Preferences\Data` directory.  
-- **MATERIAL TABLE** The material table is usually your normal SE material table.  However, for a quick test of the program, an alternative is to use `Storekeeper.mtl` from `Preferences\Templates`.  Copy it to your Solid Edge `Preferences\Materials` directory to make it available.  If you decide to continue using the program, you would eventually want to reconcile material names, face styles, etc. with your own standards. 
+- **TEMPLATE DIRECTORY** 
+
+The templates are SE part files that have variable-table-driven geometry to create new parts of a given type.  By default they are stored in the `Preferences\Templates` folder.  Note, the templates were created in SE2024.  They will only work if you're using that version or newer.
+
+- **DATA DIRECTORY** 
+
+The spreadsheet contains the variables required for each size of each type of part.  By default, it is stored in the `Preferences\Data` directory.  
+
+- **MATERIAL TABLE** 
+
+The material table is usually your normal SE material table.  However, for a quick test of the program, an alternative is to use `Storekeeper.mtl` from `Preferences\Templates`.  Copy it to your Solid Edge Materials directory to make it available.  On my machine, that location is `C:\Program Files\Siemens\Solid Edge 2024\Preferences\Materials`.  If you decide to continue using the program, you would eventually want to reconcile material names, face styles, etc. with your own standards. 
 - **OPTIONS**
   - `Read the Excel file each time the program is launched`  
 	Internally, the Excel file is parsed and saved in `*.xml` format.  If you haven't changed the Excel file, this is an unnecessary step.  Clearing this option tells the program to use the `*.xml` file it created previously.
   - `Automatically pattern a part assembled to a patterned feature`  
 	Standard parts, especially fasteners, are often patterned after placement.  The program can detect if a face used to assemble the item is part of a pattern.  
 	 
-	This works with smart patterns and user-defined patterns (that's what SE calls hole features with more than one hole circle in the profile).  It does not currently work with (the default) fast patterns, unfortunately.  Unless the added item was mated to the parent feature of the pattern, that is.
+	This works with smart patterns and user-defined patterns (that's what SE calls hole features with more than one hole circle in the profile).  It does not currently work with (the default) fast patterns, unfortunately.
   - `Add any property not already in file`  
 	As mentioned above, besides creating geometry, the program can also update file properties.  Enabling this option tells the program to add any (custom) property that does not already exist in the file.
   - `Disable fine thread warning`  
-	The program is currently unable to properly set the thread size for UNF external threads.  It warns you if that condition arises and provide instructions how to fix it.  Enabling this option suppresses that warning.
+	The program is currently unable to properly set the thread size for ANSI UNF external threads.  It warns you if that condition arises and provide instructions how to fix it.  Enabling this option suppresses that warning.
   - `Check for new version at startup`  
 	If you don't need a reminder about new versions, disable the check here.
 
@@ -109,7 +119,7 @@ This is where you enter the names of the properties that hold the values you wan
 
 **Solid Edge Template Files**
 
-These are your normal template files.  They are read to populate the available properties, and to determine what language is in use.
+These are your normal template files.  They are needed to populate the available properties, and to determine what language is in use.
 
 ### Localized SE Installations
 
@@ -179,7 +189,7 @@ The name of the spreadsheet variable has rules.  `XyzProperty` looks for `XyzFor
 
 So, for example to update the part number in the file, the program will use the information in `PartNumberFormula` to update the property defined in `PartNumberProperty`.  In this example that tells the program to make this assignment.
 
-`%{System.Document Number} = "NA"`.
+`%{System.Document Number} = "NA"`
 
 #### One More Level Down
 
@@ -187,7 +197,7 @@ So, for example to update the part number in the file, the program will use the 
   <img src="media/properties_bhcs.png">
 </p>
 
-Here we are setting up the processing of button head capscrews.  You'll see we need to know what template to use and how to name the file.  We must also provide the companion spreadsheet name and the tab in that file where the information is stored.  
+Here we are setting up the processing of button head capscrews.  You can see we need to specify what template to use and how to name the file.  We must also provide the companion spreadsheet name and the tab in that file where the information is stored.  
 
 As mentioned previously, formulas can contain entries such as `%{Name}` and `%{Length}`.  Variables not proceeded by `System.` or `Custom.` are assumed to come from the companion spreadsheet.
 
