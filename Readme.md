@@ -37,13 +37,15 @@ Unlike Family of Parts, the files are only created as needed.  Also, each part i
 
 Unlike web-based offerings, the program is integrated with your parts library and works directly with Solid Edge.  It updates the properties you specify, using the naming conventions you define.  If you want adjustable parts (see the provided springs example), or any other SE-specific functionality, the program handles it like the native file that it is.
 
-The program will never have every possible stardard part in existence, but it can be improved.  That's where **YOU** come in!  Contributions are welcome.  Please message me on the [<ins>**Solid Edge Forum**</ins>](https://community.sw.siemens.com/s/topic/0TO4O000000MihiWAC/solid-edge), or raise an [<ins>**Issue on GitHub**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/issues), for guidance on how to get started.
+The program will never have every stardard part in the world, but it can be improved.  That's where **YOU** come in!  Contributions are welcome.  Please message me on the [<ins>**Solid Edge Forum**</ins>](https://community.sw.siemens.com/s/topic/0TO4O000000MihiWAC/solid-edge), or raise an [<ins>**Issue on GitHub**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/issues), for ideas on how to get started.
 
 ## INSTALLATION
 
-You can either [<ins>**Clone the Project**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper), or download the [<ins>**Latest Release**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/releases). The latest release will be the top entry on the page. If you clone, see below to get the data and templates.
+Please note there is some setup required before using the program.  After completing this step, check the **Setup** section below for details.
 
-Please note there is some setup required before using the program.  See the **Setup** section below for details.
+To install, do one of the following
+- Download the [<ins>**Latest Release**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/releases) (It will be at the top of the page)
+- [<ins>**Clone the Project**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper) (See below to get the data and templates)
 
 ### Downloading the Latest Release
 
