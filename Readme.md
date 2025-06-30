@@ -175,7 +175,7 @@ Here at the top level of the tree, we are defining spreadsheet variables for pro
 
 In this image, we are looking at a tree node one level below the top.  You'll see we are setting values for the part number, hardware status and material.  
 
-The name of the spreadsheet variable has rules.  `XyzProperty` looks for `XyzFormula` to know how to proceed.  The prefix, `Xyz` in this case, can be anything you want (except for some reserved prefixes shown below).  The suffix, `Property` and `Formula`, are the only valid choices.  
+The name of the spreadsheet variable has rules.  `XyzProperty` looks for `XyzFormula` to know how to proceed.  The prefix, `Xyz` in this case, can be anything you want (except for some reserved names shown below).  The suffix, `Property` and `Formula`, are the only valid choices.  
 
 **Reserved Spreadsheet Variables**
 - TemplateProperty

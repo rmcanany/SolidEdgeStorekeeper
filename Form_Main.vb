@@ -1061,19 +1061,23 @@ Public Class Form_Main
         Dim Thumbnail As Bitmap = Nothing
 
         If TemplateFilename = "" Then
-            TemplateFilename = String.Format("{0}thumbnail.bmp", StartupDirectory)
-            Thumbnail = New Bitmap(TemplateFilename)
+            TemplateFilename = String.Format("{0}\thumbnail.bmp", Me.TemplateDirectory)
+            If IO.File.Exists(TemplateFilename) Then
+                Thumbnail = New Bitmap(TemplateFilename)
+            End If
         Else
             If Not FullPathProvided Then
                 TemplateFilename = $"{Me.TemplateDirectory}\{TemplateFilename}"
             Else
                 TemplateFilename = TemplateFilename
             End If
-            Dim FI As New IO.FileInfo(TemplateFilename)
-            Thumbnail = Thumbnails.ExtractThumbNail(FI, New System.Drawing.Size(100, 75))
+            If IO.File.Exists(TemplateFilename) Then
+                Dim FI As New IO.FileInfo(TemplateFilename)
+                Thumbnail = Thumbnails.ExtractThumbNail(FI, New System.Drawing.Size(100, 75))
+            End If
         End If
 
-        PictureBox1.Image = Thumbnail
+        If Thumbnail IsNot Nothing Then PictureBox1.Image = Thumbnail
 
     End Sub
 
@@ -1617,9 +1621,8 @@ Public Class Form_Main
         If Node.Nodes.Count = 0 Then
             Process()
         Else
-            MsgBox("Cannot add this item to an assembly", vbOKOnly)
+            MsgBox("This is a category header, not an individual part.  It cannot be added to an assembly", vbOKOnly)
         End If
-
     End Sub
 
     Private Sub MyBase_Resize(sender As Object, e As EventArgs) Handles MyBase.Resize
