@@ -222,4 +222,12 @@ Public Class FormTreeSearchOptions
     Private Sub CheckBoxAutoPattern_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBoxAutoPattern.CheckedChanged
         Me.AutoPattern = CheckBoxAutoPattern.Checked
     End Sub
+
+    Private Sub ButtonHelp_Click(sender As Object, e As EventArgs) Handles ButtonHelp.Click
+        Dim Info = New ProcessStartInfo()
+        Info.FileName = "https://github.com/rmcanany/SolidEdgeStorekeeper#tree-search"
+        Info.UseShellExecute = True
+        System.Diagnostics.Process.Start(Info)
+
+    End Sub
 End Class

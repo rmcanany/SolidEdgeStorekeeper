@@ -246,12 +246,9 @@ Public Class UtilsPreferences
                 FileIO.FileSystem.CopyDirectory(GetDefaultTemplatesDirectory, tmpTemplatesDirectory)
                 FMain.TemplateDirectory = tmpTemplatesDirectory
 
-                'Dim tmpMaterialLibrary As String = $"{tmpTemplatesDirectory}\Storekeeper.mtl"
-                'FMain.MaterialLibrary = tmpMaterialLibrary
-
-                Dim tmpSaveDirectory As String = $"{PreferencesDirectory}\Library"
-                FileIO.FileSystem.CreateDirectory(tmpSaveDirectory)
-                FMain.LibraryDirectory = tmpSaveDirectory
+                Dim tmpLibraryDirectory As String = $"{PreferencesDirectory}\Library"
+                FileIO.FileSystem.CreateDirectory(tmpLibraryDirectory)
+                FMain.LibraryDirectory = tmpLibraryDirectory
 
             Catch ex As Exception
                 Dim s As String = String.Format("Unable to create Preferences directory '{0}'.  ", PreferencesDirectory)
@@ -273,11 +270,11 @@ Public Class UtilsPreferences
         Return String.Format("{0}\{1}", StartupPath, DefaultTemplatesDirectory)
     End Function
 
-    Public Function GetDefaultLibraryDirectory() As String
-        Dim StartupPath As String = GetStartupDirectory()
-        Dim DefaultLibraryDirectory = "Library"
-        Return String.Format("{0}\{1}", StartupPath, DefaultLibraryDirectory)
-    End Function
+    'Public Function GetDefaultLibraryDirectory() As String
+    '    Dim StartupPath As String = GetStartupDirectory()
+    '    Dim DefaultLibraryDirectory = "Library"
+    '    Return String.Format("{0}\{1}", StartupPath, DefaultLibraryDirectory)
+    'End Function
 
 
 
@@ -923,7 +920,7 @@ Public Class UtilsPreferences
         ' https://stackoverflow.com/questions/70185058/how-to-replace-obsolete-webclient-with-httpclient-in-net-6
         Dim HttpClient As New HttpClient
         HttpClient.DefaultRequestHeaders.Add("User-Agent", {"Other"}.ToList)
-        Dim Request = New HttpRequestMessage(HttpMethod.Get, "https://api.github.com/repos/rmcanany/solidedgehousekeeper/releases/latest")
+        Dim Request = New HttpRequestMessage(HttpMethod.Get, "https://api.github.com/repos/rmcanany/solidedgestorekeeper/releases/latest")
         Dim Response = HttpClient.Send(Request)
         Dim Reader = New IO.StreamReader(Response.Content.ReadAsStream())
         s = Reader.ReadToEnd
@@ -936,6 +933,8 @@ Public Class UtilsPreferences
                 Exit For
             End If
         Next
+
+        If Not s.Contains("tag_name") Then Exit Sub
 
         s = s.ToLower
         s = s.Replace(DoubleQuote, "")  ' '"tag_name":"v2024.1"' -> 'tag_name:v2024.1'

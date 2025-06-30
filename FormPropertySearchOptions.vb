@@ -150,4 +150,11 @@
     Private Sub ButtonCancel_Click(sender As Object, e As EventArgs) Handles ButtonCancel.Click
         Me.DialogResult = DialogResult.Cancel
     End Sub
+
+    Private Sub ButtonHelp_Click(sender As Object, e As EventArgs) Handles ButtonHelp.Click
+        Dim Info = New ProcessStartInfo()
+        Info.FileName = "https://github.com/rmcanany/SolidEdgeStorekeeper#property-search"
+        Info.UseShellExecute = True
+        System.Diagnostics.Process.Start(Info)
+    End Sub
 End Class

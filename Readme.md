@@ -7,7 +7,7 @@
 
 ## DESCRIPTION
 
-Solid Edge Storekeeper is a utility for creating, organizing, and sharing standard parts.  It is free and open source and you can find it [<ins>**Here**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#readme).  
+Solid Edge Storekeeper is a utility to create, organize, and share standard parts.  It is free and open source and you can find it [<ins>**Here**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#readme).  
 
 Fasteners, retainers, structural shapes and more in ANSI and ISO format are included.  There are over 15k items available.  There is no database; everything is done in Excel.  It is fully cusomizable -- add things you need, remove those you don't.  If you upgrade Solid Edge to a new version, no change to the program or its data is required.
 
@@ -41,7 +41,9 @@ The program will never have every possible stardard part in existence, but it ca
 
 ## INSTALLATION
 
-You can either [<ins>**Clone the Project**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper), or download the [<ins>**Latest Release**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/releases). It will be the top entry on the page. (If you clone, you'll still need a Release to get the data and templates.)
+You can either [<ins>**Clone the Project**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper), or download the [<ins>**Latest Release**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/releases). The latest release will be the top entry on the page. If you clone, see below to get the data and templates.
+
+### Downloading the Latest Release
 
 <p align="center">
   <img src="media/release_page.png">
@@ -52,6 +54,12 @@ To get the latest release, click the file `SolidEdgeStorekeeper-VYYYY.N.zip`.  Y
 Choose a convenient location on your machine. Extract the zip file (right-click > Extract All).  Verify the directory is not read-only (right-click > Properties).  The program needs write access to function properly.  
 
 Double-click `Storekeeper.exe` to run.  The first time you do, you may get a `Windows Protected Your PC` message.  You can click `More Info` followed by `Run Anyway` to launch the program. 
+
+### Cloning
+
+The data and templates are not in the GitHub repo.  You need to download a Release to get them.  To make them available in your development environment, copy the `DefaultData`, `DefaultTemplates` directories to the locations where your compiled `Storekeeper.exe` is located.
+
+On my machine, the executable resides in two places: `bin\Debug\net8.0-windows\` and `bin\Release\net8.0-windows\`.  I have copies of those directories in both places.
 
 ## Setup
 

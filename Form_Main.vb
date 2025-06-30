@@ -76,6 +76,18 @@ Public Class Form_Main
 
         Dim UP As New UtilsPreferences
 
+        Dim tmpStartupDirectory As String = UP.GetStartupDirectory
+        Dim s As String = ""
+        Dim tmpDirList As New List(Of String) From {UP.GetDefaultDataDirectory, UP.GetDefaultTemplatesDirectory}
+        For Each d As String In tmpDirList
+            If Not IO.Directory.Exists(d) Then s = $"{s}  {d}{vbCrLf}"
+        Next
+        If Not s = "" Then
+            s = $"Cannot continue without the following directories{vbCrLf}{s}"
+            MsgBox(s)
+            End
+        End If
+
         Dim tmpPreferencesDirectory As String = UP.GetPreferencesDirectory
         If Not IO.Directory.Exists(tmpPreferencesDirectory) Then
             ' First run.  Set defaults.
@@ -115,7 +127,7 @@ Public Class Form_Main
         Me.Text = $"Solid Edge Storekeeper {Me.Version}"
 
         If Me.CheckNewVersion Then
-            'UP.CheckForNewerVersion(Me.Version)
+            UP.CheckForNewerVersion(Me.Version)
         End If
 
         TextBoxStatus.Text = $"{NodeCount} items available"
@@ -133,7 +145,7 @@ Public Class Form_Main
         Dim IsTreeSearch = PropertySearchFilename Is Nothing
 
         If Not IO.Directory.Exists(Me.LibraryDirectory) Then
-            ErrorMessageList.Add($"Save directory not found '{Me.LibraryDirectory}'")
+            ErrorMessageList.Add($"Library directory not found '{Me.LibraryDirectory}'")
         End If
 
         If IsTreeSearch Then
@@ -1858,6 +1870,12 @@ Public Class Form_Main
         Dim i = 0
     End Sub
 
+    Private Sub ButtonHelp_Click(sender As Object, e As EventArgs) Handles ButtonHelp.Click
+        Dim Info = New ProcessStartInfo()
+        Info.FileName = "https://github.com/rmcanany/SolidEdgeStorekeeper#readme"
+        Info.UseShellExecute = True
+        System.Diagnostics.Process.Start(Info)
+    End Sub
 End Class
 
 Public Class Props

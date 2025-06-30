@@ -38,6 +38,7 @@ Partial Class FormPropertySearchOptions
         SystemOrCustom = New DataGridViewTextBoxColumn()
         PropertyName = New DataGridViewTextBoxColumn()
         Label2 = New Label()
+        ButtonHelp = New Button()
         TableLayoutPanel1.SuspendLayout()
         TableLayoutPanel2.SuspendLayout()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
@@ -74,11 +75,13 @@ Partial Class FormPropertySearchOptions
         ' 
         ' TableLayoutPanel2
         ' 
-        TableLayoutPanel2.ColumnCount = 2
+        TableLayoutPanel2.ColumnCount = 3
         TableLayoutPanel2.ColumnStyles.Add(New ColumnStyle(SizeType.Percent, 100F))
+        TableLayoutPanel2.ColumnStyles.Add(New ColumnStyle())
         TableLayoutPanel2.ColumnStyles.Add(New ColumnStyle())
         TableLayoutPanel2.Controls.Add(ButtonCancel, 1, 0)
         TableLayoutPanel2.Controls.Add(ButtonOK, 0, 0)
+        TableLayoutPanel2.Controls.Add(ButtonHelp, 2, 0)
         TableLayoutPanel2.Dock = DockStyle.Fill
         TableLayoutPanel2.Location = New Point(84, 278)
         TableLayoutPanel2.Name = "TableLayoutPanel2"
@@ -90,7 +93,7 @@ Partial Class FormPropertySearchOptions
         ' ButtonCancel
         ' 
         ButtonCancel.Anchor = AnchorStyles.Bottom
-        ButtonCancel.Location = New Point(262, 31)
+        ButtonCancel.Location = New Point(181, 31)
         ButtonCancel.Name = "ButtonCancel"
         ButtonCancel.Size = New Size(75, 23)
         ButtonCancel.TabIndex = 0
@@ -100,7 +103,7 @@ Partial Class FormPropertySearchOptions
         ' ButtonOK
         ' 
         ButtonOK.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        ButtonOK.Location = New Point(181, 31)
+        ButtonOK.Location = New Point(100, 31)
         ButtonOK.Name = "ButtonOK"
         ButtonOK.Size = New Size(75, 23)
         ButtonOK.TabIndex = 1
@@ -207,6 +210,16 @@ Partial Class FormPropertySearchOptions
         Label2.TabIndex = 9
         Label2.Text = "Properties to search"
         ' 
+        ' ButtonHelp
+        ' 
+        ButtonHelp.Anchor = AnchorStyles.Bottom
+        ButtonHelp.Location = New Point(262, 31)
+        ButtonHelp.Name = "ButtonHelp"
+        ButtonHelp.Size = New Size(75, 23)
+        ButtonHelp.TabIndex = 2
+        ButtonHelp.Text = "Help"
+        ButtonHelp.UseVisualStyleBackColor = True
+        ' 
         ' FormPropertySearchOptions
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -239,4 +252,5 @@ Partial Class FormPropertySearchOptions
     Friend WithEvents Label2 As Label
     Friend WithEvents SystemOrCustom As DataGridViewTextBoxColumn
     Friend WithEvents PropertyName As DataGridViewTextBoxColumn
+    Friend WithEvents ButtonHelp As Button
 End Class
