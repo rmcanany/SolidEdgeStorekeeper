@@ -9,9 +9,9 @@
 
 Solid Edge Storekeeper is a utility to create, organize, and share standard parts.  It is free and open source and you can find it [<ins>**Here**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#readme).  
 
-Fasteners, retainers, structural shapes and more in ANSI and ISO format are included.  There are over 15k items available.  There is no database; everything is done in Excel.  It is fully cusomizable -- add things you need, remove those you don't.  If you upgrade Solid Edge to a new version, no change to the program or its data is required.
+Fasteners, retainers, structural shapes, and more in ANSI and ISO format are included.  There are over 15k items available.  There is no database; everything is done in Excel.  It is fully customizable.  If you upgrade Solid Edge, no change to the program or its data is required.
 
-The program handles two types of standard parts.  One consists of items like fasteners.  These are defined in dimension tables, accessed using a tree search, and created as needed.  The other consists of vendor-type items like pneumatic fittings.  Each of these has its own model file and is accessed by property search.
+The program handles two types of standard parts.  One consists of items like fasteners.  These are defined in dimension tables and created as needed.  The other consists of vendor-type items like pneumatic fittings.  Each of these has its own model file.
 
 <p align="center">
   <img src="media/tree_search.png">
@@ -63,14 +63,14 @@ The data and templates are not in the GitHub repo.  You need to download a Relea
 
 On my machine, the executable resides in two places: `bin\Debug\net8.0-windows\` and `bin\Release\net8.0-windows\`.  I have copies of those directories in both places.
 
-## Setup
+## SETUP
 
 Before using the program, some setup is required.  Note, if you run Solid Edge in a localized language please be sure to see the information at the end of this section.
 
 ### Library
-The program needs to know where to store the standard parts, and, for fastener-like items, where to find the files defining their shape and spreadsheet containing their dimensions.
+The program needs to know where to store the standard parts, and for fastener-like items, where to find the files defining their shape and spreadsheet containing their dimensions.
 
-The storage location is called the library.  The default is in the `Preferences\Library` directory under the Storekeeper main directory.  Note it is created the first time you run the program; it won't be there before that.  To change the location, click ![Options](media/icons8_Folder_16.png) on the **Tree Search** toolbar.  As noted above, if you want to access your vendor-specific standard parts, they must be in the library.  You can place them in subdirectories if desired.
+The storage location is called the library.  The default is in the `Preferences\Library` directory under the Storekeeper main directory.  Note it is created the first time you run the program; it won't be there before that.  To change the location, click ![Options](media/icons8_Folder_16.png) on the **Tree Search** toolbar.  As noted above, if you want to access your vendor-specific standard parts, they must be in the library.  You can place them in one or more subdirectories if desired.
 
 ### Tree Search
 

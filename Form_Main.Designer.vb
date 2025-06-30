@@ -373,7 +373,7 @@ Partial Class Form_Main
         TabPageInspectData.Padding = New Padding(3)
         TabPageInspectData.Size = New Size(408, 429)
         TabPageInspectData.TabIndex = 1
-        TabPageInspectData.Text = "Inspect Data"
+        TabPageInspectData.Text = "Data Inspector"
         TabPageInspectData.UseVisualStyleBackColor = True
         ' 
         ' ImageList1
