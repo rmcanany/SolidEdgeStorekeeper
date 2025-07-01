@@ -169,6 +169,8 @@ Now, let's look at the other entries in `Storekeeper.xls`, starting at the top.
 
 Here at the top level of the tree, we are defining spreadsheet variables for property names and the corresponding name in the Solid Edge file.  The location of the definition in the tree defines its scope.  Since these statements are at the top of the tree, they apply everywhere.
 
+Sorry about the syntax.  It's like that to map easily onto Xml.  While it is a very flexible data-representation format, Xml is quite rigid in the syntax department.
+
 #### Next Level Down
 
 <p align="center">
