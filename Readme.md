@@ -31,7 +31,7 @@ You can set the file names according to your preference.  You can specify the ma
 
 ![Filename Formula](media/filename_formula.png)
 
-Structural shapes are not quite the same as fasteners.  While the cross section is standard, the length typically is not.  Also, they are often further modified with holes, slots, etc.  So rather than assuming a name and location, you are prompted for both.
+Structural shapes are not quite the same as fasteners.  While the cross section is standard, the length and presence of other features is not.  Usually the part doesn't even belong in the library.  So rather than assuming a name and location, the program prompts for both.
 
 Unlike Family of Parts, the files are only created as needed.  Also, each part is stand-alone, not tied back to a master file.
 
@@ -67,12 +67,12 @@ On my machine, the executable resides in two places: `bin\Debug\net8.0-windows\`
 
 ## SETUP
 
-Before using the program, some setup is required.  Note, if you run Solid Edge in a localized language please be sure to see the information at the end of this section.
+As noted earlier, some setup is required before using the program.  If you run Solid Edge in a localized language please be sure to see the information at the end of this section.
 
 ### Library
 The program needs to know where to store the standard parts, and for fastener-like items, where to find the files defining their shape and spreadsheet containing their dimensions.
 
-The storage location is called the library.  The default is in the `Preferences\Library` directory under the Storekeeper main directory.  Note it is created the first time you run the program; it won't be there before that.  To change the location, click ![Options](media/icons8_Folder_16.png) on the **Tree Search** toolbar.  As noted above, if you want to access your vendor-specific standard parts, they must be in the library.  You can place them in one or more subdirectories if desired.
+The storage location is called the library.  The default is in `Preferences\Library` under the Storekeeper main directory.  Note it is created the first time you run the program; it won't be there before that.  To change the location, click ![Options](media/icons8_Folder_16.png) on the **Tree Search** toolbar.  As noted above, if you want to access your vendor-specific standard parts, they must be in the library.  You can place them in one or more subdirectories if desired.
 
 ### Tree Search
 

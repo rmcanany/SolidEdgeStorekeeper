@@ -280,13 +280,18 @@ Public Class Form_Main
 
         TextBoxStatus.Text = $"Adding '{IO.Path.GetFileName(Filename)}'"
 
+        Me.TopMost = False
+        System.Windows.Forms.Application.DoEvents()
+        SEApp.Activate()
+        SEApp.DoIdle()
+
         Dim Occurrences As SolidEdgeAssembly.Occurrences = AsmDoc.Occurrences
         Dim PreviousOccurrencesCount As Integer = Occurrences.Count
 
         Dim Occurrence = AsmDoc.Occurrences.AddByFilename(Filename)
         Dim SelectSet = AsmDoc.SelectSet
         SelectSet.RemoveAll()
-        SEApp.Activate()
+
         SelectSet.Add(Occurrence)
         Dim Cut = SolidEdgeConstants.AssemblyCommandConstants.AssemblyEditCut
         SEApp.StartCommand(CType(Cut, SolidEdgeFramework.SolidEdgeCommandConstants))
@@ -628,6 +633,7 @@ Public Class Form_Main
 
     Private Function GetFilenameFormula(DefaultExtension As String) As String
         Dim Filename As String = Nothing
+        Dim FilenameFormula As String = ""
 
         Dim tmpProps As List(Of Prop) = Props.GetPropsOfType("FilenameFormula")
         If tmpProps.Count = 0 Then
@@ -641,7 +647,8 @@ Public Class Form_Main
             Return Nothing
         End If
 
-        Filename = tmpProps(0).Value.Trim
+        FilenameFormula = tmpProps(0).Value.Trim
+        Filename = FilenameFormula
 
         Dim FilenameWasPrompted As Boolean = False
 
@@ -671,7 +678,6 @@ Public Class Form_Main
 
             Dim tmpFileDialog As New CommonOpenFileDialog
             tmpFileDialog.Title = "Enter file name"
-            'tmpFileDialog.Filter = "All files|*.*"
             tmpFileDialog.DefaultFileName = Filename
             tmpFileDialog.EnsureFileExists = False
             tmpFileDialog.DefaultExtension = DefaultExtension.Replace(".", "")
@@ -682,14 +688,12 @@ Public Class Form_Main
                 Return Nothing
             End If
 
-            'Dim Result = InputBox("Enter filename", "Enter filename", Filename)
-            'If Not Result = "" Then Filename = Result
-
-            'Filename = Props.SubstitutePropFormulas(Filename)
-            'If Filename Is Nothing Then Return Nothing
         Else
             Filename = Props.SubstitutePropFormulas(Filename)
-            If Filename Is Nothing Then Return Nothing
+            If Filename Is Nothing Then
+                'MsgBox($"Could not resolve filename formula '{FilenameFormula}'", vbOKOnly)
+                Return Nothing
+            End If
             Filename = $"{Me.LibraryDirectory}{Filename}"
         End If
 
@@ -700,17 +704,6 @@ Public Class Form_Main
         Filename = UFC.SubstituteIllegalCharacters(IO.Path.GetFileName(Filename))
 
         Filename = $"{Directory}\{Filename}"
-
-        'Select Case IO.Path.GetExtension(Filename)
-        '    Case ".par"
-        '        ' Nothing to do here
-        '    Case ".psm"
-        '        ' Nothing to do here
-        '    Case Else
-        '        Filename = $"{Filename}{DefaultExtension}"
-        '        'MsgBox($"Missing extension '.par' or '.psm' in '{IO.Path.GetFileName(Filename)}'", vbOKOnly)
-        '        'Return Nothing
-        'End Select
 
         If FilenameWasPrompted Then
             If IO.File.Exists(Filename) Then
