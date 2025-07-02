@@ -11,7 +11,7 @@ Solid Edge Storekeeper is a utility to create, organize, and share standard part
 
 Fasteners, retainers, structural shapes, and more in ANSI and ISO format are included.  There are over 15k items available.  There is no database; everything is done in Excel.  It is fully customizable.  If you upgrade Solid Edge, no change to the program or its data is required.
 
-The program handles two types of standard parts.  One consists of items like fasteners.  These are defined in dimension tables and created as needed.  The other consists of vendor-type items like pneumatic fittings.  Each of these has its own model file.
+The program handles two types of standard parts.  One consists of items like fasteners.  These are defined in dimension tables and created as needed.  The other consists of vendor-type items like pneumatic fittings.  Each of these has its own model file.  Both types are elegible for the handy automatic patterning option (see [<ins>**Setup**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#setup) for details).
 
 <p align="center">
   <img src="media/tree_search.png">
@@ -207,3 +207,10 @@ As mentioned previously, formulas can contain entries such as `%{Name}` and `%{L
 
 In this example, we are also updating the description property.  That isn't necessary for the program to function.  It just illustrates how to update Solid Edge file properties.  Any property in the file can be updated in this way.  
 
+## OPEN SOURCE PACKAGES
+
+This project uses these awesome open source packages.
+
+- JSON Converter [<ins>**Newtonsoft.Json**</ins>](https://github.com/JamesNK/Newtonsoft.Json)
+- Excel reader [<ins>**ExcelDataReader**</ins>](https://github.com/ExcelDataReader/ExcelDataReader)
+- Icons [<ins>**Icons8**</ins>](https://icons8.com)
