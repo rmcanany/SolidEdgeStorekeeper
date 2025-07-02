@@ -121,7 +121,7 @@ This is where you enter the names of the properties that hold the values you wan
 
 **Solid Edge Template Files**
 
-These are your normal template files.  They are needed to populate the available properties, and to determine what language is in use.
+These are your normal template files, not the ones used by the program to create standard parts.  They are needed to populate the available properties, and to determine what language is in use.
 
 ### Localized SE Installations
 
