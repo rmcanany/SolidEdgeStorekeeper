@@ -11,7 +11,7 @@ Solid Edge Storekeeper is a utility to create, organize, and share standard part
 
 Fasteners, retainers, structural shapes, and more in ANSI and ISO format are included.  There are over 15k items available.  There is no database; everything is done in Excel.  It is fully customizable.  If you upgrade Solid Edge, no change to the program or its data is required.
 
-The program handles two types of standard parts.  One consists of items like fasteners.  These are defined in dimension tables and created as needed.  The other consists of vendor-type items like pneumatic fittings.  Each of these has its own model file.  Both types are elegible for the handy automatic patterning option (see [<ins>**Setup**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#setup) for details).
+The program handles two types of standard parts.  One consists of items like fasteners.  These are defined in dimension tables and created as needed.  The other consists of vendor-type items like pneumatic fittings.  Each of these has its own model file.  Both types are eligible for the handy automatic patterning option (see [<ins>**Setup**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#setup) for details).
 
 <p align="center">
   <img src="media/tree_search.png">
@@ -169,7 +169,7 @@ Now, let's look at the other entries in `Storekeeper.xls`, starting at the top.
 
 Here at the top level of the tree, we are defining spreadsheet variables for property names and the corresponding name in the Solid Edge file.  The location of the definition in the tree defines its scope.  Since these statements are at the top of the tree, they apply everywhere.
 
-Sorry about the syntax.  It's like that to map easily onto Xml.  While it is a very flexible data-representation format, Xml is quite rigid in the syntax department.
+The syntax is horrible; that's how Xml likes it.  While Xml is a very flexible data-representation format, it is quite rigid in this regard.
 
 #### Next Level Down
 
@@ -206,6 +206,25 @@ Here we are setting up the processing of button head capscrews.  You can see we 
 As mentioned previously, formulas can contain entries such as `%{Name}` and `%{Length}`.  Variables not proceeded by `System.` or `Custom.` are assumed to come from the companion spreadsheet.
 
 In this example, we are also updating the description property.  That isn't necessary for the program to function.  It just illustrates how to update Solid Edge file properties.  Any property in the file can be updated in this way.  
+
+## CREATING NEW TEMPLATES
+
+You are of course free to create new templates any way you see fit.  However, if you plan to contribute your awesome work to the project, there are a couple of things to keep in mind.
+
+<p align="center">
+  <img src="media/template_axes.png">
+</p>
+
+Many standard parts have a primary axis.  For consistency, consider orienting it along the Y Axis as shown.  For parts with a secondary axis like the pipe elbow, consider the Z Axis.
+
+Another thing to think about is the effect of replacing one standard part with another.  It would be nice not to break assembly relationships.  For fasteners, I started with the socket head capscrew.  When it was time to create the next one, I did a Save As on that initial part and modified it as needed.  Since the head and body now have the same faces, Replace Part works without a hitch.
+
+<p align="center">
+  <img src="media/template_variable_names.png">
+</p>
+
+Variable names are something else to consider.  To minimize confusion in creating and maintaining the companion spreadsheets, see if you can reuse names that have been previously established.  You can check the supplied templates or spreadsheets to see what may apply to your parts.
+
 
 ## OPEN SOURCE PACKAGES
 
