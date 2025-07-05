@@ -31,9 +31,9 @@ You can set the file names according to your preference.  You can specify the ma
 
 ![Filename Formula](media/filename_formula.png)
 
-Structural shapes are not quite the same as fasteners.  While the cross section is standard, the length and presence of other features is not.  Usually the part doesn't even belong in the library.  So rather than assuming a name and location, the program prompts for both.
+Structural shapes are not quite the same as fasteners.  While the cross section is standard, the length and the possiblity of additional features is not.  Usually the part doesn't even belong in the library.  So rather than assuming a name and location, the program prompts for both.
 
-Unlike Family of Parts, the files are only created as needed.  Also, each part is stand-alone, not tied back to a master file.
+Unlike Family of Parts, files are only created as needed.  Also, each part is stand-alone, not tied back to a master file.
 
 Unlike web-based offerings, the program is integrated with your parts library and works directly with Solid Edge.  It updates the properties you specify, using the naming conventions you define.  If you want adjustable parts (see the provided springs example), or any other SE-specific functionality, the program handles it like the native file that it is.
 
