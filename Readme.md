@@ -92,7 +92,7 @@ The spreadsheet contains the variables required for each size of each type of pa
 
 - **MATERIAL TABLE** 
 
-The material table is usually your normal SE material table.  However, for a quick test of the program, an alternative is to use `Storekeeper.mtl` from `Preferences\Templates`.  Copy it to your Solid Edge Materials directory to make it available.  On my machine, that location is `C:\Program Files\Siemens\Solid Edge 2024\Preferences\Materials`.  If you decide to continue using the program, you would eventually want to reconcile material names, face styles, etc. with your own standards. 
+The material table is usually your normal SE material table.  However, for a quick test of the program, an alternative is to use `Storekeeper.mtl` from `Preferences\Templates`.  Copy it to your Solid Edge Materials directory to make it available.  On my machine, that location is `C:\Program Files\Siemens\Solid Edge 2024\Preferences\Materials`.  If you decide to continue using the program, you would eventually want to update the spreadsheet with your own material names. 
 - **OPTIONS**
   - `Read the Excel file each time the program is launched`  
 	Internally, the Excel file is parsed and saved in `*.xml` format.  If you haven't changed the Excel file, this is an unnecessary step.  Clearing this option tells the program to use the `*.xml` file it created previously.
@@ -101,7 +101,7 @@ The material table is usually your normal SE material table.  However, for a qui
 	 
 	This works with `Smart Patterns` and `User-Defined Patterns` (that's a hole with multiple hole circles in the profile).  It does not currently work with (the default) `Fast Patterns` unfortunately, unless you get lucky and pick the hole that was used to create the pattern.
   - `Add any property not already in file`  
-	As mentioned above, besides creating geometry, the program can also update file properties.  Enabling this option tells the program to add any (custom) property that does not already exist in the file.
+	As mentioned above, besides creating geometry, the program can also update file properties.  Enabling this option tells the program to add any (custom) property not already in the file.
   - `Disable fine thread warning`  
 	The program is currently unable to properly set the thread size for ANSI UNF external threads.  It warns you if that condition arises and provide instructions how to fix it.  Enabling this option suppresses that warning.
   - `Check for new version at startup`  
@@ -147,15 +147,15 @@ You'll see that the tree structure is represented by indenting.  The top node is
 
 In addition to child nodes under any given node, you'll notice other entries.  Those are some program attributes being set, and various properties being assigned.  More about properties in a bit.
 
-In the image, the `BHCS` and `FHCS` nodes each have an entry, `Nodes` (plural).  That is one of those program attributes I just mentioned, and is the mechanism that tells the program to consult a companion spreadsheet tab for further information.  Here is a small portion of the companion data for Dowel Pins.
+In the image, the `BHCS` and `FHCS` nodes each have an entry, `Nodes` (plural).  That is one of those program attributes just mentioned.  It is the mechanism that tells the program to consult a companion spreadsheet tab for further information.  Here is a small portion of the companion data for Dowel Pins.
 
 <p align="center">
   <img src="media/companion_spreadsheet.png">
 </p>
 
-The rows represent different sizes, the columns represent values for a given size.  The first row holds the name for each value, the second holds its *type*.  The types `Variable` and `LeafNodeVariable` refer to variables in the template's variable table.
+The rows represent different sizes, the columns represent values for a given size.  The first row holds the name for each value, the second holds its *type*.  The first column tells the program whether or not to display a given size.  It's for reducing clutter in the interface.
 
-One other *type* not shown in the image is `ParameterString`.  That denotes a value that is passed to the template, but does not reside in the variable table, meaning there must be separate code to handle it.  Currently only `ThreadDescription` is supported.  See `AnsiFasteners.xls` for an example.
+The types `Variable` and `LeafNodeVariable` refer to entries in the template's variable table.  One other *type* not shown in the image is `ParameterString`.  That denotes a value that is needed in the template, but does not reside in the variable table.  For those,  there must be separate code to handle it.  Currently only `ThreadDescription` is supported.  See `AnsiFasteners.xls` for an example.
 
 ### Properties and Spreadsheet Variables
 
