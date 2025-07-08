@@ -1548,15 +1548,15 @@ Public Class Form_Main
                     ' <Length_0.500 Type="LeafNode">
                     '     <Length Type="Double">0.500</Length>
                     ' </Length_0.500>
-                    Dim tmpOuterName As String = String.Format("{0}_{1}", NameList(ColIdx), Row(ColIdx)) ' Length_0.500
+                    Dim tmpValue As String = Row(ColIdx).Replace(",", ".") ' 0.500, 0,500 -> 0.500
+                    Dim tmpOuterName As String = String.Format("{0}_{1}", NameList(ColIdx), tmpValue) ' Length_0.500
                     Dim tmpOuterType As String = "LeafNode"
                     Dim tmpInnerName As String = NameList(ColIdx) ' Length
                     Dim tmpInnerType As String = TypeList(ColIdx).Replace("LeafNode", "") ' LeafNodeDouble -> Double
-                    Dim tmpValue As String = Row(ColIdx) ' 0.500
 
                     XmlList.Add(String.Format("{0}<{1} Type=""{2}"">", Indents(StartLevel), tmpOuterName, tmpOuterType))
                     XmlList.Add(String.Format("{0}<{1} Type=""{2}"">{3}</{1}>", Indents(StartLevel + 1), tmpInnerName, tmpInnerType, tmpValue))
-                    XmlList.Add(String.Format("{0}</{1}>", Indents(StartLevel), tmpOuterName, tmpOuterType))
+                    XmlList.Add(String.Format("{0}</{1}>", Indents(StartLevel), tmpOuterName))
 
                 End If
             Next
