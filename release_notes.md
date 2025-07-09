@@ -12,5 +12,11 @@ Please note, the program has been tested on thousands of our files, but none of 
 
 Feel free to report bugs and/or ideas for improvement on the [<ins>**Solid Edge Forum**</ins>](https://community.sw.siemens.com/s/topic/0TO4O000000MihiWAC/solid-edge) or [<ins>**GitHub**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/issues).
 
+## V2025.2
+
+### Generate Xml File
+
+Fixed an issue where locales with a comma decimal separator were getting invalid Xml headers.
+
 ## V2025.1
 Initial release.

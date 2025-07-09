@@ -5,7 +5,7 @@ Imports Microsoft.WindowsAPICodePack.Dialogs
 
 Public Class Form_Main
 
-    Private Property Version As String = "2025.1"
+    Private Property Version As String = "2025.2"
 
     Private _SelectedNodeFullPath As String
     Public Property SelectedNodeFullPath As String
@@ -106,15 +106,15 @@ Public Class Form_Main
         End If
 
         Dim ColIdx As Integer
-        DataGridView2.Columns.Clear()
-        ColIdx = DataGridView2.Columns.Add("Filename", "Filename")
-        DataGridView2.Columns(ColIdx).Width = 150
-        ColIdx = DataGridView2.Columns.Add("Path", "Path")
-        DataGridView2.Columns(ColIdx).Width = 50
+        DataGridViewVendorParts.Columns.Clear()
+        ColIdx = DataGridViewVendorParts.Columns.Add("Filename", "Filename")
+        DataGridViewVendorParts.Columns(ColIdx).Width = 150
+        ColIdx = DataGridViewVendorParts.Columns.Add("Path", "Path")
+        DataGridViewVendorParts.Columns(ColIdx).Width = 50
         For i = 0 To PropertiesToSearchList.Count - 1
             Dim PropString As String = PropertiesToSearchList(i)
-            ColIdx = DataGridView2.Columns.Add($"Prop_{i + 1}", PropString)
-            DataGridView2.Columns(ColIdx).AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+            ColIdx = DataGridViewVendorParts.Columns.Add($"Prop_{i + 1}", PropString)
+            DataGridViewVendorParts.Columns(ColIdx).AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
         Next
 
         Me.PropertiesData = New HCPropertiesData  ' Automatically loads saved settings if any.
@@ -340,74 +340,6 @@ Public Class Form_Main
 
     End Sub
 
-    'Private Function ProcessUnits(
-    '    SEApp As SolidEdgeFramework.Application,
-    '    SEDoc As SolidEdgeFramework.SolidEdgeDocument
-    '    ) As Boolean
-
-    '    Dim Success As Boolean = True
-    '    Dim Units As String
-
-    '    Dim UnitsProps As List(Of Prop) = Props.GetPropsOfType("UnitsOfMeasure")
-
-    '    If UnitsProps.Count = 0 Then
-    '        MsgBox("No UnitsFormula specified", vbOKOnly)
-    '        TextBoxStatus.Text = ""
-    '        Return False
-    '    End If
-    '    If UnitsProps.Count > 1 Then
-    '        MsgBox("Multiple UnitsFormulas specified", vbOKOnly)
-    '        TextBoxStatus.Text = ""
-    '        Return False
-    '    End If
-
-    '    Units = UnitsProps(0).Value
-
-    '    Dim ValidUnits As List(Of String) = {"inch", "mm"}.ToList
-
-    '    If Not ValidUnits.Contains(Units.ToLower) Then
-    '        MsgBox($"Units not recognized '{Units}'", vbOKOnly)
-    '        TextBoxStatus.Text = ""
-    '        Return False
-    '    End If
-
-    '    Dim UC As New UtilsCommon
-    '    Dim DocType As String = UC.GetDocType(SEDoc)
-
-    '    Dim UnitsOfMeasure As SolidEdgeFramework.UnitsOfMeasure
-    '    UnitsOfMeasure = SEDoc.UnitsOfMeasure
-
-    '    For Each UnitOfMeasure As SolidEdgeFramework.UnitOfMeasure In UnitsOfMeasure
-    '        If UnitOfMeasure.Type = SolidEdgeConstants.UnitTypeConstants.igUnitDistance Then
-
-    '            Dim DimensionStyles As SolidEdgeFrameworkSupport.DimensionStyles = Nothing
-    '            Select Case DocType
-    '                Case "par"
-    '                    Dim tmpSEDoc As SolidEdgePart.PartDocument = CType(SEDoc, SolidEdgePart.PartDocument)
-    '                    DimensionStyles = tmpSEDoc.DimensionStyles
-    '                Case "psm"
-    '                    Dim tmpSEDoc As SolidEdgePart.SheetMetalDocument = CType(SEDoc, SolidEdgePart.SheetMetalDocument)
-    '                    DimensionStyles = tmpSEDoc.DimensionStyles
-    '            End Select
-
-    '            Select Case Units.ToLower
-    '                Case "inch"
-    '                    DimensionStyles.Active = "ANSI (in)"
-    '                    SEApp.DoIdle()
-    '                    UnitOfMeasure.Units = SolidEdgeConstants.UnitOfMeasureLengthReadoutConstants.seLengthInch
-    '                    'Dim s = DimensionStyles.Active
-    '                Case "mm"
-    '                    DimensionStyles.Active = "ISO (mm)"
-    '                    SEApp.DoIdle()
-    '                    UnitOfMeasure.Units = SolidEdgeConstants.UnitOfMeasureLengthReadoutConstants.seLengthMillimeter
-    '            End Select
-    '            Exit For
-    '        End If
-    '    Next
-
-    '    Return Success
-    'End Function
-
     Private Function ProcessVariables(
         SEApp As SolidEdgeFramework.Application,
         SEDoc As SolidEdgeFramework.SolidEdgeDocument
@@ -631,6 +563,7 @@ Public Class Form_Main
         Return Success
     End Function
 
+
     Private Function GetFilenameFormula(DefaultExtension As String) As String
         Dim Filename As String = Nothing
         Dim FilenameFormula As String = ""
@@ -743,6 +676,7 @@ Public Class Form_Main
         Return TemplateName
     End Function
 
+
     Private Function MaybePatternOccurrence(
         Occurrence As SolidEdgeAssembly.Occurrence
         ) As Boolean
@@ -788,7 +722,6 @@ Public Class Form_Main
 
         Return Success
     End Function
-
 
     Private Function ProcessPatterns(
         Occurrence As SolidEdgeAssembly.Occurrence,
@@ -991,6 +924,7 @@ Public Class Form_Main
         Return Success
     End Function
 
+
     ' ###### PROPERTY TAB ######
 
     Private Sub UpdatePropertyTab()
@@ -1036,14 +970,14 @@ Public Class Form_Main
 
         If Not TemplateFound Then UpdateThumbnail("")
 
-        DataGridView1.Rows.Clear()
+        DataGridViewDataInspector.Rows.Clear()
 
         For i = 0 To Props.Items.Count - 1
             Dim Prop = Props.Items(i)
-            DataGridView1.Rows.Add(New DataGridViewRow)
-            DataGridView1.Rows(i).Cells(0).Value = Prop.Name
-            DataGridView1.Rows(i).Cells(1).Value = Prop.Type
-            DataGridView1.Rows(i).Cells(2).Value = Prop.Value
+            DataGridViewDataInspector.Rows.Add(New DataGridViewRow)
+            DataGridViewDataInspector.Rows(i).Cells(0).Value = Prop.Name
+            DataGridViewDataInspector.Rows(i).Cells(1).Value = Prop.Type
+            DataGridViewDataInspector.Rows(i).Cells(2).Value = Prop.Value
         Next
 
     End Sub
@@ -1282,6 +1216,11 @@ Public Class Form_Main
 
     Public Function ReadExcel(FileName As String) As List(Of List(Of String))
         System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance) ' Needed by ExcelReader
+
+        If Not IO.File.Exists(FileName) Then
+            MsgBox($"File not found '{FileName}'")
+            Return Nothing
+        End If
 
         Dim tmpList As New List(Of List(Of String))
         Dim i As Integer = 0
@@ -1683,15 +1622,15 @@ Public Class Form_Main
         If FPSO.DialogResult = DialogResult.OK Then
             Dim ColIdx As Integer
 
-            DataGridView2.Columns.Clear()
-            ColIdx = DataGridView2.Columns.Add("Filename", "Filename")
-            DataGridView2.Columns(ColIdx).Width = 150
-            ColIdx = DataGridView2.Columns.Add("Path", "Path")
-            DataGridView2.Columns(ColIdx).Width = 50
+            DataGridViewVendorParts.Columns.Clear()
+            ColIdx = DataGridViewVendorParts.Columns.Add("Filename", "Filename")
+            DataGridViewVendorParts.Columns(ColIdx).Width = 150
+            ColIdx = DataGridViewVendorParts.Columns.Add("Path", "Path")
+            DataGridViewVendorParts.Columns(ColIdx).Width = 50
             For i = 0 To PropertiesToSearchList.Count - 1
                 Dim PropString As String = PropertiesToSearchList(i)
-                ColIdx = DataGridView2.Columns.Add($"Prop_{i + 1}", PropString)
-                DataGridView2.Columns(ColIdx).AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells
+                ColIdx = DataGridViewVendorParts.Columns.Add($"Prop_{i + 1}", PropString)
+                DataGridViewVendorParts.Columns(ColIdx).AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells
             Next
         End If
 
@@ -1825,18 +1764,18 @@ Public Class Form_Main
 
         If DisplayDict.Count > 0 Then
 
-            DataGridView2.Rows.Clear()
+            DataGridViewVendorParts.Rows.Clear()
 
             For Each Filename As String In DisplayDict.Keys
 
                 TextBoxStatus.Text = IO.Path.GetFileName(Filename)
                 System.Windows.Forms.Application.DoEvents()
 
-                Dim RowIdx As Integer = DataGridView2.Rows.Add()
-                DataGridView2.Rows(RowIdx).Cells(0).Value = IO.Path.GetFileName(Filename)
-                DataGridView2.Rows(RowIdx).Cells(1).Value = Filename
+                Dim RowIdx As Integer = DataGridViewVendorParts.Rows.Add()
+                DataGridViewVendorParts.Rows(RowIdx).Cells(0).Value = IO.Path.GetFileName(Filename)
+                DataGridViewVendorParts.Rows(RowIdx).Cells(1).Value = Filename
                 For i = 0 To DisplayDict(Filename).Count - 1
-                    DataGridView2.Rows(RowIdx).Cells(i + 2).Value = DisplayDict(Filename)(i)
+                    DataGridViewVendorParts.Rows(RowIdx).Cells(i + 2).Value = DisplayDict(Filename)(i)
                 Next
             Next
         End If
@@ -1845,12 +1784,12 @@ Public Class Form_Main
 
     End Sub
 
-    Private Sub DataGridView2_CellMouseDown(sender As Object, e As DataGridViewCellMouseEventArgs) Handles DataGridView2.CellMouseDown
+    Private Sub DataGridView2_CellMouseDown(sender As Object, e As DataGridViewCellMouseEventArgs) Handles DataGridViewVendorParts.CellMouseDown
         ' https://stackoverflow.com/questions/1718389/right-click-context-menu-for-datagridview
 
         If Not (e.RowIndex = -1 Or e.ColumnIndex = -1) Then
-            DataGridView2.CurrentCell = CType(sender, DataGridView).Rows(e.RowIndex).Cells(e.ColumnIndex)
-            Dim PropertySearchFilename As String = CStr(DataGridView2.Rows(e.RowIndex).Cells(1).Value)
+            DataGridViewVendorParts.CurrentCell = CType(sender, DataGridView).Rows(e.RowIndex).Cells(e.ColumnIndex)
+            Dim PropertySearchFilename As String = CStr(DataGridViewVendorParts.Rows(e.RowIndex).Cells(1).Value)
             UpdateThumbnail(PropertySearchFilename, FullPathProvided:=True)
 
             If e.Button = MouseButtons.Right Then
@@ -1859,8 +1798,8 @@ Public Class Form_Main
     End Sub
 
     Private Sub AddToAssemblyToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AddToAssemblyToolStripMenuItem.Click
-        Dim RowIdx As Integer = DataGridView2.CurrentCell.RowIndex
-        Dim PropertySearchFilename As String = CStr(DataGridView2.Rows(RowIdx).Cells(1).Value)
+        Dim RowIdx As Integer = DataGridViewVendorParts.CurrentCell.RowIndex
+        Dim PropertySearchFilename As String = CStr(DataGridViewVendorParts.Rows(RowIdx).Cells(1).Value)
 
         Process(PropertySearchFilename:=PropertySearchFilename)
         Dim i = 0

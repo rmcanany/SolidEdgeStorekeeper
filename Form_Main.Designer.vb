@@ -23,13 +23,13 @@ Partial Class Form_Main
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         components = New ComponentModel.Container()
-        Dim TreeNode1 As TreeNode = New TreeNode("Node0")
-        Dim TreeNode2 As TreeNode = New TreeNode("Node4")
-        Dim TreeNode3 As TreeNode = New TreeNode("Node2", New TreeNode() {TreeNode2})
-        Dim TreeNode4 As TreeNode = New TreeNode("Node3")
-        Dim TreeNode5 As TreeNode = New TreeNode("Node1", New TreeNode() {TreeNode3, TreeNode4})
+        Dim TreeNode6 As TreeNode = New TreeNode("Node0")
+        Dim TreeNode7 As TreeNode = New TreeNode("Node4")
+        Dim TreeNode8 As TreeNode = New TreeNode("Node2", New TreeNode() {TreeNode7})
+        Dim TreeNode9 As TreeNode = New TreeNode("Node3")
+        Dim TreeNode10 As TreeNode = New TreeNode("Node1", New TreeNode() {TreeNode8, TreeNode9})
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Form_Main))
-        Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
         ToolStrip1 = New ToolStrip()
         ButtonCollapse = New ToolStripButton()
         ButtonSaveDirectory = New ToolStripButton()
@@ -38,7 +38,7 @@ Partial Class Form_Main
         TreeView1 = New TreeView()
         ContextMenuStrip1 = New ContextMenuStrip(components)
         ToolStripMenuItem1 = New ToolStripMenuItem()
-        DataGridView1 = New DataGridView()
+        DataGridViewDataInspector = New DataGridView()
         Column1 = New DataGridViewTextBoxColumn()
         Column2 = New DataGridViewTextBoxColumn()
         Column3 = New DataGridViewTextBoxColumn()
@@ -53,7 +53,7 @@ Partial Class Form_Main
         ButtonSearchProperties = New Button()
         TextBoxSearchTerms = New TextBox()
         ButtonPropertySearchOptions = New Button()
-        DataGridView2 = New DataGridView()
+        DataGridViewVendorParts = New DataGridView()
         Filename = New DataGridViewTextBoxColumn()
         Path = New DataGridViewTextBoxColumn()
         ContextMenuStrip2 = New ContextMenuStrip(components)
@@ -66,7 +66,7 @@ Partial Class Form_Main
         TextBoxStatus = New TextBox()
         ToolStrip1.SuspendLayout()
         ContextMenuStrip1.SuspendLayout()
-        CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
+        CType(DataGridViewDataInspector, ComponentModel.ISupportInitialize).BeginInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         TabControl1.SuspendLayout()
         TabPageTreeSearch.SuspendLayout()
@@ -74,7 +74,7 @@ Partial Class Form_Main
         TabPagePropertySearch.SuspendLayout()
         TableLayoutPanel4.SuspendLayout()
         TableLayoutPanel5.SuspendLayout()
-        CType(DataGridView2, ComponentModel.ISupportInitialize).BeginInit()
+        CType(DataGridViewVendorParts, ComponentModel.ISupportInitialize).BeginInit()
         ContextMenuStrip2.SuspendLayout()
         TabPageInspectData.SuspendLayout()
         TableLayoutPanel1.SuspendLayout()
@@ -134,17 +134,17 @@ Partial Class Form_Main
         TreeView1.Dock = DockStyle.Fill
         TreeView1.Location = New Point(3, 28)
         TreeView1.Name = "TreeView1"
-        TreeNode1.Name = "Node0"
-        TreeNode1.Text = "Node0"
-        TreeNode2.Name = "Node4"
-        TreeNode2.Text = "Node4"
-        TreeNode3.Name = "Node2"
-        TreeNode3.Text = "Node2"
-        TreeNode4.Name = "Node3"
-        TreeNode4.Text = "Node3"
-        TreeNode5.Name = "Node1"
-        TreeNode5.Text = "Node1"
-        TreeView1.Nodes.AddRange(New TreeNode() {TreeNode1, TreeNode5})
+        TreeNode6.Name = "Node0"
+        TreeNode6.Text = "Node0"
+        TreeNode7.Name = "Node4"
+        TreeNode7.Text = "Node4"
+        TreeNode8.Name = "Node2"
+        TreeNode8.Text = "Node2"
+        TreeNode9.Name = "Node3"
+        TreeNode9.Text = "Node3"
+        TreeNode10.Name = "Node1"
+        TreeNode10.Text = "Node1"
+        TreeView1.Nodes.AddRange(New TreeNode() {TreeNode6, TreeNode10})
         TreeView1.Size = New Size(396, 392)
         TreeView1.TabIndex = 1
         ' 
@@ -160,17 +160,17 @@ Partial Class Form_Main
         ToolStripMenuItem1.Size = New Size(162, 22)
         ToolStripMenuItem1.Text = "Add to assembly"
         ' 
-        ' DataGridView1
+        ' DataGridViewDataInspector
         ' 
-        DataGridView1.AllowUserToResizeRows = False
-        DataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        DataGridView1.Columns.AddRange(New DataGridViewColumn() {Column1, Column2, Column3})
-        DataGridView1.Dock = DockStyle.Fill
-        DataGridView1.Location = New Point(3, 3)
-        DataGridView1.Name = "DataGridView1"
-        DataGridView1.RowHeadersVisible = False
-        DataGridView1.Size = New Size(402, 423)
-        DataGridView1.TabIndex = 0
+        DataGridViewDataInspector.AllowUserToResizeRows = False
+        DataGridViewDataInspector.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        DataGridViewDataInspector.Columns.AddRange(New DataGridViewColumn() {Column1, Column2, Column3})
+        DataGridViewDataInspector.Dock = DockStyle.Fill
+        DataGridViewDataInspector.Location = New Point(3, 3)
+        DataGridViewDataInspector.Name = "DataGridViewDataInspector"
+        DataGridViewDataInspector.RowHeadersVisible = False
+        DataGridViewDataInspector.Size = New Size(402, 423)
+        DataGridViewDataInspector.TabIndex = 0
         ' 
         ' Column1
         ' 
@@ -270,7 +270,7 @@ Partial Class Form_Main
         TableLayoutPanel4.ColumnCount = 1
         TableLayoutPanel4.ColumnStyles.Add(New ColumnStyle(SizeType.Percent, 100F))
         TableLayoutPanel4.Controls.Add(TableLayoutPanel5, 0, 0)
-        TableLayoutPanel4.Controls.Add(DataGridView2, 0, 1)
+        TableLayoutPanel4.Controls.Add(DataGridViewVendorParts, 0, 1)
         TableLayoutPanel4.Dock = DockStyle.Fill
         TableLayoutPanel4.Location = New Point(3, 3)
         TableLayoutPanel4.Name = "TableLayoutPanel4"
@@ -324,21 +324,21 @@ Partial Class Form_Main
         ButtonPropertySearchOptions.TabIndex = 3
         ButtonPropertySearchOptions.UseVisualStyleBackColor = True
         ' 
-        ' DataGridView2
+        ' DataGridViewVendorParts
         ' 
-        DataGridViewCellStyle1.BackColor = Color.AliceBlue
-        DataGridView2.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
-        DataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        DataGridView2.Columns.AddRange(New DataGridViewColumn() {Filename, Path})
-        DataGridView2.ContextMenuStrip = ContextMenuStrip2
-        DataGridView2.Dock = DockStyle.Fill
-        DataGridView2.EditMode = DataGridViewEditMode.EditProgrammatically
-        DataGridView2.Location = New Point(3, 38)
-        DataGridView2.MultiSelect = False
-        DataGridView2.Name = "DataGridView2"
-        DataGridView2.RowHeadersVisible = False
-        DataGridView2.Size = New Size(396, 382)
-        DataGridView2.TabIndex = 2
+        DataGridViewCellStyle2.BackColor = Color.AliceBlue
+        DataGridViewVendorParts.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle2
+        DataGridViewVendorParts.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        DataGridViewVendorParts.Columns.AddRange(New DataGridViewColumn() {Filename, Path})
+        DataGridViewVendorParts.ContextMenuStrip = ContextMenuStrip2
+        DataGridViewVendorParts.Dock = DockStyle.Fill
+        DataGridViewVendorParts.EditMode = DataGridViewEditMode.EditProgrammatically
+        DataGridViewVendorParts.Location = New Point(3, 38)
+        DataGridViewVendorParts.MultiSelect = False
+        DataGridViewVendorParts.Name = "DataGridViewVendorParts"
+        DataGridViewVendorParts.RowHeadersVisible = False
+        DataGridViewVendorParts.Size = New Size(396, 382)
+        DataGridViewVendorParts.TabIndex = 2
         ' 
         ' Filename
         ' 
@@ -366,7 +366,7 @@ Partial Class Form_Main
         ' 
         ' TabPageInspectData
         ' 
-        TabPageInspectData.Controls.Add(DataGridView1)
+        TabPageInspectData.Controls.Add(DataGridViewDataInspector)
         TabPageInspectData.ImageKey = "icons8-search-16.png"
         TabPageInspectData.Location = New Point(4, 24)
         TabPageInspectData.Name = "TabPageInspectData"
@@ -452,7 +452,7 @@ Partial Class Form_Main
         ToolStrip1.ResumeLayout(False)
         ToolStrip1.PerformLayout()
         ContextMenuStrip1.ResumeLayout(False)
-        CType(DataGridView1, ComponentModel.ISupportInitialize).EndInit()
+        CType(DataGridViewDataInspector, ComponentModel.ISupportInitialize).EndInit()
         CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
         TabControl1.ResumeLayout(False)
         TabPageTreeSearch.ResumeLayout(False)
@@ -462,7 +462,7 @@ Partial Class Form_Main
         TableLayoutPanel4.ResumeLayout(False)
         TableLayoutPanel5.ResumeLayout(False)
         TableLayoutPanel5.PerformLayout()
-        CType(DataGridView2, ComponentModel.ISupportInitialize).EndInit()
+        CType(DataGridViewVendorParts, ComponentModel.ISupportInitialize).EndInit()
         ContextMenuStrip2.ResumeLayout(False)
         TabPageInspectData.ResumeLayout(False)
         TableLayoutPanel1.ResumeLayout(False)
@@ -474,7 +474,7 @@ Partial Class Form_Main
     Friend WithEvents ButtonOptions As ToolStripButton
     Friend WithEvents TreeView1 As TreeView
     Friend WithEvents PictureBox1 As PictureBox
-    Friend WithEvents DataGridView1 As DataGridView
+    Friend WithEvents DataGridViewDataInspector As DataGridView
     Friend WithEvents ButtonOK As Button
     Friend WithEvents ButtonClose As Button
     Friend WithEvents TabControl1 As TabControl
@@ -498,7 +498,7 @@ Partial Class Form_Main
     Friend WithEvents TableLayoutPanel5 As TableLayoutPanel
     Friend WithEvents ButtonSearchProperties As Button
     Friend WithEvents TextBoxSearchTerms As TextBox
-    Friend WithEvents DataGridView2 As DataGridView
+    Friend WithEvents DataGridViewVendorParts As DataGridView
     Friend WithEvents Filename As DataGridViewTextBoxColumn
     Friend WithEvents Path As DataGridViewTextBoxColumn
     Friend WithEvents ButtonPropertySearchOptions As Button

@@ -5,6 +5,14 @@
   <span class="description">Robert McAnany 2025</span>
 </div>
 
+## CREDITS
+
+**Beta Testers**
+@hawcad, @rob.wolbrink7456, @[Francesco Arfilli], @pedja
+
+**Helpful feedback and bug reports**
+@SeanCresswell, @[Francesco Arfilli], @arekkul, @[Imre Szucs], @64Pacific, @Seva, @hawcad, @rob.wolbrink7456, @pedja
+
 ## DESCRIPTION
 
 Solid Edge Storekeeper is a utility to create, organize, and share standard parts.  It is free and open source and you can find it [<ins>**Here**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#readme).  
@@ -38,6 +46,8 @@ Unlike Family of Parts, files are only created as needed.  Also, each part is st
 Unlike web-based offerings, the program is integrated with your parts library and works directly with Solid Edge.  It updates the properties you specify, using the naming conventions you define.  If you want adjustable parts (see the provided springs example), or any other SE-specific functionality, the program handles it like the native file that it is.
 
 The program will never have every standard part in the world, but it can be improved.  That's where **YOU** come in!  Contributions are welcome.  Please message me on the [<ins>**Solid Edge Forum**</ins>](https://community.sw.siemens.com/s/topic/0TO4O000000MihiWAC/solid-edge), or raise an [<ins>**Issue on GitHub**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/issues), for ideas on how to get started.
+
+I'm pretty sure you're here because you want to find ways to do things better, faster, and with less effort.  If so, you might want to check out [<ins>**Solid Edge Housekeeper**</ins>](https://github.com/rmcanany/SolidEdgeHousekeeper#readme).  That is a separate utility for finding annoying little errors in your project.
 
 ## INSTALLATION
 
