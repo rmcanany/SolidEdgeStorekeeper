@@ -1188,7 +1188,8 @@ Public Class Form_Main
 
             Dim ExcelTopLevel = ExcelCleanup(ExcelAll, "TopLevel")
             Dim XmlList = ExcelToXml(ExcelTopLevel, ExcelAll, Splash)
-            IO.File.WriteAllLines(IO.Path.ChangeExtension(ExcelFilename, "xml"), XmlList)
+            'If XmlList Is Nothing Then Exit Sub
+            IO.File.WriteAllLines(XmlFilename, XmlList)
         End If
 
         System.Windows.Forms.Application.DoEvents()
@@ -1200,7 +1201,26 @@ Public Class Form_Main
         Try
             XmlDoc.LoadXml(XmlString)
         Catch ex As Exception
-            MsgBox($"Error reading Xml file.  See below for details.{vbCrLf}{vbCrLf}{ex.ToString}", vbOKOnly)
+            ' The ',' character, hexadecimal value 0x2C, cannot be included in a name. Line 15, position 20.
+            Dim tmpXmlList As List(Of String) = XmlString.Split(vbCrLf).ToList
+            Dim tmpExAsList As List(Of String) = ex.Message.Split(" ").ToList
+            Dim RowIdx As Integer = 0
+            For i As Integer = 0 To tmpExAsList.Count - 1
+                If tmpExAsList(i).ToLower = "line" Then
+                    RowIdx = CInt(tmpExAsList(i + 1))
+                    Exit For
+                End If
+            Next
+            Dim s As String = ""
+            If Not RowIdx = 0 Then
+                s = $"Error reading Xml file.  Line {RowIdx}{vbCrLf}"
+                s = $"{s}'{tmpXmlList(RowIdx - 1).Trim}'{vbCrLf}"
+                s = $"{s}{vbCrLf}{ex.Message}"
+            Else
+                s = "Error reading Xml file."
+                s = $"{s}{vbCrLf}{ex.Message}"
+            End If
+            MsgBox(s, vbOKOnly)
             End
         End Try
 
@@ -1377,6 +1397,7 @@ Public Class Form_Main
                     tmpDataSource = $"{DefaultDataDirectory}\{tmpDataSource}"
                     If Not ExcelDataReaderCache.Keys.Contains(tmpDataSource) Then
                         ExcelDataReaderCache(tmpDataSource) = ReadExcel(tmpDataSource)
+                        If ExcelDataReaderCache(tmpDataSource) Is Nothing Then Return Nothing
                     End If
                     SubLevelList = ExcelDetailSheetToXml(ExcelDataReaderCache(tmpDataSource), tmpSheetname, tmpStartLevel, Indents)
                 End If
@@ -1469,12 +1490,11 @@ Public Class Form_Main
             tf = tf AndAlso Not Row(IncludeIdx).ToLower = "t"
             If tf Then Continue For
 
-            XmlList.Add(String.Format("{0}<{1}_{2} Type=""Node"">", Indents(StartLevel), NameList(NodeIdx), Row(NodeIdx)))
+            XmlList.Add(String.Format("{0}<{1}_{2} Type=""Node"">", Indents(StartLevel), NameList(NodeIdx), Row(NodeIdx).Replace(",", ".")))
             For ColIdx As Integer = 0 To Row.Count - 1
 
                 If ColIdx = NodeIdx Then Continue For
                 If Row(ColIdx).Trim = "" Then Continue For
-
 
                 If Not TypeList(ColIdx).Contains("LeafNode") Then
                     ' </NominalDiameter Type="Variable">0.164</NominalDiameter>
