@@ -6,7 +6,9 @@ Imports Microsoft.WindowsAPICodePack.Dialogs
 Public Class Form_Main
 
     Private Property Version As String = "2025.2"
-    Private Property BetaPreview As String = "SolidEdgeStorekeeper-v2025.2_BetaPreview-04"
+
+    'Private Property BetaPreview As String = "SolidEdgeStorekeeper-v2025.2_BetaPreview-04"
+    Private Property BetaPreview As String = ""
 
     Private _SelectedNodeFullPath As String
     Public Property SelectedNodeFullPath As String
