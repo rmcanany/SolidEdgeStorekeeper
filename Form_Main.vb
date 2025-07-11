@@ -6,6 +6,7 @@ Imports Microsoft.WindowsAPICodePack.Dialogs
 Public Class Form_Main
 
     Private Property Version As String = "2025.2"
+    Private Property BetaPreview As String = "SolidEdgeStorekeeper-v2025.2_BetaPreview-04"
 
     Private _SelectedNodeFullPath As String
     Public Property SelectedNodeFullPath As String
@@ -93,6 +94,9 @@ Public Class Form_Main
             ' First run.  Set defaults.
             Me.AlwaysReadExcel = True
             Me.CheckNewVersion = True
+            If Not BetaPreview = "" Then
+                MsgBox($"Testing {BetaPreview}", vbOKOnly)
+            End If
         End If
 
         UP.CreatePreferencesDirectory(Me)
@@ -1188,6 +1192,9 @@ Public Class Form_Main
 
             Dim ExcelTopLevel = ExcelCleanup(ExcelAll, "TopLevel")
             Dim XmlList = ExcelToXml(ExcelTopLevel, ExcelAll, Splash)
+            For i = 0 To XmlList.Count - 1
+                XmlList(i) = XmlList(i).Replace(",", ".")
+            Next
             'If XmlList Is Nothing Then Exit Sub
             IO.File.WriteAllLines(XmlFilename, XmlList)
         End If
@@ -1352,7 +1359,7 @@ Public Class Form_Main
 
         Dim Indent = "    "
         Dim Indents As New List(Of String)
-        For tmpLevel As Integer = 0 To 10
+        For tmpLevel As Integer = 0 To 30
             If tmpLevel = 0 Then
                 Indents.Add("")
             Else
@@ -1502,7 +1509,7 @@ Public Class Form_Main
                     Dim tmpType As String = TypeList(ColIdx)
                     Dim tmpValue As String = Row(ColIdx)
 
-                    XmlList.Add(String.Format("{0}<{1} Type=""{2}"">{3}</{1}>", Indents(StartLevel), tmpName, tmpType, tmpValue))
+                    XmlList.Add(String.Format("{0}<{1} Type=""{2}"">{3}</{1}>", Indents(StartLevel + 1), tmpName, tmpType, tmpValue))
                 Else
                     ' <Length_0.500 Type="LeafNode">
                     '     <Length Type="Double">0.500</Length>
@@ -1513,13 +1520,14 @@ Public Class Form_Main
                     Dim tmpInnerName As String = NameList(ColIdx) ' Length
                     Dim tmpInnerType As String = TypeList(ColIdx).Replace("LeafNode", "") ' LeafNodeDouble -> Double
 
-                    XmlList.Add(String.Format("{0}<{1} Type=""{2}"">", Indents(StartLevel), tmpOuterName, tmpOuterType))
-                    XmlList.Add(String.Format("{0}<{1} Type=""{2}"">{3}</{1}>", Indents(StartLevel + 1), tmpInnerName, tmpInnerType, tmpValue))
-                    XmlList.Add(String.Format("{0}</{1}>", Indents(StartLevel), tmpOuterName))
+                    XmlList.Add(String.Format("{0}<{1} Type=""{2}"">", Indents(StartLevel + 1), tmpOuterName, tmpOuterType))
+                    XmlList.Add(String.Format("{0}<{1} Type=""{2}"">{3}</{1}>", Indents(StartLevel + 2), tmpInnerName, tmpInnerType, tmpValue))
+                    XmlList.Add(String.Format("{0}</{1}>", Indents(StartLevel + 1), tmpOuterName))
 
                 End If
             Next
-            XmlList.Add(String.Format("{0}</{1}_{2}>", Indents(StartLevel), NameList(NodeIdx), Row(NodeIdx)))
+            XmlList.Add(String.Format("{0}</{1}_{2}>", Indents(StartLevel), NameList(NodeIdx), Row(NodeIdx).Replace(",", ".")))
+            'XmlList.Add(String.Format("{0}</{1}_{2}>", Indents(StartLevel), NameList(NodeIdx), Row(NodeIdx)))
         Next
 
         Return XmlList
