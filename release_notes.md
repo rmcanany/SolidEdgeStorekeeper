@@ -16,7 +16,13 @@ Feel free to report bugs and/or ideas for improvement on the [<ins>**Solid Edge 
 
 ### Generate Xml File
 
-Fixed an issue where locales with a comma decimal separator were getting invalid Xml headers.
+Fixed an issue where locales with a comma decimal separator were getting invalid Xml headers, keeping the program from functioning.
+
+### Readme
+
+Added a section with things to consider when creating new templates.
+
+Clarified the fact that the supplied templates were created in SE2024 and cannot be used with older versions.
 
 ## V2025.1
 Initial release.
