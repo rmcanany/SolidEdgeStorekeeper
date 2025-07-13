@@ -8,14 +8,14 @@
 ## CREDITS
 
 **Beta Testers**
-@hawcad, @rob.wolbrink7456, @[Francesco Arfilli], @pedja
+@hawcad, @rob.wolbrink7456, @[Francesco Arfilli], @pedja, @TeeVar
 
 **Helpful feedback and bug reports**
-@SeanCresswell, @[Francesco Arfilli], @arekkul, @[Imre Szucs], @64Pacific, @Seva, @hawcad, @rob.wolbrink7456, @pedja
+@SeanCresswell, @[Francesco Arfilli], @arekkul, @[Imre Szucs], @64Pacific, @Seva, @hawcad, @rob.wolbrink7456, @pedja, @TeeVar
 
 ## DESCRIPTION
 
-Solid Edge Storekeeper is a utility to create, organize, and share standard parts.  It is free and open source and you can find it [<ins>**Here**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#readme).  
+Solid Edge Storekeeper is a utility to create, organize, and share standard parts.  It is free and open source and you can find it [<ins>**Here**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#readme).  Please note the standard part templates were created with SE2024.  You will need that version or newer to use them.
 
 Fasteners, retainers, structural shapes, and more in ANSI and ISO format are included.  There are over 15k items available.  There is no database; everything is done in Excel.  It is fully customizable.  If you upgrade Solid Edge, no change to the program or its data is required.
 
@@ -94,7 +94,9 @@ The other settings for tree search are accessed on the Options dialog.  Click ![
 
 - **TEMPLATE DIRECTORY** 
 
-The templates are SE part files that have variable-table-driven geometry to create new parts of a given type.  By default they are stored in the `Preferences\Templates` folder.  Note, the templates were created in SE2024.  They will only work if you're using that version or newer.
+The templates are SE part files that have variable-table-driven geometry to create new parts of a given type.  By default they are stored in the `Preferences\Templates` folder.  
+
+As noted at the outset, the templates were created in SE2024.  They will only work if you're using that version or newer.  If you create new ones for an older version, I would be happy to host them on GitHub -- crediting you as a **Contributor**, of course!
 
 - **DATA DIRECTORY** 
 

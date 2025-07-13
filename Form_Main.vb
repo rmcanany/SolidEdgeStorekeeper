@@ -86,7 +86,10 @@ Public Class Form_Main
             If Not IO.Directory.Exists(d) Then s = $"{s}  {d}{vbCrLf}"
         Next
         If Not s = "" Then
-            s = $"Cannot continue without the following directories{vbCrLf}{s}"
+            s = $"Cannot continue without the following directories{vbCrLf}{s}{vbCrLf}{vbCrLf}"
+            s = $"{s}If you cloned the program from the repo, "
+            s = $"{s}please see the Installation section of the Readme "
+            s = $"{s}to learn how to get the missing files. "
             MsgBox(s)
             End
         End If
