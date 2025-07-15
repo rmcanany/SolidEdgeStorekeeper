@@ -19,9 +19,9 @@ Public Class FormNewVersionAvailable
         LLList = {LinkLabelReleaseNotes, LinkLabelInstallationInstructions, LinkLabelDownloadPage}.ToList
 
         Dim URLList As New List(Of String)
-        URLList.Add("https://github.com/rmcanany/SolidEdgeHousekeeper/blob/master/release_notes.md")
-        URLList.Add("https://github.com/rmcanany/SolidEdgeHousekeeper#installation")
-        URLList.Add("https://github.com/rmcanany/SolidEdgeHousekeeper/releases")
+        URLList.Add("https://github.com/rmcanany/SolidEdgeStorekeeper/blob/master/release_notes.md")
+        URLList.Add("https://github.com/rmcanany/SolidEdgeStorekeeper#installation")
+        URLList.Add("https://github.com/rmcanany/SolidEdgeStorekeeper/releases")
 
         Dim StartIdx = 0
         Dim EndIdx As Integer
