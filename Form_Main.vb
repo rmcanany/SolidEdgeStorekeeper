@@ -248,7 +248,7 @@ Public Class Form_Main
             End If
 
             TextBoxStatus.Text = $"Opening '{IO.Path.GetFileName(TemplateName)}'"
-            Dim SEDoc = CType(SEApp.Documents.Open(TemplateName), SolidEdgeFramework.SolidEdgeDocument)
+            Dim SEDoc = CType(SEApp.Documents.Open(TemplateName, 8), SolidEdgeFramework.SolidEdgeDocument)
             SEApp.DoIdle()
 
             TextBoxStatus.Text = $"Saving '{IO.Path.GetFileName(Filename)}'"

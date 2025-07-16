@@ -744,10 +744,12 @@ Public Class UtilsCommon
 
                     ' Some properties do not have names.
                     Try
-                        If Prop.Name.ToLower = PropertyName.ToLower Then
-                            FoundProp = Prop
-                            PropertyFound = True
-                            Exit For
+                        If Not IsNothing(Prop.Name) Then
+                            If Prop.Name.ToLower = PropertyName.ToLower Then
+                                FoundProp = Prop
+                                PropertyFound = True
+                                Exit For
+                            End If
                         End If
                     Catch ex As Exception
                     End Try
