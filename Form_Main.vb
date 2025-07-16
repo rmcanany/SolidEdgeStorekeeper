@@ -7,9 +7,6 @@ Public Class Form_Main
 
     Private Property Version As String = "2025.3"
 
-    Private Property BetaPreview As String = "SolidEdgeStorekeeper-v2025.3_BetaPreview-01"
-    'Private Property BetaPreview As String = ""
-
     Private _SelectedNodeFullPath As String
     Public Property SelectedNodeFullPath As String
         Get
@@ -99,9 +96,6 @@ Public Class Form_Main
             ' First run.  Set defaults.
             Me.AlwaysReadExcel = True
             Me.CheckNewVersion = True
-            If Not BetaPreview = "" Then
-                MsgBox($"Testing {BetaPreview}", vbOKOnly, "Beta preview")
-            End If
         End If
 
         UP.CreatePreferencesDirectory(Me)
