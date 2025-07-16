@@ -92,7 +92,7 @@ The program needs to know where to store the standard parts, and for fastener-li
 
 - **LIBRARY DIRECTORY**
 
-The library is where the standard parts are stored.  The default is in `Preferences\Library` under the `Storekeeper`` main directory.  Note it is created the first time you run the program; it won't be there before that.  As noted above, if you want to access your vendor-specific standard parts, they must be in the library.  You can place them in one or more subdirectories if desired.
+The library is where the standard parts are stored.  The default is in `Preferences\Library` under the `Storekeeper` main directory.  Note it is created the first time you run the program; it won't be there before that.  As noted above, if you want to access your vendor-specific standard parts, they must be in the library.  You can place them in one or more subdirectories if desired.
 
 - **TEMPLATE DIRECTORY** 
 
@@ -106,7 +106,10 @@ The spreadsheet contains the variables required for each size of each type of pa
 
 - **MATERIAL TABLE** 
 
-The material table is usually your normal SE material table.  However, for a quick test of the program, an alternative is to use `Storekeeper.mtl` from `Preferences\Templates`.  Copy it to your Solid Edge Materials directory to make it available.  On my machine, that location is `C:\Program Files\Siemens\Solid Edge 2024\Preferences\Materials`.  If you decide to continue using the program, you would eventually want to update the spreadsheet with your own material names. 
+The material table is usually your normal SE material table.  However, for a quick test of the program, an alternative is to use `Storekeeper.mtl` from `Preferences\Templates`.  Copy it to your Solid Edge Materials directory to make it available.  On my machine, that location is `C:\Program Files\Siemens\Solid Edge 2024\Preferences\Materials`.  
+
+If you decide to continue using the program, you would eventually want to utilize your own material table, updating material names in the spreadsheet as needed. 
+
 - **OPTIONS**
   - `Read the Excel file each time the program is launched`  
 	Internally, the Excel file is parsed and saved in `*.xml` format.  If you haven't changed the Excel file, this is an unnecessary step.  Clearing this option tells the program to use the `*.xml` file it created previously.
