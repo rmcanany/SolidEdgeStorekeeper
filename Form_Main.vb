@@ -5,10 +5,10 @@ Imports Microsoft.WindowsAPICodePack.Dialogs
 
 Public Class Form_Main
 
-    Private Property Version As String = "2025.2"
+    Private Property Version As String = "2025.3"
 
-    'Private Property BetaPreview As String = "SolidEdgeStorekeeper-v2025.2_BetaPreview-04"
-    Private Property BetaPreview As String = ""
+    Private Property BetaPreview As String = "SolidEdgeStorekeeper-v2025.3_BetaPreview-01"
+    'Private Property BetaPreview As String = ""
 
     Private _SelectedNodeFullPath As String
     Public Property SelectedNodeFullPath As String
@@ -23,19 +23,19 @@ Public Class Form_Main
         End Set
     End Property
 
-    Private _LibraryDirectory As String
+    'Private _LibraryDirectory As String
     Public Property LibraryDirectory As String
-        Get
-            Return _LibraryDirectory
-        End Get
-        Set(value As String)
-            If Not value(value.Count - 1) = "\" Then value = String.Format("{0}\", value)
-            _LibraryDirectory = value
-            If Me.TabControl1 IsNot Nothing Then
-                LabelSaveDirectory.Text = TruncateDirectoryName(value)
-            End If
-        End Set
-    End Property
+    '    Get
+    '        Return _LibraryDirectory
+    '    End Get
+    '    Set(value As String)
+    '        If Not value(value.Count - 1) = "\" Then value = String.Format("{0}\", value)
+    '        _LibraryDirectory = value
+    '        If Me.TabControl1 IsNot Nothing Then
+    '            LabelSaveDirectory.Text = TruncateDirectoryName(value)
+    '        End If
+    '    End Set
+    'End Property
 
     Public Property TemplateDirectory As String
     Public Property DataDirectory As String
@@ -90,7 +90,7 @@ Public Class Form_Main
             s = $"{s}If you cloned the program from the repo, "
             s = $"{s}please see the Installation section of the Readme "
             s = $"{s}to learn how to get the missing files. "
-            MsgBox(s)
+            MsgBox(s, vbOKOnly, "File not found")
             End
         End If
 
@@ -100,7 +100,7 @@ Public Class Form_Main
             Me.AlwaysReadExcel = True
             Me.CheckNewVersion = True
             If Not BetaPreview = "" Then
-                MsgBox($"Testing {BetaPreview}", vbOKOnly)
+                MsgBox($"Testing {BetaPreview}", vbOKOnly, "Beta preview")
             End If
         End If
 
@@ -139,7 +139,7 @@ Public Class Form_Main
             UP.CheckForNewerVersion(Me.Version)
         End If
 
-        TextBoxStatus.Text = $"{NodeCount} items available"
+        TextBoxStatus.Text = $"{Me.NodeCount} items available"
 
         Splash.Close()
 
@@ -207,7 +207,7 @@ Public Class Form_Main
             For Each s As String In ErrorMessageList
                 msg = $"{msg}{s}{vbCrLf}"
             Next
-            MsgBox(msg, vbOKOnly)
+            MsgBox(msg, vbOKOnly, "Check start conditions")
         End If
 
         Return Success
@@ -326,7 +326,7 @@ Public Class Form_Main
                     'SEApp.DoIdle()
                 End While
             Catch ex2 As Exception
-                MsgBox("Could not add part.  Please try again.", vbOKOnly)
+                MsgBox("Could not add part.  Please try again.", vbOKOnly, "Part not added")
             End Try
 
         End Try
@@ -390,7 +390,7 @@ Public Class Form_Main
                 Next
             End If
             Success = False
-            MsgBox(s, vbOKOnly)
+            MsgBox(s, vbOKOnly, "Variable not found")
         End If
 
         If Success Then
@@ -457,7 +457,7 @@ Public Class Form_Main
         Dim HasThreadedHoles As Boolean = ThreadedHoles IsNot Nothing AndAlso ThreadedHoles.Count > 0
 
         If HasExternalThreads And HasThreadedHoles Then
-            MsgBox("Cannot currently process models with both threaded holes AND external threads", vbOKOnly)
+            MsgBox("Cannot currently process models with both threaded holes AND external threads", vbOKOnly, "External and Internal threads")
             Return False
         End If
 
@@ -498,7 +498,7 @@ Public Class Form_Main
 
                 s = $"{s}Disable this warning on the Options dialog.{vbCrLf}"
 
-                MsgBox(s, vbOKOnly)
+                MsgBox(s, vbOKOnly, "External UNF threads")
 
             End If
         End If
@@ -579,12 +579,12 @@ Public Class Form_Main
 
         Dim tmpProps As List(Of Prop) = Props.GetPropsOfType("FilenameFormula")
         If tmpProps.Count = 0 Then
-            MsgBox("No FilenameFormula specified", vbOKOnly)
+            MsgBox("No FilenameFormula specified", vbOKOnly, "No file name formula")
             TextBoxStatus.Text = ""
             Return Nothing
         End If
         If tmpProps.Count > 1 Then
-            MsgBox("Multiple FilenameFormulas specified", vbOKOnly)
+            MsgBox("Multiple FilenameFormulas specified", vbOKOnly, "Multiple file name formulas")
             TextBoxStatus.Text = ""
             Return Nothing
         End If
@@ -598,7 +598,7 @@ Public Class Form_Main
             FilenameWasPrompted = True
 
             Dim tmpFileDialog As New CommonOpenFileDialog
-            tmpFileDialog.Title = "Enter file name"
+            tmpFileDialog.Title = "Enter the file name for the new part"
             tmpFileDialog.EnsureFileExists = False
             tmpFileDialog.DefaultExtension = DefaultExtension.Replace(".", "")
 
@@ -619,7 +619,7 @@ Public Class Form_Main
             Filename = Props.SubstitutePropFormulas(Filename)
 
             Dim tmpFileDialog As New CommonOpenFileDialog
-            tmpFileDialog.Title = "Enter file name"
+            tmpFileDialog.Title = "Enter the file name for the new part"
             tmpFileDialog.DefaultFileName = Filename
             tmpFileDialog.EnsureFileExists = False
             tmpFileDialog.DefaultExtension = DefaultExtension.Replace(".", "")
@@ -633,7 +633,7 @@ Public Class Form_Main
         Else
             Filename = Props.SubstitutePropFormulas(Filename)
             If Filename Is Nothing Then
-                'MsgBox($"Could not resolve filename formula '{FilenameFormula}'", vbOKOnly)
+                'MsgBox($"Could not resolve filename formula '{FilenameFormula}'", vbOKOnly, "File name formula")
                 Return Nothing
             End If
             Filename = $"{Me.LibraryDirectory}{Filename}"
@@ -649,7 +649,7 @@ Public Class Form_Main
 
         If FilenameWasPrompted Then
             If IO.File.Exists(Filename) Then
-                Dim Result = MsgBox($"'{IO.Path.GetFileName(Filename)}' exists.  Do you want to use that one?", vbYesNo)
+                Dim Result = MsgBox($"'{IO.Path.GetFileName(Filename)}' exists.  Do you want to use that one?", vbYesNo, "Existing file")
                 If Result = MsgBoxResult.No Then
                     Return Nothing
                 End If
@@ -664,12 +664,12 @@ Public Class Form_Main
 
         Dim tmpProps As List(Of Prop) = Props.GetPropsOfType("TemplateFormula")
         If tmpProps.Count = 0 Then
-            MsgBox("No TemplateFormula specified", vbOKOnly)
+            MsgBox("No TemplateFormula specified", vbOKOnly, "Template name formula")
             TextBoxStatus.Text = ""
             Return Nothing
         End If
         If tmpProps.Count > 1 Then
-            MsgBox("Multiple TemplateFormulas specified", vbOKOnly)
+            MsgBox("Multiple TemplateFormulas specified", vbOKOnly, "Template name formula")
             TextBoxStatus.Text = ""
             Return Nothing
         End If
@@ -677,7 +677,7 @@ Public Class Form_Main
         TemplateName = $"{Me.TemplateDirectory}\{tmpProps(0).Value}"
 
         If Not IO.File.Exists(TemplateName) Then
-            MsgBox($"Template not found '{TemplateName}'", vbOKOnly)
+            MsgBox($"Template not found '{TemplateName}'", vbOKOnly, "File not found")
             TextBoxStatus.Text = ""
             Return Nothing
         End If
@@ -1191,7 +1191,7 @@ Public Class Form_Main
 
         If Me.AlwaysReadExcel Or Not IO.File.Exists(XmlFilename) Then
             Dim ExcelAll As List(Of List(Of String)) = ReadExcel(ExcelFilename)
-            If ExcelAll Is Nothing Then End  ' ReadExcel provides error feedback
+            If ExcelAll Is Nothing Then Exit Sub  ' ReadExcel provides error feedback
 
             Splash.UpdateStatus("Converting to XML")
 
@@ -1232,7 +1232,7 @@ Public Class Form_Main
                 s = "Error reading Xml file."
                 s = $"{s}{vbCrLf}{ex.Message}"
             End If
-            MsgBox(s, vbOKOnly)
+            MsgBox(s, vbOKOnly, "Error reading XML")
             End
         End Try
 
@@ -1250,7 +1250,10 @@ Public Class Form_Main
         System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance) ' Needed by ExcelReader
 
         If Not IO.File.Exists(FileName) Then
-            MsgBox($"File not found '{FileName}'")
+            Dim s As String = $"File not found '{FileName}'{vbCrLf}{vbCrLf}"
+            s = $"{s}Set it (and possibly the Library, Templates, and Data directories) in the Tree Search Options dialog "
+            s = $"{s}then restart the program. "
+            MsgBox(s, vbOKOnly, "File not found")
             Return Nothing
         End If
 
@@ -1307,7 +1310,7 @@ Public Class Form_Main
                 End Using
             End Using
         Catch ex As Exception
-            MsgBox(String.Format("Could not open {0}.  It may be open elsewhere.", IO.Path.GetFileName(FileName)))
+            MsgBox(String.Format("Could not open {0}.  It may be open elsewhere.", IO.Path.GetFileName(FileName)), vbOKOnly, "Unable to open file")
             Return Nothing
         End Try
 
@@ -1571,13 +1574,13 @@ Public Class Form_Main
         Dim UP As New UtilsPreferences
         UP.SaveFormMainSettings(Me, SavingPresets:=False)
         Me.PropertiesData.Save()
-
         End
     End Sub
 
-    Private Sub Form1_Closing(sender As Object, e As EventArgs)
+    Private Sub Form1_Closing(sender As Object, e As EventArgs) Handles Me.FormClosing
         Dim UP As New UtilsPreferences
         UP.SaveFormMainSettings(Me, SavingPresets:=False)
+        'Me.PropertiesData.Save()
         End
     End Sub
 
@@ -1586,20 +1589,20 @@ Public Class Form_Main
         If Node.Nodes.Count = 0 Then
             Process()
         Else
-            MsgBox("This is a category header, not an individual part.  It cannot be added to an assembly", vbOKOnly)
+            MsgBox("This is a category header, not an individual part.  It cannot be added to an assembly", vbOKOnly, "Category header")
         End If
     End Sub
 
-    Private Sub MyBase_Resize(sender As Object, e As EventArgs) Handles MyBase.Resize
-        LabelSaveDirectory.Text = TruncateDirectoryName(LibraryDirectory)
-    End Sub
+    'Private Sub MyBase_Resize(sender As Object, e As EventArgs) Handles MyBase.Resize
+    '    LabelSaveDirectory.Text = TruncateDirectoryName(LibraryDirectory)
+    'End Sub
 
-    Private Sub ButtonSaveDirectory_Click(sender As Object, e As EventArgs) Handles ButtonSaveDirectory.Click
+    Private Sub ButtonSaveDirectory_Click(sender As Object, e As EventArgs)
         Dim tmpFolderDialog As New CommonOpenFileDialog
         tmpFolderDialog.IsFolderPicker = True
 
-        If tmpFolderDialog.ShowDialog() = DialogResult.OK Then
-            Me.LibraryDirectory = tmpFolderDialog.FileName
+        If tmpFolderDialog.ShowDialog = DialogResult.OK Then
+            LibraryDirectory = tmpFolderDialog.FileName
         End If
 
     End Sub
@@ -1690,7 +1693,7 @@ Public Class Form_Main
         End If
 
         If Not s = "" Then
-            MsgBox(s)
+            MsgBox(s, vbOKOnly, "Property search")
             Exit Sub
         End If
 
@@ -1911,7 +1914,7 @@ Public Class Props
         Matches = Regex.Matches(OutString, Pattern)
         If Not Matches.Count = 0 Then
             Dim s As String = $"Some properties could not be resolved in '{OutString}'"
-            MsgBox(s)
+            MsgBox(s, vbOKOnly, "Property substitution")
             Return Nothing
         End If
 

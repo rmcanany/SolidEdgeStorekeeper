@@ -7,6 +7,9 @@
 
 ## CREDITS
 
+**Contributors**
+@[Francesco Arfilli]
+
 **Beta Testers**
 @hawcad, @rob.wolbrink7456, @[Francesco Arfilli], @pedja, @TeeVar
 
@@ -79,18 +82,17 @@ On my machine, the executable resides in two places: `bin\Debug\net8.0-windows\`
 
 As noted earlier, some setup is required before using the program.  If you run Solid Edge in a localized language please be sure to see the information at the end of this section.
 
-### Library
-The program needs to know where to store the standard parts, and for fastener-like items, where to find the files defining their shape and spreadsheet containing their dimensions.
-
-The storage location is called the library.  The default is in `Preferences\Library` under the Storekeeper main directory.  Note it is created the first time you run the program; it won't be there before that.  To change the location, click ![Options](media/icons8_Folder_16.png) on the **Tree Search** toolbar.  As noted above, if you want to access your vendor-specific standard parts, they must be in the library.  You can place them in one or more subdirectories if desired.
-
 ### Tree Search
 
-The other settings for tree search are accessed on the Options dialog.  Click ![Options](media/Support_16.png) on the toolbar to open it.  These are described next.
+The program needs to know where to store the standard parts, and for fastener-like items, where to find the files defining their shape and spreadsheet containing their dimensions.  The settings are accessed on the Options dialog.  Click ![Options](media/Support_16.png) on the toolbar to open it.
 
 <p align="center">
   <img src="media/tree_search_options.png">
 </p>
+
+- **LIBRARY DIRECTORY**
+
+The library is where the standard parts are stored.  The default is in `Preferences\Library` under the `Storekeeper`` main directory.  Note it is created the first time you run the program; it won't be there before that.  As noted above, if you want to access your vendor-specific standard parts, they must be in the library.  You can place them in one or more subdirectories if desired.
 
 - **TEMPLATE DIRECTORY** 
 

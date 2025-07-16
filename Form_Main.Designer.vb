@@ -23,17 +23,15 @@ Partial Class Form_Main
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         components = New ComponentModel.Container()
-        Dim TreeNode6 As TreeNode = New TreeNode("Node0")
-        Dim TreeNode7 As TreeNode = New TreeNode("Node4")
-        Dim TreeNode8 As TreeNode = New TreeNode("Node2", New TreeNode() {TreeNode7})
-        Dim TreeNode9 As TreeNode = New TreeNode("Node3")
-        Dim TreeNode10 As TreeNode = New TreeNode("Node1", New TreeNode() {TreeNode8, TreeNode9})
+        Dim TreeNode1 As TreeNode = New TreeNode("Node0")
+        Dim TreeNode2 As TreeNode = New TreeNode("Node4")
+        Dim TreeNode3 As TreeNode = New TreeNode("Node2", New TreeNode() {TreeNode2})
+        Dim TreeNode4 As TreeNode = New TreeNode("Node3")
+        Dim TreeNode5 As TreeNode = New TreeNode("Node1", New TreeNode() {TreeNode3, TreeNode4})
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Form_Main))
-        Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
         ToolStrip1 = New ToolStrip()
         ButtonCollapse = New ToolStripButton()
-        ButtonSaveDirectory = New ToolStripButton()
-        LabelSaveDirectory = New ToolStripLabel()
         ButtonOptions = New ToolStripButton()
         TreeView1 = New TreeView()
         ContextMenuStrip1 = New ContextMenuStrip(components)
@@ -64,6 +62,7 @@ Partial Class Form_Main
         TableLayoutPanel3 = New TableLayoutPanel()
         ButtonHelp = New Button()
         TextBoxStatus = New TextBox()
+        LabelCollapse = New ToolStripLabel()
         ToolStrip1.SuspendLayout()
         ContextMenuStrip1.SuspendLayout()
         CType(DataGridViewDataInspector, ComponentModel.ISupportInitialize).BeginInit()
@@ -83,7 +82,7 @@ Partial Class Form_Main
         ' 
         ' ToolStrip1
         ' 
-        ToolStrip1.Items.AddRange(New ToolStripItem() {ButtonCollapse, ButtonSaveDirectory, LabelSaveDirectory, ButtonOptions})
+        ToolStrip1.Items.AddRange(New ToolStripItem() {ButtonCollapse, LabelCollapse, ButtonOptions})
         ToolStrip1.Location = New Point(0, 0)
         ToolStrip1.Name = "ToolStrip1"
         ToolStrip1.Size = New Size(402, 25)
@@ -98,24 +97,7 @@ Partial Class Form_Main
         ButtonCollapse.ImageTransparentColor = Color.Magenta
         ButtonCollapse.Name = "ButtonCollapse"
         ButtonCollapse.Size = New Size(23, 22)
-        ButtonCollapse.Text = "ToolStripButton1"
-        ButtonCollapse.ToolTipText = "Collapse"
-        ' 
-        ' ButtonSaveDirectory
-        ' 
-        ButtonSaveDirectory.DisplayStyle = ToolStripItemDisplayStyle.Image
-        ButtonSaveDirectory.Image = My.Resources.Resources.icons8_Folder_16
-        ButtonSaveDirectory.ImageTransparentColor = Color.Magenta
-        ButtonSaveDirectory.Name = "ButtonSaveDirectory"
-        ButtonSaveDirectory.Size = New Size(23, 22)
-        ButtonSaveDirectory.Text = "ButtonSaveDirectory"
-        ButtonSaveDirectory.ToolTipText = "Library Directory"
-        ' 
-        ' LabelSaveDirectory
-        ' 
-        LabelSaveDirectory.Name = "LabelSaveDirectory"
-        LabelSaveDirectory.Size = New Size(201, 22)
-        LabelSaveDirectory.Text = "Select directory location for new files"
+        ButtonCollapse.ToolTipText = "Collapse the tree"
         ' 
         ' ButtonOptions
         ' 
@@ -134,17 +116,17 @@ Partial Class Form_Main
         TreeView1.Dock = DockStyle.Fill
         TreeView1.Location = New Point(3, 28)
         TreeView1.Name = "TreeView1"
-        TreeNode6.Name = "Node0"
-        TreeNode6.Text = "Node0"
-        TreeNode7.Name = "Node4"
-        TreeNode7.Text = "Node4"
-        TreeNode8.Name = "Node2"
-        TreeNode8.Text = "Node2"
-        TreeNode9.Name = "Node3"
-        TreeNode9.Text = "Node3"
-        TreeNode10.Name = "Node1"
-        TreeNode10.Text = "Node1"
-        TreeView1.Nodes.AddRange(New TreeNode() {TreeNode6, TreeNode10})
+        TreeNode1.Name = "Node0"
+        TreeNode1.Text = "Node0"
+        TreeNode2.Name = "Node4"
+        TreeNode2.Text = "Node4"
+        TreeNode3.Name = "Node2"
+        TreeNode3.Text = "Node2"
+        TreeNode4.Name = "Node3"
+        TreeNode4.Text = "Node3"
+        TreeNode5.Name = "Node1"
+        TreeNode5.Text = "Node1"
+        TreeView1.Nodes.AddRange(New TreeNode() {TreeNode1, TreeNode5})
         TreeView1.Size = New Size(396, 392)
         TreeView1.TabIndex = 1
         ' 
@@ -326,8 +308,8 @@ Partial Class Form_Main
         ' 
         ' DataGridViewVendorParts
         ' 
-        DataGridViewCellStyle2.BackColor = Color.AliceBlue
-        DataGridViewVendorParts.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle2
+        DataGridViewCellStyle1.BackColor = Color.AliceBlue
+        DataGridViewVendorParts.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
         DataGridViewVendorParts.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         DataGridViewVendorParts.Columns.AddRange(New DataGridViewColumn() {Filename, Path})
         DataGridViewVendorParts.ContextMenuStrip = ContextMenuStrip2
@@ -440,6 +422,13 @@ Partial Class Form_Main
         TextBoxStatus.TabIndex = 3
         TextBoxStatus.Text = "Status"
         ' 
+        ' LabelCollapse
+        ' 
+        LabelCollapse.Name = "LabelCollapse"
+        LabelCollapse.Size = New Size(52, 22)
+        LabelCollapse.Text = "Collapse"
+        LabelCollapse.ToolTipText = "Collapse the tree"
+        ' 
         ' Form_Main
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -490,8 +479,6 @@ Partial Class Form_Main
     Friend WithEvents Column1 As DataGridViewTextBoxColumn
     Friend WithEvents Column2 As DataGridViewTextBoxColumn
     Friend WithEvents Column3 As DataGridViewTextBoxColumn
-    Friend WithEvents ButtonSaveDirectory As ToolStripButton
-    Friend WithEvents LabelSaveDirectory As ToolStripLabel
     Friend WithEvents TextBoxStatus As TextBox
     Friend WithEvents ButtonCollapse As ToolStripButton
     Friend WithEvents TabPagePropertySearch As TabPage
@@ -505,5 +492,6 @@ Partial Class Form_Main
     Friend WithEvents ContextMenuStrip2 As ContextMenuStrip
     Friend WithEvents AddToAssemblyToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ImageList1 As ImageList
+    Friend WithEvents LabelCollapse As ToolStripLabel
 
 End Class

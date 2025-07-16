@@ -6,6 +6,19 @@ Public Class FormTreeSearchOptions
 
     Private FMain As Form_Main
 
+    Private _LibraryDirectory As String
+    Public Property LibraryDirectory As String
+        Get
+            Return _LibraryDirectory
+        End Get
+        Set(value As String)
+            _LibraryDirectory = value
+            If Me.TableLayoutPanel1 IsNot Nothing Then
+                LabelLibraryDirectory.Text = value
+            End If
+        End Set
+    End Property
+
     Private _TemplateDirectory As String
     Public Property TemplateDirectory As String
         Get
@@ -121,6 +134,16 @@ Public Class FormTreeSearchOptions
 
     End Sub
 
+    Private Sub ButtonLibraryDirectory_Click(sender As Object, e As EventArgs) Handles ButtonLibraryDirectory.Click
+        Dim tmpFolderDialog As New CommonOpenFileDialog
+        tmpFolderDialog.IsFolderPicker = True
+
+        If tmpFolderDialog.ShowDialog() = DialogResult.OK Then
+            Me.LibraryDirectory = tmpFolderDialog.FileName
+        End If
+
+    End Sub
+
     Private Sub ButtonTemplateDirectory_Click(sender As Object, e As EventArgs) Handles ButtonTemplateDirectory.Click
         Dim tmpFolderDialog As New CommonOpenFileDialog
         tmpFolderDialog.IsFolderPicker = True
@@ -131,47 +154,14 @@ Public Class FormTreeSearchOptions
 
     End Sub
 
-    Private Sub FormOptions_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        If Not FMain.TemplateDirectory = "" Then
-            Me.TemplateDirectory = Me.FMain.TemplateDirectory
-        Else
-            Me.TemplateDirectory = "Select a directory with your standard part templates."
-        End If
-        If Not FMain.DataDirectory = "" Then
-            Me.DataDirectory = Me.FMain.DataDirectory
-        Else
-            Me.TemplateDirectory = "Select a directory with your data files."
-        End If
-        Me.MaterialTable = FMain.MaterialTable
-        'Me.ShowAnsi = Me.FMain.ShowAnsi
-        'Me.ShowIso = Me.FMain.ShowIso
-        Me.AlwaysReadExcel = FMain.AlwaysReadExcel
-        Me.AddProp = FMain.AddProp
-        Me.DisableFineThreadWarning = FMain.DisableFineThreadWarning
-        Me.CheckNewVersion = FMain.CheckNewVersion
-    End Sub
+    Private Sub ButtonDataDirectory_Click(sender As Object, e As EventArgs) Handles ButtonDataDirectory.Click
+        Dim tmpFolderDialog As New CommonOpenFileDialog
+        tmpFolderDialog.IsFolderPicker = True
 
-    Private Sub ButtonOK_Click(sender As Object, e As EventArgs) Handles ButtonOK.Click
-        If Me.TemplateDirectory(Me.TemplateDirectory.Count - 1) = "\" Then
-            Me.TemplateDirectory = Me.TemplateDirectory.Substring(0, Me.TemplateDirectory.Count - 1)
+        If tmpFolderDialog.ShowDialog() = DialogResult.OK Then
+            Me.DataDirectory = tmpFolderDialog.FileName
         End If
 
-        Me.FMain.TemplateDirectory = Me.TemplateDirectory
-        Me.FMain.DataDirectory = Me.DataDirectory
-        FMain.MaterialTable = Me.MaterialTable
-        'Me.FMain.ShowAnsi = Me.ShowAnsi
-        'Me.FMain.ShowIso = Me.ShowIso
-        FMain.AlwaysReadExcel = Me.AlwaysReadExcel
-        FMain.AutoPattern = Me.AutoPattern
-        FMain.AddProp = Me.AddProp
-        FMain.DisableFineThreadWarning = Me.DisableFineThreadWarning
-        FMain.CheckNewVersion = Me.CheckNewVersion
-
-        Me.DialogResult = DialogResult.OK
-    End Sub
-
-    Private Sub ButtonCancel_Click(sender As Object, e As EventArgs) Handles ButtonCancel.Click
-        Me.DialogResult = DialogResult.Cancel
     End Sub
 
     Private Sub ButtonMaterialLibrary_Click(sender As Object, e As EventArgs) Handles ButtonMaterialLibrary.Click
@@ -185,13 +175,61 @@ Public Class FormTreeSearchOptions
 
     End Sub
 
-    'Private Sub CheckBoxShowAnsi_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBoxShowAnsi.CheckedChanged
-    '    Me.ShowAnsi = CheckBoxShowAnsi.Checked
-    'End Sub
+    Private Sub FormOptions_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-    'Private Sub CheckBoxShowIso_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBoxShowIso.CheckedChanged
-    '    Me.ShowIso = CheckBoxShowIso.Checked
-    'End Sub
+        If Not FMain.LibraryDirectory = "" Then
+            Me.LibraryDirectory = Me.FMain.LibraryDirectory
+        Else
+            Me.LibraryDirectory = "Select a directory to store your standard parts"
+        End If
+
+        If Not FMain.TemplateDirectory = "" Then
+            Me.TemplateDirectory = Me.FMain.TemplateDirectory
+        Else
+            Me.TemplateDirectory = "Select a directory with your standard part templates"
+        End If
+
+        If Not FMain.DataDirectory = "" Then
+            Me.DataDirectory = Me.FMain.DataDirectory
+        Else
+            Me.TemplateDirectory = "Select a directory with your data files"
+        End If
+
+        If Not FMain.MaterialTable = "" Then
+            Me.MaterialTable = Me.FMain.MaterialTable
+        Else
+            Me.MaterialTable = "Select a material table"
+        End If
+
+
+        Me.AlwaysReadExcel = FMain.AlwaysReadExcel
+        Me.AddProp = FMain.AddProp
+        Me.DisableFineThreadWarning = FMain.DisableFineThreadWarning
+        Me.CheckNewVersion = FMain.CheckNewVersion
+    End Sub
+
+    Private Sub ButtonOK_Click(sender As Object, e As EventArgs) Handles ButtonOK.Click
+        If Me.TemplateDirectory(Me.TemplateDirectory.Count - 1) = "\" Then
+            Me.TemplateDirectory = Me.TemplateDirectory.Substring(0, Me.TemplateDirectory.Count - 1)
+        End If
+
+        Me.FMain.LibraryDirectory = Me.LibraryDirectory
+        Me.FMain.TemplateDirectory = Me.TemplateDirectory
+        Me.FMain.DataDirectory = Me.DataDirectory
+        FMain.MaterialTable = Me.MaterialTable
+
+        FMain.AlwaysReadExcel = Me.AlwaysReadExcel
+        FMain.AutoPattern = Me.AutoPattern
+        FMain.AddProp = Me.AddProp
+        FMain.DisableFineThreadWarning = Me.DisableFineThreadWarning
+        FMain.CheckNewVersion = Me.CheckNewVersion
+
+        Me.DialogResult = DialogResult.OK
+    End Sub
+
+    Private Sub ButtonCancel_Click(sender As Object, e As EventArgs) Handles ButtonCancel.Click
+        Me.DialogResult = DialogResult.Cancel
+    End Sub
 
     Private Sub CheckBoxAddProp_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBoxAddProp.CheckedChanged
         Me.AddProp = CheckBoxAddProp.Checked
@@ -203,16 +241,6 @@ Public Class FormTreeSearchOptions
 
     Private Sub CheckBoxCheckNewVersion_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBoxCheckNewVersion.CheckedChanged
         Me.CheckNewVersion = CheckBoxCheckNewVersion.Checked
-    End Sub
-
-    Private Sub ButtonDataDirectory_Click(sender As Object, e As EventArgs) Handles ButtonDataDirectory.Click
-        Dim tmpFolderDialog As New CommonOpenFileDialog
-        tmpFolderDialog.IsFolderPicker = True
-
-        If tmpFolderDialog.ShowDialog() = DialogResult.OK Then
-            Me.DataDirectory = tmpFolderDialog.FileName
-        End If
-
     End Sub
 
     Private Sub CheckBoxAlwaysReadExcel_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBoxAlwaysReadExcel.CheckedChanged
@@ -230,4 +258,5 @@ Public Class FormTreeSearchOptions
         System.Diagnostics.Process.Start(Info)
 
     End Sub
+
 End Class
