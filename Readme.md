@@ -50,7 +50,11 @@ Unlike web-based offerings, the program is integrated with your parts library an
 
 The program will never have every standard part in the world, but it can be improved.  That's where **YOU** come in!  Contributions are welcome.  Please message me on the [<ins>**Solid Edge Forum**</ins>](https://community.sw.siemens.com/s/topic/0TO4O000000MihiWAC/solid-edge), or raise an [<ins>**Issue on GitHub**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/issues), for ideas on how to get started.
 
-I'm pretty sure you're here because you want to find ways to do things better, faster, and with less effort.  If so, you might want to check out [<ins>**Solid Edge Housekeeper**</ins>](https://github.com/rmcanany/SolidEdgeHousekeeper#readme).  That is a separate utility for finding annoying little errors in your project.
+Uh-oh.  The Marketing guy just showed up.  He wants to *"Synergize our stake holders and leverage this cross-promotion opportunity"*.  Uh, who talks like that?  Anyway, here he is.
+
+>  *Hello there!! I'm Big Mike!  Do you want to do things better and faster with less work?!  Of course you do!  That's why you should check out [<ins>**Solid Edge Housekeeper**</ins>](https://github.com/rmcanany/SolidEdgeHousekeeper#readme)!  It is a batch utility for finding annoying little errors in your project!  You're going to love it!!*
+
+Sorry about that.  Shall we continue?
 
 ## INSTALLATION
 
