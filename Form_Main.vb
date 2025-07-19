@@ -20,20 +20,7 @@ Public Class Form_Main
         End Set
     End Property
 
-    'Private _LibraryDirectory As String
     Public Property LibraryDirectory As String
-    '    Get
-    '        Return _LibraryDirectory
-    '    End Get
-    '    Set(value As String)
-    '        If Not value(value.Count - 1) = "\" Then value = String.Format("{0}\", value)
-    '        _LibraryDirectory = value
-    '        If Me.TabControl1 IsNot Nothing Then
-    '            LabelSaveDirectory.Text = TruncateDirectoryName(value)
-    '        End If
-    '    End Set
-    'End Property
-
     Public Property TemplateDirectory As String
     Public Property DataDirectory As String
     Public Property MaterialTable As String
@@ -102,7 +89,7 @@ Public Class Form_Main
         UP.GetFormMainSettings(Me)
         UP.CreateFilenameCharmap()
 
-        LoadXml(Me.DataDirectory, Splash)
+        LoadXml(Splash)
 
         If Me.PropertiesToSearchList Is Nothing Then
             Me.PropertiesToSearchList = New List(Of String)
@@ -1172,7 +1159,7 @@ Public Class Form_Main
 
     ' ###### EXCEL AND XML ######
 
-    Public Sub LoadXml(DataDirectory As String, Splash As FormSplash)
+    Public Sub LoadXml(Splash As FormSplash)
 
         ''https://www.codemag.com/Article/2312031/Process-XML-Files-Easily-Using-.NET-6-7
         ''https://stackoverflow.com/questions/54606021/how-to-populate-winforms-treeview-from-xml-file-regardless-the-number-of-childr
@@ -1180,7 +1167,7 @@ Public Class Form_Main
         TextBoxStatus.Text = "Reading Excel file"
         Splash.UpdateStatus("Reading Excel file")
 
-        Dim ExcelFilename As String = String.Format("{0}\Storekeeper.xls", DataDirectory)
+        Dim ExcelFilename As String = String.Format("{0}\Storekeeper.xls", Me.DataDirectory)
         Dim XmlFilename As String = IO.Path.ChangeExtension(ExcelFilename, "xml")
 
         If Me.AlwaysReadExcel Or Not IO.File.Exists(XmlFilename) Then
@@ -1355,8 +1342,8 @@ Public Class Form_Main
         Dim OldValue As String
 
         Dim ExcelDataReaderCache As New Dictionary(Of String, List(Of List(Of String)))
-        Dim UP As New UtilsPreferences
-        Dim DefaultDataDirectory = UP.GetDefaultDataDirectory
+        'Dim UP As New UtilsPreferences
+        'Dim DefaultDataDirectory = UP.GetDefaultDataDirectory
 
 
         Dim Indent = "    "
@@ -1403,7 +1390,7 @@ Public Class Form_Main
                 If tmpDataSource = "Sheet" Then
                     SubLevelList = ExcelDetailSheetToXml(ExcelAll, tmpSheetname, tmpStartLevel, Indents)
                 Else  ' It's an excel filename
-                    tmpDataSource = $"{DefaultDataDirectory}\{tmpDataSource}"
+                    tmpDataSource = $"{Me.DataDirectory}\{tmpDataSource}"
                     If Not ExcelDataReaderCache.Keys.Contains(tmpDataSource) Then
                         ExcelDataReaderCache(tmpDataSource) = ReadExcel(tmpDataSource)
                         If ExcelDataReaderCache(tmpDataSource) Is Nothing Then Return Nothing
