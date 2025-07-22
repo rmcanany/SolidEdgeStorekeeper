@@ -107,7 +107,7 @@ Public Class UtilsPreferences
                     Value = CStr(PropInfo.GetValue(FMain, Nothing))
                 Case "list`1"
                     Value = JsonConvert.SerializeObject(PropInfo.GetValue(FMain, Nothing))
-                Case "hcpropertiesdata"
+                Case "hcpropertiesdata", "logger"
                     ' Nothing to do here.  HCPropertiesData is saved separately.
                 Case Else
                     MsgBox(String.Format("PropInfo.PropertyType.Name '{0}' not recognized", PropType))
@@ -125,7 +125,7 @@ Public Class UtilsPreferences
                     Case "list`1"
                         Value = JsonConvert.SerializeObject(New List(Of String))
                         MsgBox(String.Format("PropInfo.PropertyType.Name '{0}' detected", PropInfo.PropertyType.Name))
-                    Case "hcpropertiesdata"
+                    Case "hcpropertiesdata", "logger"
                         ' Nothing to do here.  HCPropertiesData is saved separately.
                     Case Else
                         MsgBox(String.Format("In UtilsPreferences.SaveFormMainSettings: PropInfo.PropertyType.Name '{0}' not recognized", PropInfo.PropertyType.Name))
@@ -215,6 +215,7 @@ Public Class UtilsPreferences
 
         Dim StartupDirectory As String = System.Windows.Forms.Application.StartupPath()
 
+        ' Remove trailing '\'
         If StartupDirectory(StartupDirectory.Count - 1) = "\" Then
             StartupDirectory = StartupDirectory.Substring(0, StartupDirectory.Count - 1)
         End If

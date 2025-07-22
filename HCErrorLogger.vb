@@ -10,7 +10,7 @@ Public Class HCErrorLogger
 
     Public Sub New()
         Me.Timestamp = System.DateTime.Now.ToString("yyyyMMdd_HHmmss")
-        Me.LogfileName = String.Format("{0}\Housekeeper_{1}.log", IO.Path.GetTempPath, Timestamp)
+        Me.LogfileName = String.Format("{0}\Storekeeper_{1}.log", IO.Path.GetTempPath, Timestamp)
         Me.FileLoggers = New List(Of Logger)
         Me.Abort = False
 

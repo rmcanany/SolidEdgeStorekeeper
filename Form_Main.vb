@@ -35,6 +35,39 @@ Public Class Form_Main
     Public Property PartTemplate As String
     Public Property SheetmetalTemplate As String
 
+    Private _PrePopulate As Boolean
+    Public Property PrePopulate As Boolean
+        Get
+            Return _PrePopulate
+        End Get
+        Set(value As Boolean)
+            _PrePopulate = value
+            If Me.TabControl1 IsNot Nothing Then
+
+                ButtonPrepopulate.Checked = PrePopulate
+                ButtonAddToLibrary.Visible = PrePopulate
+                LabelAddToLibrary.Visible = PrePopulate
+
+                If PrePopulate Then
+                    Me.Cursor = Cursors.WaitCursor
+                    TreeView1.CheckBoxes = True
+                    ButtonPrepopulate.Image = My.Resources.icons8_Checkbox_Checked
+                    LabelPrePopulate.BackColor = System.Drawing.Color.Orange
+                    Me.Cursor = Cursors.Default
+                Else
+                    ButtonPrepopulate.Image = My.Resources.icons8_Checkbox_Unchecked
+                    LabelPrePopulate.BackColor = System.Drawing.Color.Transparent
+                    TreeView1.CheckBoxes = False
+                    TreeView1.CollapseAll()
+                    TreeView1.Nodes(0).Expand()
+                End If
+            End If
+        End Set
+    End Property
+    Public Property FileLogger As Logger
+
+
+
     Private Property XmlDoc As System.Xml.XmlDocument
     Private Property Props As Props
     Private Property SEApp As SolidEdgeFramework.Application
@@ -42,6 +75,9 @@ Public Class Form_Main
     Private Property TemplateDoc As SolidEdgeFramework.SolidEdgeDocument
     Private Property AssemblyPasteComplete As Boolean
     Private Property NodeCount As Integer
+    Private Property AddToLibraryOnly As Boolean
+    Private Property ErrorLogger As HCErrorLogger
+
 
 
     ' https://community.sw.siemens.com/s/question/0D5Vb00000Krsy5KAB/handling-events-how-to-use-help-example
@@ -120,6 +156,9 @@ Public Class Form_Main
             UP.CheckForNewerVersion(Me.Version)
         End If
 
+        Me.PrePopulate = False
+        Me.AddToLibraryOnly = False
+
         TextBoxStatus.Text = $"{Me.NodeCount} items available"
 
         Splash.Close()
@@ -189,6 +228,7 @@ Public Class Form_Main
                 msg = $"{msg}{s}{vbCrLf}"
             Next
             MsgBox(msg, vbOKOnly, "Check start conditions")
+            Me.ErrorLogger.RequestAbort()
         End If
 
         Return Success
@@ -264,39 +304,30 @@ Public Class Form_Main
 
         ' ###### ADD PART TO ASSEMBLY ######
 
-        AddHandler SEAppEvents.AfterCommandRun, AddressOf DISEApplicationEvents_AfterCommandRun
-        SEApp.DoIdle()
-        AssemblyPasteComplete = False
+        If Not AddToLibraryOnly Then
+            AddHandler SEAppEvents.AfterCommandRun, AddressOf DISEApplicationEvents_AfterCommandRun
+            SEApp.DoIdle()
+            AssemblyPasteComplete = False
 
-        TextBoxStatus.Text = $"Adding '{IO.Path.GetFileName(Filename)}'"
+            TextBoxStatus.Text = $"Adding '{IO.Path.GetFileName(Filename)}'"
 
-        Me.TopMost = False
-        System.Windows.Forms.Application.DoEvents()
-        SEApp.Activate()
-        SEApp.DoIdle()
+            Me.TopMost = False
+            System.Windows.Forms.Application.DoEvents()
+            SEApp.Activate()
+            SEApp.DoIdle()
 
-        Dim Occurrences As SolidEdgeAssembly.Occurrences = AsmDoc.Occurrences
-        Dim PreviousOccurrencesCount As Integer = Occurrences.Count
+            Dim Occurrences As SolidEdgeAssembly.Occurrences = AsmDoc.Occurrences
+            Dim PreviousOccurrencesCount As Integer = Occurrences.Count
 
-        Dim Occurrence = AsmDoc.Occurrences.AddByFilename(Filename)
-        Dim SelectSet = AsmDoc.SelectSet
-        SelectSet.RemoveAll()
+            Dim Occurrence = AsmDoc.Occurrences.AddByFilename(Filename)
+            Dim SelectSet = AsmDoc.SelectSet
+            SelectSet.RemoveAll()
 
-        SelectSet.Add(Occurrence)
-        Dim Cut = SolidEdgeConstants.AssemblyCommandConstants.AssemblyEditCut
-        SEApp.StartCommand(CType(Cut, SolidEdgeFramework.SolidEdgeCommandConstants))
-        Dim Paste = SolidEdgeConstants.AssemblyCommandConstants.AssemblyEditPaste
+            SelectSet.Add(Occurrence)
+            Dim Cut = SolidEdgeConstants.AssemblyCommandConstants.AssemblyEditCut
+            SEApp.StartCommand(CType(Cut, SolidEdgeFramework.SolidEdgeCommandConstants))
+            Dim Paste = SolidEdgeConstants.AssemblyCommandConstants.AssemblyEditPaste
 
-        Try
-            SEApp.StartCommand(CType(Paste, SolidEdgeFramework.SolidEdgeCommandConstants))
-
-            ' Wait for Paste command to complete
-
-            While Not AssemblyPasteComplete
-                Threading.Thread.Sleep(500)
-                'SEApp.DoIdle()
-            End While
-        Catch ex As Exception
             Try
                 SEApp.StartCommand(CType(Paste, SolidEdgeFramework.SolidEdgeCommandConstants))
 
@@ -306,23 +337,36 @@ Public Class Form_Main
                     Threading.Thread.Sleep(500)
                     'SEApp.DoIdle()
                 End While
-            Catch ex2 As Exception
-                MsgBox("Could not add part.  Please try again.", vbOKOnly, "Part not added")
+            Catch ex As Exception
+                Try
+                    SEApp.StartCommand(CType(Paste, SolidEdgeFramework.SolidEdgeCommandConstants))
+
+                    ' Wait for Paste command to complete
+
+                    While Not AssemblyPasteComplete
+                        Threading.Thread.Sleep(500)
+                        'SEApp.DoIdle()
+                    End While
+                Catch ex2 As Exception
+                    'MsgBox("Could not add part.  Please try again.", vbOKOnly, "Part not added")
+                    Me.FileLogger.AddMessage("Could not add part.  Please try again.")
+                End Try
+
             End Try
 
-        End Try
+            RemoveHandler SEAppEvents.AfterCommandRun, AddressOf DISEApplicationEvents_AfterCommandRun
 
-        RemoveHandler SEAppEvents.AfterCommandRun, AddressOf DISEApplicationEvents_AfterCommandRun
+            If Me.AutoPattern And Occurrences.Count > PreviousOccurrencesCount Then
+                Occurrence = CType(Occurrences(Occurrences.Count - 1), SolidEdgeAssembly.Occurrence)
+                MaybePatternOccurrence(Occurrence)
+            End If
 
-        If Me.AutoPattern And Occurrences.Count > PreviousOccurrencesCount Then
-            Occurrence = CType(Occurrences(Occurrences.Count - 1), SolidEdgeAssembly.Occurrence)
-            MaybePatternOccurrence(Occurrence)
+            Me.TopMost = True
+            System.Windows.Forms.Application.DoEvents()
+            Me.TopMost = False
+
+
         End If
-
-        Me.TopMost = True
-        System.Windows.Forms.Application.DoEvents()
-        Me.TopMost = False
-
         TextBoxStatus.Text = ""
 
         OleMessageFilter.Revoke()
@@ -341,38 +385,24 @@ Public Class Form_Main
 
         Dim VariableProps As List(Of Prop) = Props.GetPropsOfType("Variable")
         Dim VariableDict As Dictionary(Of String, SolidEdgeFramework.variable) = UC.GetDocVariables(SEDoc)
-        Dim ErrorList As New List(Of String)
+        'Dim ErrorList As New List(Of String)
 
         SEApp.DelayCompute = True
 
         For Each Prop As Prop In VariableProps
             If VariableDict.Keys.Contains(Prop.Name) Then
-                VariableDict(Prop.Name).Formula = Prop.Value
+                If IsNumeric(Prop.Value) Then
+                    VariableDict(Prop.Name).Formula = Prop.Value
+                Else
+                    Me.FileLogger.AddMessage($"Cannot process value for '{Prop.Name}': '{Prop.Value}'")
+                End If
             Else
-                ErrorList.Add(Prop.Name)
+                Me.FileLogger.AddMessage($"Variable not found: '{Prop.Name}'")
             End If
         Next
 
         SEApp.DelayCompute = False
         SEApp.DoIdle()
-
-        If ErrorList.Count > 0 Then
-            Dim s As String = ""
-            If ErrorList.Count = 1 Then
-                s = $"Variable not found: '{ErrorList(0)}'"
-            Else
-                s = "Variables not found: "
-                For i = 0 To ErrorList.Count - 1
-                    If i = 0 Then
-                        s = $"{s} '{ErrorList(i)}'"
-                    Else
-                        s = $"{s}, '{ErrorList(i)}'"
-                    End If
-                Next
-            End If
-            Success = False
-            MsgBox(s, vbOKOnly, "Variable not found")
-        End If
 
         If Success Then
             Select Case UC.GetDocType(SEDoc)
@@ -438,7 +468,8 @@ Public Class Form_Main
         Dim HasThreadedHoles As Boolean = ThreadedHoles IsNot Nothing AndAlso ThreadedHoles.Count > 0
 
         If HasExternalThreads And HasThreadedHoles Then
-            MsgBox("Cannot currently process models with both threaded holes AND external threads", vbOKOnly, "External and Internal threads")
+            'MsgBox("Cannot currently process models with both threaded holes AND external threads", vbOKOnly, "External and Internal threads")
+            Me.FileLogger.AddMessage("Cannot currently process models with both threaded holes AND external threads")
             Return False
         End If
 
@@ -479,8 +510,8 @@ Public Class Form_Main
 
                 s = $"{s}Disable this warning on the Options dialog.{vbCrLf}"
 
-                MsgBox(s, vbOKOnly, "External UNF threads")
-
+                'MsgBox(s, vbOKOnly, "External UNF threads")
+                Me.FileLogger.AddMessage("Cannot correctly create external fine threads.  See Readme for details.")
             End If
         End If
 
@@ -560,12 +591,14 @@ Public Class Form_Main
 
         Dim tmpProps As List(Of Prop) = Props.GetPropsOfType("FilenameFormula")
         If tmpProps.Count = 0 Then
-            MsgBox("No FilenameFormula specified", vbOKOnly, "No file name formula")
+            'MsgBox("No FilenameFormula specified", vbOKOnly, "No file name formula")
+            Me.FileLogger.AddMessage("No FilenameFormula specified")
             TextBoxStatus.Text = ""
             Return Nothing
         End If
         If tmpProps.Count > 1 Then
-            MsgBox("Multiple FilenameFormulas specified", vbOKOnly, "Multiple file name formulas")
+            'MsgBox("Multiple FilenameFormulas specified", vbOKOnly, "Multiple file name formulas")
+            Me.FileLogger.AddMessage("Multiple FilenameFormulas specified")
             TextBoxStatus.Text = ""
             Return Nothing
         End If
@@ -576,39 +609,48 @@ Public Class Form_Main
         Dim FilenameWasPrompted As Boolean = False
 
         If Filename.ToLower.Trim = "prompt" Then
-            FilenameWasPrompted = True
-
-            Dim tmpFileDialog As New CommonOpenFileDialog
-            tmpFileDialog.Title = "Enter the file name for the new part"
-            tmpFileDialog.EnsureFileExists = False
-            tmpFileDialog.DefaultExtension = DefaultExtension.Replace(".", "")
-
-            If tmpFileDialog.ShowDialog() = DialogResult.OK Then
-                Filename = tmpFileDialog.FileName
-            Else
+            If Me.AddToLibraryOnly Then
+                FileLogger.AddMessage("Cannot process prompted filename in batch mode")
                 Return Nothing
-            End If
+            Else
+                FilenameWasPrompted = True
 
-            'Dim Result = InputBox("Enter filename", "Enter filename")
-            'If Not Result = "" Then Filename = Result
+                Dim tmpFileDialog As New CommonOpenFileDialog
+                tmpFileDialog.Title = "Enter the file name for the new part"
+                tmpFileDialog.EnsureFileExists = False
+                tmpFileDialog.DefaultExtension = DefaultExtension.Replace(".", "")
+
+                If tmpFileDialog.ShowDialog() = DialogResult.OK Then
+                    Filename = tmpFileDialog.FileName
+                Else
+                    Return Nothing
+                End If
+
+            End If
 
         ElseIf Filename.ToLower.Contains("promptwithdefault") Then
 
-            FilenameWasPrompted = True
-
-            Filename = Filename.Split(CChar(":"))(1).Trim
-            Filename = Props.SubstitutePropFormulas(Filename)
-
-            Dim tmpFileDialog As New CommonOpenFileDialog
-            tmpFileDialog.Title = "Enter the file name for the new part"
-            tmpFileDialog.DefaultFileName = Filename
-            tmpFileDialog.EnsureFileExists = False
-            tmpFileDialog.DefaultExtension = DefaultExtension.Replace(".", "")
-
-            If tmpFileDialog.ShowDialog() = DialogResult.OK Then
-                Filename = tmpFileDialog.FileName
-            Else
+            If Me.AddToLibraryOnly Then
+                FileLogger.AddMessage("Cannot process prompted filename in batch mode")
                 Return Nothing
+            Else
+                FilenameWasPrompted = True
+
+                Filename = Filename.Split(CChar(":"))(1).Trim
+                Filename = Props.SubstitutePropFormulas(Filename)
+
+                Dim tmpFileDialog As New CommonOpenFileDialog
+                tmpFileDialog.Title = "Enter the file name for the new part"
+                tmpFileDialog.DefaultFileName = Filename
+                tmpFileDialog.EnsureFileExists = False
+                tmpFileDialog.DefaultExtension = DefaultExtension.Replace(".", "")
+
+                If tmpFileDialog.ShowDialog() = DialogResult.OK Then
+                    Filename = tmpFileDialog.FileName
+                Else
+                    Return Nothing
+                End If
+
             End If
 
         Else
@@ -617,7 +659,7 @@ Public Class Form_Main
                 'MsgBox($"Could not resolve filename formula '{FilenameFormula}'", vbOKOnly, "File name formula")
                 Return Nothing
             End If
-            Filename = $"{Me.LibraryDirectory}{Filename}"
+            Filename = $"{Me.LibraryDirectory}\{Filename}"
         End If
 
         Dim UFC As New UtilsFilenameCharmap
@@ -645,12 +687,14 @@ Public Class Form_Main
 
         Dim tmpProps As List(Of Prop) = Props.GetPropsOfType("TemplateFormula")
         If tmpProps.Count = 0 Then
-            MsgBox("No TemplateFormula specified", vbOKOnly, "Template name formula")
+            'MsgBox("No TemplateFormula specified", vbOKOnly, "Template name formula")
+            Me.FileLogger.AddMessage("No TemplateFormula specified")
             TextBoxStatus.Text = ""
             Return Nothing
         End If
         If tmpProps.Count > 1 Then
-            MsgBox("Multiple TemplateFormulas specified", vbOKOnly, "Template name formula")
+            'MsgBox("Multiple TemplateFormulas specified", vbOKOnly, "Template name formula")
+            Me.FileLogger.AddMessage("Multiple TemplateFormulas specified")
             TextBoxStatus.Text = ""
             Return Nothing
         End If
@@ -658,7 +702,8 @@ Public Class Form_Main
         TemplateName = $"{Me.TemplateDirectory}\{tmpProps(0).Value}"
 
         If Not IO.File.Exists(TemplateName) Then
-            MsgBox($"Template not found '{TemplateName}'", vbOKOnly, "File not found")
+            'MsgBox($"Template not found '{TemplateName}'", vbOKOnly, "File not found")
+            Me.FileLogger.AddMessage($"Template not found '{TemplateName}'")
             TextBoxStatus.Text = ""
             Return Nothing
         End If
@@ -1523,6 +1568,23 @@ Public Class Form_Main
     End Function
 
 
+    ' ###### ERROR REPORTING ######
+
+    Private Sub ReportErrors()
+        If Me.ErrorLogger.HasErrors Then
+            Me.ErrorLogger.Save()
+            Try
+                ' Try to use the default application to open the file.
+                Diagnostics.Process.Start(Me.ErrorLogger.LogfileName)
+            Catch ex As Exception
+                ' If none, open with notepad.exe
+                Diagnostics.Process.Start("notepad.exe", Me.ErrorLogger.LogfileName)
+            End Try
+        End If
+
+    End Sub
+
+
     ' ###### EVENT HANDLERS ######
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -1540,35 +1602,50 @@ Public Class Form_Main
 
         Me.SelectedNodeFullPath = e.Node.FullPath
         TreeView1.SelectedNode = e.Node
-
-        If e.Button = MouseButtons.Right Then
-
-            'If e.Node.Tag.ToString = "LeafNode" Then
-            '    ContextMenuStrip1.Show()
+        If e.Node.Nodes.Count > 0 Then
+            'If e.Node.IsExpanded Then
+            '    e.Node.Collapse()
             'Else
-            '    ContextMenuStrip1.Visible = False
+            '    e.Node.Expand()
             'End If
+        Else
+            If e.Button = MouseButtons.Right And Not Me.PrePopulate Then
+                ContextMenuStrip1.Show(TreeView1.PointToScreen(e.Location))
+            End If
+
         End If
+
     End Sub
 
     Private Sub ButtonClose_Click(sender As Object, e As EventArgs) Handles ButtonClose.Click
+        Me.PrePopulate = False
+        Me.AddToLibraryOnly = False
+
         Dim UP As New UtilsPreferences
         UP.SaveFormMainSettings(Me, SavingPresets:=False)
         Me.PropertiesData.Save()
+
         End
     End Sub
 
     Private Sub Form1_Closing(sender As Object, e As EventArgs) Handles Me.FormClosing
+        Me.PrePopulate = False
+        Me.AddToLibraryOnly = False
+
         Dim UP As New UtilsPreferences
         UP.SaveFormMainSettings(Me, SavingPresets:=False)
-        'Me.PropertiesData.Save()
+        Me.PropertiesData.Save()
+
         End
     End Sub
 
     Private Sub ToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem1.Click
         Dim Node = TreeView1.SelectedNode
         If Node.Nodes.Count = 0 Then
+            Me.ErrorLogger = New HCErrorLogger
+            Me.FileLogger = Me.ErrorLogger.AddFile(Node.FullPath)
             Process()
+            ReportErrors()
         Else
             MsgBox("This is a category header, not an individual part.  It cannot be added to an assembly", vbOKOnly, "Category header")
         End If
@@ -1607,6 +1684,10 @@ Public Class Form_Main
     Private Sub ButtonCollapse_Click(sender As Object, e As EventArgs) Handles ButtonCollapse.Click
         TreeView1.CollapseAll()
         TreeView1.Nodes(0).Expand()
+    End Sub
+
+    Private Sub LabelCollapse_Click(sender As Object, e As EventArgs) Handles LabelCollapse.Click
+        ButtonCollapse.PerformClick()
     End Sub
 
     'Private Sub ButtonSelectProperties_Click(sender As Object, e As EventArgs) Handles ButtonSelectProperties.Click
@@ -1818,8 +1899,10 @@ Public Class Form_Main
         Dim RowIdx As Integer = DataGridViewVendorParts.CurrentCell.RowIndex
         Dim PropertySearchFilename As String = CStr(DataGridViewVendorParts.Rows(RowIdx).Cells(1).Value)
 
+        Me.ErrorLogger = New HCErrorLogger
+        Me.FileLogger = Me.ErrorLogger.AddFile(PropertySearchFilename)
         Process(PropertySearchFilename:=PropertySearchFilename)
-        Dim i = 0
+        ReportErrors()
     End Sub
 
     Private Sub ButtonHelp_Click(sender As Object, e As EventArgs) Handles ButtonHelp.Click
@@ -1827,6 +1910,100 @@ Public Class Form_Main
         Info.FileName = "https://github.com/rmcanany/SolidEdgeStorekeeper#readme"
         Info.UseShellExecute = True
         System.Diagnostics.Process.Start(Info)
+    End Sub
+
+    Private Sub ButtonMultiSelect_Click(sender As Object, e As EventArgs) Handles ButtonPrepopulate.Click
+        Me.PrePopulate = Not ButtonPrepopulate.Checked
+    End Sub
+
+    Private Sub LabelMultiSelect_Click(sender As Object, e As EventArgs) Handles LabelPrePopulate.Click
+        ButtonPrepopulate.PerformClick()
+    End Sub
+
+
+    Private Sub treeTestsSelection_AfterCheck(sender As Object, e As TreeViewEventArgs) Handles TreeView1.AfterCheck
+        ' https://stackoverflow.com/questions/7257356/checking-treeview-nodes
+
+        If e.Action <> TreeViewAction.ByMouse And e.Action <> TreeViewAction.ByKeyboard Then Exit Sub
+
+        CheckAllNodes(e.Node)
+        'CheckAllNodesForParent(e.Node)
+    End Sub
+
+    Public Sub CheckAllNodes(ByRef TreeNodeToCheck As TreeNode)
+        Dim val As Boolean = TreeNodeToCheck.Checked
+        For Each n As TreeNode In TreeNodeToCheck.Nodes
+            n.Checked = val
+            If n.GetNodeCount(True) > 0 Then
+                CheckAllNodes(n)
+            End If
+        Next
+    End Sub
+
+    Private Sub ButtonAddToLibrary_Click(sender As Object, e As EventArgs) Handles ButtonAddToLibrary.Click
+        Dim CheckedNodesList As New List(Of TreeNode)
+        Dim RootNode As TreeNode = TreeView1.Nodes(0)
+        GetCheckedNodes(RootNode, CheckedNodesList)
+        Dim Count As Integer = CheckedNodesList.Count
+        Dim MaxMsgCount As Integer = 30
+        Dim s As String = ""
+
+        If Count = 0 Then
+            MsgBox("No checked items found", vbOKOnly)
+            Exit Sub
+        End If
+
+        If Count = 1 Then
+            s = $"Add this item to the library?{vbCrLf}{vbCrLf}"
+        ElseIf Count <= MaxMsgCount Then
+            s = $"Add these items to the library?{vbCrLf}{vbCrLf}"
+        Else
+            s = $"Add these items (and {Count - MaxMsgCount} more) to the library?{vbCrLf}{vbCrLf}"
+        End If
+
+        For i = 0 To CheckedNodesList.Count - 1
+            If i = MaxMsgCount Then Exit For
+            Dim Pathname As String = CheckedNodesList(i).FullPath
+            Pathname = Pathname.Replace("Solid Edge Storekeeper\", "")
+            s = $"{s}    {Pathname}{vbCrLf}"
+        Next
+
+        Dim Result As MsgBoxResult = MsgBox(s, vbYesNo, "Add to Library")
+
+        If Result = MsgBoxResult.Yes Then
+            AddToLibraryOnly = True
+
+            Me.ErrorLogger = New HCErrorLogger
+
+            For Each Node As TreeNode In CheckedNodesList
+                If Me.ErrorLogger.Abort Then Exit For
+                TreeView1.SelectedNode = Node
+                Me.FileLogger = Me.ErrorLogger.AddFile(Node.FullPath)
+                Node.EnsureVisible()
+                Process()
+            Next
+
+            ReportErrors()
+
+            AddToLibraryOnly = False
+            TextBoxStatus.Text = $"Added {Count} items to the library"
+        End If
+
+    End Sub
+
+    Private Sub GetCheckedNodes(Node As TreeNode, CheckedNodesList As List(Of TreeNode))
+
+        If Node.Nodes.Count = 0 Then
+            If Node.Checked Then CheckedNodesList.Add(Node)
+        Else
+            For Each SubNode As TreeNode In Node.Nodes
+                GetCheckedNodes(SubNode, CheckedNodesList)
+            Next
+        End If
+    End Sub
+
+    Private Sub LabelAddToLibrary_Click(sender As Object, e As EventArgs) Handles LabelAddToLibrary.Click
+        ButtonAddToLibrary.PerformClick()
     End Sub
 End Class
 
@@ -1895,7 +2072,8 @@ Public Class Props
         Matches = Regex.Matches(OutString, Pattern)
         If Not Matches.Count = 0 Then
             Dim s As String = $"Some properties could not be resolved in '{OutString}'"
-            MsgBox(s, vbOKOnly, "Property substitution")
+            'MsgBox(s, vbOKOnly, "Property substitution")
+            Form_Main.FileLogger.AddMessage(s)
             Return Nothing
         End If
 
