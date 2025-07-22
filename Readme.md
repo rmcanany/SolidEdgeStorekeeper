@@ -150,6 +150,37 @@ You may have more work to do if you're not using English in Solid Edge.  In the 
 
 Open the file (located in the `Preferences\Data` directory) and look for entries like `%{System.Title}` and update as required.
 
+## PRE-POPULATING THE LIBRARY
+
+You can add items to the library ahead of time.  Click the `Pre-populate` checkbox to get started.
+
+<p align="center">
+  <img src="media/prepopulate_library.png">
+</p>
+
+To select an item, enable its checkbox.  Checking on a category header, `Size 0.073-64` in this example, will select all items below it.  You can select a category, then de-select any you don't want.  Once satisfied with the selection, click `Add to library` to start the process.
+
+To avoid confusion, the `Add to assembly` shortcut is disabled in this mode.  Uncheck `Prepopulate` to get it back.
+
+## CREATING NEW TEMPLATES
+
+You are of course free to create new templates any way you see fit.  However, if you plan to contribute your awesome work to the project, there are a couple of things to keep in mind.
+
+<p align="center">
+  <img src="media/template_axes.png">
+</p>
+
+Many standard parts have a primary axis.  For consistency, consider orienting it along the Y Axis as shown.  For parts with a secondary axis like the pipe elbow, consider the Z Axis.
+
+Another thing to think about is the effect of replacing one standard part with another.  It would be nice not to break assembly relationships.  For fasteners, I started with the socket head capscrew.  When it was time to create the next one, I did a Save As on that initial part and modified it as needed.  Since the head and body now have the same faces, Replace Part works without a hitch.
+
+<p align="center">
+  <img src="media/template_variable_names.png">
+</p>
+
+Variable names are something else to consider.  To minimize confusion in creating and maintaining the companion spreadsheets, see if you can reuse names that have been previously established.  You can check the supplied templates or spreadsheets to see what may apply to your parts.
+
+
 ## CUSTOMIZATION
 
 The following is for those who want to customize the program.  You may want to do that eventually, but you can safely skip this section if you're just getting started.
@@ -227,25 +258,6 @@ Here we are setting up the processing of button head capscrews.  You can see we 
 As mentioned previously, formulas can contain entries such as `%{Name}` and `%{Length}`.  Variables not proceeded by `System.` or `Custom.` are assumed to come from the companion spreadsheet.
 
 In this example, we are also updating the description property.  That isn't necessary for the program to function.  It just illustrates how to update Solid Edge file properties.  Any property in the file can be updated in this way.  
-
-## CREATING NEW TEMPLATES
-
-You are of course free to create new templates any way you see fit.  However, if you plan to contribute your awesome work to the project, there are a couple of things to keep in mind.
-
-<p align="center">
-  <img src="media/template_axes.png">
-</p>
-
-Many standard parts have a primary axis.  For consistency, consider orienting it along the Y Axis as shown.  For parts with a secondary axis like the pipe elbow, consider the Z Axis.
-
-Another thing to think about is the effect of replacing one standard part with another.  It would be nice not to break assembly relationships.  For fasteners, I started with the socket head capscrew.  When it was time to create the next one, I did a Save As on that initial part and modified it as needed.  Since the head and body now have the same faces, Replace Part works without a hitch.
-
-<p align="center">
-  <img src="media/template_variable_names.png">
-</p>
-
-Variable names are something else to consider.  To minimize confusion in creating and maintaining the companion spreadsheets, see if you can reuse names that have been previously established.  You can check the supplied templates or spreadsheets to see what may apply to your parts.
-
 
 ## OPEN SOURCE PACKAGES
 

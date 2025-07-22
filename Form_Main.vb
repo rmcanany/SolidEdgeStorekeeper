@@ -208,7 +208,7 @@ Public Class Form_Main
             ErrorMessageList.Add("Solid Edge not detected.  This command requires a running instance of Solid Edge with an assembly file active")
         End Try
 
-        If SEApp IsNot Nothing Then
+        If SEApp IsNot Nothing And Not Me.PrePopulate Then
             Try
                 AsmDoc = CType(SEApp.ActiveDocument, SolidEdgeAssembly.AssemblyDocument)
             Catch ex As Exception
@@ -216,8 +216,10 @@ Public Class Form_Main
             End Try
         End If
 
-        If SEApp IsNot Nothing And AsmDoc IsNot Nothing AndAlso AsmDoc.Path = "" Then
-            ErrorMessageList.Add("Assembly must be saved before adding parts")
+        If Not Me.PrePopulate Then
+            If SEApp IsNot Nothing And AsmDoc IsNot Nothing AndAlso AsmDoc.Path = "" Then
+                ErrorMessageList.Add("Assembly must be saved before adding parts")
+            End If
         End If
 
         If Not ErrorMessageList.Count = 0 Then

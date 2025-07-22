@@ -23,22 +23,22 @@ Partial Class Form_Main
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         components = New ComponentModel.Container()
-        Dim TreeNode6 As TreeNode = New TreeNode("Node0")
-        Dim TreeNode7 As TreeNode = New TreeNode("Node4")
-        Dim TreeNode8 As TreeNode = New TreeNode("Node2", New TreeNode() {TreeNode7})
-        Dim TreeNode9 As TreeNode = New TreeNode("Node3")
-        Dim TreeNode10 As TreeNode = New TreeNode("Node1", New TreeNode() {TreeNode8, TreeNode9})
+        Dim TreeNode1 As TreeNode = New TreeNode("Node0")
+        Dim TreeNode2 As TreeNode = New TreeNode("Node4")
+        Dim TreeNode3 As TreeNode = New TreeNode("Node2", New TreeNode() {TreeNode2})
+        Dim TreeNode4 As TreeNode = New TreeNode("Node3")
+        Dim TreeNode5 As TreeNode = New TreeNode("Node1", New TreeNode() {TreeNode3, TreeNode4})
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Form_Main))
-        Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
         ToolStrip1 = New ToolStrip()
         ButtonCollapse = New ToolStripButton()
         LabelCollapse = New ToolStripLabel()
         ToolStripSeparator1 = New ToolStripSeparator()
         ButtonPrepopulate = New ToolStripButton()
         LabelPrePopulate = New ToolStripLabel()
-        ButtonOptions = New ToolStripButton()
         ButtonAddToLibrary = New ToolStripButton()
         LabelAddToLibrary = New ToolStripLabel()
+        ButtonOptions = New ToolStripButton()
         TreeView1 = New TreeView()
         ContextMenuStrip1 = New ContextMenuStrip(components)
         ToolStripMenuItem1 = New ToolStripMenuItem()
@@ -87,7 +87,7 @@ Partial Class Form_Main
         ' 
         ' ToolStrip1
         ' 
-        ToolStrip1.Items.AddRange(New ToolStripItem() {ButtonCollapse, LabelCollapse, ToolStripSeparator1, ButtonPrepopulate, LabelPrePopulate, ButtonOptions, ButtonAddToLibrary, LabelAddToLibrary})
+        ToolStrip1.Items.AddRange(New ToolStripItem() {ButtonCollapse, LabelCollapse, ToolStripSeparator1, ButtonPrepopulate, LabelPrePopulate, ButtonAddToLibrary, LabelAddToLibrary, ButtonOptions})
         ToolStrip1.Location = New Point(0, 0)
         ToolStrip1.Name = "ToolStrip1"
         ToolStrip1.RenderMode = ToolStripRenderMode.System
@@ -124,15 +124,35 @@ Partial Class Form_Main
         ButtonPrepopulate.ImageTransparentColor = Color.Magenta
         ButtonPrepopulate.Name = "ButtonPrepopulate"
         ButtonPrepopulate.Size = New Size(23, 22)
-        ButtonPrepopulate.Text = "Multi select"
+        ButtonPrepopulate.Text = "Prepopulate the library"
         ButtonPrepopulate.ToolTipText = "Enable multi select"
         ' 
         ' LabelPrePopulate
         ' 
         LabelPrePopulate.BackColor = Color.Orange
         LabelPrePopulate.Name = "LabelPrePopulate"
-        LabelPrePopulate.Size = New Size(71, 22)
-        LabelPrePopulate.Text = "Prepopulate"
+        LabelPrePopulate.Size = New Size(76, 22)
+        LabelPrePopulate.Text = "Pre-populate"
+        LabelPrePopulate.ToolTipText = "Prepopulate the library"
+        ' 
+        ' ButtonAddToLibrary
+        ' 
+        ButtonAddToLibrary.DisplayStyle = ToolStripItemDisplayStyle.Image
+        ButtonAddToLibrary.Image = My.Resources.Resources.icons8_add_list_16
+        ButtonAddToLibrary.ImageTransparentColor = Color.Magenta
+        ButtonAddToLibrary.Name = "ButtonAddToLibrary"
+        ButtonAddToLibrary.Size = New Size(23, 22)
+        ButtonAddToLibrary.Text = "ToolStripButton1"
+        ButtonAddToLibrary.ToolTipText = "Add selected items to the library"
+        ButtonAddToLibrary.Visible = False
+        ' 
+        ' LabelAddToLibrary
+        ' 
+        LabelAddToLibrary.Name = "LabelAddToLibrary"
+        LabelAddToLibrary.Size = New Size(79, 22)
+        LabelAddToLibrary.Text = "Add to library"
+        LabelAddToLibrary.ToolTipText = "Add selected items to the library"
+        LabelAddToLibrary.Visible = False
         ' 
         ' ButtonOptions
         ' 
@@ -145,39 +165,22 @@ Partial Class Form_Main
         ButtonOptions.Text = "ToolStripButton1"
         ButtonOptions.ToolTipText = "Options"
         ' 
-        ' ButtonAddToLibrary
-        ' 
-        ButtonAddToLibrary.DisplayStyle = ToolStripItemDisplayStyle.Image
-        ButtonAddToLibrary.Image = My.Resources.Resources.icons8_add_list_16
-        ButtonAddToLibrary.ImageTransparentColor = Color.Magenta
-        ButtonAddToLibrary.Name = "ButtonAddToLibrary"
-        ButtonAddToLibrary.Size = New Size(23, 22)
-        ButtonAddToLibrary.Text = "ToolStripButton1"
-        ButtonAddToLibrary.Visible = False
-        ' 
-        ' LabelAddToLibrary
-        ' 
-        LabelAddToLibrary.Name = "LabelAddToLibrary"
-        LabelAddToLibrary.Size = New Size(79, 22)
-        LabelAddToLibrary.Text = "Add to library"
-        LabelAddToLibrary.Visible = False
-        ' 
         ' TreeView1
         ' 
         TreeView1.Dock = DockStyle.Fill
         TreeView1.Location = New Point(3, 28)
         TreeView1.Name = "TreeView1"
-        TreeNode6.Name = "Node0"
-        TreeNode6.Text = "Node0"
-        TreeNode7.Name = "Node4"
-        TreeNode7.Text = "Node4"
-        TreeNode8.Name = "Node2"
-        TreeNode8.Text = "Node2"
-        TreeNode9.Name = "Node3"
-        TreeNode9.Text = "Node3"
-        TreeNode10.Name = "Node1"
-        TreeNode10.Text = "Node1"
-        TreeView1.Nodes.AddRange(New TreeNode() {TreeNode6, TreeNode10})
+        TreeNode1.Name = "Node0"
+        TreeNode1.Text = "Node0"
+        TreeNode2.Name = "Node4"
+        TreeNode2.Text = "Node4"
+        TreeNode3.Name = "Node2"
+        TreeNode3.Text = "Node2"
+        TreeNode4.Name = "Node3"
+        TreeNode4.Text = "Node3"
+        TreeNode5.Name = "Node1"
+        TreeNode5.Text = "Node1"
+        TreeView1.Nodes.AddRange(New TreeNode() {TreeNode1, TreeNode5})
         TreeView1.Size = New Size(396, 392)
         TreeView1.TabIndex = 1
         ' 
@@ -359,8 +362,8 @@ Partial Class Form_Main
         ' 
         ' DataGridViewVendorParts
         ' 
-        DataGridViewCellStyle2.BackColor = Color.AliceBlue
-        DataGridViewVendorParts.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle2
+        DataGridViewCellStyle1.BackColor = Color.AliceBlue
+        DataGridViewVendorParts.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
         DataGridViewVendorParts.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         DataGridViewVendorParts.Columns.AddRange(New DataGridViewColumn() {Filename, Path})
         DataGridViewVendorParts.ContextMenuStrip = ContextMenuStrip2

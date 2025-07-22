@@ -20,6 +20,10 @@ Contributed by **@[Francesco Arfilli]**.  Thank you!
 
 Changed the template updating process for new parts.  The update now occcurs in the background.  This speeds up processing and eliminates the unexplained and confusing presence of a new part file in the interface.
 
+### Pre-populate Library
+
+Added the ability to selectively add items to the library ahead of time. (Thank you **@Seva!**)
+
 ### Bug Fixes
 
 Fixed an issue where the form settings were not being saved in certain conditions. (Thank you **@TeeVar!**)
