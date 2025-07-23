@@ -30,7 +30,7 @@ Added the ability to replace selected parts in the assembly.
 
 Contributed by **@[Francesco Arfilli]**.  Thank you!
 
-Changed the template updating process for new parts.  The update now occcurs in the background.  This speeds up processing and eliminates the unexplained and confusing presence of a new part file in the interface.
+Changed the template updating process for new parts.  The update can now occcur in the background.  Set the option on the Tree Search Options dialog.  Running in the background speeds up processing and eliminates the unexplained and confusing presence of a new part file in the interface.
 
 ### Pre-populate Library
 

@@ -181,7 +181,7 @@ Once satisfied with the selection, click `Add to library` to start the process. 
 
 To avoid confusion, the `Add to assembly` shortcut is disabled in this mode.  Uncheck `Pre-populate` to get it back.
 
-One handy feature missing in the `TreeView` control is `multiselect`.  That means you cannot select a range with click followed by SHIFT-click.  It may be possible to add code to implement it, but it's not available now.
+One handy feature missing in the `TreeView` control is `Multiselect`.  That means you cannot select a range with click followed by SHIFT-click.  It may be possible to add code to implement it, but it's not available now.
 
 
 ## CREATING NEW TEMPLATES
