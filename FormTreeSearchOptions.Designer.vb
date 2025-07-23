@@ -25,11 +25,6 @@ Partial Class FormTreeSearchOptions
         components = New ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FormTreeSearchOptions))
         TableLayoutPanel1 = New TableLayoutPanel()
-        TableLayoutPanel2 = New TableLayoutPanel()
-        ButtonOK = New Button()
-        ButtonCancel = New Button()
-        ButtonHelp = New Button()
-        CheckBoxCheckNewVersion = New CheckBox()
         CheckBoxDisableFineThreadWarning = New CheckBox()
         CheckBoxAddProp = New CheckBox()
         CheckBoxAutoPattern = New CheckBox()
@@ -43,6 +38,14 @@ Partial Class FormTreeSearchOptions
         LabelTemplateDirectory = New Label()
         ButtonLibraryDirectory = New Button()
         LabelLibraryDirectory = New Label()
+        TableLayoutPanel2 = New TableLayoutPanel()
+        ButtonOK = New Button()
+        ButtonCancel = New Button()
+        ButtonHelp = New Button()
+        CheckBoxCheckNewVersion = New CheckBox()
+        CheckBoxProcessTemplateInBackground = New CheckBox()
+        CheckBoxFailedConstraintSuppress = New CheckBox()
+        CheckBoxFailedConstraintAllow = New CheckBox()
         ToolTip1 = New ToolTip(components)
         TableLayoutPanel1.SuspendLayout()
         TableLayoutPanel2.SuspendLayout()
@@ -54,8 +57,6 @@ Partial Class FormTreeSearchOptions
         TableLayoutPanel1.ColumnCount = 2
         TableLayoutPanel1.ColumnStyles.Add(New ColumnStyle())
         TableLayoutPanel1.ColumnStyles.Add(New ColumnStyle(SizeType.Percent, 100F))
-        TableLayoutPanel1.Controls.Add(TableLayoutPanel2, 1, 11)
-        TableLayoutPanel1.Controls.Add(CheckBoxCheckNewVersion, 0, 9)
         TableLayoutPanel1.Controls.Add(CheckBoxDisableFineThreadWarning, 0, 8)
         TableLayoutPanel1.Controls.Add(CheckBoxAddProp, 0, 7)
         TableLayoutPanel1.Controls.Add(CheckBoxAutoPattern, 0, 6)
@@ -69,10 +70,17 @@ Partial Class FormTreeSearchOptions
         TableLayoutPanel1.Controls.Add(LabelTemplateDirectory, 1, 1)
         TableLayoutPanel1.Controls.Add(ButtonLibraryDirectory, 0, 0)
         TableLayoutPanel1.Controls.Add(LabelLibraryDirectory, 1, 0)
+        TableLayoutPanel1.Controls.Add(TableLayoutPanel2, 1, 16)
+        TableLayoutPanel1.Controls.Add(CheckBoxCheckNewVersion, 0, 15)
+        TableLayoutPanel1.Controls.Add(CheckBoxProcessTemplateInBackground, 0, 9)
+        TableLayoutPanel1.Controls.Add(CheckBoxFailedConstraintSuppress, 0, 10)
+        TableLayoutPanel1.Controls.Add(CheckBoxFailedConstraintAllow, 0, 11)
         TableLayoutPanel1.Dock = DockStyle.Fill
         TableLayoutPanel1.Location = New Point(0, 0)
         TableLayoutPanel1.Name = "TableLayoutPanel1"
-        TableLayoutPanel1.RowCount = 12
+        TableLayoutPanel1.RowCount = 17
+        TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
+        TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
@@ -84,71 +92,12 @@ Partial Class FormTreeSearchOptions
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle())
+        TableLayoutPanel1.RowStyles.Add(New RowStyle())
+        TableLayoutPanel1.RowStyles.Add(New RowStyle())
+        TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Percent, 100F))
-        TableLayoutPanel1.Size = New Size(623, 343)
+        TableLayoutPanel1.Size = New Size(623, 439)
         TableLayoutPanel1.TabIndex = 0
-        ' 
-        ' TableLayoutPanel2
-        ' 
-        TableLayoutPanel2.ColumnCount = 3
-        TableLayoutPanel2.ColumnStyles.Add(New ColumnStyle(SizeType.Percent, 100F))
-        TableLayoutPanel2.ColumnStyles.Add(New ColumnStyle())
-        TableLayoutPanel2.ColumnStyles.Add(New ColumnStyle())
-        TableLayoutPanel2.Controls.Add(ButtonOK, 0, 0)
-        TableLayoutPanel2.Controls.Add(ButtonCancel, 1, 0)
-        TableLayoutPanel2.Controls.Add(ButtonHelp, 2, 0)
-        TableLayoutPanel2.Dock = DockStyle.Fill
-        TableLayoutPanel2.Location = New Point(99, 303)
-        TableLayoutPanel2.Name = "TableLayoutPanel2"
-        TableLayoutPanel2.RowCount = 1
-        TableLayoutPanel2.RowStyles.Add(New RowStyle(SizeType.Percent, 100F))
-        TableLayoutPanel2.Size = New Size(521, 37)
-        TableLayoutPanel2.TabIndex = 5
-        ' 
-        ' ButtonOK
-        ' 
-        ButtonOK.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        ButtonOK.Location = New Point(281, 11)
-        ButtonOK.Name = "ButtonOK"
-        ButtonOK.Size = New Size(75, 23)
-        ButtonOK.TabIndex = 1
-        ButtonOK.Text = "OK"
-        ButtonOK.UseVisualStyleBackColor = True
-        ' 
-        ' ButtonCancel
-        ' 
-        ButtonCancel.Anchor = AnchorStyles.Bottom
-        ButtonCancel.Location = New Point(362, 11)
-        ButtonCancel.Name = "ButtonCancel"
-        ButtonCancel.Size = New Size(75, 23)
-        ButtonCancel.TabIndex = 0
-        ButtonCancel.Text = "Cancel"
-        ButtonCancel.UseVisualStyleBackColor = True
-        ' 
-        ' ButtonHelp
-        ' 
-        ButtonHelp.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        ButtonHelp.Location = New Point(443, 11)
-        ButtonHelp.Name = "ButtonHelp"
-        ButtonHelp.Size = New Size(75, 23)
-        ButtonHelp.TabIndex = 2
-        ButtonHelp.Text = "Help"
-        ButtonHelp.UseVisualStyleBackColor = True
-        ' 
-        ' CheckBoxCheckNewVersion
-        ' 
-        CheckBoxCheckNewVersion.Anchor = AnchorStyles.Left
-        CheckBoxCheckNewVersion.AutoSize = True
-        CheckBoxCheckNewVersion.Checked = True
-        CheckBoxCheckNewVersion.CheckState = CheckState.Checked
-        TableLayoutPanel1.SetColumnSpan(CheckBoxCheckNewVersion, 2)
-        CheckBoxCheckNewVersion.Location = New Point(3, 275)
-        CheckBoxCheckNewVersion.Name = "CheckBoxCheckNewVersion"
-        CheckBoxCheckNewVersion.Padding = New Padding(5, 0, 0, 0)
-        CheckBoxCheckNewVersion.Size = New Size(209, 19)
-        CheckBoxCheckNewVersion.TabIndex = 11
-        CheckBoxCheckNewVersion.Text = "    Check for new version at statup"
-        CheckBoxCheckNewVersion.UseVisualStyleBackColor = True
         ' 
         ' CheckBoxDisableFineThreadWarning
         ' 
@@ -158,9 +107,9 @@ Partial Class FormTreeSearchOptions
         CheckBoxDisableFineThreadWarning.Location = New Point(3, 245)
         CheckBoxDisableFineThreadWarning.Name = "CheckBoxDisableFineThreadWarning"
         CheckBoxDisableFineThreadWarning.Padding = New Padding(5, 0, 0, 0)
-        CheckBoxDisableFineThreadWarning.Size = New Size(187, 19)
+        CheckBoxDisableFineThreadWarning.Size = New Size(175, 19)
         CheckBoxDisableFineThreadWarning.TabIndex = 10
-        CheckBoxDisableFineThreadWarning.Text = "    Disable fine thread warning"
+        CheckBoxDisableFineThreadWarning.Text = "Disable fine thread warning"
         CheckBoxDisableFineThreadWarning.UseVisualStyleBackColor = True
         ' 
         ' CheckBoxAddProp
@@ -171,9 +120,9 @@ Partial Class FormTreeSearchOptions
         CheckBoxAddProp.Location = New Point(3, 215)
         CheckBoxAddProp.Name = "CheckBoxAddProp"
         CheckBoxAddProp.Padding = New Padding(5, 0, 0, 0)
-        CheckBoxAddProp.Size = New Size(229, 19)
+        CheckBoxAddProp.Size = New Size(217, 19)
         CheckBoxAddProp.TabIndex = 6
-        CheckBoxAddProp.Text = "    Add any property not already in file"
+        CheckBoxAddProp.Text = "Add any property not already in file"
         ToolTip1.SetToolTip(CheckBoxAddProp, "Add missing SE file properties")
         CheckBoxAddProp.UseVisualStyleBackColor = True
         ' 
@@ -185,9 +134,9 @@ Partial Class FormTreeSearchOptions
         CheckBoxAutoPattern.Location = New Point(3, 185)
         CheckBoxAutoPattern.Name = "CheckBoxAutoPattern"
         CheckBoxAutoPattern.Padding = New Padding(5, 0, 0, 0)
-        CheckBoxAutoPattern.Size = New Size(377, 19)
+        CheckBoxAutoPattern.Size = New Size(365, 19)
         CheckBoxAutoPattern.TabIndex = 17
-        CheckBoxAutoPattern.Text = "    Automatically pattern a part if assembled to a patterned feature"
+        CheckBoxAutoPattern.Text = "Automatically pattern a part if assembled to a patterned feature"
         CheckBoxAutoPattern.UseVisualStyleBackColor = True
         ' 
         ' CheckBoxAlwaysReadExcel
@@ -198,9 +147,9 @@ Partial Class FormTreeSearchOptions
         CheckBoxAlwaysReadExcel.Location = New Point(3, 155)
         CheckBoxAlwaysReadExcel.Name = "CheckBoxAlwaysReadExcel"
         CheckBoxAlwaysReadExcel.Padding = New Padding(5, 0, 0, 0)
-        CheckBoxAlwaysReadExcel.Size = New Size(325, 19)
+        CheckBoxAlwaysReadExcel.Size = New Size(312, 19)
         CheckBoxAlwaysReadExcel.TabIndex = 12
-        CheckBoxAlwaysReadExcel.Text = "    Read the Excel file each time the program is launched"
+        CheckBoxAlwaysReadExcel.Text = "Read the Excel file each time the program is launched"
         CheckBoxAlwaysReadExcel.UseVisualStyleBackColor = True
         ' 
         ' Label4
@@ -210,7 +159,7 @@ Partial Class FormTreeSearchOptions
         TableLayoutPanel1.SetColumnSpan(Label4, 2)
         Label4.Location = New Point(3, 127)
         Label4.Name = "Label4"
-        Label4.Size = New Size(56, 15)
+        Label4.Size = New Size(57, 15)
         Label4.TabIndex = 16
         Label4.Text = "OPTIONS"
         ' 
@@ -300,11 +249,116 @@ Partial Class FormTreeSearchOptions
         LabelLibraryDirectory.TabIndex = 19
         LabelLibraryDirectory.Text = "Select a library directory"
         ' 
+        ' TableLayoutPanel2
+        ' 
+        TableLayoutPanel2.ColumnCount = 3
+        TableLayoutPanel2.ColumnStyles.Add(New ColumnStyle(SizeType.Percent, 100F))
+        TableLayoutPanel2.ColumnStyles.Add(New ColumnStyle())
+        TableLayoutPanel2.ColumnStyles.Add(New ColumnStyle())
+        TableLayoutPanel2.Controls.Add(ButtonOK, 0, 0)
+        TableLayoutPanel2.Controls.Add(ButtonCancel, 1, 0)
+        TableLayoutPanel2.Controls.Add(ButtonHelp, 2, 0)
+        TableLayoutPanel2.Dock = DockStyle.Fill
+        TableLayoutPanel2.Location = New Point(99, 393)
+        TableLayoutPanel2.Name = "TableLayoutPanel2"
+        TableLayoutPanel2.RowCount = 1
+        TableLayoutPanel2.RowStyles.Add(New RowStyle(SizeType.Percent, 100F))
+        TableLayoutPanel2.Size = New Size(521, 43)
+        TableLayoutPanel2.TabIndex = 5
+        ' 
+        ' ButtonOK
+        ' 
+        ButtonOK.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
+        ButtonOK.Location = New Point(281, 17)
+        ButtonOK.Name = "ButtonOK"
+        ButtonOK.Size = New Size(75, 23)
+        ButtonOK.TabIndex = 1
+        ButtonOK.Text = "OK"
+        ButtonOK.UseVisualStyleBackColor = True
+        ' 
+        ' ButtonCancel
+        ' 
+        ButtonCancel.Anchor = AnchorStyles.Bottom
+        ButtonCancel.Location = New Point(362, 17)
+        ButtonCancel.Name = "ButtonCancel"
+        ButtonCancel.Size = New Size(75, 23)
+        ButtonCancel.TabIndex = 0
+        ButtonCancel.Text = "Cancel"
+        ButtonCancel.UseVisualStyleBackColor = True
+        ' 
+        ' ButtonHelp
+        ' 
+        ButtonHelp.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
+        ButtonHelp.Location = New Point(443, 17)
+        ButtonHelp.Name = "ButtonHelp"
+        ButtonHelp.Size = New Size(75, 23)
+        ButtonHelp.TabIndex = 2
+        ButtonHelp.Text = "Help"
+        ButtonHelp.UseVisualStyleBackColor = True
+        ' 
+        ' CheckBoxCheckNewVersion
+        ' 
+        CheckBoxCheckNewVersion.Anchor = AnchorStyles.Left
+        CheckBoxCheckNewVersion.AutoSize = True
+        CheckBoxCheckNewVersion.Checked = True
+        CheckBoxCheckNewVersion.CheckState = CheckState.Checked
+        TableLayoutPanel1.SetColumnSpan(CheckBoxCheckNewVersion, 2)
+        CheckBoxCheckNewVersion.Location = New Point(3, 365)
+        CheckBoxCheckNewVersion.Name = "CheckBoxCheckNewVersion"
+        CheckBoxCheckNewVersion.Padding = New Padding(5, 0, 0, 0)
+        CheckBoxCheckNewVersion.Size = New Size(209, 19)
+        CheckBoxCheckNewVersion.TabIndex = 11
+        CheckBoxCheckNewVersion.Text = "    Check for new version at statup"
+        CheckBoxCheckNewVersion.UseVisualStyleBackColor = True
+        ' 
+        ' CheckBoxProcessTemplateInBackground
+        ' 
+        CheckBoxProcessTemplateInBackground.Anchor = AnchorStyles.Left
+        CheckBoxProcessTemplateInBackground.AutoSize = True
+        CheckBoxProcessTemplateInBackground.Checked = True
+        CheckBoxProcessTemplateInBackground.CheckState = CheckState.Checked
+        TableLayoutPanel1.SetColumnSpan(CheckBoxProcessTemplateInBackground, 2)
+        CheckBoxProcessTemplateInBackground.Location = New Point(3, 275)
+        CheckBoxProcessTemplateInBackground.Name = "CheckBoxProcessTemplateInBackground"
+        CheckBoxProcessTemplateInBackground.Padding = New Padding(5, 0, 0, 0)
+        CheckBoxProcessTemplateInBackground.Size = New Size(206, 19)
+        CheckBoxProcessTemplateInBackground.TabIndex = 20
+        CheckBoxProcessTemplateInBackground.Text = "Process templates in background"
+        CheckBoxProcessTemplateInBackground.UseVisualStyleBackColor = True
+        ' 
+        ' CheckBoxFailedConstraintSuppress
+        ' 
+        CheckBoxFailedConstraintSuppress.Anchor = AnchorStyles.Left
+        CheckBoxFailedConstraintSuppress.AutoSize = True
+        CheckBoxFailedConstraintSuppress.Checked = True
+        CheckBoxFailedConstraintSuppress.CheckState = CheckState.Checked
+        TableLayoutPanel1.SetColumnSpan(CheckBoxFailedConstraintSuppress, 2)
+        CheckBoxFailedConstraintSuppress.Location = New Point(3, 305)
+        CheckBoxFailedConstraintSuppress.Name = "CheckBoxFailedConstraintSuppress"
+        CheckBoxFailedConstraintSuppress.Padding = New Padding(5, 0, 0, 0)
+        CheckBoxFailedConstraintSuppress.Size = New Size(237, 19)
+        CheckBoxFailedConstraintSuppress.TabIndex = 21
+        CheckBoxFailedConstraintSuppress.Text = "Replace part: Suppress failed constraint"
+        CheckBoxFailedConstraintSuppress.UseVisualStyleBackColor = True
+        ' 
+        ' CheckBoxFailedConstraintAllow
+        ' 
+        CheckBoxFailedConstraintAllow.Anchor = AnchorStyles.Left
+        CheckBoxFailedConstraintAllow.AutoSize = True
+        TableLayoutPanel1.SetColumnSpan(CheckBoxFailedConstraintAllow, 2)
+        CheckBoxFailedConstraintAllow.Location = New Point(3, 335)
+        CheckBoxFailedConstraintAllow.Name = "CheckBoxFailedConstraintAllow"
+        CheckBoxFailedConstraintAllow.Padding = New Padding(5, 0, 0, 0)
+        CheckBoxFailedConstraintAllow.Size = New Size(220, 19)
+        CheckBoxFailedConstraintAllow.TabIndex = 22
+        CheckBoxFailedConstraintAllow.Text = "Replace part: Allow failed constraint"
+        CheckBoxFailedConstraintAllow.UseVisualStyleBackColor = True
+        ' 
         ' FormTreeSearchOptions
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(623, 343)
+        ClientSize = New Size(623, 439)
         Controls.Add(TableLayoutPanel1)
         Icon = CType(resources.GetObject("$this.Icon"), Icon)
         Name = "FormTreeSearchOptions"
@@ -336,4 +390,7 @@ Partial Class FormTreeSearchOptions
     Friend WithEvents CheckBoxAutoPattern As CheckBox
     Friend WithEvents ButtonLibraryDirectory As Button
     Friend WithEvents LabelLibraryDirectory As Label
+    Friend WithEvents CheckBoxProcessTemplateInBackground As CheckBox
+    Friend WithEvents CheckBoxFailedConstraintSuppress As CheckBox
+    Friend WithEvents CheckBoxFailedConstraintAllow As CheckBox
 End Class

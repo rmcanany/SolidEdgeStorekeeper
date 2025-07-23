@@ -67,6 +67,9 @@ Public Class Form_Main
         End Set
     End Property
     Public Property FileLogger As Logger
+    Public Property ProcessTemplateInBackground As Boolean = True
+    Public Property FailedConstraintSuppress As Boolean = True
+    Public Property FailedConstraintAllow As Boolean
 
 
 
@@ -275,7 +278,12 @@ Public Class Form_Main
             End If
 
             TextBoxStatus.Text = $"Opening '{IO.Path.GetFileName(TemplateName)}'"
-            Dim SEDoc = CType(SEApp.Documents.Open(TemplateName, 8), SolidEdgeFramework.SolidEdgeDocument)
+            Dim SEDoc As SolidEdgeFramework.SolidEdgeDocument = Nothing
+            If Me.ProcessTemplateInBackground Then
+                SEDoc = CType(SEApp.Documents.Open(TemplateName, 8), SolidEdgeFramework.SolidEdgeDocument)
+            Else
+                SEDoc = CType(SEApp.Documents.Open(TemplateName), SolidEdgeFramework.SolidEdgeDocument)
+            End If
             SEApp.DoIdle()
 
             TextBoxStatus.Text = $"Saving '{IO.Path.GetFileName(Filename)}'"
@@ -394,12 +402,24 @@ Public Class Form_Main
                             Next
 
                             Dim tmpOcc = tmpColl.ToArray
-                            objAsm.ReplaceComponents(CType(tmpOcc, Array), Filename, SolidEdgeAssembly.ConstraintReplacementConstants.seConstraintReplacementSuppress)
+                            If Me.FailedConstraintSuppress Then
+                                objAsm.ReplaceComponents(CType(tmpOcc, Array), Filename, SolidEdgeAssembly.ConstraintReplacementConstants.seConstraintReplacementSuppress)
+                            ElseIf Me.FailedConstraintAllow Then
+                                objAsm.ReplaceComponents(CType(tmpOcc, Array), Filename, SolidEdgeAssembly.ConstraintReplacementConstants.seConstraintReplacementNone)
+                            Else
+                                Me.FileLogger.AddMessage("Option not set for treatment of failed constraints.  Set it on the Tree Search Options dialog.")
+                            End If
 
                         Else
 
                             Dim tmpOcc As System.Array = {objOcc}
-                            objAsm.ReplaceComponents(tmpOcc, Filename, SolidEdgeAssembly.ConstraintReplacementConstants.seConstraintReplacementSuppress)
+                            If Me.FailedConstraintSuppress Then
+                                objAsm.ReplaceComponents(tmpOcc, Filename, SolidEdgeAssembly.ConstraintReplacementConstants.seConstraintReplacementSuppress)
+                            ElseIf Me.FailedConstraintAllow Then
+                                objAsm.ReplaceComponents(tmpOcc, Filename, SolidEdgeAssembly.ConstraintReplacementConstants.seConstraintReplacementNone)
+                            Else
+                                Me.FileLogger.AddMessage("Option not set for treatment of for failed constraints.  Set it on the Tree Search Options dialog.")
+                            End If
 
                         End If
 
@@ -463,13 +483,13 @@ Public Class Form_Main
         SEApp.DelayCompute = False
         SEApp.DoIdle()
 
-        If Success Then
+        If Not Me.ProcessTemplateInBackground And Success Then
             Select Case UC.GetDocType(SEDoc)
                 Case "asm"
-                    'SEApp.StartCommand(CType(SolidEdgeConstants.AssemblyCommandConstants.AssemblyViewFit, SolidEdgeFramework.SolidEdgeCommandConstants))
+                    SEApp.StartCommand(CType(SolidEdgeConstants.AssemblyCommandConstants.AssemblyViewFit, SolidEdgeFramework.SolidEdgeCommandConstants))
                     '##### Why viewfit ??? F.Arfilli
                 Case "par", "psm"
-                    'SEApp.StartCommand(CType(SolidEdgeConstants.PartCommandConstants.PartViewFit, SolidEdgeFramework.SolidEdgeCommandConstants))
+                    SEApp.StartCommand(CType(SolidEdgeConstants.PartCommandConstants.PartViewFit, SolidEdgeFramework.SolidEdgeCommandConstants))
             End Select
         End If
 
