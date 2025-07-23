@@ -1620,14 +1620,18 @@ Public Class Form_Main
     End Sub
 
     Private Sub ButtonClose_Click(sender As Object, e As EventArgs) Handles ButtonClose.Click
-        Me.PrePopulate = False
-        Me.AddToLibraryOnly = False
+        If ButtonClose.Text = "Stop" Then
+            Me.ErrorLogger.RequestAbort()
+        Else
+            Me.PrePopulate = False
+            Me.AddToLibraryOnly = False
 
-        Dim UP As New UtilsPreferences
-        UP.SaveFormMainSettings(Me, SavingPresets:=False)
-        Me.PropertiesData.Save()
+            Dim UP As New UtilsPreferences
+            UP.SaveFormMainSettings(Me, SavingPresets:=False)
+            Me.PropertiesData.Save()
 
-        End
+            End
+        End If
     End Sub
 
     Private Sub Form1_Closing(sender As Object, e As EventArgs) Handles Me.FormClosing
@@ -1914,11 +1918,11 @@ Public Class Form_Main
         System.Diagnostics.Process.Start(Info)
     End Sub
 
-    Private Sub ButtonMultiSelect_Click(sender As Object, e As EventArgs) Handles ButtonPrepopulate.Click
+    Private Sub ButtonPrepopulate_Click(sender As Object, e As EventArgs) Handles ButtonPrepopulate.Click
         Me.PrePopulate = Not ButtonPrepopulate.Checked
     End Sub
 
-    Private Sub LabelMultiSelect_Click(sender As Object, e As EventArgs) Handles LabelPrePopulate.Click
+    Private Sub LabelPrePopulate_Click(sender As Object, e As EventArgs) Handles LabelPrePopulate.Click
         ButtonPrepopulate.PerformClick()
     End Sub
 
@@ -1973,22 +1977,31 @@ Public Class Form_Main
         Dim Result As MsgBoxResult = MsgBox(s, vbYesNo, "Add to Library")
 
         If Result = MsgBoxResult.Yes Then
-            AddToLibraryOnly = True
 
             Me.ErrorLogger = New HCErrorLogger
 
+            AddToLibraryOnly = True
+            ButtonClose.Text = "Stop"
+            ButtonClose.BackColor = Color.Coral
+
+            Dim AddedCount As Integer = 0
+
             For Each Node As TreeNode In CheckedNodesList
+                System.Windows.Forms.Application.DoEvents()
                 If Me.ErrorLogger.Abort Then Exit For
                 TreeView1.SelectedNode = Node
                 Me.FileLogger = Me.ErrorLogger.AddFile(Node.FullPath)
                 Node.EnsureVisible()
                 Process()
+                AddedCount += 1
             Next
 
             ReportErrors()
 
+            ButtonClose.Text = "Close"
+            ButtonClose.BackColor = Color.White
             AddToLibraryOnly = False
-            TextBoxStatus.Text = $"Added {Count} items to the library"
+            TextBoxStatus.Text = $"Added {AddedCount} items to the library"
         End If
 
     End Sub

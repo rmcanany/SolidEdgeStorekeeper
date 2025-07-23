@@ -24,6 +24,12 @@ Changed the template updating process for new parts.  The update now occcurs in 
 
 Added the ability to selectively add items to the library ahead of time. (Thank you **@Seva!**)
 
+![Prepopulate](media/prepopulate_library.png)
+
+To select an item, enable its checkbox.  Checking on a category header, `Size 0.073-64` in this example, will select all items below it.  You can select a category, then de-select any items you don't want included.  Once satisfied with the selection, click `Add to library` to start the process.
+
+See the [<ins>**Pre-Populating the Library**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#pre-populating-the-library) section of the Readme for details.
+
 ### Bug Fixes
 
 Fixed an issue where the form settings were not being saved in certain conditions. (Thank you **@TeeVar!**)

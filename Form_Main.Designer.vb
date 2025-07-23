@@ -242,12 +242,13 @@ Partial Class Form_Main
         ' ButtonClose
         ' 
         ButtonClose.Anchor = AnchorStyles.Bottom
-        ButtonClose.Location = New Point(257, 123)
+        ButtonClose.BackColor = Color.White
+        ButtonClose.Location = New Point(227, 116)
         ButtonClose.Name = "ButtonClose"
-        ButtonClose.Size = New Size(75, 23)
+        ButtonClose.Size = New Size(90, 30)
         ButtonClose.TabIndex = 2
         ButtonClose.Text = "Close"
-        ButtonClose.UseVisualStyleBackColor = True
+        ButtonClose.UseVisualStyleBackColor = False
         ' 
         ' TabControl1
         ' 
@@ -459,12 +460,13 @@ Partial Class Form_Main
         ' ButtonHelp
         ' 
         ButtonHelp.Anchor = AnchorStyles.Bottom
-        ButtonHelp.Location = New Point(338, 123)
+        ButtonHelp.BackColor = Color.White
+        ButtonHelp.Location = New Point(323, 116)
         ButtonHelp.Name = "ButtonHelp"
-        ButtonHelp.Size = New Size(75, 23)
+        ButtonHelp.Size = New Size(90, 30)
         ButtonHelp.TabIndex = 3
         ButtonHelp.Text = "Help"
-        ButtonHelp.UseVisualStyleBackColor = True
+        ButtonHelp.UseVisualStyleBackColor = False
         ' 
         ' TextBoxStatus
         ' 

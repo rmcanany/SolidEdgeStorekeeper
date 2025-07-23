@@ -152,15 +152,20 @@ Open the file (located in the `Preferences\Data` directory) and look for entries
 
 ## PRE-POPULATING THE LIBRARY
 
-You can add items to the library ahead of time.  Click the `Pre-populate` checkbox to get started.
+You can add items to the library ahead of time.  Enable the `Pre-populate` checkbox to get started.
 
 <p align="center">
   <img src="media/prepopulate_library.png">
 </p>
 
-To select an item, enable its checkbox.  Checking on a category header, `Size 0.073-64` in this example, will select all items below it.  You can select a category, then de-select any you don't want.  Once satisfied with the selection, click `Add to library` to start the process.
+To select an item, enable its checkbox.  Enabling the checkbox of a category header, `Size 0.073-64` in this example, will select all items below it.  You can select a category, then de-select any items you don't want included.  
 
-To avoid confusion, the `Add to assembly` shortcut is disabled in this mode.  Uncheck `Prepopulate` to get it back.
+Once satisfied with the selection, click `Add to library` to start the process.  After you do, the `Close` button text changes to `Stop`.  Click that to stop processing.  It may take a few seconds to register.  It doesn't hurt to click it twice.
+
+To avoid confusion, the `Add to assembly` shortcut is disabled in this mode.  Uncheck `Pre-populate` to get it back.
+
+One handy feature missing in the `TreeView` control is `multiselect`.  That means you cannot select a range with click followed by SHIFT-click.  It may be possible to add code to implement it, but it's not available now.
+
 
 ## CREATING NEW TEMPLATES
 
@@ -172,7 +177,7 @@ You are of course free to create new templates any way you see fit.  However, if
 
 Many standard parts have a primary axis.  For consistency, consider orienting it along the Y Axis as shown.  For parts with a secondary axis like the pipe elbow, consider the Z Axis.
 
-Another thing to think about is the effect of replacing one standard part with another.  It would be nice not to break assembly relationships.  For fasteners, I started with the socket head capscrew.  When it was time to create the next one, I did a Save As on that initial part and modified it as needed.  Since the head and body now have the same faces, Replace Part works without a hitch.
+Another thing to think about is the effect of replacing one standard part with another.  It would be nice not to break assembly relationships.  For fasteners, I started with the socket head capscrew.  When it was time to create the next one, I did a Save As on that initial part and modified it as needed.  Since the head and body now have the same faces, Replace Part works as expected.
 
 <p align="center">
   <img src="media/template_variable_names.png">
