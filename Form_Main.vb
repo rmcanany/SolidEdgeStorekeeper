@@ -2,6 +2,8 @@
 
 Imports System.Text.RegularExpressions
 Imports Microsoft.WindowsAPICodePack.Dialogs
+Imports SolidEdgeAssembly
+Imports SolidEdgeConstants
 
 Public Class Form_Main
 
@@ -236,7 +238,7 @@ Public Class Form_Main
         Return Success
     End Function
 
-    Private Sub Process(Optional PropertySearchFilename As String = Nothing)
+    Private Sub Process(Optional PropertySearchFilename As String = Nothing, Optional Replace As Boolean = False, Optional ReplaceAll As Boolean = False)
         Dim Proceed As Boolean = True
         Dim UC As New UtilsCommon
 
@@ -262,6 +264,8 @@ Public Class Form_Main
         End If
 
         If Not IO.File.Exists(Filename) Then
+
+            SEApp.SuspendMRU() ' Suspend MRU to prevent adding the file to the MRU list
 
             TextBoxStatus.Text = "Getting template name"
             Dim TemplateName As String = GetTemplateNameFormula()
@@ -299,8 +303,11 @@ Public Class Form_Main
             Else
                 SEDoc.Close()
                 SEApp.DoIdle()
+                SEApp.ResumeMRU()
                 Exit Sub
             End If
+
+            SEApp.ResumeMRU()
 
         End If
 
@@ -311,35 +318,27 @@ Public Class Form_Main
             SEApp.DoIdle()
             AssemblyPasteComplete = False
 
-            TextBoxStatus.Text = $"Adding '{IO.Path.GetFileName(Filename)}'"
-
             Me.TopMost = False
             System.Windows.Forms.Application.DoEvents()
             SEApp.Activate()
             SEApp.DoIdle()
 
-            Dim Occurrences As SolidEdgeAssembly.Occurrences = AsmDoc.Occurrences
-            Dim PreviousOccurrencesCount As Integer = Occurrences.Count
+            If Not Replace Then
 
-            Dim Occurrence = AsmDoc.Occurrences.AddByFilename(Filename)
-            Dim SelectSet = AsmDoc.SelectSet
-            SelectSet.RemoveAll()
+                TextBoxStatus.Text = $"Adding '{IO.Path.GetFileName(Filename)}'"
 
-            SelectSet.Add(Occurrence)
-            Dim Cut = SolidEdgeConstants.AssemblyCommandConstants.AssemblyEditCut
-            SEApp.StartCommand(CType(Cut, SolidEdgeFramework.SolidEdgeCommandConstants))
-            Dim Paste = SolidEdgeConstants.AssemblyCommandConstants.AssemblyEditPaste
+                Dim Occurrences As SolidEdgeAssembly.Occurrences = AsmDoc.Occurrences
+                Dim PreviousOccurrencesCount As Integer = Occurrences.Count
 
-            Try
-                SEApp.StartCommand(CType(Paste, SolidEdgeFramework.SolidEdgeCommandConstants))
+                Dim Occurrence = AsmDoc.Occurrences.AddByFilename(Filename)
+                Dim SelectSet = AsmDoc.SelectSet
+                SelectSet.RemoveAll()
 
-                ' Wait for Paste command to complete
+                SelectSet.Add(Occurrence)
+                Dim Cut = SolidEdgeConstants.AssemblyCommandConstants.AssemblyEditCut
+                SEApp.StartCommand(CType(Cut, SolidEdgeFramework.SolidEdgeCommandConstants))
+                Dim Paste = SolidEdgeConstants.AssemblyCommandConstants.AssemblyEditPaste
 
-                While Not AssemblyPasteComplete
-                    Threading.Thread.Sleep(500)
-                    'SEApp.DoIdle()
-                End While
-            Catch ex As Exception
                 Try
                     SEApp.StartCommand(CType(Paste, SolidEdgeFramework.SolidEdgeCommandConstants))
 
@@ -349,18 +348,76 @@ Public Class Form_Main
                         Threading.Thread.Sleep(500)
                         'SEApp.DoIdle()
                     End While
-                Catch ex2 As Exception
-                    'MsgBox("Could not add part.  Please try again.", vbOKOnly, "Part not added")
-                    Me.FileLogger.AddMessage("Could not add part.  Please try again.")
+                Catch ex As Exception
+                    Try
+                        SEApp.StartCommand(CType(Paste, SolidEdgeFramework.SolidEdgeCommandConstants))
+
+                        ' Wait for Paste command to complete
+
+                        While Not AssemblyPasteComplete
+                            Threading.Thread.Sleep(500)
+                            'SEApp.DoIdle()
+                        End While
+                    Catch ex2 As Exception
+                        'MsgBox("Could not add part.  Please try again.", vbOKOnly, "Part not added")
+                        Me.FileLogger.AddMessage("Could not add part.  Please try again.")
+                    End Try
+
                 End Try
 
-            End Try
+                RemoveHandler SEAppEvents.AfterCommandRun, AddressOf DISEApplicationEvents_AfterCommandRun
 
-            RemoveHandler SEAppEvents.AfterCommandRun, AddressOf DISEApplicationEvents_AfterCommandRun
+                If Me.AutoPattern And Occurrences.Count > PreviousOccurrencesCount Then
+                    Occurrence = CType(Occurrences(Occurrences.Count - 1), SolidEdgeAssembly.Occurrence)
+                    MaybePatternOccurrence(Occurrence)
+                End If
 
-            If Me.AutoPattern And Occurrences.Count > PreviousOccurrencesCount Then
-                Occurrence = CType(Occurrences(Occurrences.Count - 1), SolidEdgeAssembly.Occurrence)
-                MaybePatternOccurrence(Occurrence)
+            Else
+
+                TextBoxStatus.Text = $"Replacing selected with'{IO.Path.GetFileName(Filename)}'"
+
+                If SEApp.ActiveSelectSet.Count >= 1 Then
+
+                    Dim objOcc As SolidEdgeAssembly.Occurrence = CType(SEApp.ActiveSelectSet.Item(1), Occurrence)
+                    Dim objAsm As SolidEdgeAssembly.AssemblyDocument = CType(SEApp.ActiveDocument, SolidEdgeAssembly.AssemblyDocument)
+
+                    If objOcc.Type = SolidEdgeFramework.ObjectType.igPart Or objOcc.Type = SolidEdgeFramework.ObjectType.igSubAssembly Then
+
+                        SEApp.DelayCompute = True
+
+                        If ReplaceAll Then
+
+                            Dim tmpColl As New List(Of Occurrence)
+
+                            For i = 1 To objAsm.Occurrences.Count
+                                If objAsm.Occurrences.Item(i).OccurrenceFileName = objOcc.OccurrenceFileName Then tmpColl.Add(objAsm.Occurrences.Item(i))
+                            Next
+
+                            Dim tmpOcc = tmpColl.ToArray
+                            objAsm.ReplaceComponents(CType(tmpOcc, Array), Filename, SolidEdgeAssembly.ConstraintReplacementConstants.seConstraintReplacementSuppress)
+
+                        Else
+
+                            Dim tmpOcc As System.Array = {objOcc}
+                            objAsm.ReplaceComponents(tmpOcc, Filename, SolidEdgeAssembly.ConstraintReplacementConstants.seConstraintReplacementSuppress)
+
+                        End If
+
+                        SEApp.ActiveSelectSet.RefreshDisplay()
+                        SEApp.DelayCompute = False
+
+                    End If
+
+                Else
+
+                    Clipboard.Clear()
+                    Clipboard.SetText(Filename)
+                    SEApp.StartCommand(CType(AssemblyCommandConstants.AssemblyEditPaste, SolidEdgeFramework.SolidEdgeCommandConstants))
+
+                End If
+
+                RemoveHandler SEAppEvents.AfterCommandRun, AddressOf DISEApplicationEvents_AfterCommandRun  'just because it is early initialized
+
             End If
 
             Me.TopMost = True
@@ -409,9 +466,10 @@ Public Class Form_Main
         If Success Then
             Select Case UC.GetDocType(SEDoc)
                 Case "asm"
-                    SEApp.StartCommand(CType(SolidEdgeConstants.AssemblyCommandConstants.AssemblyViewFit, SolidEdgeFramework.SolidEdgeCommandConstants))
+                    'SEApp.StartCommand(CType(SolidEdgeConstants.AssemblyCommandConstants.AssemblyViewFit, SolidEdgeFramework.SolidEdgeCommandConstants))
+                    '##### Why viewfit ??? F.Arfilli
                 Case "par", "psm"
-                    SEApp.StartCommand(CType(SolidEdgeConstants.PartCommandConstants.PartViewFit, SolidEdgeFramework.SolidEdgeCommandConstants))
+                    'SEApp.StartCommand(CType(SolidEdgeConstants.PartCommandConstants.PartViewFit, SolidEdgeFramework.SolidEdgeCommandConstants))
             End Select
         End If
 
@@ -2006,6 +2064,34 @@ Public Class Form_Main
 
     Private Sub LabelAddToLibrary_Click(sender As Object, e As EventArgs) Handles LabelAddToLibrary.Click
         ButtonAddToLibrary.PerformClick()
+    End Sub
+
+    Private Sub ReplaceSelectedToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ReplaceSelectedToolStripMenuItem.Click
+
+        Dim Node = TreeView1.SelectedNode
+        If Node.Nodes.Count = 0 Then
+            Me.ErrorLogger = New HCErrorLogger
+            Me.FileLogger = Me.ErrorLogger.AddFile(Node.FullPath)
+            Process(Replace:=True)
+            ReportErrors()
+        Else
+            MsgBox("This is a category header, not an individual part.  It cannot be added to an assembly", vbOKOnly, "Category header")
+        End If
+
+    End Sub
+
+    Private Sub ReplaceAllToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ReplaceAllToolStripMenuItem.Click
+
+        Dim Node = TreeView1.SelectedNode
+        If Node.Nodes.Count = 0 Then
+            Me.ErrorLogger = New HCErrorLogger
+            Me.FileLogger = Me.ErrorLogger.AddFile(Node.FullPath)
+            Process(Replace:=True, ReplaceAll:=True)
+            ReportErrors()
+        Else
+            MsgBox("This is a category header, not an individual part.  It cannot be added to an assembly", vbOKOnly, "Category header")
+        End If
+
     End Sub
 End Class
 
