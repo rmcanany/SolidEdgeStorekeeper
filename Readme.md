@@ -175,7 +175,7 @@ You can add items to the library ahead of time.  Enable the `Pre-populate` check
   <img src="media/prepopulate_library.png">
 </p>
 
-To select an item, enable its checkbox.  Enabling the checkbox of a category header, `Size 0.073-64` in this example, will select all items below it.  You can select a category, then de-select any items you don't want included.  
+To select an item, enable its checkbox.  Enabling the checkbox of a category header will select all items (including subcategories) below it.  You can select a category, then de-select any items you don't want included.  
 
 Once satisfied with the selection, click `Add to library` to start the process.  After you do, the `Close` button text changes to `Stop`.  Click that to stop processing.  It may take a few seconds to register.  It doesn't hurt to click it twice.
 
