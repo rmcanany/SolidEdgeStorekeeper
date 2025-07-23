@@ -11,7 +11,7 @@
 @[Francesco Arfilli]
 
 **Beta Testers**
-@hawcad, @rob.wolbrink7456, @[Francesco Arfilli], @pedja, @TeeVar
+@hawcad, @rob.wolbrink7456, @[Francesco Arfilli], @pedja, @TeeVar, @Seva
 
 **Helpful feedback and bug reports**
 @SeanCresswell, @[Francesco Arfilli], @arekkul, @[Imre Szucs], @64Pacific, @Seva, @hawcad, @rob.wolbrink7456, @pedja, @TeeVar
@@ -28,7 +28,11 @@ The program handles two types of standard parts.  One consists of items like fas
   <img src="media/tree_search.png">
 </p>
 
-For items like fasteners, use **Tree Search**.  Navigate to the desired item, right-click and select `Add to assembly`.  If the item is already in your library, it is added to the assembly and the `Place Part` command is activated.  If not, it creates the new part, saves it to the library, then proceeds as above. 
+For items like fasteners, use **Tree Search**.  Navigate to the desired item, right-click and choose an action. If the part is not already in the library, the program creates it and saves it in the library.  The possible actions are:
+
+- `Add to assembly`  Adds the part to the assembly and activates the `Place part` command.
+- `Replace selected`  Replaces a selected part in the assembly.
+- `Replace all`  Replaces all occurrences of a selected part in the assembly.
 
 <p align="center">
   <img src="media/property_search.png">
@@ -50,11 +54,11 @@ Unlike web-based offerings, the program is integrated with your parts library an
 
 The program will never have every standard part in the world, but it can be improved.  That's where **YOU** come in!  Contributions are welcome.  Please message me on the [<ins>**Solid Edge Forum**</ins>](https://community.sw.siemens.com/s/topic/0TO4O000000MihiWAC/solid-edge), or raise an [<ins>**Issue on GitHub**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/issues), for ideas on how to get started.
 
-Uh-oh.  The Marketing guy just showed up.  He wants to *"Synergize our stake holders and leverage this cross-promotion opportunity"*.  Uh, who talks like that?  Anyway, here he is.
+Uh-oh.  The Marketing guy just showed up.  He wants to *"Synergize our stake holders and leverage this cross-promotion opportunity"*.  Who talks like that?  Anyway, here he is.
 
->  *Hello there!! I'm Big Mike!  Do you want to do things better and faster with less work?!  Of course you do!  That's why you should check out [<ins>**Solid Edge Housekeeper**</ins>](https://github.com/rmcanany/SolidEdgeHousekeeper#readme)!  It is a batch utility for finding annoying little errors in your project!  You're going to love it!!*
+>  *Hello there!! I'm Big Mike!  Do you want to do things better and faster with less work?!  Of course you do!  That's why you need [<ins>**Solid Edge Housekeeper**</ins>](https://github.com/rmcanany/SolidEdgeHousekeeper#readme)!  It is a batch utility for finding annoying little errors in your project!  You're going to love it!!*
 
-Sorry about that.  Shall we continue?
+Sorry about that.  Now where were we?
 
 ## INSTALLATION
 
@@ -112,7 +116,7 @@ The spreadsheet contains the variables required for each size of each type of pa
 
 The material table is usually your normal SE material table.  However, for a quick test of the program, an alternative is to use `Storekeeper.mtl` from `Preferences\Templates`.  Copy it to your Solid Edge Materials directory to make it available.  On my machine, that location is `C:\Program Files\Siemens\Solid Edge 2024\Preferences\Materials`.  
 
-If you decide to continue using the program, you would eventually want to utilize your own material table, updating material names in the spreadsheet as needed. 
+If you decide to continue using the program, you would eventually want to utilize your own material table, updating material names in the spreadsheet and templates as needed. 
 
 - **OPTIONS**
   - `Read the Excel file each time the program is launched`  
