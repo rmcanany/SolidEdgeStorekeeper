@@ -265,6 +265,8 @@ Public Class Form_Main
 
         If Not IO.File.Exists(Filename) Then
 
+            SEApp.SuspendMRU() ' Suspend MRU to prevent adding the file to the MRU list
+
             TextBoxStatus.Text = "Getting template name"
             Dim TemplateName As String = GetTemplateNameFormula()
             If TemplateName Is Nothing Then
@@ -301,8 +303,11 @@ Public Class Form_Main
             Else
                 SEDoc.Close()
                 SEApp.DoIdle()
+                SEApp.ResumeMRU()
                 Exit Sub
             End If
+
+            SEApp.ResumeMRU()
 
         End If
 
