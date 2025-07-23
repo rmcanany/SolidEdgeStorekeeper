@@ -98,25 +98,23 @@ The program needs to know where to store the standard parts, and for fastener-li
   <img src="media/tree_search_options.png">
 </p>
 
-- **LIBRARY DIRECTORY**
+- **LIBRARY DIRECTORY**  
+The library is where the standard parts are stored.  The default is in `Preferences\Library` under the `Storekeeper` main directory.  
 
-The library is where the standard parts are stored.  The default is in `Preferences\Library` under the `Storekeeper` main directory.  Note it is created the first time you run the program; it won't be there before that.  As noted above, if you want to access your vendor-specific standard parts, they must be in the library.  You can place them in one or more subdirectories if desired.
+  Note it is created the first time you run the program; it won't be there before that.  As noted above, if you want to access your vendor-specific standard parts, they must be in the library.  You can place them in one or more subdirectories if desired.
 
-- **TEMPLATE DIRECTORY** 
+- **TEMPLATE DIRECTORY**  
+The templates are SE part files that have variable-table-driven geometry to create new parts of a given type.  By default they are stored in the `Preferences\Templates` folder.
 
-The templates are SE part files that have variable-table-driven geometry to create new parts of a given type.  By default they are stored in the `Preferences\Templates` folder.  
+  As noted at the outset, the templates were created in SE2024.  They will only work if you're using that version or newer.  If you create new ones for an older version, I would be happy to host them on GitHub -- crediting you as a **Contributor**, of course!
 
-As noted at the outset, the templates were created in SE2024.  They will only work if you're using that version or newer.  If you create new ones for an older version, I would be happy to host them on GitHub -- crediting you as a **Contributor**, of course!
-
-- **DATA DIRECTORY** 
-
+- **DATA DIRECTORY**  
 The spreadsheet contains the variables required for each size of each type of part.  By default, it is stored in the `Preferences\Data` directory.  
 
-- **MATERIAL TABLE** 
-
+- **MATERIAL TABLE**  
 The material table is usually your normal SE material table.  However, for a quick test of the program, an alternative is to use `Storekeeper.mtl` from `Preferences\Templates`.  Copy it to your Solid Edge Materials directory to make it available.  On my machine, that location is `C:\Program Files\Siemens\Solid Edge 2024\Preferences\Materials`.  
 
-If you decide to continue using the program, you would eventually want to utilize your own material table, updating material names in the spreadsheet and templates as needed. 
+  If you decide to continue using the program, you would eventually want to utilize your own material table, updating material names in the spreadsheet and templates as needed. 
 
 - **OPTIONS**
   - `Read the Excel file each time the program is launched`  
@@ -127,8 +125,23 @@ If you decide to continue using the program, you would eventually want to utiliz
 	This works with `Smart Patterns` and `User-Defined Patterns` (that's a hole with multiple hole circles in the profile).  It does not currently work with (the default) `Fast Patterns` unfortunately, unless you get lucky and pick the hole that was used to create the pattern.
   - `Add any property not already in file`  
 	As mentioned above, besides creating geometry, the program can also update file properties.  Enabling this option tells the program to add any (custom) property not already in the file.
+	
   - `Disable fine thread warning`  
-	The program is currently unable to properly set the thread size for ANSI UNF external threads.  It warns you if that condition arises and provide instructions how to fix it.  Enabling this option suppresses that warning.
+	The program is currently unable to properly set the thread size for ANSI UNF external threads.  The program logs a warning if this occurs.  Enabling this option suppresses that warning.
+	
+	The condition can cause issues with interference checking.  Fixing it is optional.  To do so, open the file and edit the Thread definition.  On the Parameters Step, you'll note the size designation is followed by an asterix (*).  Click the drop down and select the one without it.
+	
+	![Thread Fix](media/fine_thread_fix.png)
+	
+  - `Process templates in background`  
+	A new part must be opened in Solid Edge to update its parameters.  This setting tells the program to not display it in the user interface.
+	
+  - `Replace part: Suppress failed constraint`  
+	When replacing a part, some constraints may fail to get resolved.  If this occurs, this option tells the program to suppress the constraint.
+	
+  - `Replace part: Allow failed constraint`  
+	With the same situation as above, this option tells the program to leave the constraint in the failed state.
+	
   - `Check for new version at startup`  
 	If you don't need a reminder about new versions, disable the check here.
 
