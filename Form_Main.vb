@@ -68,8 +68,8 @@ Public Class Form_Main
     End Property
     Public Property FileLogger As Logger
     Public Property ProcessTemplateInBackground As Boolean = True
-    Public Property FailedConstraintSuppress As Boolean = True
-    Public Property FailedConstraintAllow As Boolean
+    Public Property FailedConstraintSuppress As Boolean
+    Public Property FailedConstraintAllow As Boolean = True
 
 
 
@@ -160,9 +160,6 @@ Public Class Form_Main
         If Me.CheckNewVersion Then
             UP.CheckForNewerVersion(Me.Version)
         End If
-
-        Me.PrePopulate = False
-        Me.AddToLibraryOnly = False
 
         TextBoxStatus.Text = $"{Me.NodeCount} items available"
 
@@ -2103,6 +2100,10 @@ Public Class Form_Main
 
         Dim Node = TreeView1.SelectedNode
         If Node.Nodes.Count = 0 Then
+            If Not (Me.FailedConstraintSuppress Or Me.FailedConstraintAllow) Then
+                MsgBox("Set how to handle failed constraints on the Tree Search Options dialog", vbOKOnly)
+                Exit Sub
+            End If
             Me.ErrorLogger = New HCErrorLogger
             Me.FileLogger = Me.ErrorLogger.AddFile(Node.FullPath)
             Process(Replace:=True)
@@ -2117,6 +2118,10 @@ Public Class Form_Main
 
         Dim Node = TreeView1.SelectedNode
         If Node.Nodes.Count = 0 Then
+            If Not (Me.FailedConstraintSuppress Or Me.FailedConstraintAllow) Then
+                MsgBox("Set how to handle failed constraints on the Tree Search Options dialog", vbOKOnly)
+                Exit Sub
+            End If
             Me.ErrorLogger = New HCErrorLogger
             Me.FileLogger = Me.ErrorLogger.AddFile(Node.FullPath)
             Process(Replace:=True, ReplaceAll:=True)
