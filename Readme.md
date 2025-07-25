@@ -16,6 +16,18 @@
 **Helpful feedback and bug reports**
 @SeanCresswell, @[Francesco Arfilli], @arekkul, @[Imre Szucs], @64Pacific, @Seva, @hawcad, @rob.wolbrink7456, @pedja, @TeeVar
 
+*Feedback from users*
+
+> OMG .....love your work buddy!
+
+>  Management of standard parts is a huge use of my time and this may solve that!
+
+> Thx, another great tool for SolidEdge​ Users!
+
+> Cool tool!  I have been looking for something just like this.  (...) Great job, and making it open source is just extra good karma.
+
+> Another excellent utility. Appreciate your contributions to the community. 
+
 ## DESCRIPTION
 
 Solid Edge Storekeeper is a utility to create, organize, and share standard parts.  It is free and open source and you can find it [<ins>**Here**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#readme).  Please note the standard part templates were created with SE2024.  You will need that version or newer to use them.
