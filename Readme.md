@@ -7,13 +7,13 @@
 
 ## CREDITS
 
-**Contributors**
+**Contributors**  
 @[Francesco Arfilli]
 
-**Beta Testers**
+**Beta Testers**  
 @hawcad, @rob.wolbrink7456, @[Francesco Arfilli], @pedja, @TeeVar, @Seva
 
-**Helpful feedback and bug reports**
+**Helpful feedback and bug reports**  
 @SeanCresswell, @[Francesco Arfilli], @arekkul, @[Imre Szucs], @64Pacific, @Seva, @hawcad, @rob.wolbrink7456, @pedja, @TeeVar
 
 *Feedback from users*
@@ -111,7 +111,7 @@ The program needs to know where to store the standard parts, and for fastener-li
 </p>
 
 - **LIBRARY DIRECTORY**  
-The library is where the standard parts are stored.  The default is in `Preferences\Library` under the `Storekeeper` main directory.  
+The library is where the standard parts you create are stored.  The default is in `Preferences\Library` under the `Storekeeper` main directory.  
 
   Note it is created the first time you run the program; it won't be there before that.  As noted above, if you want to access your vendor-specific standard parts, they must be in the library.  You can place them in one or more subdirectories if desired.
 
@@ -153,6 +153,9 @@ The material table is usually your normal SE material table.  However, for a qui
 	
   - `Replace part: Allow failed constraint`  
 	With the same situation as above, this option tells the program to leave the constraint in the failed state.
+	
+  - `Do not show processed files in the Most Recently Used list`  
+	Enable this option to keep the program from adding newly-generated standard parts to the Most Recently Used list.  Note this function was added to Solid Edge in version 2020.  If you are running an earlier version, this option must be disabled.
 	
   - `Check for new version at startup`  
 	If you don't need a reminder about new versions, disable the check here.

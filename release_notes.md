@@ -16,7 +16,7 @@ Feel free to report bugs and/or ideas for improvement on the [<ins>**Solid Edge 
 
 ### Replace Part
 
-Contributed by **@[Francesco Arfilli]**.  Thank you!
+Contributed by **@[Francesco Arfilli].**  Thank you!
 
 Added the ability to replace selected parts in the assembly.
 
@@ -44,11 +44,17 @@ See the [<ins>**Pre-Populating the Library**</ins>](https://github.com/rmcanany/
 
 ### Other
 
-Fixed an issue where the form settings were not being saved in certain conditions. (Thank you **@TeeVar!**)
-
-Fixed an issue where moving the program to a new directory did not allow the user to access the interface to update file locations.   (Thank you again **@TeeVar!**)
-
 Fixed an issue where accessing certain file properties was causing an exception.  (Contributed by **@[Francesco Arfilli].**  Thank you!)
+
+The following were all reported by **@TeeVar**.  Thank you!
+
+- Fixed an issue where the form settings were not being saved in certain conditions.
+
+- Fixed an issue where moving the program to a new directory did not allow the user to access the interface to update file locations.  
+
+- Fixed an issue where the program was halting when Solid Edge versions prior to V2020 were being used.
+
+- Fixed an issue where new standard parts were not being saved to the `Library` directory.
 
 ## V2025.2
 

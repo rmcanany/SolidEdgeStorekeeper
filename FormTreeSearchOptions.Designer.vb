@@ -46,8 +46,8 @@ Partial Class FormTreeSearchOptions
         CheckBoxProcessTemplateInBackground = New CheckBox()
         CheckBoxFailedConstraintSuppress = New CheckBox()
         CheckBoxFailedConstraintAllow = New CheckBox()
-        ToolTip1 = New ToolTip(components)
         CheckBoxSuspendMRU = New CheckBox()
+        ToolTip1 = New ToolTip(components)
         TableLayoutPanel1.SuspendLayout()
         TableLayoutPanel2.SuspendLayout()
         SuspendLayout()
@@ -98,7 +98,7 @@ Partial Class FormTreeSearchOptions
         TableLayoutPanel1.RowStyles.Add(New RowStyle())
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Percent, 100F))
-        TableLayoutPanel1.Size = New Size(472, 479)
+        TableLayoutPanel1.Size = New Size(472, 464)
         TableLayoutPanel1.TabIndex = 0
         ' 
         ' CheckBoxDisableFineThreadWarning
@@ -265,13 +265,13 @@ Partial Class FormTreeSearchOptions
         TableLayoutPanel2.Name = "TableLayoutPanel2"
         TableLayoutPanel2.RowCount = 1
         TableLayoutPanel2.RowStyles.Add(New RowStyle(SizeType.Percent, 100F))
-        TableLayoutPanel2.Size = New Size(370, 53)
+        TableLayoutPanel2.Size = New Size(370, 38)
         TableLayoutPanel2.TabIndex = 5
         ' 
         ' ButtonOK
         ' 
         ButtonOK.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        ButtonOK.Location = New Point(130, 27)
+        ButtonOK.Location = New Point(130, 12)
         ButtonOK.Name = "ButtonOK"
         ButtonOK.Size = New Size(75, 23)
         ButtonOK.TabIndex = 1
@@ -281,7 +281,7 @@ Partial Class FormTreeSearchOptions
         ' ButtonCancel
         ' 
         ButtonCancel.Anchor = AnchorStyles.Bottom
-        ButtonCancel.Location = New Point(211, 27)
+        ButtonCancel.Location = New Point(211, 12)
         ButtonCancel.Name = "ButtonCancel"
         ButtonCancel.Size = New Size(75, 23)
         ButtonCancel.TabIndex = 0
@@ -291,7 +291,7 @@ Partial Class FormTreeSearchOptions
         ' ButtonHelp
         ' 
         ButtonHelp.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        ButtonHelp.Location = New Point(292, 27)
+        ButtonHelp.Location = New Point(292, 12)
         ButtonHelp.Name = "ButtonHelp"
         ButtonHelp.Size = New Size(75, 23)
         ButtonHelp.TabIndex = 2
@@ -364,16 +364,16 @@ Partial Class FormTreeSearchOptions
         CheckBoxSuspendMRU.Location = New Point(3, 365)
         CheckBoxSuspendMRU.Name = "CheckBoxSuspendMRU"
         CheckBoxSuspendMRU.Padding = New Padding(5, 0, 0, 0)
-        CheckBoxSuspendMRU.Size = New Size(336, 19)
+        CheckBoxSuspendMRU.Size = New Size(330, 19)
         CheckBoxSuspendMRU.TabIndex = 23
-        CheckBoxSuspendMRU.Text = "Do not show processed files in the Most Recently Used list"
+        CheckBoxSuspendMRU.Text = "Do not add files to the Recently Used list (SE2020 and up)"
         CheckBoxSuspendMRU.UseVisualStyleBackColor = True
         ' 
         ' FormTreeSearchOptions
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(472, 479)
+        ClientSize = New Size(472, 464)
         Controls.Add(TableLayoutPanel1)
         Icon = CType(resources.GetObject("$this.Icon"), Icon)
         Name = "FormTreeSearchOptions"
