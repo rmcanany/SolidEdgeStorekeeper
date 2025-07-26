@@ -47,6 +47,7 @@ Partial Class FormTreeSearchOptions
         CheckBoxFailedConstraintSuppress = New CheckBox()
         CheckBoxFailedConstraintAllow = New CheckBox()
         ToolTip1 = New ToolTip(components)
+        CheckBoxSuspendMRU = New CheckBox()
         TableLayoutPanel1.SuspendLayout()
         TableLayoutPanel2.SuspendLayout()
         SuspendLayout()
@@ -75,6 +76,7 @@ Partial Class FormTreeSearchOptions
         TableLayoutPanel1.Controls.Add(CheckBoxProcessTemplateInBackground, 0, 9)
         TableLayoutPanel1.Controls.Add(CheckBoxFailedConstraintSuppress, 0, 10)
         TableLayoutPanel1.Controls.Add(CheckBoxFailedConstraintAllow, 0, 11)
+        TableLayoutPanel1.Controls.Add(CheckBoxSuspendMRU, 0, 12)
         TableLayoutPanel1.Dock = DockStyle.Fill
         TableLayoutPanel1.Location = New Point(0, 0)
         TableLayoutPanel1.Name = "TableLayoutPanel1"
@@ -91,12 +93,12 @@ Partial Class FormTreeSearchOptions
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
-        TableLayoutPanel1.RowStyles.Add(New RowStyle())
+        TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle())
         TableLayoutPanel1.RowStyles.Add(New RowStyle())
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Percent, 100F))
-        TableLayoutPanel1.Size = New Size(472, 439)
+        TableLayoutPanel1.Size = New Size(472, 479)
         TableLayoutPanel1.TabIndex = 0
         ' 
         ' CheckBoxDisableFineThreadWarning
@@ -259,17 +261,17 @@ Partial Class FormTreeSearchOptions
         TableLayoutPanel2.Controls.Add(ButtonCancel, 1, 0)
         TableLayoutPanel2.Controls.Add(ButtonHelp, 2, 0)
         TableLayoutPanel2.Dock = DockStyle.Fill
-        TableLayoutPanel2.Location = New Point(99, 393)
+        TableLayoutPanel2.Location = New Point(99, 423)
         TableLayoutPanel2.Name = "TableLayoutPanel2"
         TableLayoutPanel2.RowCount = 1
         TableLayoutPanel2.RowStyles.Add(New RowStyle(SizeType.Percent, 100F))
-        TableLayoutPanel2.Size = New Size(370, 43)
+        TableLayoutPanel2.Size = New Size(370, 53)
         TableLayoutPanel2.TabIndex = 5
         ' 
         ' ButtonOK
         ' 
         ButtonOK.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        ButtonOK.Location = New Point(130, 17)
+        ButtonOK.Location = New Point(130, 27)
         ButtonOK.Name = "ButtonOK"
         ButtonOK.Size = New Size(75, 23)
         ButtonOK.TabIndex = 1
@@ -279,7 +281,7 @@ Partial Class FormTreeSearchOptions
         ' ButtonCancel
         ' 
         ButtonCancel.Anchor = AnchorStyles.Bottom
-        ButtonCancel.Location = New Point(211, 17)
+        ButtonCancel.Location = New Point(211, 27)
         ButtonCancel.Name = "ButtonCancel"
         ButtonCancel.Size = New Size(75, 23)
         ButtonCancel.TabIndex = 0
@@ -289,7 +291,7 @@ Partial Class FormTreeSearchOptions
         ' ButtonHelp
         ' 
         ButtonHelp.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        ButtonHelp.Location = New Point(292, 17)
+        ButtonHelp.Location = New Point(292, 27)
         ButtonHelp.Name = "ButtonHelp"
         ButtonHelp.Size = New Size(75, 23)
         ButtonHelp.TabIndex = 2
@@ -303,7 +305,7 @@ Partial Class FormTreeSearchOptions
         CheckBoxCheckNewVersion.Checked = True
         CheckBoxCheckNewVersion.CheckState = CheckState.Checked
         TableLayoutPanel1.SetColumnSpan(CheckBoxCheckNewVersion, 2)
-        CheckBoxCheckNewVersion.Location = New Point(3, 365)
+        CheckBoxCheckNewVersion.Location = New Point(3, 395)
         CheckBoxCheckNewVersion.Name = "CheckBoxCheckNewVersion"
         CheckBoxCheckNewVersion.Padding = New Padding(5, 0, 0, 0)
         CheckBoxCheckNewVersion.Size = New Size(197, 19)
@@ -354,11 +356,24 @@ Partial Class FormTreeSearchOptions
         CheckBoxFailedConstraintAllow.Text = "Replace part: Allow failed constraint"
         CheckBoxFailedConstraintAllow.UseVisualStyleBackColor = True
         ' 
+        ' CheckBoxSuspendMRU
+        ' 
+        CheckBoxSuspendMRU.Anchor = AnchorStyles.Left
+        CheckBoxSuspendMRU.AutoSize = True
+        TableLayoutPanel1.SetColumnSpan(CheckBoxSuspendMRU, 2)
+        CheckBoxSuspendMRU.Location = New Point(3, 365)
+        CheckBoxSuspendMRU.Name = "CheckBoxSuspendMRU"
+        CheckBoxSuspendMRU.Padding = New Padding(5, 0, 0, 0)
+        CheckBoxSuspendMRU.Size = New Size(336, 19)
+        CheckBoxSuspendMRU.TabIndex = 23
+        CheckBoxSuspendMRU.Text = "Do not show processed files in the Most Recently Used list"
+        CheckBoxSuspendMRU.UseVisualStyleBackColor = True
+        ' 
         ' FormTreeSearchOptions
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(472, 439)
+        ClientSize = New Size(472, 479)
         Controls.Add(TableLayoutPanel1)
         Icon = CType(resources.GetObject("$this.Icon"), Icon)
         Name = "FormTreeSearchOptions"
@@ -393,4 +408,5 @@ Partial Class FormTreeSearchOptions
     Friend WithEvents CheckBoxProcessTemplateInBackground As CheckBox
     Friend WithEvents CheckBoxFailedConstraintSuppress As CheckBox
     Friend WithEvents CheckBoxFailedConstraintAllow As CheckBox
+    Friend WithEvents CheckBoxSuspendMRU As CheckBox
 End Class

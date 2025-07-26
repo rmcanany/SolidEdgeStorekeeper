@@ -149,6 +149,19 @@ Public Class FormTreeSearchOptions
         End Set
     End Property
 
+    Private _SuspendMRU As Boolean
+    Public Property SuspendMRU As Boolean
+        Get
+            Return _SuspendMRU
+        End Get
+        Set(value As Boolean)
+            _SuspendMRU = value
+            If Me.TableLayoutPanel1 IsNot Nothing Then
+                CheckBoxSuspendMRU.Checked = SuspendMRU
+            End If
+        End Set
+    End Property
+
     Private _CheckNewVersion As Boolean
     Public Property CheckNewVersion As Boolean
         Get
@@ -247,6 +260,7 @@ Public Class FormTreeSearchOptions
         Me.ProcessTemplateInBackground = FMain.ProcessTemplateInBackground
         Me.FailedConstraintSuppress = FMain.FailedConstraintSuppress
         Me.FailedConstraintAllow = FMain.FailedConstraintAllow
+        Me.SuspendMRU = FMain.SuspendMRU
         Me.CheckNewVersion = FMain.CheckNewVersion
     End Sub
 
@@ -267,6 +281,7 @@ Public Class FormTreeSearchOptions
         FMain.ProcessTemplateInBackground = Me.ProcessTemplateInBackground
         FMain.FailedConstraintSuppress = Me.FailedConstraintSuppress
         FMain.FailedConstraintAllow = Me.FailedConstraintAllow
+        FMain.SuspendMRU = Me.SuspendMRU
         FMain.CheckNewVersion = Me.CheckNewVersion
 
         Me.DialogResult = DialogResult.OK
@@ -317,4 +332,9 @@ Public Class FormTreeSearchOptions
         Me.FailedConstraintAllow = CheckBoxFailedConstraintAllow.Checked
         Me.FailedConstraintSuppress = Not Me.FailedConstraintAllow
     End Sub
+
+    Private Sub CheckBoxSuspendMRU_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBoxSuspendMRU.CheckedChanged
+        Me.SuspendMRU = CheckBoxSuspendMRU.Checked
+    End Sub
+
 End Class

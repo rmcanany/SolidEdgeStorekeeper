@@ -8,6 +8,8 @@ Imports SolidEdgeConstants
 Public Class Form_Main
 
     Private Property Version As String = "2025.3"
+    Private Property PreviewVersion As String = "Preview 04"  ' Empty string if not a preview
+
 
     Private _SelectedNodeFullPath As String
     Public Property SelectedNodeFullPath As String
@@ -70,6 +72,7 @@ Public Class Form_Main
     Public Property ProcessTemplateInBackground As Boolean = True
     Public Property FailedConstraintSuppress As Boolean
     Public Property FailedConstraintAllow As Boolean = True
+    Public Property SuspendMRU As Boolean = False
 
 
 
@@ -155,7 +158,11 @@ Public Class Form_Main
         UP.CheckVersionFormat(Me.Version)
 
         ' Form title
-        Me.Text = $"Solid Edge Storekeeper {Me.Version}"
+        If Me.PreviewVersion = "" Then
+            Me.Text = $"Solid Edge Storekeeper {Me.Version}"
+        Else
+            Me.Text = $"Solid Edge Storekeeper {Me.Version} {Me.PreviewVersion}"
+        End If
 
         If Me.CheckNewVersion Then
             UP.CheckForNewerVersion(Me.Version)
@@ -265,7 +272,7 @@ Public Class Form_Main
 
         If Not IO.File.Exists(Filename) Then
 
-            SEApp.SuspendMRU() ' Suspend MRU to prevent adding the file to the MRU list
+            If Me.SuspendMRU Then SEApp.SuspendMRU() ' Suspend MRU to prevent adding the file to the MRU list
 
             TextBoxStatus.Text = "Getting template name"
             Dim TemplateName As String = GetTemplateNameFormula()
@@ -308,11 +315,11 @@ Public Class Form_Main
             Else
                 SEDoc.Close()
                 SEApp.DoIdle()
-                SEApp.ResumeMRU()
+                If Me.SuspendMRU Then SEApp.ResumeMRU()
                 Exit Sub
             End If
 
-            SEApp.ResumeMRU()
+            If Me.SuspendMRU Then SEApp.ResumeMRU()
 
         End If
 
