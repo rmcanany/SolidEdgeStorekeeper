@@ -162,6 +162,19 @@ Public Class FormTreeSearchOptions
         End Set
     End Property
 
+    Private _AllowCommaDelimiters As Boolean
+    Public Property AllowCommaDelimiters As Boolean
+        Get
+            Return _AllowCommaDelimiters
+        End Get
+        Set(value As Boolean)
+            _AllowCommaDelimiters = value
+            If Me.TableLayoutPanel1 IsNot Nothing Then
+                CheckBoxAllowCommaDelimiters.Checked = AllowCommaDelimiters
+            End If
+        End Set
+    End Property
+
     Private _CheckNewVersion As Boolean
     Public Property CheckNewVersion As Boolean
         Get
@@ -261,6 +274,7 @@ Public Class FormTreeSearchOptions
         Me.FailedConstraintSuppress = FMain.FailedConstraintSuppress
         Me.FailedConstraintAllow = FMain.FailedConstraintAllow
         Me.SuspendMRU = FMain.SuspendMRU
+        Me.AllowCommaDelimiters = FMain.AllowCommaDelimiters
         Me.CheckNewVersion = FMain.CheckNewVersion
     End Sub
 
@@ -282,6 +296,7 @@ Public Class FormTreeSearchOptions
         FMain.FailedConstraintSuppress = Me.FailedConstraintSuppress
         FMain.FailedConstraintAllow = Me.FailedConstraintAllow
         FMain.SuspendMRU = Me.SuspendMRU
+        FMain.AllowCommaDelimiters = Me.AllowCommaDelimiters
         FMain.CheckNewVersion = Me.CheckNewVersion
 
         Me.DialogResult = DialogResult.OK
@@ -337,4 +352,7 @@ Public Class FormTreeSearchOptions
         Me.SuspendMRU = CheckBoxSuspendMRU.Checked
     End Sub
 
+    Private Sub CheckBoxAllowCommaDelimiters_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBoxAllowCommaDelimiters.CheckedChanged
+        Me.AllowCommaDelimiters = CheckBoxAllowCommaDelimiters.Checked
+    End Sub
 End Class
