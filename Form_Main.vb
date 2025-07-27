@@ -8,7 +8,9 @@ Imports SolidEdgeConstants
 Public Class Form_Main
 
     Private Property Version As String = "2025.3"
-    Private Property PreviewVersion As String = ""  ' Empty string if not a preview
+
+    'Private Property PreviewVersion As String = ""  ' Empty string if not a preview
+    Private Property PreviewVersion As String = "Preview 05"  ' Empty string if not a preview
 
 
     Private _SelectedNodeFullPath As String
@@ -474,11 +476,15 @@ Public Class Form_Main
 
         For Each Prop As Prop In VariableProps
             If VariableDict.Keys.Contains(Prop.Name) Then
-                If IsNumeric(Prop.Value) Then
+                Try
                     VariableDict(Prop.Name).Formula = Prop.Value
-                Else
+                    'VariableDict(Prop.Name).Formula = Prop.Value.Replace(".", ",")
+                Catch ex As Exception
                     Me.FileLogger.AddMessage($"Cannot process value for '{Prop.Name}': '{Prop.Value}'")
-                End If
+                End Try
+                'If IsNumeric(Prop.Value) Then
+                'Else
+                'End If
             Else
                 Me.FileLogger.AddMessage($"Variable not found: '{Prop.Name}'")
             End If
