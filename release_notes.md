@@ -56,6 +56,8 @@ The following were all reported by **@TeeVar**.  Thank you!
 
 - Fixed an issue where new standard parts were not being saved to the `Library` directory.
 
+- Fixed an issue where commas were replaced with periods in variables and properties.  The fix is somewhat experimental.  Enable the `Allow comma delimiters` on the Tree Search Options dialog to try it.
+
 ## V2025.2
 
 ### Generate Xml File

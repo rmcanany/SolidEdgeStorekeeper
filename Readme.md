@@ -70,7 +70,7 @@ Uh-oh.  The Marketing guy just showed up.  He wants to *"Synergize our stake hol
 
 >  *Hello there!! I'm Big Mike!  Do you want to do things better and faster with less work?!  Of course you do!  That's why you need [<ins>**Solid Edge Housekeeper**</ins>](https://github.com/rmcanany/SolidEdgeHousekeeper#readme)!  It is a batch utility for finding annoying little errors in your project!  You're going to love it!!*
 
-Sorry about that.  Now where were we?
+Sorry about that.  Let's move on.
 
 ## INSTALLATION
 
