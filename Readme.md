@@ -11,7 +11,7 @@
 @[Francesco Arfilli]
 
 **Beta Testers**
-@hawcad, @rob.wolbrink7456, @[Francesco Arfilli], @pedja, @TeeVar
+@hawcad, @rob.wolbrink7456, @[Francesco Arfilli], @pedja, @TeeVar, @Seva
 
 **Helpful feedback and bug reports**
 @SeanCresswell, @[Francesco Arfilli], @arekkul, @[Imre Szucs], @64Pacific, @Seva, @hawcad, @rob.wolbrink7456, @pedja, @TeeVar
