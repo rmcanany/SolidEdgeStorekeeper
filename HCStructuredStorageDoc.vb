@@ -7,6 +7,7 @@ Imports System.IO
 Imports System.Text
 Imports System.Text.RegularExpressions
 Imports System.Xml
+'Imports Microsoft.PowerShell.Commands.Internal.Format
 Imports OpenMcdf
 Imports OpenMcdf.Extensions
 Imports OpenMcdf.Extensions.OLEProperties
@@ -15,6 +16,7 @@ Imports OpenMcdf.Extensions.OLEProperties
 Public Class HCStructuredStorageDoc
 
     Public Property FullName As String
+    Public Property OpenReadWrite As Boolean
 
     Private Property PropSets As PropertySets
     Private Property fs As FileStream
@@ -24,6 +26,7 @@ Public Class HCStructuredStorageDoc
     Private Property PropertiesData As HCPropertiesData
     Private Property MatTable As MaterialTable
     Private Property DocType As String 'asm, dft, par, psm, mtl
+
 
     Public Enum StatusSecurityMapping
         ssmAvailable = 0
@@ -35,18 +38,19 @@ Public Class HCStructuredStorageDoc
     End Enum
 
 
-    Public Sub New(_FullName As String, Optional OpenReadWrite As Boolean = True)
+    Public Sub New(_FullName As String, Optional _OpenReadWrite As Boolean = True)
 
         Me.FullName = _FullName
+        Me.OpenReadWrite = _OpenReadWrite
 
         Try
-            If OpenReadWrite Then
+            If _OpenReadWrite Then
                 Me.fs = New FileStream(Me.FullName, FileMode.Open, FileAccess.ReadWrite)
             Else
                 Me.fs = New FileStream(Me.FullName, FileMode.Open, FileAccess.Read)
             End If
         Catch ex As Exception
-            Dim L As Integer = Me.FullName.Count
+            'Dim L As Integer = Me.FullName.Count
             Throw New Exception(String.Format("Unable to open file.  {0}", ex.Message))
         End Try
 
@@ -67,7 +71,7 @@ Public Class HCStructuredStorageDoc
 
     Public Sub ReadProperties(_PropertiesData As HCPropertiesData)
         Me.PropertiesData = _PropertiesData
-        Me.PropSets = New PropertySets(Me.cf, Me.FullName)
+        Me.PropSets = New PropertySets(Me.cf, Me.FullName, Me.OpenReadWrite)
     End Sub
 
     Public Sub ReadLinks(_LinkManagementOrder As List(Of String))
@@ -350,7 +354,7 @@ Public Class HCStructuredStorageDoc
 
     Public Function SubstitutePropertyFormulas(
          InString As String,
-         ValidFilenameRequired As Boolean,
+         ErrorLogger As Logger,
          Optional IsExpression As Boolean = False
          ) As String
 
@@ -383,6 +387,26 @@ Public Class HCStructuredStorageDoc
         Dim MatchString As Match
         Dim Pattern As String
 
+        Dim ExpressionLanguage As String = ""
+
+        If IsExpression And InString.StartsWith("EXPRESSION_") Then
+            Dim TextToRemove As String = InString.Split(CChar(vbCrLf))(0)  ' EXPRESSION_VB, EXPRESSION_SQL
+
+            Select Case TextToRemove
+                Case "EXPRESSION_VB"
+                    ExpressionLanguage = "VB"
+                Case "EXPRESSION_NCalc"
+                    ExpressionLanguage = "NCalc"
+                Case Else
+                    ErrorLogger.AddMessage($"SubstitutePropertyFormulas: Expression header not recognized '{TextToRemove}'")
+                    'MsgBox($"SubstitutePropertyFormulas: Expression header not recognized '{TextToRemove}'")
+                    Return Nothing
+            End Select
+
+            InString = InString.Replace($"{TextToRemove}{vbCrLf}", "")
+
+        End If
+
 
         ' Any number of substrings that start with "%{" and end with the first encountered "}".
         Pattern = "%{[^}]*}"
@@ -398,8 +422,9 @@ Public Class HCStructuredStorageDoc
 
         If Proceed Then
             For Each Formula In Formulas
-                DocValue = ProcessFormula(Formula, ValidFilenameRequired)
+                DocValue = ProcessFormula(Formula, ErrorLogger)
                 If DocValue Is Nothing Then
+                    ErrorLogger.AddMessage($"Could not process formula '{Formula}'")
                     Return Nothing
                 Else
                     DocValues.Add(DocValue)
@@ -419,18 +444,30 @@ Public Class HCStructuredStorageDoc
         'If Proceed Then
         '    If IsExpression Then
 
-        '        Dim nCalcExpression As New ExtendedExpression(OutString)
+        '        If ExpressionLanguage = "" Or ExpressionLanguage = "NCalc" Then
+        '            Dim nCalcExpression As New ExtendedExpression(OutString)
+        '            Try
+        '                Dim A = nCalcExpression.Evaluate()
+        '                OutString = A.ToString
+        '            Catch ex As Exception
+        '                ErrorLogger.AddMessage($"Could not process expression '{OutString}'")
+        '                OutString = Nothing
+        '            End Try
 
-        '        Try
-        '            Dim A = nCalcExpression.Evaluate()
+        '        Else  ' Must be VB
+        '            Dim UPS As New UtilsPowerShell
+        '            Dim PowerShellFileContents As List(Of String) = UPS.BuildExpressionFile(OutString.Split(CChar(vbCrLf)).ToList)
+        '            Dim PowerShellFilename As String = $"{IO.Path.GetTempPath}\HousekeeperExpression.ps1"
+        '            IO.File.WriteAllLines(PowerShellFilename, PowerShellFileContents)
 
-        '            OutString = A.ToString
+        '            Try
+        '                OutString = UPS.RunExpressionScript(PowerShellFilename)
+        '            Catch ex As Exception
+        '                ErrorLogger.AddMessage($"Could not process expression '{OutString}'")
+        '                OutString = Nothing
+        '            End Try
 
-        '        Catch ex As Exception
-
-        '            OutString = Nothing
-
-        '        End Try
+        '        End If
 
         '    End If
         'End If
@@ -439,8 +476,46 @@ Public Class HCStructuredStorageDoc
         Return OutString
     End Function
 
+    Public Function GetAllProps() As List(Of Tuple(Of String, String, String, Object))
+        ' Returns a list of tuples.  Each tuple contains these values.
+        ' (
+        '    PropertySetActualName as String,
+        '    PropertyNameEnglish as String,
+        '    PropertyTypeName as String,
+        '    PropertyValue as Object
+        ' )
 
-    Private Function ProcessFormula(Formula As String, ValidFilenameRequired As Boolean) As String
+        Dim PropTuples As New List(Of Tuple(Of String, String, String, Object))
+        Dim PropTuple As Tuple(Of String, String, String, Object)
+        Dim TypeName As String = Nothing
+
+        For Each _PropSet As PropertySet In Me.PropSets.Items
+            For Each _Prop As Prop In _PropSet.Items
+                Select Case _Prop.VTType
+                    Case = VTPropertyType.VT_BOOL
+                        TypeName = "boolean"
+                    Case = VTPropertyType.VT_I4
+                        TypeName = "int32"
+                    Case = VTPropertyType.VT_LPSTR, VTPropertyType.VT_LPWSTR
+                        TypeName = "string"
+                    Case = VTPropertyType.VT_FILETIME
+                        TypeName = "datetime"
+                    Case = VTPropertyType.VT_R8
+                        TypeName = "double"
+                End Select
+
+                PropTuple = Tuple.Create(_PropSet.Name, _Prop.Name, TypeName, _Prop.Value)
+                PropTuples.Add(PropTuple)
+
+            Next
+        Next
+
+
+        Return PropTuples
+    End Function
+
+
+    Private Function ProcessFormula(Formula As String, ErrorLogger As Logger) As String
         Dim DocValue As String = Nothing
 
         Dim UC As New UtilsCommon
@@ -448,7 +523,7 @@ Public Class HCStructuredStorageDoc
 
         Dim PropertySetName As String
         Dim PropertyName As String
-        Dim PropertyNameEnglish As String
+        Dim PropertyNameEnglish As String = Nothing
         Dim ModelIdx As Integer
 
         Dim LinkName As String
@@ -459,59 +534,81 @@ Public Class HCStructuredStorageDoc
         ModelIdx = UC.ModelIdxFromFormula(Formula)
 
         If Not ((PropertySetName = "System") Or (PropertySetName = "Custom") Or (PropertySetName = "Server")) Then
+            ErrorLogger.AddMessage($"PropertySet not recognized '{PropertySetName}'")
             Return Nothing
         End If
 
         'If (PropertySetName = "Server") And (PropertyName = "Query") Then
-        '    Return Form_Main.ExecuteQuery(FullName, Form_Main.ServerQuery, ModelIdx).Replace(vbCrLf, " ")
+        '    'Return Form_Main.ExecuteQuery(FullName, Form_Main.ServerQuery, ModelIdx).Replace(vbCrLf, " ")
+
+        '    Dim tmpServerQuery = SubstitutePropertyFormulas(Form_Main.ServerQuery, ErrorLogger)
+        '    Return Form_Main.ExecuteQuery(FullName, tmpServerQuery, ModelIdx).Replace(vbCrLf, " ")
         'End If
 
-        PropertyNameEnglish = Me.PropertiesData.GetPropertyData(PropertyName).EnglishName
+        Dim tmpPropertyData As PropertyData = Me.PropertiesData.GetPropertyData(PropertyName)
+        If tmpPropertyData IsNot Nothing Then
+            PropertyNameEnglish = tmpPropertyData.EnglishName
+        Else
+            ErrorLogger.AddMessage($"Property not recognized '{PropertyName}'")
+            Return Nothing
+        End If
 
-        If ModelIdx = 0 Then
-            DocValue = CStr(GetPropValue(PropertySetName, PropertyNameEnglish))
-            If DocValue Is Nothing Then
-                Return Nothing
-            Else
-                If ValidFilenameRequired Then
-                    DocValue = UFC.SubstituteIllegalCharacters(DocValue)
+        If Not IsNothing(PropertyNameEnglish) Then
+
+            If ModelIdx = 0 Then
+                DocValue = CStr(GetPropValue(PropertySetName, PropertyNameEnglish))
+                If DocValue Is Nothing Then
+                    ErrorLogger.AddMessage($"No value found for '{PropertySetName}.{PropertyNameEnglish}'")
+                    Return Nothing
+                Else
+                    'If ValidFilenameRequired Then
+                    '    DocValue = UFC.SubstituteIllegalCharacters(DocValue, New List(Of String))
+                    'End If
                 End If
+
+            Else
+                If Me.LinkNames Is Nothing Then
+                    Throw New Exception("LinkNames not initialized")
+                End If
+
+                If ModelIdx > Me.LinkNames.Items.Count - 1 Then
+                    Return Nothing
+                End If
+
+                LinkName = Me.LinkNames.Items(ModelIdx - 1)
+
+                Dim SSDoc As HCStructuredStorageDoc = Nothing
+                Try
+                    SSDoc = New HCStructuredStorageDoc(LinkName)
+                    SSDoc.ReadProperties(Me.PropertiesData)
+                Catch ex As Exception
+                    If SSDoc IsNot Nothing Then SSDoc.Close()
+                    Return Nothing
+                End Try
+
+                DocValue = CStr(SSDoc.GetPropValue(PropertySetName, PropertyNameEnglish))
+                If DocValue Is Nothing Then
+                    SSDoc.Close()
+                    Return Nothing
+                Else
+                    'If ValidFilenameRequired Then
+                    '    DocValue = UFC.SubstituteIllegalCharacters(DocValue, New List(Of String))
+                    'End If
+                End If
+
+                SSDoc.Close()
             End If
 
         Else
-            If Me.LinkNames Is Nothing Then
-                Throw New Exception("LinkNames not initialized")
-            End If
+            ' Changing back to returning Nothing.
+            ' This routine is called by SubstitutePropertyFormulas, which is used in many places.
+            ' They all already have ways of handling return values of Nothing.
+            'DocValue = "*** PROPERTY NOT FOUND ***" '<-------- IS THIS ACCETTABLE ?
 
-            If ModelIdx > Me.LinkNames.Items.Count - 1 Then
-                Return Nothing
-            End If
-
-            LinkName = Me.LinkNames.Items(ModelIdx - 1)
-
-            Dim SSDoc As HCStructuredStorageDoc = Nothing
-            Try
-                SSDoc = New HCStructuredStorageDoc(LinkName)
-                SSDoc.ReadProperties(Me.PropertiesData)
-            Catch ex As Exception
-                If SSDoc IsNot Nothing Then SSDoc.Close()
-                Return Nothing
-            End Try
-
-            DocValue = CStr(SSDoc.GetPropValue(PropertySetName, PropertyNameEnglish))
-            If DocValue Is Nothing Then
-                SSDoc.Close()
-                Return Nothing
-            Else
-                If ValidFilenameRequired Then
-                    DocValue = UFC.SubstituteIllegalCharacters(DocValue)
-                End If
-            End If
-
-            SSDoc.Close()
         End If
 
         Return DocValue
+
     End Function
 
     Private Function GetProp(
@@ -673,15 +770,21 @@ Public Class HCStructuredStorageDoc
 
     Private Class PropertySets
         Public Property Items As List(Of PropertySet)
+        Public Property OpenReadWrite As Boolean
 
         Private Property cf As CompoundFile
         Private Property FullName As String
         Private Property PropertySetNames As List(Of String)
 
 
-        Public Sub New(_cf As CompoundFile, _FullName As String)
+        Public Sub New(
+            _cf As CompoundFile,
+            _FullName As String,
+            _OpenReadWrite As Boolean)
+
             Me.cf = _cf
             Me.FullName = _FullName
+            Me.OpenReadWrite = _OpenReadWrite
 
             Me.Items = New List(Of PropertySet)
 
@@ -701,7 +804,7 @@ Public Class HCStructuredStorageDoc
                     'Not all files have every PropertySet
                     'Properties of some very old files appear to be organized differently
                     Try
-                        Me.Items.Add(New PropertySet(Me.cf, PropertySetName))
+                        Me.Items.Add(New PropertySet(Me.cf, PropertySetName, Me.OpenReadWrite))
                         Me.PropertySetNames.Add(PropertySetName)
                     Catch ex As Exception
                     End Try
@@ -712,8 +815,9 @@ Public Class HCStructuredStorageDoc
                     End If
                 Else
                     ' The Custom PropertySet needs the same cs and co as DocumentSummaryInformation, not copies.
-                    If (cs IsNot Nothing) And (cs IsNot Nothing) Then
-                        Me.Items.Add(New PropertySet(Me.cf, PropertySetName, cs, co))
+                    'If (cs IsNot Nothing) And (cs IsNot Nothing) Then
+                    If (cs IsNot Nothing) And (co IsNot Nothing) Then
+                        Me.Items.Add(New PropertySet(Me.cf, PropertySetName, Me.OpenReadWrite, cs, co))
                         PropertySetNames.Add(PropertySetName)
                     End If
                 End If
@@ -761,6 +865,7 @@ Public Class HCStructuredStorageDoc
     Private Class PropertySet
         Public Property Items As New List(Of Prop)
         Public Property Name As String
+        Public Property OpenReadWrite As Boolean
 
         Private Property cf As CompoundFile
         Public Property cs As CFStream
@@ -769,13 +874,16 @@ Public Class HCStructuredStorageDoc
         Private Property PropertySetNameToStreamName As New Dictionary(Of String, String)
 
 
-        Public Sub New(_cf As CompoundFile,
-                       PropertySetName As String,
-                       Optional _cs As CFStream = Nothing,
-                       Optional _co As OLEPropertiesContainer = Nothing)
+        Public Sub New(
+            _cf As CompoundFile,
+            PropertySetName As String,
+            _OpenReadWrite As Boolean,
+            Optional _cs As CFStream = Nothing,
+            Optional _co As OLEPropertiesContainer = Nothing)
 
             Me.cf = _cf
             Me.Name = PropertySetName
+            Me.OpenReadWrite = _OpenReadWrite
 
             Me.PropertySetNameToStreamName("SummaryInformation") = "SummaryInformation"
             Me.PropertySetNameToStreamName("DocumentSummaryInformation") = "DocumentSummaryInformation"
@@ -805,7 +913,7 @@ Public Class HCStructuredStorageDoc
                     For Each OLEProp As OLEProperty In co.UserDefinedProperties.Properties
                         CorrectedName = CorrectedOLEPropName(PropertySetName, OLEProp)
                         Me.PropNames.Add(CorrectedName)
-                        Me.Items.Add(New Prop(co, OLEProp, CorrectedName))
+                        Me.Items.Add(New Prop(co, OLEProp, CorrectedName, OpenReadWrite))
                     Next
                 End If
 
@@ -813,7 +921,7 @@ Public Class HCStructuredStorageDoc
                 For Each OLEProp As OLEProperty In co.Properties
                     CorrectedName = CorrectedOLEPropName(PropertySetName, OLEProp)
                     Me.PropNames.Add(CorrectedName)
-                    Me.Items.Add(New Prop(co, OLEProp, CorrectedName))
+                    Me.Items.Add(New Prop(co, OLEProp, CorrectedName, OpenReadWrite))
                 Next
 
             End If
@@ -826,7 +934,18 @@ Public Class HCStructuredStorageDoc
 
             Select Case PropertySetName
                 Case "SummaryInformation"
-                    CorrectedName = OLEProp.PropertyName.Replace("PIDSI_", "")
+                    Select Case OLEProp.PropertyIdentifier
+                        Case 8
+                            CorrectedName = "Last Author"
+                        Case 12
+                            CorrectedName = "Origination Date"
+                        Case 13
+                            CorrectedName = "Last Save Date"
+                        Case 19
+                            CorrectedName = "Security"
+                        Case Else
+                            CorrectedName = OLEProp.PropertyName.Replace("PIDSI_", "")
+                    End Select
                 Case "DocumentSummaryInformation"
                     CorrectedName = OLEProp.PropertyName.Replace("PIDDSI_", "")
                 Case "ExtendedSummaryInformation"
@@ -947,6 +1066,8 @@ Public Class HCStructuredStorageDoc
         Public Function AddProp(PropertyNameEnglish As String, Value As Object) As Boolean
             Dim Success As Boolean = True
 
+            If Not Me.OpenReadWrite Then Return False
+
             Dim OLEProp As OLEProperty = Nothing
             Dim UserProperties As OLEPropertiesContainer
             Dim NewPropertyId As UInteger
@@ -987,7 +1108,7 @@ Public Class HCStructuredStorageDoc
 
             If Success Then
                 PropNames.Add(PropertyNameEnglish)
-                Dim Prop = New Prop(co, OLEProp, PropertyNameEnglish)
+                Dim Prop = New Prop(co, OLEProp, PropertyNameEnglish, Me.OpenReadWrite)
                 Items.Add(Prop)
             End If
 
@@ -1035,18 +1156,27 @@ Public Class HCStructuredStorageDoc
 
         Public Property VTType As VTPropertyType
         Public Property PropertyIdentifier As UInteger
+        Public Property OpenReadWrite As Boolean
+
 
         Private co As OLEPropertiesContainer
         Private Property OLEProp As OLEProperty
 
 
-        Public Sub New(_co As OLEPropertiesContainer, _OLEProp As OLEProperty, CorrectedName As String)
+        Public Sub New(
+            _co As OLEPropertiesContainer,
+            _OLEProp As OLEProperty,
+            CorrectedName As String,
+            _OpenReadWrite As Boolean)
+
             Me.co = _co
             Me.OLEProp = _OLEProp
             Me.Name = CorrectedName
+            Me.OpenReadWrite = _OpenReadWrite
             Me.PropertyIdentifier = Me.OLEProp.PropertyIdentifier
             Me.VTType = Me.OLEProp.VTType
-            Me.SetValue(Me.OLEProp.Value)
+
+            If Me.OpenReadWrite Then Me.SetValue(Me.OLEProp.Value)
         End Sub
 
 

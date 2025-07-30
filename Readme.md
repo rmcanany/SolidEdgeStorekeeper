@@ -7,14 +7,26 @@
 
 ## CREDITS
 
-**Contributors**
+**Contributors**  
 @[Francesco Arfilli]
 
-**Beta Testers**
+**Beta Testers**  
 @hawcad, @rob.wolbrink7456, @[Francesco Arfilli], @pedja, @TeeVar, @Seva
 
-**Helpful feedback and bug reports**
+**Helpful feedback and bug reports**  
 @SeanCresswell, @[Francesco Arfilli], @arekkul, @[Imre Szucs], @64Pacific, @Seva, @hawcad, @rob.wolbrink7456, @pedja, @TeeVar
+
+*Feedback from users*
+
+> OMG .....love your work buddy!
+
+>  Management of standard parts is a huge use of my time and this may solve that!
+
+> Thx, another great tool for SolidEdge​ Users!
+
+> Cool tool!  I have been looking for something just like this.  (...) Great job, and making it open source is just extra good karma.
+
+> Another excellent utility. Appreciate your contributions to the community. 
 
 ## DESCRIPTION
 
@@ -28,7 +40,11 @@ The program handles two types of standard parts.  One consists of items like fas
   <img src="media/tree_search.png">
 </p>
 
-For items like fasteners, use **Tree Search**.  Navigate to the desired item, right-click and select `Add to assembly`.  If the item is already in your library, it is added to the assembly and the `Place Part` command is activated.  If not, it creates the new part, saves it to the library, then proceeds as above. 
+For items like fasteners, use **Tree Search**.  Navigate to the desired item, right-click and choose an action. If the part is not already in the library, the program creates it and saves it in the library.  The possible actions are:
+
+- `Add to assembly`  Adds the part to the assembly and activates the `Place part` command.
+- `Replace selected`  Replaces a selected part in the assembly.
+- `Replace all`  Replaces all occurrences of a selected part in the assembly.
 
 <p align="center">
   <img src="media/property_search.png">
@@ -50,11 +66,11 @@ Unlike web-based offerings, the program is integrated with your parts library an
 
 The program will never have every standard part in the world, but it can be improved.  That's where **YOU** come in!  Contributions are welcome.  Please message me on the [<ins>**Solid Edge Forum**</ins>](https://community.sw.siemens.com/s/topic/0TO4O000000MihiWAC/solid-edge), or raise an [<ins>**Issue on GitHub**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/issues), for ideas on how to get started.
 
-Uh-oh.  The Marketing guy just showed up.  He wants to *"Synergize our stake holders and leverage this cross-promotion opportunity"*.  Uh, who talks like that?  Anyway, here he is.
+Uh-oh.  The Marketing guy just showed up.  He wants to *"Synergize our stake holders and leverage this cross-promotion opportunity"*.  Who talks like that?  Anyway, here he is.
 
->  *Hello there!! I'm Big Mike!  Do you want to do things better and faster with less work?!  Of course you do!  That's why you should check out [<ins>**Solid Edge Housekeeper**</ins>](https://github.com/rmcanany/SolidEdgeHousekeeper#readme)!  It is a batch utility for finding annoying little errors in your project!  You're going to love it!!*
+>  *Hello there!! I'm Big Mike!  Do you want to do things better and faster with less work?!  Of course you do!  That's why you need [<ins>**Solid Edge Housekeeper**</ins>](https://github.com/rmcanany/SolidEdgeHousekeeper#readme)!  It is a batch utility for finding annoying little errors in your project!  You're going to love it!!*
 
-Sorry about that.  Shall we continue?
+Sorry about that.  Let's move on.
 
 ## INSTALLATION
 
@@ -94,25 +110,23 @@ The program needs to know where to store the standard parts, and for fastener-li
   <img src="media/tree_search_options.png">
 </p>
 
-- **LIBRARY DIRECTORY**
+- **LIBRARY DIRECTORY**  
+The library is where the standard parts you create are stored.  The default is in `Preferences\Library` under the `Storekeeper` main directory.  
 
-The library is where the standard parts are stored.  The default is in `Preferences\Library` under the `Storekeeper` main directory.  Note it is created the first time you run the program; it won't be there before that.  As noted above, if you want to access your vendor-specific standard parts, they must be in the library.  You can place them in one or more subdirectories if desired.
+  Note it is created the first time you run the program; it won't be there before that.  As noted above, if you want to access your vendor-specific standard parts, they must be in the library.  You can place them in one or more subdirectories if desired.
 
-- **TEMPLATE DIRECTORY** 
+- **TEMPLATE DIRECTORY**  
+The templates are SE part files that have variable-table-driven geometry to create new parts of a given type.  By default they are stored in the `Preferences\Templates` folder.
 
-The templates are SE part files that have variable-table-driven geometry to create new parts of a given type.  By default they are stored in the `Preferences\Templates` folder.  
+  As noted at the outset, the templates were created in SE2024.  They will only work if you're using that version or newer.  If you create new ones for an older version, I would be happy to host them on GitHub -- crediting you as a **Contributor**, of course!
 
-As noted at the outset, the templates were created in SE2024.  They will only work if you're using that version or newer.  If you create new ones for an older version, I would be happy to host them on GitHub -- crediting you as a **Contributor**, of course!
-
-- **DATA DIRECTORY** 
-
+- **DATA DIRECTORY**  
 The spreadsheet contains the variables required for each size of each type of part.  By default, it is stored in the `Preferences\Data` directory.  
 
-- **MATERIAL TABLE** 
-
+- **MATERIAL TABLE**  
 The material table is usually your normal SE material table.  However, for a quick test of the program, an alternative is to use `Storekeeper.mtl` from `Preferences\Templates`.  Copy it to your Solid Edge Materials directory to make it available.  On my machine, that location is `C:\Program Files\Siemens\Solid Edge 2024\Preferences\Materials`.  
 
-If you decide to continue using the program, you would eventually want to utilize your own material table, updating material names in the spreadsheet as needed. 
+  If you decide to continue using the program, you would eventually want to utilize your own material table, updating material names in the spreadsheet and templates as needed. 
 
 - **OPTIONS**
   - `Read the Excel file each time the program is launched`  
@@ -123,8 +137,26 @@ If you decide to continue using the program, you would eventually want to utiliz
 	This works with `Smart Patterns` and `User-Defined Patterns` (that's a hole with multiple hole circles in the profile).  It does not currently work with (the default) `Fast Patterns` unfortunately, unless you get lucky and pick the hole that was used to create the pattern.
   - `Add any property not already in file`  
 	As mentioned above, besides creating geometry, the program can also update file properties.  Enabling this option tells the program to add any (custom) property not already in the file.
+	
   - `Disable fine thread warning`  
-	The program is currently unable to properly set the thread size for ANSI UNF external threads.  It warns you if that condition arises and provide instructions how to fix it.  Enabling this option suppresses that warning.
+	The program is currently unable to properly set the thread size for ANSI UNF external threads.  The program logs a warning if this occurs.  Enabling this option suppresses that warning.
+	
+	The condition can cause issues with interference checking.  Fixing it is optional.  To do so, open the file and edit the Thread definition.  On the Parameters Step, you'll note the size designation is followed by an asterix (*).  Click the drop down and select the one without it.
+	
+	![Thread Fix](media/fine_thread_fix.png)
+	
+  - `Process templates in background`  
+	A new part must be opened in Solid Edge to update its parameters.  This setting tells the program to not display it in the user interface.
+	
+  - `Replace part: Suppress failed constraint`  
+	When replacing a part, some constraints may fail to get resolved.  If this occurs, this option tells the program to suppress the constraint.
+	
+  - `Replace part: Allow failed constraint`  
+	With the same situation as above, this option tells the program to leave the constraint in the failed state.
+	
+  - `Do not show processed files in the Most Recently Used list`  
+	Enable this option to keep the program from adding newly-generated standard parts to the Most Recently Used list.  Note this function was added to Solid Edge in version 2020.  If you are running an earlier version, this option must be disabled.
+	
   - `Check for new version at startup`  
 	If you don't need a reminder about new versions, disable the check here.
 
@@ -158,13 +190,13 @@ You can add items to the library ahead of time.  Enable the `Pre-populate` check
   <img src="media/prepopulate_library.png">
 </p>
 
-To select an item, enable its checkbox.  Enabling the checkbox of a category header, `Size 0.073-64` in this example, will select all items below it.  You can select a category, then de-select any items you don't want included.  
+To select an item, enable its checkbox.  Enabling the checkbox of a category header will select all items (including subcategories) below it.  You can select a category, then de-select any items you don't want included.  
 
 Once satisfied with the selection, click `Add to library` to start the process.  After you do, the `Close` button text changes to `Stop`.  Click that to stop processing.  It may take a few seconds to register.  It doesn't hurt to click it twice.
 
 To avoid confusion, the `Add to assembly` shortcut is disabled in this mode.  Uncheck `Pre-populate` to get it back.
 
-One handy feature missing in the `TreeView` control is `multiselect`.  That means you cannot select a range with click followed by SHIFT-click.  It may be possible to add code to implement it, but it's not available now.
+One handy feature missing in the `TreeView` control is `Multiselect`.  That means you cannot select a range with click followed by SHIFT-click.  It may be possible to add code to implement it, but it's not available now.
 
 
 ## CREATING NEW TEMPLATES

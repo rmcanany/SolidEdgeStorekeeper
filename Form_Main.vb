@@ -5,7 +5,7 @@ Imports Microsoft.WindowsAPICodePack.Dialogs
 
 Public Class Form_Main
 
-    Private Property Version As String = "2025.3"
+    Private Property Version As String = "2025.4"
 
     Private Property PreviewVersion As String = ""  ' Empty string if not a preview
     'Private Property PreviewVersion As String = "Preview 06"  ' Empty string if not a preview
@@ -1946,13 +1946,17 @@ Public Class Form_Main
 
         Dim SSDoc As HCStructuredStorageDoc = Nothing
 
+        Dim PropertiesCache As New HCPropertiesCache(Me)
+
+        PropertiesCache.Update(FoundFiles, New Logger("CacheLogger", Nothing))
+
         For Each Filename As String In FoundFiles
 
             TextBoxStatus.Text = IO.Path.GetFileName(Filename)
             System.Windows.Forms.Application.DoEvents()
 
             Try
-                SSDoc = New HCStructuredStorageDoc(Filename, OpenReadWrite:=False)
+                SSDoc = New HCStructuredStorageDoc(Filename, _OpenReadWrite:=False)
                 SSDoc.ReadProperties(Me.PropertiesData)
             Catch ex As Exception
                 If SSDoc IsNot Nothing Then SSDoc.Close()
