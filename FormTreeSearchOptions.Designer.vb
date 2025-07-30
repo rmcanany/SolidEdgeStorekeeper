@@ -185,9 +185,9 @@ Partial Class FormTreeSearchOptions
         CheckBoxAutoPattern.Location = New Point(3, 185)
         CheckBoxAutoPattern.Name = "CheckBoxAutoPattern"
         CheckBoxAutoPattern.Padding = New Padding(5, 0, 0, 0)
-        CheckBoxAutoPattern.Size = New Size(380, 19)
+        CheckBoxAutoPattern.Size = New Size(377, 19)
         CheckBoxAutoPattern.TabIndex = 17
-        CheckBoxAutoPattern.Text = "     Automatically pattern a part if assembled to a patterned feature"
+        CheckBoxAutoPattern.Text = "    Automatically pattern a part if assembled to a patterned feature"
         CheckBoxAutoPattern.UseVisualStyleBackColor = True
         ' 
         ' CheckBoxAlwaysReadExcel
@@ -198,7 +198,7 @@ Partial Class FormTreeSearchOptions
         CheckBoxAlwaysReadExcel.Location = New Point(3, 155)
         CheckBoxAlwaysReadExcel.Name = "CheckBoxAlwaysReadExcel"
         CheckBoxAlwaysReadExcel.Padding = New Padding(5, 0, 0, 0)
-        CheckBoxAlwaysReadExcel.Size = New Size(324, 19)
+        CheckBoxAlwaysReadExcel.Size = New Size(325, 19)
         CheckBoxAlwaysReadExcel.TabIndex = 12
         CheckBoxAlwaysReadExcel.Text = "    Read the Excel file each time the program is launched"
         CheckBoxAlwaysReadExcel.UseVisualStyleBackColor = True
@@ -210,7 +210,7 @@ Partial Class FormTreeSearchOptions
         TableLayoutPanel1.SetColumnSpan(Label4, 2)
         Label4.Location = New Point(3, 127)
         Label4.Name = "Label4"
-        Label4.Size = New Size(57, 15)
+        Label4.Size = New Size(56, 15)
         Label4.TabIndex = 16
         Label4.Text = "OPTIONS"
         ' 
