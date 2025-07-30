@@ -14,11 +14,23 @@ Feel free to report bugs and/or ideas for improvement on the [<ins>**Solid Edge 
 
 ## V2025.3
 
+### Replace Part
+
+Contributed by **@[Francesco Arfilli].**  Thank you!
+
+Added the ability to replace selected parts in the assembly.
+
+![Replace Part](media/tree_search.png)
+
+- `Replace selected`  Replaces a selected part in the assembly.
+- `Replace all`  Replaces all occurrences of a selected part in the assembly.
+
+
 ### Update Template File in Background
 
 Contributed by **@[Francesco Arfilli]**.  Thank you!
 
-Changed the template updating process for new parts.  The update now occcurs in the background.  This speeds up processing and eliminates the unexplained and confusing presence of a new part file in the interface.
+Changed the template updating process for new parts.  The update can now occcur in the background.  Set the option on the Tree Search Options dialog.  Running in the background speeds up processing and eliminates the unexplained and confusing presence of a new part file in the interface.
 
 ### Pre-populate Library
 
@@ -26,17 +38,25 @@ Added the ability to selectively add items to the library ahead of time. (Thank 
 
 ![Prepopulate](media/prepopulate_library.png)
 
-To select an item, enable its checkbox.  Checking on a category header, `Size 0.073-64` in this example, will select all items below it.  You can select a category, then de-select any items you don't want included.  Once satisfied with the selection, click `Add to library` to start the process.
+To select an item, enable its checkbox.  Checking on a category header selects all items below it.  You can select a category, then de-select any items you don't want included.  Once satisfied with the selection, click `Add to library` to start the process.
 
 See the [<ins>**Pre-Populating the Library**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#pre-populating-the-library) section of the Readme for details.
 
-### Bug Fixes
+### Other
 
-Fixed an issue where the form settings were not being saved in certain conditions. (Thank you **@TeeVar!**)
+Fixed an issue where accessing certain file properties was causing an exception.  (Contributed by **@[Francesco Arfilli].**  Thank you!)
 
-Fixed an issue where moving the program to a new directory did not allow the user to access the interface to update file locations.   (Thank you again **@TeeVar!**)
+The following were all reported by **@TeeVar**.  Thank you!
 
-Fixed an issue where accessing certain file properties was causing an exception.  (Thank you **@[Francesco Arfilli]!**)
+- Fixed an issue where the form settings were not being saved in certain conditions.
+
+- Fixed an issue where moving the program to a new directory did not allow the user to access the interface to update file locations.  
+
+- Fixed an issue where the program was halting when Solid Edge versions prior to V2020 were being used.
+
+- Fixed an issue where new standard parts were not being saved to the `Library` directory.
+
+- Fixed an issue where commas were replaced with periods in variables and properties.  The fix is somewhat experimental.  Enable the `Allow comma delimiters` on the Tree Search Options dialog to try it.
 
 ## V2025.2
 

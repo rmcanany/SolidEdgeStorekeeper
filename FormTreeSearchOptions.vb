@@ -110,6 +110,71 @@ Public Class FormTreeSearchOptions
         End Set
     End Property
 
+    Private _ProcessTemplateInBackground As Boolean
+    Public Property ProcessTemplateInBackground As Boolean
+        Get
+            Return _ProcessTemplateInBackground
+        End Get
+        Set(value As Boolean)
+            _ProcessTemplateInBackground = value
+            If Me.TableLayoutPanel1 IsNot Nothing Then
+                CheckBoxProcessTemplateInBackground.Checked = ProcessTemplateInBackground
+            End If
+        End Set
+    End Property
+
+    Private _FailedConstraintSuppress As Boolean
+    Public Property FailedConstraintSuppress As Boolean
+        Get
+            Return _FailedConstraintSuppress
+        End Get
+        Set(value As Boolean)
+            _FailedConstraintSuppress = value
+            If Me.TableLayoutPanel1 IsNot Nothing Then
+                CheckBoxFailedConstraintSuppress.Checked = FailedConstraintSuppress
+            End If
+        End Set
+    End Property
+
+    Private _FailedConstraintAllow As Boolean
+    Public Property FailedConstraintAllow As Boolean
+        Get
+            Return _FailedConstraintAllow
+        End Get
+        Set(value As Boolean)
+            _FailedConstraintAllow = value
+            If Me.TableLayoutPanel1 IsNot Nothing Then
+                CheckBoxFailedConstraintAllow.Checked = FailedConstraintAllow
+            End If
+        End Set
+    End Property
+
+    Private _SuspendMRU As Boolean
+    Public Property SuspendMRU As Boolean
+        Get
+            Return _SuspendMRU
+        End Get
+        Set(value As Boolean)
+            _SuspendMRU = value
+            If Me.TableLayoutPanel1 IsNot Nothing Then
+                CheckBoxSuspendMRU.Checked = SuspendMRU
+            End If
+        End Set
+    End Property
+
+    Private _AllowCommaDelimiters As Boolean
+    Public Property AllowCommaDelimiters As Boolean
+        Get
+            Return _AllowCommaDelimiters
+        End Get
+        Set(value As Boolean)
+            _AllowCommaDelimiters = value
+            If Me.TableLayoutPanel1 IsNot Nothing Then
+                CheckBoxAllowCommaDelimiters.Checked = AllowCommaDelimiters
+            End If
+        End Set
+    End Property
+
     Private _CheckNewVersion As Boolean
     Public Property CheckNewVersion As Boolean
         Get
@@ -205,6 +270,11 @@ Public Class FormTreeSearchOptions
         Me.AlwaysReadExcel = FMain.AlwaysReadExcel
         Me.AddProp = FMain.AddProp
         Me.DisableFineThreadWarning = FMain.DisableFineThreadWarning
+        Me.ProcessTemplateInBackground = FMain.ProcessTemplateInBackground
+        Me.FailedConstraintSuppress = FMain.FailedConstraintSuppress
+        Me.FailedConstraintAllow = FMain.FailedConstraintAllow
+        Me.SuspendMRU = FMain.SuspendMRU
+        Me.AllowCommaDelimiters = FMain.AllowCommaDelimiters
         Me.CheckNewVersion = FMain.CheckNewVersion
     End Sub
 
@@ -222,6 +292,11 @@ Public Class FormTreeSearchOptions
         FMain.AutoPattern = Me.AutoPattern
         FMain.AddProp = Me.AddProp
         FMain.DisableFineThreadWarning = Me.DisableFineThreadWarning
+        FMain.ProcessTemplateInBackground = Me.ProcessTemplateInBackground
+        FMain.FailedConstraintSuppress = Me.FailedConstraintSuppress
+        FMain.FailedConstraintAllow = Me.FailedConstraintAllow
+        FMain.SuspendMRU = Me.SuspendMRU
+        FMain.AllowCommaDelimiters = Me.AllowCommaDelimiters
         FMain.CheckNewVersion = Me.CheckNewVersion
 
         Me.DialogResult = DialogResult.OK
@@ -259,4 +334,25 @@ Public Class FormTreeSearchOptions
 
     End Sub
 
+    Private Sub CheckBoxProcessTemplateInBackground_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBoxProcessTemplateInBackground.CheckedChanged
+        Me.ProcessTemplateInBackground = CheckBoxProcessTemplateInBackground.Checked
+    End Sub
+
+    Private Sub CheckBoxFailedConstraintSuppress_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBoxFailedConstraintSuppress.CheckedChanged
+        Me.FailedConstraintSuppress = CheckBoxFailedConstraintSuppress.Checked
+        Me.FailedConstraintAllow = Not Me.FailedConstraintSuppress
+    End Sub
+
+    Private Sub CheckBoxFailedConstraintAllow_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBoxFailedConstraintAllow.CheckedChanged
+        Me.FailedConstraintAllow = CheckBoxFailedConstraintAllow.Checked
+        Me.FailedConstraintSuppress = Not Me.FailedConstraintAllow
+    End Sub
+
+    Private Sub CheckBoxSuspendMRU_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBoxSuspendMRU.CheckedChanged
+        Me.SuspendMRU = CheckBoxSuspendMRU.Checked
+    End Sub
+
+    Private Sub CheckBoxAllowCommaDelimiters_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBoxAllowCommaDelimiters.CheckedChanged
+        Me.AllowCommaDelimiters = CheckBoxAllowCommaDelimiters.Checked
+    End Sub
 End Class

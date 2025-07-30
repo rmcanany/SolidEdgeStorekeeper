@@ -2,12 +2,14 @@
 
 Imports System.Text.RegularExpressions
 Imports Microsoft.WindowsAPICodePack.Dialogs
-Imports SolidEdgeAssembly
-Imports SolidEdgeConstants
 
 Public Class Form_Main
 
     Private Property Version As String = "2025.3"
+
+    Private Property PreviewVersion As String = ""  ' Empty string if not a preview
+    'Private Property PreviewVersion As String = "Preview 06"  ' Empty string if not a preview
+
 
     Private _SelectedNodeFullPath As String
     Public Property SelectedNodeFullPath As String
@@ -67,6 +69,12 @@ Public Class Form_Main
         End Set
     End Property
     Public Property FileLogger As Logger
+    Public Property ProcessTemplateInBackground As Boolean = True
+    Public Property FailedConstraintSuppress As Boolean
+    Public Property FailedConstraintAllow As Boolean = True
+    Public Property SuspendMRU As Boolean = False
+    Public Property AllowCommaDelimiters As Boolean = False
+    Public Property XmlCommaIndicator As String = "...."
 
 
 
@@ -79,6 +87,7 @@ Public Class Form_Main
     Private Property NodeCount As Integer
     Private Property AddToLibraryOnly As Boolean
     Private Property ErrorLogger As HCErrorLogger
+
 
 
 
@@ -152,14 +161,16 @@ Public Class Form_Main
         UP.CheckVersionFormat(Me.Version)
 
         ' Form title
-        Me.Text = $"Solid Edge Storekeeper {Me.Version}"
+        If Me.PreviewVersion = "" Then
+            Me.Text = $"Solid Edge Storekeeper {Me.Version}"
+        Else
+            Me.Text = $"Solid Edge Storekeeper {Me.Version} {Me.PreviewVersion}"
+            MsgBox(Me.Text, vbOKOnly, "Running a preview version")
+        End If
 
         If Me.CheckNewVersion Then
             UP.CheckForNewerVersion(Me.Version)
         End If
-
-        Me.PrePopulate = False
-        Me.AddToLibraryOnly = False
 
         TextBoxStatus.Text = $"{Me.NodeCount} items available"
 
@@ -265,7 +276,7 @@ Public Class Form_Main
 
         If Not IO.File.Exists(Filename) Then
 
-            SEApp.SuspendMRU() ' Suspend MRU to prevent adding the file to the MRU list
+            If Me.SuspendMRU Then SEApp.SuspendMRU() ' Suspend MRU to prevent adding the file to the MRU list
 
             TextBoxStatus.Text = "Getting template name"
             Dim TemplateName As String = GetTemplateNameFormula()
@@ -275,7 +286,12 @@ Public Class Form_Main
             End If
 
             TextBoxStatus.Text = $"Opening '{IO.Path.GetFileName(TemplateName)}'"
-            Dim SEDoc = CType(SEApp.Documents.Open(TemplateName, 8), SolidEdgeFramework.SolidEdgeDocument)
+            Dim SEDoc As SolidEdgeFramework.SolidEdgeDocument = Nothing
+            If Me.ProcessTemplateInBackground Then
+                SEDoc = CType(SEApp.Documents.Open(TemplateName, 8), SolidEdgeFramework.SolidEdgeDocument)
+            Else
+                SEDoc = CType(SEApp.Documents.Open(TemplateName), SolidEdgeFramework.SolidEdgeDocument)
+            End If
             SEApp.DoIdle()
 
             TextBoxStatus.Text = $"Saving '{IO.Path.GetFileName(Filename)}'"
@@ -303,11 +319,11 @@ Public Class Form_Main
             Else
                 SEDoc.Close()
                 SEApp.DoIdle()
-                SEApp.ResumeMRU()
+                If Me.SuspendMRU Then SEApp.ResumeMRU()
                 Exit Sub
             End If
 
-            SEApp.ResumeMRU()
+            If Me.SuspendMRU Then SEApp.ResumeMRU()
 
         End If
 
@@ -378,7 +394,7 @@ Public Class Form_Main
 
                 If SEApp.ActiveSelectSet.Count >= 1 Then
 
-                    Dim objOcc As SolidEdgeAssembly.Occurrence = CType(SEApp.ActiveSelectSet.Item(1), Occurrence)
+                    Dim objOcc As SolidEdgeAssembly.Occurrence = CType(SEApp.ActiveSelectSet.Item(1), SolidEdgeAssembly.Occurrence)
                     Dim objAsm As SolidEdgeAssembly.AssemblyDocument = CType(SEApp.ActiveDocument, SolidEdgeAssembly.AssemblyDocument)
 
                     If objOcc.Type = SolidEdgeFramework.ObjectType.igPart Or objOcc.Type = SolidEdgeFramework.ObjectType.igSubAssembly Then
@@ -387,19 +403,31 @@ Public Class Form_Main
 
                         If ReplaceAll Then
 
-                            Dim tmpColl As New List(Of Occurrence)
+                            Dim tmpColl As New List(Of SolidEdgeAssembly.Occurrence)
 
                             For i = 1 To objAsm.Occurrences.Count
                                 If objAsm.Occurrences.Item(i).OccurrenceFileName = objOcc.OccurrenceFileName Then tmpColl.Add(objAsm.Occurrences.Item(i))
                             Next
 
                             Dim tmpOcc = tmpColl.ToArray
-                            objAsm.ReplaceComponents(CType(tmpOcc, Array), Filename, SolidEdgeAssembly.ConstraintReplacementConstants.seConstraintReplacementSuppress)
+                            If Me.FailedConstraintSuppress Then
+                                objAsm.ReplaceComponents(CType(tmpOcc, Array), Filename, SolidEdgeAssembly.ConstraintReplacementConstants.seConstraintReplacementSuppress)
+                            ElseIf Me.FailedConstraintAllow Then
+                                objAsm.ReplaceComponents(CType(tmpOcc, Array), Filename, SolidEdgeAssembly.ConstraintReplacementConstants.seConstraintReplacementNone)
+                            Else
+                                Me.FileLogger.AddMessage("Option not set for treatment of failed constraints.  Set it on the Tree Search Options dialog.")
+                            End If
 
                         Else
 
                             Dim tmpOcc As System.Array = {objOcc}
-                            objAsm.ReplaceComponents(tmpOcc, Filename, SolidEdgeAssembly.ConstraintReplacementConstants.seConstraintReplacementSuppress)
+                            If Me.FailedConstraintSuppress Then
+                                objAsm.ReplaceComponents(tmpOcc, Filename, SolidEdgeAssembly.ConstraintReplacementConstants.seConstraintReplacementSuppress)
+                            ElseIf Me.FailedConstraintAllow Then
+                                objAsm.ReplaceComponents(tmpOcc, Filename, SolidEdgeAssembly.ConstraintReplacementConstants.seConstraintReplacementNone)
+                            Else
+                                Me.FileLogger.AddMessage("Option not set for treatment of for failed constraints.  Set it on the Tree Search Options dialog.")
+                            End If
 
                         End If
 
@@ -412,7 +440,7 @@ Public Class Form_Main
 
                     Clipboard.Clear()
                     Clipboard.SetText(Filename)
-                    SEApp.StartCommand(CType(AssemblyCommandConstants.AssemblyEditPaste, SolidEdgeFramework.SolidEdgeCommandConstants))
+                    SEApp.StartCommand(CType(SolidEdgeConstants.AssemblyCommandConstants.AssemblyEditPaste, SolidEdgeFramework.SolidEdgeCommandConstants))
 
                 End If
 
@@ -450,11 +478,15 @@ Public Class Form_Main
 
         For Each Prop As Prop In VariableProps
             If VariableDict.Keys.Contains(Prop.Name) Then
-                If IsNumeric(Prop.Value) Then
+                Try
                     VariableDict(Prop.Name).Formula = Prop.Value
-                Else
+                    'VariableDict(Prop.Name).Formula = Prop.Value.Replace(".", ",")
+                Catch ex As Exception
                     Me.FileLogger.AddMessage($"Cannot process value for '{Prop.Name}': '{Prop.Value}'")
-                End If
+                End Try
+                'If IsNumeric(Prop.Value) Then
+                'Else
+                'End If
             Else
                 Me.FileLogger.AddMessage($"Variable not found: '{Prop.Name}'")
             End If
@@ -463,13 +495,13 @@ Public Class Form_Main
         SEApp.DelayCompute = False
         SEApp.DoIdle()
 
-        If Success Then
+        If Not Me.ProcessTemplateInBackground And Success Then
             Select Case UC.GetDocType(SEDoc)
                 Case "asm"
-                    'SEApp.StartCommand(CType(SolidEdgeConstants.AssemblyCommandConstants.AssemblyViewFit, SolidEdgeFramework.SolidEdgeCommandConstants))
+                    SEApp.StartCommand(CType(SolidEdgeConstants.AssemblyCommandConstants.AssemblyViewFit, SolidEdgeFramework.SolidEdgeCommandConstants))
                     '##### Why viewfit ??? F.Arfilli
                 Case "par", "psm"
-                    'SEApp.StartCommand(CType(SolidEdgeConstants.PartCommandConstants.PartViewFit, SolidEdgeFramework.SolidEdgeCommandConstants))
+                    SEApp.StartCommand(CType(SolidEdgeConstants.PartCommandConstants.PartViewFit, SolidEdgeFramework.SolidEdgeCommandConstants))
             End Select
         End If
 
@@ -1041,10 +1073,18 @@ Public Class Form_Main
 
             Dim ChildNodes = CurrentNode.ChildNodes
             For Each tmpNode As Xml.XmlNode In ChildNodes
-                If tmpNode.Name = NextNodeName Then
+
+                ' ###### Comma to '....' ######
+
+                'If tmpNode.Name = NextNodeName Then
+                '    CurrentNode = tmpNode
+                '    Continue For
+                'End If
+                If tmpNode.Name = NextNodeName.Replace(",", Me.XmlCommaIndicator) Then
                     CurrentNode = tmpNode
                     Continue For
                 End If
+
                 For Each Attribute As Xml.XmlAttribute In tmpNode.Attributes
                     If Attribute.Name = "Type" Then
                         If Not (Attribute.Value = "Node" Or Attribute.Value.Contains("LeafNode")) Then
@@ -1126,7 +1166,10 @@ Public Class Form_Main
         'Dim xmlnode As Xml.XmlNode = XmlDoc.ChildNodes(0)
         Dim xmlnode As Xml.XmlNode = XmlDoc.ChildNodes(1)
         TreeView1.Nodes.Clear()
-        TreeView1.Nodes.Add(New TreeNode(XmlDoc.DocumentElement.Name))
+
+        'TreeView1.Nodes.Add(New TreeNode(XmlDoc.DocumentElement.Name))
+        TreeView1.Nodes.Add(New TreeNode(XmlDoc.DocumentElement.Name.Replace(Me.XmlCommaIndicator, ",")))
+
         Dim tNode As TreeNode = TreeView1.Nodes(0)
         AddNode(xmlnode, tNode, Splash)
 
@@ -1158,13 +1201,17 @@ Public Class Form_Main
                 xNode = childNodes(i)
                 If IsTreenode(xNode) Then
                     Splash.UpdateStatus(StatusMessage)
-                    Dim n As Integer = inTreeNode.Nodes.Add(New TreeNode(UnderscoreToSpace(xNode.Name)))
+
+                    'Dim n As Integer = inTreeNode.Nodes.Add(New TreeNode(UnderscoreToSpace(xNode.Name)))
+                    Dim tmpName As String = UnderscoreToSpace(xNode.Name.Replace(Me.XmlCommaIndicator, ","))
+                    Dim n As Integer = inTreeNode.Nodes.Add(New TreeNode(tmpName))
+
                     tNode = inTreeNode.Nodes(n)
                     AddNode(xNode, tNode, Splash)
                 End If
             Next
 
-            inTreeNode.Text = UnderscoreToSpace(inXmlNode.Name)
+            inTreeNode.Text = UnderscoreToSpace(inXmlNode.Name.Replace(Me.XmlCommaIndicator, ","))
 
             ' Add the xml node type as a tag to the tree node
             For Each Attribute As Xml.XmlAttribute In inXmlNode.Attributes
@@ -1283,10 +1330,9 @@ Public Class Form_Main
 
             Dim ExcelTopLevel = ExcelCleanup(ExcelAll, "TopLevel")
             Dim XmlList = ExcelToXml(ExcelTopLevel, ExcelAll, Splash)
-            For i = 0 To XmlList.Count - 1
-                XmlList(i) = XmlList(i).Replace(",", ".")
-            Next
-            'If XmlList Is Nothing Then Exit Sub
+
+            XmlList = SanitizeXMLTags(XmlList)
+
             IO.File.WriteAllLines(XmlFilename, XmlList)
         End If
 
@@ -1332,6 +1378,49 @@ Public Class Form_Main
 
     End Sub
 
+    Public Function SanitizeXMLTags(XmlList As List(Of String)) As List(Of String)
+
+        Dim XmlOutList As New List(Of String)
+        Dim InTag As Boolean = False
+        Dim InQuotes As Boolean = False
+
+        For Each Line As String In XmlList
+
+            If Not Me.AllowCommaDelimiters Then
+                XmlOutList.Add(Line.Replace(",", "."))
+
+            Else
+                ' Deal with repeated doublequotes
+                Line = Line.Replace("""", Chr(182))
+
+                Dim OutLine As String = ""
+
+                For Each Character As String In Line
+                    If Character = Chr(182) Then InQuotes = Not InQuotes
+                    If Character = "<" And Not InQuotes Then InTag = True
+                    If Character = ">" And Not InQuotes Then InTag = False
+
+                    If InQuotes Then
+                        OutLine = $"{OutLine}{Character}"  ' Must be checked first to capture '<' or '>'
+                    ElseIf InTag Then
+                        If Character = "," Then
+                            OutLine = $"{OutLine}{Me.XmlCommaIndicator}"
+                        Else
+                            OutLine = $"{OutLine}{Character}"
+                        End If
+                    Else
+                        OutLine = $"{OutLine}{Character}"
+                    End If
+                Next
+
+                OutLine = OutLine.Replace(Chr(182), """")
+                XmlOutList.Add(OutLine)
+
+            End If
+        Next
+
+        Return XmlOutList
+    End Function
     Public Function ReadExcel(FileName As String) As List(Of List(Of String))
         System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance) ' Needed by ExcelReader
 
@@ -1487,6 +1576,7 @@ Public Class Form_Main
                     Stack.Push(Value)
                     XmlList.Add(String.Format("{0}<{1} Type=""Node"">", Indents(Level), Value))
                 End If
+
             ElseIf Token = "Nodes" Then
                 Dim tmpStartLevel = Level + 1
                 Dim tmpDataSource = Value.Split(":")(0)  ' Sheet:AnsiFastenersBHCS -> Sheet, AnsiFasteners.xls:BHCS -> AnsiFasteners.xls
@@ -1591,7 +1681,11 @@ Public Class Form_Main
             tf = tf AndAlso Not Row(IncludeIdx).ToLower = "t"
             If tf Then Continue For
 
-            XmlList.Add(String.Format("{0}<{1}_{2} Type=""Node"">", Indents(StartLevel), NameList(NodeIdx), Row(NodeIdx).Replace(",", ".")))
+            ' ###### Moved comma handling to SanitizeXMLTags ######
+
+            'XmlList.Add(String.Format("{0}<{1}_{2} Type=""Node"">", Indents(StartLevel), NameList(NodeIdx), Row(NodeIdx).Replace(",", ".")))  ' #### No exposed commas
+            XmlList.Add(String.Format("{0}<{1}_{2} Type=""Node"">", Indents(StartLevel), NameList(NodeIdx), Row(NodeIdx)))  ' #### No exposed commas
+
             For ColIdx As Integer = 0 To Row.Count - 1
 
                 If ColIdx = NodeIdx Then Continue For
@@ -1608,7 +1702,12 @@ Public Class Form_Main
                     ' <Length_0.500 Type="LeafNode">
                     '     <Length Type="Double">0.500</Length>
                     ' </Length_0.500>
-                    Dim tmpValue As String = Row(ColIdx).Replace(",", ".") ' 0.500, 0,500 -> 0.500
+
+                    ' ###### Moved comma handling to SanitizeXMLTags ######
+
+                    'Dim tmpValue As String = Row(ColIdx).Replace(",", ".") ' 0.500, 0,500 -> 0.500
+                    Dim tmpValue As String = Row(ColIdx) ' 0.500, 0,500 -> 0.500
+
                     Dim tmpOuterName As String = String.Format("{0}_{1}", NameList(ColIdx), tmpValue) ' Length_0.500
                     Dim tmpOuterType As String = "LeafNode"
                     Dim tmpInnerName As String = NameList(ColIdx) ' Length
@@ -1620,7 +1719,12 @@ Public Class Form_Main
 
                 End If
             Next
-            XmlList.Add(String.Format("{0}</{1}_{2}>", Indents(StartLevel), NameList(NodeIdx), Row(NodeIdx).Replace(",", ".")))
+
+            ' ###### Moved comma handling to SanitizeXMLTags ######
+
+            'XmlList.Add(String.Format("{0}</{1}_{2}>", Indents(StartLevel), NameList(NodeIdx), Row(NodeIdx).Replace(",", ".")))
+            XmlList.Add(String.Format("{0}</{1}_{2}>", Indents(StartLevel), NameList(NodeIdx), Row(NodeIdx)))
+
             'XmlList.Add(String.Format("{0}</{1}_{2}>", Indents(StartLevel), NameList(NodeIdx), Row(NodeIdx)))
         Next
 
@@ -1900,19 +2004,42 @@ Public Class Form_Main
                 TextBoxStatus.Text = IO.Path.GetFileName(Filename)
                 System.Windows.Forms.Application.DoEvents()
 
-                For Each PropValue As String In FileDict(Filename)
-                    For Each SearchTerm As String In SearchTerms
-                        If PropValue.ToLower.Contains(SearchTerm.ToLower) Then
-                            If Not MatchDict.Keys.Contains(Filename) Then
-                                MatchDict(Filename) = FileDict(Filename)
-                                Exit For
+                Dim NewWay As Boolean = True
+                If NewWay Then
+                    Dim MatchList As New List(Of String)
+                    For Each PropValue As String In FileDict(Filename)
+                        For Each SearchTerm As String In SearchTerms
+                            If PropValue.ToLower.Contains(SearchTerm.ToLower) And Not MatchList.Contains(SearchTerm.ToLower) Then
+                                MatchList.Add(SearchTerm.ToLower)
+                                If MatchList.Count = SearchTerms.Count Then
+                                    MatchDict(Filename) = FileDict(Filename)
+                                    Exit For
+                                End If
+                                'If Not MatchDict.Keys.Contains(Filename) Then
+                                '    MatchDict(Filename) = FileDict(Filename)
+                                '    Exit For
+                                'End If
                             End If
+                        Next
+                        If MatchDict.Keys.Contains(Filename) Then
+                            Exit For
                         End If
                     Next
-                    If MatchDict.Keys.Contains(Filename) Then
-                        Exit For
-                    End If
-                Next
+                Else
+                    For Each PropValue As String In FileDict(Filename)
+                        For Each SearchTerm As String In SearchTerms
+                            If PropValue.ToLower.Contains(SearchTerm.ToLower) Then
+                                If Not MatchDict.Keys.Contains(Filename) Then
+                                    MatchDict(Filename) = FileDict(Filename)
+                                    Exit For
+                                End If
+                            End If
+                        Next
+                        If MatchDict.Keys.Contains(Filename) Then
+                            Exit For
+                        End If
+                    Next
+                End If
             Next
         End If
 
@@ -1924,9 +2051,9 @@ Public Class Form_Main
             DisplayDict = FileDict
         End If
 
-        If DisplayDict.Count > 0 Then
+        DataGridViewVendorParts.Rows.Clear()
 
-            DataGridViewVendorParts.Rows.Clear()
+        If DisplayDict.Count > 0 Then
 
             For Each Filename As String In DisplayDict.Keys
 
@@ -2083,6 +2210,10 @@ Public Class Form_Main
 
         Dim Node = TreeView1.SelectedNode
         If Node.Nodes.Count = 0 Then
+            If Not (Me.FailedConstraintSuppress Or Me.FailedConstraintAllow) Then
+                MsgBox("Set how to handle failed constraints on the Tree Search Options dialog", vbOKOnly)
+                Exit Sub
+            End If
             Me.ErrorLogger = New HCErrorLogger
             Me.FileLogger = Me.ErrorLogger.AddFile(Node.FullPath)
             Process(Replace:=True)
@@ -2097,6 +2228,10 @@ Public Class Form_Main
 
         Dim Node = TreeView1.SelectedNode
         If Node.Nodes.Count = 0 Then
+            If Not (Me.FailedConstraintSuppress Or Me.FailedConstraintAllow) Then
+                MsgBox("Set how to handle failed constraints on the Tree Search Options dialog", vbOKOnly)
+                Exit Sub
+            End If
             Me.ErrorLogger = New HCErrorLogger
             Me.FileLogger = Me.ErrorLogger.AddFile(Node.FullPath)
             Process(Replace:=True, ReplaceAll:=True)

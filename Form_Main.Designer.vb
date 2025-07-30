@@ -23,13 +23,13 @@ Partial Class Form_Main
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         components = New ComponentModel.Container()
-        Dim TreeNode6 As TreeNode = New TreeNode("Node0")
-        Dim TreeNode7 As TreeNode = New TreeNode("Node4")
-        Dim TreeNode8 As TreeNode = New TreeNode("Node2", New TreeNode() {TreeNode7})
-        Dim TreeNode9 As TreeNode = New TreeNode("Node3")
-        Dim TreeNode10 As TreeNode = New TreeNode("Node1", New TreeNode() {TreeNode8, TreeNode9})
+        Dim TreeNode1 As TreeNode = New TreeNode("Node0")
+        Dim TreeNode2 As TreeNode = New TreeNode("Node4")
+        Dim TreeNode3 As TreeNode = New TreeNode("Node2", New TreeNode() {TreeNode2})
+        Dim TreeNode4 As TreeNode = New TreeNode("Node3")
+        Dim TreeNode5 As TreeNode = New TreeNode("Node1", New TreeNode() {TreeNode3, TreeNode4})
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Form_Main))
-        Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
         ToolStrip1 = New ToolStrip()
         ButtonCollapse = New ToolStripButton()
         LabelCollapse = New ToolStripLabel()
@@ -131,7 +131,7 @@ Partial Class Form_Main
         ' 
         ' LabelPrePopulate
         ' 
-        LabelPrePopulate.BackColor = Color.Orange
+        LabelPrePopulate.BackColor = Color.Transparent
         LabelPrePopulate.Name = "LabelPrePopulate"
         LabelPrePopulate.Size = New Size(76, 22)
         LabelPrePopulate.Text = "Pre-populate"
@@ -172,17 +172,17 @@ Partial Class Form_Main
         TreeView1.Dock = DockStyle.Fill
         TreeView1.Location = New Point(3, 28)
         TreeView1.Name = "TreeView1"
-        TreeNode6.Name = "Node0"
-        TreeNode6.Text = "Node0"
-        TreeNode7.Name = "Node4"
-        TreeNode7.Text = "Node4"
-        TreeNode8.Name = "Node2"
-        TreeNode8.Text = "Node2"
-        TreeNode9.Name = "Node3"
-        TreeNode9.Text = "Node3"
-        TreeNode10.Name = "Node1"
-        TreeNode10.Text = "Node1"
-        TreeView1.Nodes.AddRange(New TreeNode() {TreeNode6, TreeNode10})
+        TreeNode1.Name = "Node0"
+        TreeNode1.Text = "Node0"
+        TreeNode2.Name = "Node4"
+        TreeNode2.Text = "Node4"
+        TreeNode3.Name = "Node2"
+        TreeNode3.Text = "Node2"
+        TreeNode4.Name = "Node3"
+        TreeNode4.Text = "Node3"
+        TreeNode5.Name = "Node1"
+        TreeNode5.Text = "Node1"
+        TreeView1.Nodes.AddRange(New TreeNode() {TreeNode1, TreeNode5})
         TreeView1.Size = New Size(396, 392)
         TreeView1.TabIndex = 1
         ' 
@@ -190,24 +190,24 @@ Partial Class Form_Main
         ' 
         ContextMenuStrip1.Items.AddRange(New ToolStripItem() {ToolStripMenuItem1, ReplaceSelectedToolStripMenuItem, ReplaceAllToolStripMenuItem})
         ContextMenuStrip1.Name = "ContextMenuStrip1"
-        ContextMenuStrip1.Size = New Size(181, 92)
+        ContextMenuStrip1.Size = New Size(163, 70)
         ' 
         ' ToolStripMenuItem1
         ' 
         ToolStripMenuItem1.Name = "ToolStripMenuItem1"
-        ToolStripMenuItem1.Size = New Size(180, 22)
+        ToolStripMenuItem1.Size = New Size(162, 22)
         ToolStripMenuItem1.Text = "Add to assembly"
         ' 
         ' ReplaceSelectedToolStripMenuItem
         ' 
         ReplaceSelectedToolStripMenuItem.Name = "ReplaceSelectedToolStripMenuItem"
-        ReplaceSelectedToolStripMenuItem.Size = New Size(180, 22)
+        ReplaceSelectedToolStripMenuItem.Size = New Size(162, 22)
         ReplaceSelectedToolStripMenuItem.Text = "Replace selected"
         ' 
         ' ReplaceAllToolStripMenuItem
         ' 
         ReplaceAllToolStripMenuItem.Name = "ReplaceAllToolStripMenuItem"
-        ReplaceAllToolStripMenuItem.Size = New Size(180, 22)
+        ReplaceAllToolStripMenuItem.Size = New Size(162, 22)
         ReplaceAllToolStripMenuItem.Text = "Replace all"
         ' 
         ' DataGridViewDataInspector
@@ -377,8 +377,8 @@ Partial Class Form_Main
         ' 
         ' DataGridViewVendorParts
         ' 
-        DataGridViewCellStyle2.BackColor = Color.AliceBlue
-        DataGridViewVendorParts.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle2
+        DataGridViewCellStyle1.BackColor = Color.AliceBlue
+        DataGridViewVendorParts.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
         DataGridViewVendorParts.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         DataGridViewVendorParts.Columns.AddRange(New DataGridViewColumn() {Filename, Path})
         DataGridViewVendorParts.ContextMenuStrip = ContextMenuStrip2
