@@ -43,6 +43,20 @@
         End Set
     End Property
 
+    Private _CacheProperties As Boolean
+    Public Property CacheProperties As Boolean
+        Get
+            Return _CacheProperties
+        End Get
+        Set(value As Boolean)
+            _CacheProperties = value
+            If Me.TableLayoutPanel1 IsNot Nothing Then
+                CheckBoxCacheProperties.Checked = CacheProperties
+            End If
+        End Set
+    End Property
+
+
 
     Public Sub New(_FMain As Form_Main)
 
@@ -60,6 +74,7 @@
         AssemblyTemplate = FMain.AssemblyTemplate
         PartTemplate = FMain.PartTemplate
         SheetmetalTemplate = FMain.SheetmetalTemplate
+        Me.CacheProperties = FMain.CacheProperties
 
         PropertiesToSearchList = FMain.PropertiesToSearchList
 
@@ -121,6 +136,7 @@
         FMain.AssemblyTemplate = AssemblyTemplate
         FMain.PartTemplate = PartTemplate
         FMain.SheetmetalTemplate = SheetmetalTemplate
+        FMain.CacheProperties = Me.CacheProperties
 
         PropertiesToSearchList.Clear()
 
@@ -141,6 +157,7 @@
                 End If
             End If
         Next
+
         FMain.PropertiesToSearchList = PropertiesToSearchList
 
 
@@ -156,5 +173,9 @@
         Info.FileName = "https://github.com/rmcanany/SolidEdgeStorekeeper#property-search"
         Info.UseShellExecute = True
         System.Diagnostics.Process.Start(Info)
+    End Sub
+
+    Private Sub CheckBoxCacheProperties_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBoxCacheProperties.CheckedChanged
+        Me.CacheProperties = CheckBoxCacheProperties.Checked
     End Sub
 End Class

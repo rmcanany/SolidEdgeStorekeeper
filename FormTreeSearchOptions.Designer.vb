@@ -47,8 +47,8 @@ Partial Class FormTreeSearchOptions
         CheckBoxFailedConstraintSuppress = New CheckBox()
         CheckBoxFailedConstraintAllow = New CheckBox()
         CheckBoxSuspendMRU = New CheckBox()
-        ToolTip1 = New ToolTip(components)
         CheckBoxAllowCommaDelimiters = New CheckBox()
+        ToolTip1 = New ToolTip(components)
         TableLayoutPanel1.SuspendLayout()
         TableLayoutPanel2.SuspendLayout()
         SuspendLayout()
@@ -100,7 +100,7 @@ Partial Class FormTreeSearchOptions
         TableLayoutPanel1.RowStyles.Add(New RowStyle())
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Percent, 100F))
-        TableLayoutPanel1.Size = New Size(472, 492)
+        TableLayoutPanel1.Size = New Size(472, 496)
         TableLayoutPanel1.TabIndex = 0
         ' 
         ' CheckBoxDisableFineThreadWarning
@@ -267,13 +267,13 @@ Partial Class FormTreeSearchOptions
         TableLayoutPanel2.Name = "TableLayoutPanel2"
         TableLayoutPanel2.RowCount = 1
         TableLayoutPanel2.RowStyles.Add(New RowStyle(SizeType.Percent, 100F))
-        TableLayoutPanel2.Size = New Size(370, 36)
+        TableLayoutPanel2.Size = New Size(370, 40)
         TableLayoutPanel2.TabIndex = 5
         ' 
         ' ButtonOK
         ' 
         ButtonOK.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        ButtonOK.Location = New Point(130, 10)
+        ButtonOK.Location = New Point(130, 14)
         ButtonOK.Name = "ButtonOK"
         ButtonOK.Size = New Size(75, 23)
         ButtonOK.TabIndex = 1
@@ -283,7 +283,7 @@ Partial Class FormTreeSearchOptions
         ' ButtonCancel
         ' 
         ButtonCancel.Anchor = AnchorStyles.Bottom
-        ButtonCancel.Location = New Point(211, 10)
+        ButtonCancel.Location = New Point(211, 14)
         ButtonCancel.Name = "ButtonCancel"
         ButtonCancel.Size = New Size(75, 23)
         ButtonCancel.TabIndex = 0
@@ -293,7 +293,7 @@ Partial Class FormTreeSearchOptions
         ' ButtonHelp
         ' 
         ButtonHelp.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        ButtonHelp.Location = New Point(292, 10)
+        ButtonHelp.Location = New Point(292, 14)
         ButtonHelp.Name = "ButtonHelp"
         ButtonHelp.Size = New Size(75, 23)
         ButtonHelp.TabIndex = 2
@@ -388,7 +388,7 @@ Partial Class FormTreeSearchOptions
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(472, 492)
+        ClientSize = New Size(472, 496)
         Controls.Add(TableLayoutPanel1)
         Icon = CType(resources.GetObject("$this.Icon"), Icon)
         Name = "FormTreeSearchOptions"

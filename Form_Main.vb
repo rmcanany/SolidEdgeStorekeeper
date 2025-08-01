@@ -8,7 +8,7 @@ Public Class Form_Main
     Private Property Version As String = "2025.4"
 
     Private Property PreviewVersion As String = ""  ' Empty string if not a preview
-    'Private Property PreviewVersion As String = "Preview 06"  ' Empty string if not a preview
+    'Private Property PreviewVersion As String = "Preview 06"  
 
 
     Private _SelectedNodeFullPath As String
@@ -35,6 +35,7 @@ Public Class Form_Main
     Public Property CheckNewVersion As Boolean
     Public Property PropertiesToSearchList As List(Of String)
     Public Property PropertiesData As HCPropertiesData
+    Public Property PropertiesCache As HCPropertiesCache
     Public Property AssemblyTemplate As String
     Public Property PartTemplate As String
     Public Property SheetmetalTemplate As String
@@ -75,6 +76,7 @@ Public Class Form_Main
     Public Property SuspendMRU As Boolean = False
     Public Property AllowCommaDelimiters As Boolean = False
     Public Property XmlCommaIndicator As String = "...."
+    Public Property CacheProperties As Boolean
 
 
 
@@ -155,6 +157,8 @@ Public Class Form_Main
         Next
 
         Me.PropertiesData = New HCPropertiesData  ' Automatically loads saved settings if any.
+
+        'Me.PropertiesCache = New HCPropertiesCache(Me)   ' Automatically loads saved settings if any.
 
         Splash.UpdateStatus("Checking version")
 
@@ -1927,6 +1931,13 @@ Public Class Form_Main
             Exit Sub
         End If
 
+        If Me.CacheProperties And Me.PropertiesCache Is Nothing Then
+            TextBoxStatus.Text = "Retrieving property cache"
+            System.Windows.Forms.Application.DoEvents()
+            Me.PropertiesCache = New HCPropertiesCache(Me)
+            TextBoxStatus.Text = ""
+        End If
+
         Dim SearchTerms As New List(Of String)
         For Each SearchTerm As String In TextBoxSearchTerms.Text.Trim.Split(CChar(" ")).ToList
             If Not SearchTerm.Trim = "" Then
@@ -1946,22 +1957,24 @@ Public Class Form_Main
 
         Dim SSDoc As HCStructuredStorageDoc = Nothing
 
-        Dim PropertiesCache As New HCPropertiesCache(Me)
-
-        PropertiesCache.Update(FoundFiles, New Logger("CacheLogger", Nothing))
+        If Me.CacheProperties Then
+            Me.PropertiesCache.Update(FoundFiles, New Logger("CacheLogger", Nothing))
+        End If
 
         For Each Filename As String In FoundFiles
 
             TextBoxStatus.Text = IO.Path.GetFileName(Filename)
             System.Windows.Forms.Application.DoEvents()
 
-            Try
-                SSDoc = New HCStructuredStorageDoc(Filename, _OpenReadWrite:=False)
-                SSDoc.ReadProperties(Me.PropertiesData)
-            Catch ex As Exception
-                If SSDoc IsNot Nothing Then SSDoc.Close()
-                Continue For
-            End Try
+            If Not Me.CacheProperties Then
+                Try
+                    SSDoc = New HCStructuredStorageDoc(Filename, _OpenReadWrite:=False)
+                    SSDoc.ReadProperties(Me.PropertiesData)
+                Catch ex As Exception
+                    If SSDoc IsNot Nothing Then SSDoc.Close()
+                    Continue For
+                End Try
+            End If
 
             FileDict(Filename) = New List(Of String)
 
@@ -1989,14 +2002,20 @@ Public Class Form_Main
                     PropertyNameEnglish = tmpPropertyData.EnglishName
                 End If
 
-                PropertyValue = CStr(SSDoc.GetPropValue(PropertySet, PropertyNameEnglish))
+                PropertyValue = ""
+
+                If Not Me.CacheProperties Then
+                    PropertyValue = CStr(SSDoc.GetPropValue(PropertySet, PropertyNameEnglish))
+                Else
+                    PropertyValue = CStr(Me.PropertiesCache.GetPropValue(Filename, PropertySet, PropertyNameEnglish))
+                End If
+
                 If PropertyValue Is Nothing Then PropertyValue = ""
 
                 FileDict(Filename).Add(PropertyValue)
-
             Next
 
-            SSDoc.Close()
+            If Not Me.CacheProperties Then SSDoc.Close()
 
         Next
 
@@ -2008,42 +2027,21 @@ Public Class Form_Main
                 TextBoxStatus.Text = IO.Path.GetFileName(Filename)
                 System.Windows.Forms.Application.DoEvents()
 
-                Dim NewWay As Boolean = True
-                If NewWay Then
-                    Dim MatchList As New List(Of String)
-                    For Each PropValue As String In FileDict(Filename)
-                        For Each SearchTerm As String In SearchTerms
-                            If PropValue.ToLower.Contains(SearchTerm.ToLower) And Not MatchList.Contains(SearchTerm.ToLower) Then
-                                MatchList.Add(SearchTerm.ToLower)
-                                If MatchList.Count = SearchTerms.Count Then
-                                    MatchDict(Filename) = FileDict(Filename)
-                                    Exit For
-                                End If
-                                'If Not MatchDict.Keys.Contains(Filename) Then
-                                '    MatchDict(Filename) = FileDict(Filename)
-                                '    Exit For
-                                'End If
+                Dim MatchList As New List(Of String)
+                For Each PropValue As String In FileDict(Filename)
+                    For Each SearchTerm As String In SearchTerms
+                        If PropValue.ToLower.Contains(SearchTerm.ToLower) And Not MatchList.Contains(SearchTerm.ToLower) Then
+                            MatchList.Add(SearchTerm.ToLower)
+                            If MatchList.Count = SearchTerms.Count Then
+                                MatchDict(Filename) = FileDict(Filename)
+                                Exit For
                             End If
-                        Next
-                        If MatchDict.Keys.Contains(Filename) Then
-                            Exit For
                         End If
                     Next
-                Else
-                    For Each PropValue As String In FileDict(Filename)
-                        For Each SearchTerm As String In SearchTerms
-                            If PropValue.ToLower.Contains(SearchTerm.ToLower) Then
-                                If Not MatchDict.Keys.Contains(Filename) Then
-                                    MatchDict(Filename) = FileDict(Filename)
-                                    Exit For
-                                End If
-                            End If
-                        Next
-                        If MatchDict.Keys.Contains(Filename) Then
-                            Exit For
-                        End If
-                    Next
-                End If
+                    If MatchDict.Keys.Contains(Filename) Then
+                        Exit For
+                    End If
+                Next
             Next
         End If
 

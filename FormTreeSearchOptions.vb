@@ -355,4 +355,5 @@ Public Class FormTreeSearchOptions
     Private Sub CheckBoxAllowCommaDelimiters_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBoxAllowCommaDelimiters.CheckedChanged
         Me.AllowCommaDelimiters = CheckBoxAllowCommaDelimiters.Checked
     End Sub
+
 End Class

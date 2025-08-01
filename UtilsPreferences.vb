@@ -109,6 +109,8 @@ Public Class UtilsPreferences
                     Value = JsonConvert.SerializeObject(PropInfo.GetValue(FMain, Nothing))
                 Case "hcpropertiesdata", "logger"
                     ' Nothing to do here.  HCPropertiesData is saved separately.
+                Case "hcpropertiescache"
+                    ' Nothing to do here.  HCPropertiesCache is saved separately.
                 Case Else
                     MsgBox(String.Format("PropInfo.PropertyType.Name '{0}' not recognized", PropType))
             End Select
@@ -127,6 +129,8 @@ Public Class UtilsPreferences
                         MsgBox(String.Format("PropInfo.PropertyType.Name '{0}' detected", PropInfo.PropertyType.Name))
                     Case "hcpropertiesdata", "logger"
                         ' Nothing to do here.  HCPropertiesData is saved separately.
+                    Case "hcpropertiescache"
+                        ' Nothing to do here.  HCPropertiesCache is saved separately.
                     Case Else
                         MsgBox(String.Format("In UtilsPreferences.SaveFormMainSettings: PropInfo.PropertyType.Name '{0}' not recognized", PropInfo.PropertyType.Name))
                 End Select
@@ -281,6 +285,25 @@ Public Class UtilsPreferences
 
     Public Function GetPropertiesDataFilename(CheckExisting As Boolean) As String
         Dim Filename = "properties_data.json"
+        Filename = String.Format("{0}\{1}", GetPreferencesDirectory, Filename)
+
+        If CheckExisting Then
+            If FileIO.FileSystem.FileExists(Filename) Then
+                Return Filename
+            Else
+                Return ""
+            End If
+        Else
+            Return Filename
+        End If
+
+    End Function
+
+
+    '###### PROPERTIES CACHE ######
+
+    Public Function GetPropertiesCacheFilename(CheckExisting As Boolean) As String
+        Dim Filename = "properties_cache.json"
         Filename = String.Format("{0}\{1}", GetPreferencesDirectory, Filename)
 
         If CheckExisting Then

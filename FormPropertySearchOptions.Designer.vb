@@ -27,6 +27,7 @@ Partial Class FormPropertySearchOptions
         TableLayoutPanel2 = New TableLayoutPanel()
         ButtonCancel = New Button()
         ButtonOK = New Button()
+        ButtonHelp = New Button()
         ButtonSheetmetalTemplate = New Button()
         ButtonPartTemplate = New Button()
         ButtonAssemblyTemplate = New Button()
@@ -38,7 +39,7 @@ Partial Class FormPropertySearchOptions
         SystemOrCustom = New DataGridViewTextBoxColumn()
         PropertyName = New DataGridViewTextBoxColumn()
         Label2 = New Label()
-        ButtonHelp = New Button()
+        CheckBoxCacheProperties = New CheckBox()
         TableLayoutPanel1.SuspendLayout()
         TableLayoutPanel2.SuspendLayout()
         CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
@@ -49,7 +50,6 @@ Partial Class FormPropertySearchOptions
         TableLayoutPanel1.ColumnCount = 2
         TableLayoutPanel1.ColumnStyles.Add(New ColumnStyle())
         TableLayoutPanel1.ColumnStyles.Add(New ColumnStyle(SizeType.Percent, 100F))
-        TableLayoutPanel1.Controls.Add(TableLayoutPanel2, 1, 6)
         TableLayoutPanel1.Controls.Add(ButtonSheetmetalTemplate, 0, 5)
         TableLayoutPanel1.Controls.Add(ButtonPartTemplate, 0, 4)
         TableLayoutPanel1.Controls.Add(ButtonAssemblyTemplate, 0, 3)
@@ -59,18 +59,23 @@ Partial Class FormPropertySearchOptions
         TableLayoutPanel1.Controls.Add(Label1, 0, 2)
         TableLayoutPanel1.Controls.Add(DataGridView1, 0, 1)
         TableLayoutPanel1.Controls.Add(Label2, 0, 0)
+        TableLayoutPanel1.Controls.Add(TableLayoutPanel2, 1, 9)
+        TableLayoutPanel1.Controls.Add(CheckBoxCacheProperties, 0, 6)
         TableLayoutPanel1.Dock = DockStyle.Fill
         TableLayoutPanel1.Location = New Point(0, 0)
         TableLayoutPanel1.Name = "TableLayoutPanel1"
-        TableLayoutPanel1.RowCount = 7
+        TableLayoutPanel1.RowCount = 10
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 125F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
+        TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
+        TableLayoutPanel1.RowStyles.Add(New RowStyle())
+        TableLayoutPanel1.RowStyles.Add(New RowStyle())
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 40F))
-        TableLayoutPanel1.Size = New Size(427, 338)
+        TableLayoutPanel1.Size = New Size(427, 351)
         TableLayoutPanel1.TabIndex = 0
         ' 
         ' TableLayoutPanel2
@@ -83,17 +88,17 @@ Partial Class FormPropertySearchOptions
         TableLayoutPanel2.Controls.Add(ButtonOK, 0, 0)
         TableLayoutPanel2.Controls.Add(ButtonHelp, 2, 0)
         TableLayoutPanel2.Dock = DockStyle.Fill
-        TableLayoutPanel2.Location = New Point(84, 278)
+        TableLayoutPanel2.Location = New Point(84, 308)
         TableLayoutPanel2.Name = "TableLayoutPanel2"
         TableLayoutPanel2.RowCount = 1
         TableLayoutPanel2.RowStyles.Add(New RowStyle(SizeType.Percent, 100F))
-        TableLayoutPanel2.Size = New Size(340, 57)
+        TableLayoutPanel2.Size = New Size(340, 40)
         TableLayoutPanel2.TabIndex = 7
         ' 
         ' ButtonCancel
         ' 
         ButtonCancel.Anchor = AnchorStyles.Bottom
-        ButtonCancel.Location = New Point(181, 31)
+        ButtonCancel.Location = New Point(181, 14)
         ButtonCancel.Name = "ButtonCancel"
         ButtonCancel.Size = New Size(75, 23)
         ButtonCancel.TabIndex = 0
@@ -103,12 +108,22 @@ Partial Class FormPropertySearchOptions
         ' ButtonOK
         ' 
         ButtonOK.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        ButtonOK.Location = New Point(100, 31)
+        ButtonOK.Location = New Point(100, 14)
         ButtonOK.Name = "ButtonOK"
         ButtonOK.Size = New Size(75, 23)
         ButtonOK.TabIndex = 1
         ButtonOK.Text = "OK"
         ButtonOK.UseVisualStyleBackColor = True
+        ' 
+        ' ButtonHelp
+        ' 
+        ButtonHelp.Anchor = AnchorStyles.Bottom
+        ButtonHelp.Location = New Point(262, 14)
+        ButtonHelp.Name = "ButtonHelp"
+        ButtonHelp.Size = New Size(75, 23)
+        ButtonHelp.TabIndex = 2
+        ButtonHelp.Text = "Help"
+        ButtonHelp.UseVisualStyleBackColor = True
         ' 
         ' ButtonSheetmetalTemplate
         ' 
@@ -210,21 +225,24 @@ Partial Class FormPropertySearchOptions
         Label2.TabIndex = 9
         Label2.Text = "Properties to search"
         ' 
-        ' ButtonHelp
+        ' CheckBoxCacheProperties
         ' 
-        ButtonHelp.Anchor = AnchorStyles.Bottom
-        ButtonHelp.Location = New Point(262, 31)
-        ButtonHelp.Name = "ButtonHelp"
-        ButtonHelp.Size = New Size(75, 23)
-        ButtonHelp.TabIndex = 2
-        ButtonHelp.Text = "Help"
-        ButtonHelp.UseVisualStyleBackColor = True
+        CheckBoxCacheProperties.Anchor = AnchorStyles.Left
+        CheckBoxCacheProperties.AutoSize = True
+        TableLayoutPanel1.SetColumnSpan(CheckBoxCacheProperties, 2)
+        CheckBoxCacheProperties.Location = New Point(3, 280)
+        CheckBoxCacheProperties.Name = "CheckBoxCacheProperties"
+        CheckBoxCacheProperties.Padding = New Padding(5, 0, 0, 0)
+        CheckBoxCacheProperties.Size = New Size(262, 19)
+        CheckBoxCacheProperties.TabIndex = 10
+        CheckBoxCacheProperties.Text = "Cache library file properties for faster search"
+        CheckBoxCacheProperties.UseVisualStyleBackColor = True
         ' 
         ' FormPropertySearchOptions
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(427, 338)
+        ClientSize = New Size(427, 351)
         Controls.Add(TableLayoutPanel1)
         Icon = CType(resources.GetObject("$this.Icon"), Icon)
         Name = "FormPropertySearchOptions"
@@ -253,4 +271,5 @@ Partial Class FormPropertySearchOptions
     Friend WithEvents SystemOrCustom As DataGridViewTextBoxColumn
     Friend WithEvents PropertyName As DataGridViewTextBoxColumn
     Friend WithEvents ButtonHelp As Button
+    Friend WithEvents CheckBoxCacheProperties As CheckBox
 End Class
