@@ -157,6 +157,9 @@ The material table is usually your normal SE material table.  However, for a qui
   - `Do not show processed files in the Most Recently Used list`  
 	Enable this option to keep the program from adding newly-generated standard parts to the Most Recently Used list.  Note this function was added to Solid Edge in version 2020.  If you are running an earlier version, this option must be disabled.
 	
+  - `Allow comma delimiters (experimental)`  
+	Allows the use of a comma as the decimal delimiter.  This is somewhat experimental because commas are not allowed `*.xml` headers.  There is a workaround in place, but has not been thouroughly tested.  Disabling this option causes causes commas to be replaced with periods in the `*.xml` file.
+	
   - `Check for new version at startup`  
 	If you don't need a reminder about new versions, disable the check here.
 
@@ -168,13 +171,19 @@ Additional settings for **Property Search** are accessed from that tab's toolbar
   <img src="media/property_search_options.png">
 </p>
 
-**Properties to Search**
+#### Properties to Search
 
 This is where you enter the names of the properties that hold the values you want to match.  You must also specify if the property is System or Custom.  System properties are in every Solid Edge file.  Custom properties are ones you define, probably in a template.
 
-**Solid Edge Template Files**
+#### Solid Edge Template Files
+
 
 These are your normal template files, not the ones used by the program to create standard parts.  They are needed to populate the available properties, and to determine what language is in use.
+
+#### Options
+
+- `Cache library file properties for faster search`  
+  Reads all file properties and saves them in a separate file.  This can speed up property searches for large libraries.  It takes some time to load the file initially; the status bar informs you of the progress.
 
 ### Localized SE Installations
 
