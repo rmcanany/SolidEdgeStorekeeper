@@ -73,6 +73,166 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized resource of type System.Drawing.Bitmap.
         '''</summary>
+        Friend ReadOnly Property FastenerStack_F_CO_FW_LW_N() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("FastenerStack_F-CO-FW-LW-N", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property FastenerStack_F_CO_FW_N() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("FastenerStack_F-CO-FW-N", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property FastenerStack_F_CO_LW_N() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("FastenerStack_F-CO-LW-N", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property FastenerStack_F_CO_N() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("FastenerStack_F-CO-N", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property FastenerStack_F_CO_TB() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("FastenerStack_F-CO-TB", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property FastenerStack_F_CO_TT() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("FastenerStack_F-CO-TT", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property FastenerStack_F_FW_CO_FW_LW_N() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("FastenerStack_F-FW-CO-FW-LW-N", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property FastenerStack_F_FW_CO_FW_N() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("FastenerStack_F-FW-CO-FW-N", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property FastenerStack_F_FW_CO_LW_N() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("FastenerStack_F-FW-CO-LW-N", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property FastenerStack_F_FW_CO_N() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("FastenerStack_F-FW-CO-N", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property FastenerStack_F_FW_CO_TB() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("FastenerStack_F-FW-CO-TB", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property FastenerStack_F_FW_CO_TT() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("FastenerStack_F-FW-CO-TT", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property FastenerStack_F_LW_CO_TB() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("FastenerStack_F-LW-CO-TB", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property FastenerStack_F_LW_CO_TT() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("FastenerStack_F-LW-CO-TT", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property FastenerStack_F_LW_FW_CO_TB() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("FastenerStack_F-LW-FW-CO-TB", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property FastenerStack_F_LW_FW_CO_TT() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("FastenerStack_F-LW-FW-CO-TT", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
         Friend ReadOnly Property icons8_add_list_16() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("icons8-add-list-16", resourceCulture)
@@ -96,6 +256,16 @@ Namespace My.Resources
         Friend ReadOnly Property icons8_Checkbox_Unchecked() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("icons8_Checkbox_Unchecked", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property icons8_choose_16() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("icons8-choose-16", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
             End Get
         End Property
@@ -143,9 +313,29 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized resource of type System.Drawing.Bitmap.
         '''</summary>
+        Friend ReadOnly Property icons8_paste_16() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("icons8-paste-16", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
         Friend ReadOnly Property icons8_search_16() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("icons8-search-16", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property locked() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("locked", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
             End Get
         End Property
@@ -176,6 +366,16 @@ Namespace My.Resources
         Friend ReadOnly Property Support_16() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("Support_16", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property unlocked() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("unlocked", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
             End Get
         End Property

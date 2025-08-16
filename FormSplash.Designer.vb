@@ -56,6 +56,7 @@ Partial Class FormSplash
         Controls.Add(TextBoxStatus)
         Controls.Add(PictureBox1)
         FormBorderStyle = FormBorderStyle.None
+        Icon = CType(resources.GetObject("$this.Icon"), Icon)
         Name = "FormSplash"
         StartPosition = FormStartPosition.CenterScreen
         Text = "Splash"

@@ -70,6 +70,7 @@ Partial Class Form_Main
         TableLayoutPanel3 = New TableLayoutPanel()
         ButtonHelp = New Button()
         TextBoxStatus = New TextBox()
+        FastenerStackToolStripMenuItem = New ToolStripMenuItem()
         ToolStrip1.SuspendLayout()
         ContextMenuStrip1.SuspendLayout()
         CType(DataGridViewDataInspector, ComponentModel.ISupportInitialize).BeginInit()
@@ -188,26 +189,26 @@ Partial Class Form_Main
         ' 
         ' ContextMenuStrip1
         ' 
-        ContextMenuStrip1.Items.AddRange(New ToolStripItem() {ToolStripMenuItem1, ReplaceSelectedToolStripMenuItem, ReplaceAllToolStripMenuItem})
+        ContextMenuStrip1.Items.AddRange(New ToolStripItem() {ToolStripMenuItem1, ReplaceSelectedToolStripMenuItem, ReplaceAllToolStripMenuItem, FastenerStackToolStripMenuItem})
         ContextMenuStrip1.Name = "ContextMenuStrip1"
-        ContextMenuStrip1.Size = New Size(163, 70)
+        ContextMenuStrip1.Size = New Size(181, 114)
         ' 
         ' ToolStripMenuItem1
         ' 
         ToolStripMenuItem1.Name = "ToolStripMenuItem1"
-        ToolStripMenuItem1.Size = New Size(162, 22)
+        ToolStripMenuItem1.Size = New Size(180, 22)
         ToolStripMenuItem1.Text = "Add to assembly"
         ' 
         ' ReplaceSelectedToolStripMenuItem
         ' 
         ReplaceSelectedToolStripMenuItem.Name = "ReplaceSelectedToolStripMenuItem"
-        ReplaceSelectedToolStripMenuItem.Size = New Size(162, 22)
+        ReplaceSelectedToolStripMenuItem.Size = New Size(180, 22)
         ReplaceSelectedToolStripMenuItem.Text = "Replace selected"
         ' 
         ' ReplaceAllToolStripMenuItem
         ' 
         ReplaceAllToolStripMenuItem.Name = "ReplaceAllToolStripMenuItem"
-        ReplaceAllToolStripMenuItem.Size = New Size(162, 22)
+        ReplaceAllToolStripMenuItem.Size = New Size(180, 22)
         ReplaceAllToolStripMenuItem.Text = "Replace all"
         ' 
         ' DataGridViewDataInspector
@@ -492,6 +493,12 @@ Partial Class Form_Main
         TextBoxStatus.TabIndex = 3
         TextBoxStatus.Text = "Status"
         ' 
+        ' FastenerStackToolStripMenuItem
+        ' 
+        FastenerStackToolStripMenuItem.Name = "FastenerStackToolStripMenuItem"
+        FastenerStackToolStripMenuItem.Size = New Size(180, 22)
+        FastenerStackToolStripMenuItem.Text = "Fastener stack"
+        ' 
         ' Form_Main
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -563,5 +570,6 @@ Partial Class Form_Main
     Friend WithEvents LabelAddToLibrary As ToolStripLabel
     Friend WithEvents ReplaceSelectedToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ReplaceAllToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents FastenerStackToolStripMenuItem As ToolStripMenuItem
 
 End Class

@@ -1,6 +1,7 @@
 ﻿Option Strict On
 
 Imports System.Text.RegularExpressions
+Imports System.Xml
 Imports Microsoft.WindowsAPICodePack.Dialogs
 
 Public Class Form_Main
@@ -77,17 +78,17 @@ Public Class Form_Main
     Public Property AllowCommaDelimiters As Boolean = False
     Public Property XmlCommaIndicator As String = "...."
     Public Property CacheProperties As Boolean
+    Public Property XmlDoc As System.Xml.XmlDocument
+    Public Property AddToLibraryOnly As Boolean
 
 
 
-    Private Property XmlDoc As System.Xml.XmlDocument
     Private Property Props As Props
     Private Property SEApp As SolidEdgeFramework.Application
     Private Property AsmDoc As SolidEdgeAssembly.AssemblyDocument
     Private Property TemplateDoc As SolidEdgeFramework.SolidEdgeDocument
     Private Property AssemblyPasteComplete As Boolean
     Private Property NodeCount As Integer
-    Private Property AddToLibraryOnly As Boolean
     Private Property ErrorLogger As HCErrorLogger
 
 
@@ -253,7 +254,11 @@ Public Class Form_Main
         Return Success
     End Function
 
-    Private Sub Process(Optional PropertySearchFilename As String = Nothing, Optional Replace As Boolean = False, Optional ReplaceAll As Boolean = False)
+    Public Sub Process(
+        Optional PropertySearchFilename As String = Nothing,
+        Optional Replace As Boolean = False,
+        Optional ReplaceAll As Boolean = False)
+
         Dim Proceed As Boolean = True
         Dim UC As New UtilsCommon
 
@@ -681,7 +686,7 @@ Public Class Form_Main
     End Function
 
 
-    Private Function GetFilenameFormula(DefaultExtension As String) As String
+    Public Function GetFilenameFormula(DefaultExtension As String) As String
         Dim Filename As String = Nothing
         Dim FilenameFormula As String = ""
 
@@ -778,7 +783,7 @@ Public Class Form_Main
         Return Filename
     End Function
 
-    Private Function GetTemplateNameFormula() As String
+    Public Function GetTemplateNameFormula() As String
         Dim TemplateName As String
 
         Dim tmpProps As List(Of Prop) = Props.GetPropsOfType("TemplateFormula")
@@ -1078,12 +1083,6 @@ Public Class Form_Main
             Dim ChildNodes = CurrentNode.ChildNodes
             For Each tmpNode As Xml.XmlNode In ChildNodes
 
-                ' ###### Comma to '....' ######
-
-                'If tmpNode.Name = NextNodeName Then
-                '    CurrentNode = tmpNode
-                '    Continue For
-                'End If
                 If tmpNode.Name = NextNodeName.Replace(",", Me.XmlCommaIndicator) Then
                     CurrentNode = tmpNode
                     Continue For
@@ -1227,7 +1226,7 @@ Public Class Form_Main
         End If
     End Sub
 
-    Private Function SpaceToUnderscore(InString As String) As String
+    Public Function SpaceToUnderscore(InString As String) As String
         Return InString.Replace(" ", "_")
     End Function
 
@@ -1735,6 +1734,73 @@ Public Class Form_Main
         Return XmlList
     End Function
 
+    Public Function XmlNodeFromPath(FullPath As String) As XmlNode
+        'Dim tmpProps As New Props
+
+        Dim Node As XmlNode = Nothing
+        Dim FullPathList As List(Of String) = FullPath.Split("\").ToList
+
+        Dim CurrentNode = XmlDoc.ChildNodes(1) ' Root node
+
+        For i = 0 To FullPathList.Count - 1
+            Dim NextNodeName = ""
+            If i < FullPathList.Count - 1 Then
+                NextNodeName = FullPathList(i + 1)
+            Else
+                Node = CurrentNode
+                Exit For
+            End If
+
+            Dim ChildNodes = CurrentNode.ChildNodes
+            For Each tmpNode As Xml.XmlNode In ChildNodes
+
+                If tmpNode.Name = NextNodeName.Replace(",", Me.XmlCommaIndicator) Then
+                    CurrentNode = tmpNode
+                    Continue For
+                End If
+
+                'For Each Attribute As Xml.XmlAttribute In tmpNode.Attributes
+                '    If Attribute.Name = "Type" Then
+                '        If Not (Attribute.Value = "Node" Or Attribute.Value.Contains("LeafNode")) Then
+                '            Dim tmpName As String = tmpNode.Name
+                '            Dim tmpType As String = Attribute.Value
+                '            Dim tmpValue As String = tmpNode.InnerText
+                '            Dim Prop As New Prop(tmpName, tmpType, tmpValue)
+                '            tmpProps.Items.Add(Prop)
+                '            'If tmpType = "TemplateFormula" Then
+                '            '    UpdateThumbnail(tmpValue)
+                '            '    TemplateFound = True
+                '            'End If
+                '        End If
+                '    End If
+                'Next
+            Next
+        Next
+
+        Return Node
+        'Return tmpProps
+    End Function
+
+    Public Function PathFromXmlNode(Node As XmlNode) As String
+        Dim FullPath As String = Nothing
+        Dim ReversedList As New List(Of String)
+        'ReversedList.Add(Node.Name)
+
+        Dim CurrentNode As XmlNode = Node
+
+        While CurrentNode IsNot Nothing
+            ReversedList.Add(CurrentNode.Name)
+            CurrentNode = CurrentNode.ParentNode
+        End While
+
+        ReversedList.RemoveAt(ReversedList.Count - 1)  ' Removes the #document entry
+
+        For i = ReversedList.Count - 1 To 0 Step -1
+            FullPath = $"{FullPath}\{ReversedList(i)}"
+        Next
+
+        Return FullPath
+    End Function
 
     ' ###### ERROR REPORTING ######
 
@@ -2243,6 +2309,27 @@ Public Class Form_Main
         End If
 
     End Sub
+
+    Private Sub FastenerStackToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles FastenerStackToolStripMenuItem.Click
+        Dim Node = TreeView1.SelectedNode
+        Dim Filename = GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(GetTemplateNameFormula()))
+        Dim FFS As New FormFastenerStack(Me)
+        'AddHandler FFS.ButtonSelectStyle.Click, AddressOf EventTest
+        FFS.FastenerFilename = Filename
+        FFS.Show()
+
+        Dim i = 0
+    End Sub
+
+    Private Sub EventTest(sender As Object, e As EventArgs)
+        If TextBoxStatus.Text = "" Then
+            TextBoxStatus.Text = "Clicked Set Style"
+        Else
+            TextBoxStatus.Text = ""
+        End If
+        Dim i = 0
+    End Sub
+
 End Class
 
 Public Class Props
