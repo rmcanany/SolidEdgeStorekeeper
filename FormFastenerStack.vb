@@ -1,5 +1,6 @@
 ﻿Option Strict On
 Imports System.Xml
+Imports SolidEdgeAssembly
 
 Public Class FormFastenerStack
 
@@ -193,6 +194,9 @@ Public Class FormFastenerStack
     Public Property TreeviewLockwasherFullPath As String
     Public Property TreeviewNutFullPath As String
 
+    'Private SEAppEvents As SolidEdgeFramework.DISEApplicationEvents_Event
+
+
     Public Enum StackConfigurationConstants
 
         '  F Fastener
@@ -237,11 +241,32 @@ Public Class FormFastenerStack
     Public Sub Process()
         Dim Proceed As Boolean = True
 
-        GenerateNeededFiles()
+        'FMain.SEApp.DisplayAlerts = False
 
-        If Not CheckStartConditions() Then Proceed = False
+        If Not GenerateNeededFiles() Then Proceed = False
 
-        Dim AssyList As List(Of SolidEdgeAssembly.AssemblyDocument) = PrepTmpAssys()
+        If Proceed And Not CheckStartConditions() Then Proceed = False
+
+        Dim StackAssyFilenames As List(Of String) = Nothing
+
+        If Proceed Then
+            StackAssyFilenames = PrepStackAssemblies()
+            If StackAssyFilenames.Count = 1 Then
+                Me.TopFilename = StackAssyFilenames(0)
+                Me.BottomFilename = ""
+            ElseIf StackAssyFilenames.Count = 2 Then
+                Me.TopFilename = StackAssyFilenames(0)
+                Me.BottomFilename = StackAssyFilenames(1)
+            Else
+                Proceed = False
+            End If
+        End If
+
+        If Proceed Then
+            Proceed = AddStackToAssembly()
+        End If
+
+        'FMain.SEApp.DisplayAlerts = True
 
     End Sub
 
@@ -307,9 +332,13 @@ Public Class FormFastenerStack
 
     End Function
 
-    Private Sub GenerateNeededFiles()
+    Private Function GenerateNeededFiles() As Boolean
+
+        Dim Success As Boolean = True
 
         Dim tmpTreeviewFastenerFullPath As String
+
+        ' Get the correct length of fastener for the given parameters
         tmpTreeviewFastenerFullPath = GetCorrectLengthFastenerFullPath(
             Me.TreeviewFastenerFullPath, Me.FastenerMinLength, Me.FastenerMaxLength)
 
@@ -317,41 +346,49 @@ Public Class FormFastenerStack
             Me.TreeviewFastenerFullPath = tmpTreeviewFastenerFullPath
         Else
             MsgBox("No fastener length satisfies given parameters", vbOKOnly, "Fastener Length Not Found")
-            Exit Sub
+            Return False
         End If
 
         Dim ConfigString As String = Me.StackConfiguration.ToString
 
-        Dim tmpSelectedNodeFullPath = FMain.SelectedNodeFullPath
-        FMain.AddToLibraryOnly = True
+        Dim tmpSelectedNodeFullPath = FMain.SelectedNodeFullPath ' Save the original selected node.  Used to reset the form after processing.
 
+        FMain.AddToLibraryOnly = True  ' We don't want to add the individual files to the user's assembly
+
+        ' Generate the fastener if needed
         FMain.SelectedNodeFullPath = Me.TreeviewFastenerFullPath
         Me.FastenerFilename = FMain.GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(FMain.GetTemplateNameFormula()))
         FMain.Process()
 
+        ' Generate the flat washer if needed
         If ConfigString.Contains("_FW_") Then
             FMain.SelectedNodeFullPath = Me.TreeviewFlatWasherFullPath
             FMain.Process()
         End If
 
+        ' Generate the lock washer if needed
         If ConfigString.Contains("_LW_") Then
             FMain.SelectedNodeFullPath = Me.TreeviewLockwasherFullPath
             FMain.Process()
         End If
 
+        ' Generate the nut if needed
         If ConfigString.Contains("_N") Then
             FMain.SelectedNodeFullPath = Me.TreeviewNutFullPath
             FMain.Process()
         End If
 
+        ' Reset to original conditions
         FMain.AddToLibraryOnly = False
         FMain.SelectedNodeFullPath = tmpSelectedNodeFullPath
 
-    End Sub
+        Return Success
 
-    Private Function PrepTmpAssys() As List(Of SolidEdgeAssembly.AssemblyDocument)
+    End Function
 
-        Dim Outlist As New List(Of SolidEdgeAssembly.AssemblyDocument)
+    Private Function PrepStackAssemblies() As List(Of String)
+
+        Dim Outlist As New List(Of String)
 
         If FMain.SEApp Is Nothing Or FMain.AsmDoc Is Nothing Then
             MsgBox("Unable to connect to Solid Edge, or an assembly file is not open")
@@ -359,6 +396,8 @@ Public Class FormFastenerStack
         End If
 
         For Each AssyFilename In {GetTopAssyFilename(), GetBottomAssyFilename()}
+
+            If AssyFilename = "" Then Continue For  ' Some configurations do not have a bottom stack assembly
 
             Dim tmpAssyFilename = $"{IO.Path.GetDirectoryName(AssyFilename)}\tmp{IO.Path.GetFileName(AssyFilename)}"
 
@@ -374,7 +413,7 @@ Public Class FormFastenerStack
             tmpAsm.SaveAs(tmpAssyFilename)
             FMain.SEApp.DoIdle()
 
-            Outlist.Add(tmpAsm)
+            Outlist.Add(tmpAssyFilename)
 
             For Each Occurrence As SolidEdgeAssembly.Occurrence In tmpAsm.Occurrences
                 Dim OccurrenceFilename As String = Occurrence.OccurrenceFileName
@@ -390,7 +429,7 @@ Public Class FormFastenerStack
                     Case "N.par"
                         ReplacementFilename = Me.NutFilename
                     Case Else
-                        MsgBox($"FastenerStack.PrepTmpAssys unrecognized filename: '{IO.Path.GetFileName(OccurrenceFilename)}'")
+                        MsgBox($"FastenerStack.PrepStackAssemblies unrecognized filename: '{IO.Path.GetFileName(OccurrenceFilename)}'")
                         Return Nothing
                 End Select
 
@@ -398,8 +437,9 @@ Public Class FormFastenerStack
                     tmpAsm.ReplaceComponents({Occurrence}, ReplacementFilename, SolidEdgeAssembly.ConstraintReplacementConstants.seConstraintReplacementSuppress)
                 ElseIf FMain.FailedConstraintAllow Then
                     tmpAsm.ReplaceComponents({Occurrence}, ReplacementFilename, SolidEdgeAssembly.ConstraintReplacementConstants.seConstraintReplacementNone)
-                    'Else
-                    '    Me.FileLogger.AddMessage("Option not set for treatment of for failed constraints.  Set it on the Tree Search Options dialog.")
+                Else
+                    MsgBox("Option not set for treatment of for failed constraints.  Set it on the Tree Search Options dialog.")
+                    Return Nothing
                 End If
 
             Next
@@ -413,6 +453,62 @@ Public Class FormFastenerStack
 
         Return Outlist
     End Function
+
+    Private Function AddStackToAssembly() As Boolean
+        Dim Success As Boolean = True
+
+        AddHandler FMain.SEAppEvents.AfterCommandRun, AddressOf FMain.DISEApplicationEvents_AfterCommandRun
+        FMain.SEApp.DoIdle()
+        Me.TopMost = False
+        System.Windows.Forms.Application.DoEvents()
+        FMain.SEApp.Activate()
+        FMain.SEApp.DoIdle()
+
+        Dim Occurrences As SolidEdgeAssembly.Occurrences = FMain.AsmDoc.Occurrences
+        Dim NumFilesAdded As Integer = 0
+
+        For Each Filename As String In ({Me.TopFilename, Me.BottomFilename})
+            If Filename = "" Then Continue For
+
+            Dim PreviousOccurrencesCount As Integer = Occurrences.Count
+            Dim Occurrence As SolidEdgeAssembly.Occurrence = Nothing
+
+            FMain.AssemblyPasteComplete = False
+
+            Clipboard.Clear()
+            Clipboard.SetText(Filename)
+            FMain.SEApp.StartCommand(CType(SolidEdgeConstants.AssemblyCommandConstants.AssemblyEditPaste, SolidEdgeFramework.SolidEdgeCommandConstants))
+
+            While Not FMain.AssemblyPasteComplete
+                Threading.Thread.Sleep(500)
+                'SEApp.DoIdle()
+            End While
+
+            If Occurrences.Count > PreviousOccurrencesCount Then
+                Occurrence = CType(Occurrences(Occurrences.Count - 1), SolidEdgeAssembly.Occurrence)
+                NumFilesAdded += Occurrence.SubOccurrences.Count
+                FMain.AsmDoc.DisperseSubassembly(Occurrence, False)
+            End If
+
+        Next
+
+        RemoveHandler FMain.SEAppEvents.AfterCommandRun, AddressOf FMain.DISEApplicationEvents_AfterCommandRun
+
+        Dim NewOccurrenceList As New List(Of SolidEdgeAssembly.Occurrence)
+
+        If NumFilesAdded > 0 Then
+            'FMain.SEApp.ActiveSelectSet.RemoveAll()
+            For i = 0 To NumFilesAdded - 1
+                NewOccurrenceList.Add(CType(Occurrences(Occurrences.Count - 1 - i), Occurrence))
+            Next
+        End If
+
+        Dim NewGroup As SolidEdgeAssembly.AssemblyGroup = FMain.AsmDoc.AssemblyGroups.Add(NumFilesAdded, NewOccurrenceList.ToArray)
+        NewGroup.Name = $"FastenerStack {FMain.AsmDoc.AssemblyGroups.Count}"
+
+        Return Success
+    End Function
+
 
     Private Function GetTopAssyFilename() As String
         Dim Filename As String = ""
@@ -429,6 +525,9 @@ Public Class FormFastenerStack
         Dim Filename As String = ""
 
         Filename = Me.StackConfiguration.ToString.Split("_CO_")(1)
+
+        If Filename.Contains("TB") Or Filename.Contains("TT") Then Return ""
+
         Filename = Filename.Replace("_", "-")
         Filename = $"FastenerStackBottom_{Filename}.asm"
         Filename = $"{FMain.TemplateDirectory}\FastenerStackTemplates\{Filename}"

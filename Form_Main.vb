@@ -87,7 +87,7 @@ Public Class Form_Main
 
     Private Property Props As Props
     Private Property TemplateDoc As SolidEdgeFramework.SolidEdgeDocument
-    Private Property AssemblyPasteComplete As Boolean
+    Public Property AssemblyPasteComplete As Boolean
     Private Property NodeCount As Integer
     Private Property ErrorLogger As HCErrorLogger
 
@@ -96,7 +96,7 @@ Public Class Form_Main
 
     ' https://community.sw.siemens.com/s/question/0D5Vb00000Krsy5KAB/handling-events-how-to-use-help-example
     ' https://github.com/SolidEdgeCommunity/Samples/blob/master/General/EventHandling/vb/EventHandling/MainForm.vb
-    Private SEAppEvents As SolidEdgeFramework.DISEApplicationEvents_Event
+    Public SEAppEvents As SolidEdgeFramework.DISEApplicationEvents_Event
 
     Private Sub Startup()
 
@@ -1914,7 +1914,7 @@ Public Class Form_Main
 
     End Sub
 
-    Private Sub DISEApplicationEvents_AfterCommandRun(ByVal theCommandID As Integer)
+    Public Sub DISEApplicationEvents_AfterCommandRun(ByVal theCommandID As Integer)
         If theCommandID = 57637 Then ' SolidEdgeConstants.AssemblyCommandConstants.AssemblyEditPaste
             AssemblyPasteComplete = True
         End If
