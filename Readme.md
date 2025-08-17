@@ -8,7 +8,7 @@
 ## CREDITS
 
 **Contributors**  
-@[Francesco Arfilli]
+@[Francesco Arfilli], @TeeVar
 
 **Beta Testers**  
 @hawcad, @rob.wolbrink7456, @[Francesco Arfilli], @pedja, @TeeVar, @Seva

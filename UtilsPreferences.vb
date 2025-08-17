@@ -41,6 +41,11 @@ Public Class UtilsPreferences
         Dim Value As String
         Dim PropType As String
 
+        Dim s As String = ""
+
+        Dim SkipProps As New List(Of String)
+        SkipProps.AddRange({"hcpropertiesdata", "logger", "hcpropertiescache", "xmldocument", "application", "assemblydocument"})
+
         For Each PropInfo As System.Reflection.PropertyInfo In PropInfos
 
             PropType = PropInfo.PropertyType.Name.ToLower
@@ -50,7 +55,7 @@ Public Class UtilsPreferences
             tf = tf Or {"Left", "Top", "Width", "Height"}.ToList.Contains(PropInfo.Name)
 
             If Not tf Then Continue For
-            If PropType = "xmldocument" Then Continue For
+            If SkipProps.Contains(PropType) Then Continue For
 
             Value = Nothing
 
@@ -59,12 +64,16 @@ Public Class UtilsPreferences
                     Value = CStr(PropInfo.GetValue(FMain, Nothing))
                 Case "list`1"
                     Value = JsonConvert.SerializeObject(PropInfo.GetValue(FMain, Nothing))
-                Case "hcpropertiesdata", "logger"
-                    ' Nothing to do here.  HCPropertiesData is saved separately.
-                Case "hcpropertiescache"
-                    ' Nothing to do here.  HCPropertiesCache is saved separately.
+                    'Case "hcpropertiesdata", "logger"
+                    '    ' Nothing to do here.  HCPropertiesData is saved separately.
+                    'Case "hcpropertiescache"
+                    '    ' Nothing to do here.  HCPropertiesCache is saved separately.
                 Case Else
-                    MsgBox(String.Format("PropInfo.PropertyType.Name '{0}' not recognized", PropType))
+                    If s = "" Then
+                        s = $"In UtilsPreferences.SaveFormMainSettings: PropInfo.PropertyType.Name not recognized{vbCrLf}"
+                    End If
+                    s = $"{s}    '{PropInfo.PropertyType.Name}'{vbCrLf}"
+                    'MsgBox(String.Format("PropInfo.PropertyType.Name '{0}' not recognized", PropType))
             End Select
 
 
@@ -79,12 +88,12 @@ Public Class UtilsPreferences
                     Case "list`1"
                         Value = JsonConvert.SerializeObject(New List(Of String))
                         MsgBox(String.Format("PropInfo.PropertyType.Name '{0}' detected", PropInfo.PropertyType.Name))
-                    Case "hcpropertiesdata", "logger"
-                        ' Nothing to do here.  HCPropertiesData is saved separately.
-                    Case "hcpropertiescache"
-                        ' Nothing to do here.  HCPropertiesCache is saved separately.
+                        'Case "hcpropertiesdata", "logger"
+                        '    ' Nothing to do here.  HCPropertiesData is saved separately.
+                        'Case "hcpropertiescache"
+                        '    ' Nothing to do here.  HCPropertiesCache is saved separately.
                     Case Else
-                        MsgBox(String.Format("In UtilsPreferences.SaveFormMainSettings: PropInfo.PropertyType.Name '{0}' not recognized", PropInfo.PropertyType.Name))
+                        'MsgBox(String.Format("In UtilsPreferences.SaveFormMainSettings: PropInfo.PropertyType.Name '{0}' not recognized", PropInfo.PropertyType.Name))
                 End Select
             End If
 
@@ -94,6 +103,9 @@ Public Class UtilsPreferences
 
         Next
 
+        If Not s = "" Then
+            MsgBox(s)
+        End If
         JSONString = JsonConvert.SerializeObject(tmpJSONDict)
 
         IO.File.WriteAllText(Outfile, JSONString)
@@ -392,6 +404,8 @@ Public Class UtilsPreferences
         Dim Value As String
         Dim PropType As String
 
+        Dim s As String = ""
+
         For Each PropInfo As System.Reflection.PropertyInfo In PropInfos
 
             PropType = PropInfo.PropertyType.Name.ToLower
@@ -422,7 +436,7 @@ Public Class UtilsPreferences
                     'Case "hcpropertiescache"
                     '    ' Nothing to do here.  HCPropertiesCache is saved separately.
                 Case Else
-                    MsgBox(String.Format("PropInfo.PropertyType.Name '{0}' not recognized", PropType))
+                    'MsgBox(String.Format("PropInfo.PropertyType.Name '{0}' not recognized", PropType))
             End Select
 
 
@@ -444,7 +458,11 @@ Public Class UtilsPreferences
                         'Case "hcpropertiescache"
                         '    ' Nothing to do here.  HCPropertiesCache is saved separately.
                     Case Else
-                        MsgBox(String.Format("In UtilsPreferences.SaveFormMainSettings: PropInfo.PropertyType.Name '{0}' not recognized", PropInfo.PropertyType.Name))
+                        If s = "" Then
+                            s = $"In UtilsPreferences.SaveFormMainSettings: PropInfo.PropertyType.Name not recognized{vbCrLf}"
+                        End If
+                        s = $"{s}    '{PropInfo.PropertyType.Name}'{vbCrLf}"
+                        'MsgBox(String.Format("In UtilsPreferences.SaveFormMainSettings: PropInfo.PropertyType.Name '{0}' not recognized", PropInfo.PropertyType.Name))
                 End Select
             End If
 
@@ -453,6 +471,10 @@ Public Class UtilsPreferences
             End If
 
         Next
+
+        If Not s = "" Then
+            MsgBox(s)
+        End If
 
         JSONString = JsonConvert.SerializeObject(tmpJSONDict)
 

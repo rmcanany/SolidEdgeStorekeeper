@@ -47,7 +47,7 @@ Partial Class FormStackConfiguration
         ' 
         ' Button_F_CO_N
         ' 
-        Button_F_CO_N.Image = CType(resources.GetObject("Button_F_CO_N.Image"), Image)
+        Button_F_CO_N.Image = My.Resources.Resources.Small_F_CO_N
         Button_F_CO_N.Location = New Point(3, 3)
         Button_F_CO_N.Name = "Button_F_CO_N"
         Button_F_CO_N.Size = New Size(58, 88)
@@ -92,7 +92,7 @@ Partial Class FormStackConfiguration
         ' 
         ' Button_F_LW_FW_CO_TB
         ' 
-        Button_F_LW_FW_CO_TB.Image = CType(resources.GetObject("Button_F_LW_FW_CO_TB.Image"), Image)
+        Button_F_LW_FW_CO_TB.Image = My.Resources.Resources.Small_F_LW_FW_CO_TB
         Button_F_LW_FW_CO_TB.Location = New Point(195, 285)
         Button_F_LW_FW_CO_TB.Name = "Button_F_LW_FW_CO_TB"
         Button_F_LW_FW_CO_TB.Size = New Size(58, 88)
@@ -102,7 +102,7 @@ Partial Class FormStackConfiguration
         ' 
         ' Button_F_LW_CO_TB
         ' 
-        Button_F_LW_CO_TB.Image = CType(resources.GetObject("Button_F_LW_CO_TB.Image"), Image)
+        Button_F_LW_CO_TB.Image = My.Resources.Resources.Small_F_LW_CO_TB
         Button_F_LW_CO_TB.Location = New Point(131, 285)
         Button_F_LW_CO_TB.Name = "Button_F_LW_CO_TB"
         Button_F_LW_CO_TB.Size = New Size(58, 88)
@@ -112,7 +112,7 @@ Partial Class FormStackConfiguration
         ' 
         ' Button_F_FW_CO_TB
         ' 
-        Button_F_FW_CO_TB.Image = CType(resources.GetObject("Button_F_FW_CO_TB.Image"), Image)
+        Button_F_FW_CO_TB.Image = My.Resources.Resources.Small_F_FW_CO_TB
         Button_F_FW_CO_TB.Location = New Point(67, 285)
         Button_F_FW_CO_TB.Name = "Button_F_FW_CO_TB"
         Button_F_FW_CO_TB.Size = New Size(58, 88)
@@ -122,7 +122,7 @@ Partial Class FormStackConfiguration
         ' 
         ' Button_F_CO_TB
         ' 
-        Button_F_CO_TB.Image = CType(resources.GetObject("Button_F_CO_TB.Image"), Image)
+        Button_F_CO_TB.Image = My.Resources.Resources.Small_F_CO_TB
         Button_F_CO_TB.Location = New Point(3, 285)
         Button_F_CO_TB.Name = "Button_F_CO_TB"
         Button_F_CO_TB.Size = New Size(58, 88)
@@ -132,7 +132,7 @@ Partial Class FormStackConfiguration
         ' 
         ' Button_F_LW_FW_CO_TT
         ' 
-        Button_F_LW_FW_CO_TT.Image = CType(resources.GetObject("Button_F_LW_FW_CO_TT.Image"), Image)
+        Button_F_LW_FW_CO_TT.Image = My.Resources.Resources.Small_F_LW_FW_CO_TT
         Button_F_LW_FW_CO_TT.Location = New Point(195, 191)
         Button_F_LW_FW_CO_TT.Name = "Button_F_LW_FW_CO_TT"
         Button_F_LW_FW_CO_TT.Size = New Size(58, 88)
@@ -142,7 +142,7 @@ Partial Class FormStackConfiguration
         ' 
         ' Button_F_LW_CO_TT
         ' 
-        Button_F_LW_CO_TT.Image = CType(resources.GetObject("Button_F_LW_CO_TT.Image"), Image)
+        Button_F_LW_CO_TT.Image = My.Resources.Resources.Small_F_LW_CO_TT
         Button_F_LW_CO_TT.Location = New Point(131, 191)
         Button_F_LW_CO_TT.Name = "Button_F_LW_CO_TT"
         Button_F_LW_CO_TT.Size = New Size(58, 88)
@@ -152,7 +152,7 @@ Partial Class FormStackConfiguration
         ' 
         ' Button_F_FW_CO_TT
         ' 
-        Button_F_FW_CO_TT.Image = CType(resources.GetObject("Button_F_FW_CO_TT.Image"), Image)
+        Button_F_FW_CO_TT.Image = My.Resources.Resources.Small_F_FW_CO_TT
         Button_F_FW_CO_TT.Location = New Point(67, 191)
         Button_F_FW_CO_TT.Name = "Button_F_FW_CO_TT"
         Button_F_FW_CO_TT.Size = New Size(58, 88)
@@ -162,7 +162,7 @@ Partial Class FormStackConfiguration
         ' 
         ' Button_F_CO_TT
         ' 
-        Button_F_CO_TT.Image = CType(resources.GetObject("Button_F_CO_TT.Image"), Image)
+        Button_F_CO_TT.Image = My.Resources.Resources.Small_F_CO_TT
         Button_F_CO_TT.Location = New Point(3, 191)
         Button_F_CO_TT.Name = "Button_F_CO_TT"
         Button_F_CO_TT.Size = New Size(58, 88)
@@ -172,7 +172,7 @@ Partial Class FormStackConfiguration
         ' 
         ' Button_F_FW_CO_FW_LW_N
         ' 
-        Button_F_FW_CO_FW_LW_N.Image = CType(resources.GetObject("Button_F_FW_CO_FW_LW_N.Image"), Image)
+        Button_F_FW_CO_FW_LW_N.Image = My.Resources.Resources.Small_F_FW_CO_FW_LW_N
         Button_F_FW_CO_FW_LW_N.Location = New Point(195, 97)
         Button_F_FW_CO_FW_LW_N.Name = "Button_F_FW_CO_FW_LW_N"
         Button_F_FW_CO_FW_LW_N.Size = New Size(58, 88)
@@ -182,7 +182,7 @@ Partial Class FormStackConfiguration
         ' 
         ' Button_F_FW_CO_LW_N
         ' 
-        Button_F_FW_CO_LW_N.Image = CType(resources.GetObject("Button_F_FW_CO_LW_N.Image"), Image)
+        Button_F_FW_CO_LW_N.Image = My.Resources.Resources.Small_F_FW_CO_LW_N
         Button_F_FW_CO_LW_N.Location = New Point(131, 97)
         Button_F_FW_CO_LW_N.Name = "Button_F_FW_CO_LW_N"
         Button_F_FW_CO_LW_N.Size = New Size(58, 88)
@@ -192,7 +192,7 @@ Partial Class FormStackConfiguration
         ' 
         ' Button_F_FW_CO_FW_N
         ' 
-        Button_F_FW_CO_FW_N.Image = CType(resources.GetObject("Button_F_FW_CO_FW_N.Image"), Image)
+        Button_F_FW_CO_FW_N.Image = My.Resources.Resources.Small_F_FW_CO_FW_N
         Button_F_FW_CO_FW_N.Location = New Point(67, 97)
         Button_F_FW_CO_FW_N.Name = "Button_F_FW_CO_FW_N"
         Button_F_FW_CO_FW_N.Size = New Size(58, 88)
@@ -202,7 +202,7 @@ Partial Class FormStackConfiguration
         ' 
         ' Button_F_FW_CO_N
         ' 
-        Button_F_FW_CO_N.Image = CType(resources.GetObject("Button_F_FW_CO_N.Image"), Image)
+        Button_F_FW_CO_N.Image = My.Resources.Resources.Small_F_FW_CO_N
         Button_F_FW_CO_N.Location = New Point(3, 97)
         Button_F_FW_CO_N.Name = "Button_F_FW_CO_N"
         Button_F_FW_CO_N.Size = New Size(58, 88)
@@ -212,7 +212,7 @@ Partial Class FormStackConfiguration
         ' 
         ' Button_F_CO_FW_LW_N
         ' 
-        Button_F_CO_FW_LW_N.Image = CType(resources.GetObject("Button_F_CO_FW_LW_N.Image"), Image)
+        Button_F_CO_FW_LW_N.Image = My.Resources.Resources.Small_F_CO_FW_LW_N
         Button_F_CO_FW_LW_N.Location = New Point(195, 3)
         Button_F_CO_FW_LW_N.Name = "Button_F_CO_FW_LW_N"
         Button_F_CO_FW_LW_N.Size = New Size(58, 88)
@@ -222,7 +222,7 @@ Partial Class FormStackConfiguration
         ' 
         ' Button_F_CO_LW_N
         ' 
-        Button_F_CO_LW_N.Image = CType(resources.GetObject("Button_F_CO_LW_N.Image"), Image)
+        Button_F_CO_LW_N.Image = My.Resources.Resources.Small_F_CO_LW_N
         Button_F_CO_LW_N.Location = New Point(131, 3)
         Button_F_CO_LW_N.Name = "Button_F_CO_LW_N"
         Button_F_CO_LW_N.Size = New Size(58, 88)
@@ -232,7 +232,7 @@ Partial Class FormStackConfiguration
         ' 
         ' Button_F_CO_FW_N
         ' 
-        Button_F_CO_FW_N.Image = CType(resources.GetObject("Button_F_CO_FW_N.Image"), Image)
+        Button_F_CO_FW_N.Image = My.Resources.Resources.Small_F_CO_FW_N
         Button_F_CO_FW_N.Location = New Point(67, 3)
         Button_F_CO_FW_N.Name = "Button_F_CO_FW_N"
         Button_F_CO_FW_N.Size = New Size(58, 88)

@@ -241,6 +241,8 @@ Public Class FormFastenerStack
 
         If Not CheckStartConditions() Then Proceed = False
 
+        Dim AssyList As List(Of SolidEdgeAssembly.AssemblyDocument) = PrepTmpAssys()
+
     End Sub
 
     Private Function CheckStartConditions() As Boolean
@@ -346,6 +348,93 @@ Public Class FormFastenerStack
         FMain.SelectedNodeFullPath = tmpSelectedNodeFullPath
 
     End Sub
+
+    Private Function PrepTmpAssys() As List(Of SolidEdgeAssembly.AssemblyDocument)
+
+        Dim Outlist As New List(Of SolidEdgeAssembly.AssemblyDocument)
+
+        If FMain.SEApp Is Nothing Or FMain.AsmDoc Is Nothing Then
+            MsgBox("Unable to connect to Solid Edge, or an assembly file is not open")
+            Return Nothing
+        End If
+
+        For Each AssyFilename In {GetTopAssyFilename(), GetBottomAssyFilename()}
+
+            Dim tmpAssyFilename = $"{IO.Path.GetDirectoryName(AssyFilename)}\tmp{IO.Path.GetFileName(AssyFilename)}"
+
+            Dim tmpAsm As SolidEdgeAssembly.AssemblyDocument = Nothing
+            If Me.FMain.ProcessTemplateInBackground Then
+                tmpAsm = CType(FMain.SEApp.Documents.Open(AssyFilename, 8), SolidEdgeAssembly.AssemblyDocument)
+            Else
+                tmpAsm = CType(Me.FMain.SEApp.Documents.Open(AssyFilename), SolidEdgeAssembly.AssemblyDocument)
+            End If
+            FMain.SEApp.DoIdle()
+
+            'TextBoxStatus.Text = $"Saving '{IO.Path.GetFileName(Filename)}'"
+            tmpAsm.SaveAs(tmpAssyFilename)
+            FMain.SEApp.DoIdle()
+
+            Outlist.Add(tmpAsm)
+
+            For Each Occurrence As SolidEdgeAssembly.Occurrence In tmpAsm.Occurrences
+                Dim OccurrenceFilename As String = Occurrence.OccurrenceFileName
+                Dim ReplacementFilename As String = ""
+
+                Select Case IO.Path.GetFileName(OccurrenceFilename)
+                    Case "F.par"
+                        ReplacementFilename = Me.FastenerFilename
+                    Case "FW.par"
+                        ReplacementFilename = Me.FlatWasherFilename
+                    Case "LW.par"
+                        ReplacementFilename = Me.LockwasherFilename
+                    Case "N.par"
+                        ReplacementFilename = Me.NutFilename
+                    Case Else
+                        MsgBox($"FastenerStack.PrepTmpAssys unrecognized filename: '{IO.Path.GetFileName(OccurrenceFilename)}'")
+                        Return Nothing
+                End Select
+
+                If FMain.FailedConstraintSuppress Then
+                    tmpAsm.ReplaceComponents({Occurrence}, ReplacementFilename, SolidEdgeAssembly.ConstraintReplacementConstants.seConstraintReplacementSuppress)
+                ElseIf FMain.FailedConstraintAllow Then
+                    tmpAsm.ReplaceComponents({Occurrence}, ReplacementFilename, SolidEdgeAssembly.ConstraintReplacementConstants.seConstraintReplacementNone)
+                    'Else
+                    '    Me.FileLogger.AddMessage("Option not set for treatment of for failed constraints.  Set it on the Tree Search Options dialog.")
+                End If
+
+            Next
+
+            tmpAsm.Save()
+            FMain.SEApp.DoIdle()
+            tmpAsm.Close()
+            FMain.SEApp.DoIdle()
+
+        Next
+
+        Return Outlist
+    End Function
+
+    Private Function GetTopAssyFilename() As String
+        Dim Filename As String = ""
+
+        Filename = Me.StackConfiguration.ToString.Split("_CO_")(0)
+        Filename = Filename.Replace("_", "-")
+        Filename = $"FastenerStackTop_{Filename}.asm"
+        Filename = $"{FMain.TemplateDirectory}\FastenerStackTemplates\{Filename}"
+
+        Return Filename
+    End Function
+
+    Private Function GetBottomAssyFilename() As String
+        Dim Filename As String = ""
+
+        Filename = Me.StackConfiguration.ToString.Split("_CO_")(1)
+        Filename = Filename.Replace("_", "-")
+        Filename = $"FastenerStackBottom_{Filename}.asm"
+        Filename = $"{FMain.TemplateDirectory}\FastenerStackTemplates\{Filename}"
+
+        Return Filename
+    End Function
 
     Public Sub GetRelatedFilenames()
         Dim SelectedNodeFullPath As String = FMain.SelectedNodeFullPath  ' Saving to reset back

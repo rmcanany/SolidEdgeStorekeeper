@@ -80,12 +80,12 @@ Public Class Form_Main
     Public Property CacheProperties As Boolean
     Public Property XmlDoc As System.Xml.XmlDocument
     Public Property AddToLibraryOnly As Boolean
+    Public Property SEApp As SolidEdgeFramework.Application
+    Public Property AsmDoc As SolidEdgeAssembly.AssemblyDocument
 
 
 
     Private Property Props As Props
-    Private Property SEApp As SolidEdgeFramework.Application
-    Private Property AsmDoc As SolidEdgeAssembly.AssemblyDocument
     Private Property TemplateDoc As SolidEdgeFramework.SolidEdgeDocument
     Private Property AssemblyPasteComplete As Boolean
     Private Property NodeCount As Integer
@@ -243,12 +243,13 @@ Public Class Form_Main
         If Not ErrorMessageList.Count = 0 Then
             Success = False
 
-            Dim msg As String = ""
+            Dim msg As String = $"Please resolve the following before proceeding{vbCrLf}"
+            Dim Indent As String = "    "
             For Each s As String In ErrorMessageList
-                msg = $"{msg}{s}{vbCrLf}"
+                msg = $"{msg}{Indent}{s}{vbCrLf}"
             Next
-            MsgBox(msg, vbOKOnly, "Check start conditions")
-            Me.ErrorLogger.RequestAbort()
+            MsgBox(msg, vbOKOnly, "Check Start Conditions")
+            'Me.ErrorLogger.RequestAbort()
         End If
 
         Return Success
