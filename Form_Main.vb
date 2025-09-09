@@ -41,6 +41,28 @@ Public Class Form_Main
     Public Property PartTemplate As String
     Public Property SheetmetalTemplate As String
 
+    Private _SaveInLibrary As Boolean
+    Public Property SaveInLibrary As Boolean
+        Get
+            Return _SaveInLibrary
+        End Get
+        Set(value As Boolean)
+            _SaveInLibrary = value
+            If Me.TabControl1 IsNot Nothing Then
+
+                ButtonSaveInLibrary.Checked = SaveInLibrary
+                ButtonSaveInOther.Checked = Not SaveInLibrary
+
+                If SaveInLibrary Then
+                    ButtonSaveInLibrary.Image = My.Resources.icons8_Checkbox_Checked
+                    ButtonSaveInOther.Image = My.Resources.icons8_Checkbox_Unchecked
+                Else
+                    ButtonSaveInLibrary.Image = My.Resources.icons8_Checkbox_Unchecked
+                    ButtonSaveInOther.Image = My.Resources.icons8_Checkbox_Checked
+                End If
+            End If
+        End Set
+    End Property
     Private _PrePopulate As Boolean
     Public Property PrePopulate As Boolean
         Get
@@ -240,6 +262,24 @@ Public Class Form_Main
             End If
         End If
 
+        If SEApp IsNot Nothing Then
+            Dim MaterialTableFolder As String
+            Dim MaterialTableFolderObject As Object = Nothing
+
+            Dim MTFConstant As SolidEdgeFramework.ApplicationGlobalConstants
+            MTFConstant = SolidEdgeFramework.ApplicationGlobalConstants.seApplicationGlobalMatTableFolder
+
+            SEApp.GetGlobalParameter(MTFConstant, MaterialTableFolderObject)
+            Try
+                MaterialTableFolder = CStr(MaterialTableFolderObject)
+                If Not Me.MaterialTable.Contains(MaterialTableFolder) Then
+                    ErrorMessageList.Add($"Material table not in required folder: '{MaterialTableFolder}'")
+                End If
+            Catch ex As Exception
+
+            End Try
+        End If
+
         If Not ErrorMessageList.Count = 0 Then
             Success = False
 
@@ -305,6 +345,10 @@ Public Class Form_Main
             SEApp.DoIdle()
 
             TextBoxStatus.Text = $"Saving '{IO.Path.GetFileName(Filename)}'"
+            Dim Dir As String = IO.Path.GetDirectoryName(Filename)
+            If Not IO.Directory.Exists(Dir) Then
+                IO.Directory.CreateDirectory(Dir)
+            End If
             SEDoc.SaveAs(Filename)
             SEApp.DoIdle()
 
@@ -395,7 +439,7 @@ Public Class Form_Main
 
                 If Me.AutoPattern And Occurrences.Count > PreviousOccurrencesCount Then
                     Occurrence = CType(Occurrences(Occurrences.Count - 1), SolidEdgeAssembly.Occurrence)
-                    MaybePatternOccurrence(Occurrence)
+                    MaybePatternOccurrence(Occurrence, PiggybackOccurrences:=Nothing)
                 End If
 
             Else
@@ -688,6 +732,10 @@ Public Class Form_Main
 
 
     Public Function GetFilenameFormula(DefaultExtension As String) As String
+        ' Examples
+        ' bhcs_%{Name}_%{Length}.par
+        ' Fasteners\BHCS\bhcs_%{Name}_%{Length}.par
+
         Dim Filename As String = Nothing
         Dim FilenameFormula As String = ""
 
@@ -708,37 +756,14 @@ Public Class Form_Main
         FilenameFormula = tmpProps(0).Value.Trim
         Filename = FilenameFormula
 
-        Dim FilenameWasPrompted As Boolean = False
-
-        If Filename.ToLower.Trim = "prompt" Then
+        If Not Me.SaveInLibrary Then
             If Me.AddToLibraryOnly Then
                 FileLogger.AddMessage("Cannot process prompted filename in batch mode")
                 Return Nothing
             Else
-                FilenameWasPrompted = True
+                'FilenameWasPrompted = True
 
-                Dim tmpFileDialog As New CommonOpenFileDialog
-                tmpFileDialog.Title = "Enter the file name for the new part"
-                tmpFileDialog.EnsureFileExists = False
-                tmpFileDialog.DefaultExtension = DefaultExtension.Replace(".", "")
-
-                If tmpFileDialog.ShowDialog() = DialogResult.OK Then
-                    Filename = tmpFileDialog.FileName
-                Else
-                    Return Nothing
-                End If
-
-            End If
-
-        ElseIf Filename.ToLower.Contains("promptwithdefault") Then
-
-            If Me.AddToLibraryOnly Then
-                FileLogger.AddMessage("Cannot process prompted filename in batch mode")
-                Return Nothing
-            Else
-                FilenameWasPrompted = True
-
-                Filename = Filename.Split(CChar(":"))(1).Trim
+                'Filename = Filename.Split(CChar(":"))(1).Trim
                 Filename = Props.SubstitutePropFormulas(Filename)
 
                 Dim tmpFileDialog As New CommonOpenFileDialog
@@ -754,7 +779,6 @@ Public Class Form_Main
                 End If
 
             End If
-
         Else
             Filename = Props.SubstitutePropFormulas(Filename)
             If Filename Is Nothing Then
@@ -764,6 +788,61 @@ Public Class Form_Main
             Filename = $"{Me.LibraryDirectory}\{Filename}"
         End If
 
+        'Dim FilenameWasPrompted As Boolean = False
+        'If Filename.ToLower.Trim = "prompt" Then
+        '    If Me.AddToLibraryOnly Then
+        '        FileLogger.AddMessage("Cannot process prompted filename in batch mode")
+        '        Return Nothing
+        '    Else
+        '        FilenameWasPrompted = True
+
+        '        Dim tmpFileDialog As New CommonOpenFileDialog
+        '        tmpFileDialog.Title = "Enter the file name for the new part"
+        '        tmpFileDialog.EnsureFileExists = False
+        '        tmpFileDialog.DefaultExtension = DefaultExtension.Replace(".", "")
+
+        '        If tmpFileDialog.ShowDialog() = DialogResult.OK Then
+        '            Filename = tmpFileDialog.FileName
+        '        Else
+        '            Return Nothing
+        '        End If
+
+        '    End If
+
+        'ElseIf Filename.ToLower.Contains("promptwithdefault") Then
+
+        '    If Me.AddToLibraryOnly Then
+        '        FileLogger.AddMessage("Cannot process prompted filename in batch mode")
+        '        Return Nothing
+        '    Else
+        '        FilenameWasPrompted = True
+
+        '        Filename = Filename.Split(CChar(":"))(1).Trim
+        '        Filename = Props.SubstitutePropFormulas(Filename)
+
+        '        Dim tmpFileDialog As New CommonOpenFileDialog
+        '        tmpFileDialog.Title = "Enter the file name for the new part"
+        '        tmpFileDialog.DefaultFileName = Filename
+        '        tmpFileDialog.EnsureFileExists = False
+        '        tmpFileDialog.DefaultExtension = DefaultExtension.Replace(".", "")
+
+        '        If tmpFileDialog.ShowDialog() = DialogResult.OK Then
+        '            Filename = tmpFileDialog.FileName
+        '        Else
+        '            Return Nothing
+        '        End If
+
+        '    End If
+
+        'Else
+        '    Filename = Props.SubstitutePropFormulas(Filename)
+        '    If Filename Is Nothing Then
+        '        'MsgBox($"Could not resolve filename formula '{FilenameFormula}'", vbOKOnly, "File name formula")
+        '        Return Nothing
+        '    End If
+        '    Filename = $"{Me.LibraryDirectory}\{Filename}"
+        'End If
+
         Dim UFC As New UtilsFilenameCharmap
 
         Dim Directory As String = IO.Path.GetDirectoryName(Filename)
@@ -772,7 +851,7 @@ Public Class Form_Main
 
         Filename = $"{Directory}\{Filename}"
 
-        If FilenameWasPrompted Then
+        If Not Me.SaveInLibrary Then
             If IO.File.Exists(Filename) Then
                 Dim Result = MsgBox($"'{IO.Path.GetFileName(Filename)}' exists.  Do you want to use that one?", vbYesNo, "Existing file")
                 If Result = MsgBoxResult.No Then
@@ -814,8 +893,10 @@ Public Class Form_Main
     End Function
 
 
-    Private Function MaybePatternOccurrence(
-        Occurrence As SolidEdgeAssembly.Occurrence
+    Public Function MaybePatternOccurrence(
+        Occurrence As SolidEdgeAssembly.Occurrence,
+        PiggybackOccurrences As List(Of SolidEdgeAssembly.Occurrence),
+        Optional NameSuffix As String = ""
         ) As Boolean
 
         Dim Success As Boolean = True
@@ -829,17 +910,21 @@ Public Class Form_Main
         Dim TargetUserDefinedPattern As SolidEdgePart.UserDefinedPattern = Nothing
 
         Dim Relations3d As SolidEdgeAssembly.Relations3d = CType(Occurrence.Relations3d, SolidEdgeAssembly.Relations3d)
-        For Each Relation3d In Relations3d
-            Dim AxialRelation3d As SolidEdgeAssembly.AxialRelation3d = TryCast(Relation3d, SolidEdgeAssembly.AxialRelation3d)
+        Dim Element2 As SolidEdgeAssembly.TopologyReference = Nothing
+
+        ' Start at the end of Relations3d collection.  After the stack assy dispersal, the last axial relation should be the one we want.
+        For i = Relations3d.Count - 1 To 0 Step -1
+            Dim AxialRelation3d As SolidEdgeAssembly.AxialRelation3d = TryCast(Relations3d(i), SolidEdgeAssembly.AxialRelation3d)
             If AxialRelation3d IsNot Nothing Then
 
                 Occurrence2 = AxialRelation3d.Occurrence2
 
-                Dim Element2 As SolidEdgeAssembly.TopologyReference
                 Element2 = TryCast(AxialRelation3d.GetElement2(IsTopologyReference), SolidEdgeAssembly.TopologyReference)
 
                 'Dim ComType = HCComObject.GetCOMObjectType(Element2)
                 If Element2 IsNot Nothing Then
+                    ' https://community.sw.siemens.com/s/question/0D5Vb00000lBzhzKAC/unique-identifier-for-any-occurences-within-an-assembly
+                    ' https://community.sw.siemens.com/s/question/0D54O000061xps4SAA/creating-relations-between-suboccurrences
                     Face2 = TryCast(Element2.Object, SolidEdgeGeometry.Face)
                     If Face2 IsNot Nothing Then
                         Face2ID = Face2.ID
@@ -850,9 +935,9 @@ Public Class Form_Main
         Next
 
         If Occurrence2 IsNot Nothing And Face2 IsNot Nothing Then
-            Success = ProcessPatterns(Occurrence, Occurrence2, Face2ID)
+            Success = ProcessPatterns(Occurrence, Occurrence2, Face2ID, PiggybackOccurrences, NameSuffix, Element2)
 
-            If Not Success Then Success = ProcessUserDefinedPatterns(Occurrence, Occurrence2, Face2ID)
+            If Not Success Then Success = ProcessUserDefinedPatterns(Occurrence, Occurrence2, Face2ID, PiggybackOccurrences, NameSuffix, Element2)
         Else
             Success = False
         End If
@@ -863,53 +948,58 @@ Public Class Form_Main
     Private Function ProcessPatterns(
         Occurrence As SolidEdgeAssembly.Occurrence,
         Occurrence2 As SolidEdgeAssembly.Occurrence,
-        Face2ID As Integer
+        Face2ID As Integer,
+        PiggybackOccurrences As List(Of SolidEdgeAssembly.Occurrence),
+        NameSuffix As String,
+        Element2 As SolidEdgeAssembly.TopologyReference
         ) As Boolean
 
         Dim Success As Boolean = True
 
         Dim TargetPattern As SolidEdgePart.Pattern = Nothing
         Dim TargetHole As SolidEdgePart.Hole = Nothing
+        Dim Models As SolidEdgePart.Models = Nothing
 
+        Dim Occurrence2IsSubassembly As Boolean = False
+        Dim Occurrence2Original As SolidEdgeAssembly.SubOccurrence = Nothing
 
-        Dim Occurrence2Doc As SolidEdgePart.PartDocument = CType(Occurrence2.OccurrenceDocument, SolidEdgePart.PartDocument)
-        For Each Model As SolidEdgePart.Model In Occurrence2Doc.Models
+        Dim Extension = IO.Path.GetExtension(Occurrence2.OccurrenceFileName)
 
-            For Each Pattern As SolidEdgePart.Pattern In Model.Patterns
+        If Extension = ".asm" Then
+            Occurrence2IsSubassembly = True
 
-                Dim InputFeatures = Array.CreateInstance(GetType(Object), 0)
-                Pattern.GetInputFeatures(InputFeatures)
-                For Each InputFeature As Object In InputFeatures
-                    Dim Hole As SolidEdgePart.Hole = TryCast(InputFeature, SolidEdgePart.Hole)
-                    If Hole IsNot Nothing Then
-                        Dim HoleSideFaces As SolidEdgeGeometry.Faces = CType(Hole.SideFaces, SolidEdgeGeometry.Faces)
-                        'Dim ComType = HCComObject.GetCOMObjectType(HoleSideFaces)
+            Occurrence2Original = CType(Element2.Parent, SolidEdgeAssembly.SubOccurrence)
 
-                        For Each SideFace As SolidEdgeGeometry.Face In HoleSideFaces
-                            If SideFace.ID = Face2ID Then
-                                TargetPattern = Pattern
-                                TargetHole = Hole
-                            End If
-                            If TargetPattern IsNot Nothing Then Exit For
-                        Next
-                    End If
-                    If TargetPattern IsNot Nothing Then Exit For
-                Next
+            Occurrence2 = CType(Element2.Parent, SolidEdgeAssembly.SubOccurrence).ThisAsOccurrence
 
-                Dim OccurrenceCount As Integer
-                If Pattern.PatternType = SolidEdgePart.PatternTypeConstants.seSmartPattern Then
-                    OccurrenceCount = Pattern.NumberOfOccurrences
-                Else
-                    OccurrenceCount = 2
-                End If
+            Extension = IO.Path.GetExtension(Occurrence2.OccurrenceFileName)
+        End If
 
-                Dim OccurrenceFeatures = Array.CreateInstance(GetType(Object), 0)
-                For i As Integer = 1 To OccurrenceCount
-                    Pattern.GetOccurrence(i, OccurrenceFeatures)
-                    For Each Feature As Object In OccurrenceFeatures
-                        Dim Hole As SolidEdgePart.Hole = TryCast(Feature, SolidEdgePart.Hole)
+        Select Case Extension
+            'Case ".asm"
+            '    Return False
+            Case ".par"
+                Dim tmpOccurrence2Doc As SolidEdgePart.PartDocument = CType(Occurrence2.OccurrenceDocument, SolidEdgePart.PartDocument)
+                Models = tmpOccurrence2Doc.Models
+            Case ".psm"
+                Dim tmpOccurrence2Doc As SolidEdgePart.SheetMetalDocument = CType(Occurrence2.OccurrenceDocument, SolidEdgePart.SheetMetalDocument)
+                Models = tmpOccurrence2Doc.Models
+        End Select
+
+        For Each Model As SolidEdgePart.Model In Models
+
+            If Model.Patterns IsNot Nothing AndAlso Model.Patterns.Count > 0 Then
+                For Each Pattern As SolidEdgePart.Pattern In Model.Patterns
+
+                    ' Check pattern input features for the selected hole face
+                    Dim InputFeatures = Array.CreateInstance(GetType(Object), 0)
+                    Pattern.GetInputFeatures(InputFeatures)
+                    For Each InputFeature As Object In InputFeatures
+                        Dim Hole As SolidEdgePart.Hole = TryCast(InputFeature, SolidEdgePart.Hole)
                         If Hole IsNot Nothing Then
                             Dim HoleSideFaces As SolidEdgeGeometry.Faces = CType(Hole.SideFaces, SolidEdgeGeometry.Faces)
+                            'Dim ComType = HCComObject.GetCOMObjectType(HoleSideFaces)
+
                             For Each SideFace As SolidEdgeGeometry.Face In HoleSideFaces
                                 If SideFace.ID = Face2ID Then
                                     TargetPattern = Pattern
@@ -920,17 +1010,44 @@ Public Class Form_Main
                         End If
                         If TargetPattern IsNot Nothing Then Exit For
                     Next
+
+                    ' Check pattern occurrence features for the selected hole face
+                    Dim OccurrenceCount As Integer
+                    If Pattern.PatternType = SolidEdgePart.PatternTypeConstants.seSmartPattern Then
+                        OccurrenceCount = Pattern.NumberOfOccurrences
+                    Else
+                        OccurrenceCount = 2
+                    End If
+
+                    Dim OccurrenceFeatures = Array.CreateInstance(GetType(Object), 0)
+                    For i As Integer = 1 To OccurrenceCount
+                        Pattern.GetOccurrence(i, OccurrenceFeatures)
+                        For Each Feature As Object In OccurrenceFeatures
+                            Dim Hole As SolidEdgePart.Hole = TryCast(Feature, SolidEdgePart.Hole)
+                            If Hole IsNot Nothing Then
+                                Dim HoleSideFaces As SolidEdgeGeometry.Faces = CType(Hole.SideFaces, SolidEdgeGeometry.Faces)
+                                For Each SideFace As SolidEdgeGeometry.Face In HoleSideFaces
+                                    If SideFace.ID = Face2ID Then
+                                        TargetPattern = Pattern
+                                        TargetHole = Hole
+                                    End If
+                                    If TargetPattern IsNot Nothing Then Exit For
+                                Next
+                            End If
+                            If TargetPattern IsNot Nothing Then Exit For
+                        Next
+                        If TargetPattern IsNot Nothing Then Exit For
+                    Next
                     If TargetPattern IsNot Nothing Then Exit For
                 Next
 
-                If TargetPattern IsNot Nothing Then Exit For
-            Next
+            End If
             If TargetPattern IsNot Nothing Then Exit For
         Next
-        'End If
 
         If TargetPattern IsNot Nothing And TargetHole IsNot Nothing Then
 
+            ' Get a unique name
             Dim ExistingNames As New List(Of String)
             For Each AssemblyPattern As SolidEdgeAssembly.AssemblyPattern In AsmDoc.AssemblyPatterns
                 ExistingNames.Add(AssemblyPattern.Name)
@@ -942,15 +1059,28 @@ Public Class Form_Main
                 Suffix += 1
             End While
 
+            ' Create pattern
             Dim SourceOccurrences As New List(Of SolidEdgeAssembly.Occurrence)
             SourceOccurrences.Add(Occurrence)
+            If PiggybackOccurrences IsNot Nothing Then SourceOccurrences.AddRange(PiggybackOccurrences)
 
-            Dim RefPattern = AsmDoc.CreateReference(Occurrence2, TargetPattern)
+            Dim RefPattern As Object = Nothing
+            Dim RefHole As Object = Nothing
 
-            Dim RefHole = AsmDoc.CreateReference(Occurrence2, TargetHole)
+            If Not Occurrence2IsSubassembly Then
+                RefPattern = AsmDoc.CreateReference(Occurrence2, TargetPattern)
+                RefHole = AsmDoc.CreateReference(Occurrence2, TargetHole)
+            Else
+                RefPattern = createTopASMRef(Occurrence2Original, TargetPattern)
+                RefHole = createTopASMRef(Occurrence2Original, TargetHole)
+            End If
 
             Dim AsmPattern As SolidEdgeAssembly.AssemblyPattern
-            AsmPattern = AsmDoc.AssemblyPatterns.CreateEx($"{Prefix}{CStr(Suffix)}", SourceOccurrences.ToArray, RefPattern, RefHole)
+            If NameSuffix = "" Then
+                AsmPattern = AsmDoc.AssemblyPatterns.CreateEx($"{Prefix}{CStr(Suffix)}", SourceOccurrences.ToArray, RefPattern, RefHole)
+            Else
+                AsmPattern = AsmDoc.AssemblyPatterns.CreateEx($"{Prefix}{CStr(Suffix)}_{NameSuffix}", SourceOccurrences.ToArray, RefPattern, RefHole)
+            End If
 
         Else
             Success = False
@@ -963,74 +1093,78 @@ Public Class Form_Main
     Private Function ProcessUserDefinedPatterns(
         Occurrence As SolidEdgeAssembly.Occurrence,
         Occurrence2 As SolidEdgeAssembly.Occurrence,
-        Face2ID As Integer
+        Face2ID As Integer,
+        PiggybackOccurrences As List(Of SolidEdgeAssembly.Occurrence),
+        NameSuffix As String,
+        Element2 As SolidEdgeAssembly.TopologyReference
         ) As Boolean
 
         Dim Success As Boolean = True
 
         Dim TargetPattern As SolidEdgePart.UserDefinedPattern = Nothing
         Dim TargetHole As SolidEdgePart.Hole = Nothing
+        Dim Models As SolidEdgePart.Models = Nothing
 
+        Dim Occurrence2IsSubassembly As Boolean = False
+        Dim Occurrence2Original As SolidEdgeAssembly.SubOccurrence = Nothing
 
-        Dim Occurrence2Doc As SolidEdgePart.PartDocument = CType(Occurrence2.OccurrenceDocument, SolidEdgePart.PartDocument)
-        For Each Model As SolidEdgePart.Model In Occurrence2Doc.Models
+        Dim Extension = IO.Path.GetExtension(Occurrence2.OccurrenceFileName)
 
-            For Each UserDefinedPattern As SolidEdgePart.UserDefinedPattern In Model.UserDefinedPatterns
+        If Extension = ".asm" Then
+            Occurrence2IsSubassembly = True
 
-                Dim InputFeatures = Array.CreateInstance(GetType(Object), 0)
-                UserDefinedPattern.GetInputFeatures(InputFeatures)
-                For Each InputFeature As Object In InputFeatures
-                    Dim Hole As SolidEdgePart.Hole = TryCast(InputFeature, SolidEdgePart.Hole)
-                    If Hole IsNot Nothing Then
-                        Dim HoleSideFaces As SolidEdgeGeometry.Faces = CType(Hole.SideFaces, SolidEdgeGeometry.Faces)
-                        'Dim ComType = HCComObject.GetCOMObjectType(HoleSideFaces)
+            Occurrence2Original = CType(Element2.Parent, SolidEdgeAssembly.SubOccurrence)
 
-                        For Each SideFace As SolidEdgeGeometry.Face In HoleSideFaces
-                            If SideFace.ID = Face2ID Then
-                                TargetPattern = UserDefinedPattern
-                                TargetHole = Hole
-                            End If
-                            If TargetPattern IsNot Nothing Then Exit For
-                        Next
-                    End If
+            Occurrence2 = CType(Element2.Parent, SolidEdgeAssembly.SubOccurrence).ThisAsOccurrence
+
+            Extension = IO.Path.GetExtension(Occurrence2.OccurrenceFileName)
+        End If
+
+        Select Case Extension
+            'Case ".asm"
+            Case ".par"
+                Dim tmpOccurrence2Doc As SolidEdgePart.PartDocument = CType(Occurrence2.OccurrenceDocument, SolidEdgePart.PartDocument)
+                Models = tmpOccurrence2Doc.Models
+            Case ".psm"
+                Dim tmpOccurrence2Doc As SolidEdgePart.SheetMetalDocument = CType(Occurrence2.OccurrenceDocument, SolidEdgePart.SheetMetalDocument)
+                Models = tmpOccurrence2Doc.Models
+        End Select
+
+        For Each Model As SolidEdgePart.Model In Models
+
+            If Model.UserDefinedPatterns IsNot Nothing AndAlso Model.UserDefinedPatterns.Count > 0 Then
+                For Each UserDefinedPattern As SolidEdgePart.UserDefinedPattern In Model.UserDefinedPatterns
+
+                    Dim InputFeatures = Array.CreateInstance(GetType(Object), 0)
+                    UserDefinedPattern.GetInputFeatures(InputFeatures)
+                    For Each InputFeature As Object In InputFeatures
+                        Dim Hole As SolidEdgePart.Hole = TryCast(InputFeature, SolidEdgePart.Hole)
+                        If Hole IsNot Nothing Then
+                            Dim HoleSideFaces As SolidEdgeGeometry.Faces = CType(Hole.SideFaces, SolidEdgeGeometry.Faces)
+                            'Dim ComType = HCComObject.GetCOMObjectType(HoleSideFaces)
+
+                            For Each SideFace As SolidEdgeGeometry.Face In HoleSideFaces
+                                If SideFace.ID = Face2ID Then
+                                    TargetPattern = UserDefinedPattern
+                                    TargetHole = Hole
+                                End If
+                                If TargetPattern IsNot Nothing Then Exit For
+                            Next
+                        End If
+                        If TargetPattern IsNot Nothing Then Exit For
+                    Next
+
                     If TargetPattern IsNot Nothing Then Exit For
                 Next
 
-                'Dim OccurrenceCount As Integer
-                'If UserDefinedPattern.PatternType = SolidEdgePart.PatternTypeConstants.seSmartPattern Then
-                '    OccurrenceCount = UserDefinedPattern.NumberOfOccurrences
-                'Else
-                '    OccurrenceCount = 2
-                'End If
-
-                'Dim OccurrenceFeatures = Array.CreateInstance(GetType(Object), 0)
-                'For i As Integer = 1 To OccurrenceCount
-                '    UserDefinedPattern.GetOccurrence(i, OccurrenceFeatures)
-                '    For Each Feature As Object In OccurrenceFeatures
-                '        Dim Hole As SolidEdgePart.Hole = TryCast(Feature, SolidEdgePart.Hole)
-                '        If Hole IsNot Nothing Then
-                '            Dim HoleSideFaces As SolidEdgeGeometry.Faces = CType(Hole.SideFaces, SolidEdgeGeometry.Faces)
-                '            For Each SideFace As SolidEdgeGeometry.Face In HoleSideFaces
-                '                If SideFace.ID = Face2ID Then
-                '                    TargetPattern = UserDefinedPattern
-                '                    TargetHole = Hole
-                '                End If
-                '                If TargetPattern IsNot Nothing Then Exit For
-                '            Next
-                '        End If
-                '        If TargetPattern IsNot Nothing Then Exit For
-                '    Next
-                '    If TargetPattern IsNot Nothing Then Exit For
-                'Next
-
-                If TargetPattern IsNot Nothing Then Exit For
-            Next
+            End If
             If TargetPattern IsNot Nothing Then Exit For
         Next
         'End If
 
         If TargetPattern IsNot Nothing And TargetHole IsNot Nothing Then
 
+            ' Get a unique name
             Dim ExistingNames As New List(Of String)
             For Each AssemblyPattern As SolidEdgeAssembly.AssemblyPattern In AsmDoc.AssemblyPatterns
                 ExistingNames.Add(AssemblyPattern.Name)
@@ -1042,16 +1176,28 @@ Public Class Form_Main
                 Suffix += 1
             End While
 
-
+            ' Create the pattern
             Dim SourceOccurrences As New List(Of SolidEdgeAssembly.Occurrence)
             SourceOccurrences.Add(Occurrence)
+            If PiggybackOccurrences IsNot Nothing Then SourceOccurrences.AddRange(PiggybackOccurrences)
 
-            Dim RefPattern = AsmDoc.CreateReference(Occurrence2, TargetPattern)
+            Dim RefPattern As Object = Nothing
+            Dim RefHole As Object = Nothing
 
-            Dim RefHole = AsmDoc.CreateReference(Occurrence2, TargetHole)
+            If Not Occurrence2IsSubassembly Then
+                RefPattern = AsmDoc.CreateReference(Occurrence2, TargetPattern)
+                RefHole = AsmDoc.CreateReference(Occurrence2, TargetHole)
+            Else
+                RefPattern = createTopASMRef(Occurrence2Original, TargetPattern)
+                RefHole = createTopASMRef(Occurrence2Original, TargetHole)
+            End If
 
             Dim AsmPattern As SolidEdgeAssembly.AssemblyPattern
-            AsmPattern = AsmDoc.AssemblyPatterns.CreateEx($"{Prefix}{CStr(Suffix)}", SourceOccurrences.ToArray, RefPattern, RefHole)
+            If NameSuffix = "" Then
+                AsmPattern = AsmDoc.AssemblyPatterns.CreateEx($"{Prefix}{CStr(Suffix)}", SourceOccurrences.ToArray, RefPattern, RefHole)
+            Else
+                AsmPattern = AsmDoc.AssemblyPatterns.CreateEx($"{Prefix}{CStr(Suffix)}_{NameSuffix}", SourceOccurrences.ToArray, RefPattern, RefHole)
+            End If
 
         Else
             Success = False
@@ -1060,6 +1206,70 @@ Public Class Form_Main
 
         Return Success
     End Function
+
+    'Private Function GetSubassyReference(
+    '    Element2 As SolidEdgeAssembly.TopologyReference
+    '    ) As SolidEdgeFramework.Reference
+
+    '    Dim Reference As SolidEdgeFramework.Reference = Nothing
+
+    '    Dim ParentSubOccurrence As SolidEdgeAssembly.SubOccurrence
+    '    ParentSubOccurrence = CType(Element2.Parent, SolidEdgeAssembly.SubOccurrence)
+    '    Dim ParentParent As SolidEdgeAssembly.SubOccurrence
+    '    ParentParent = CType(ParentSubOccurrence.Parent, SolidEdgeAssembly.SubOccurrence)
+
+    '    Dim Face2 = CType(Element2.Object, SolidEdgeGeometry.Face)
+
+    '    'Reference = createTopASMRef(ParentParent, ParentSubOccurrence)
+    '    Reference = createTopASMRef(ParentSubOccurrence, Face2)
+
+
+    '    Return Reference
+    'End Function
+
+    Function createTopASMRef(
+        ByVal pSubOcc As SolidEdgeAssembly.SubOccurrence,
+        ByVal obj As Object
+        ) As SolidEdgeFramework.Reference
+
+        'https://community.sw.siemens.com/s/question/0D54O000061xps4SAA/creating-relations-between-suboccurrences
+        'Function that creates a reference of object "obj" that is inside a suboccurrence "pSubOcc" placed at any sublevel inside the main assembly
+
+        Dim pOcc As SolidEdgeAssembly.Occurrence
+        Dim pRef As SolidEdgeFramework.Reference
+
+        'We construct the reference of obj recursively to reach the top assembly
+        'The first reference to start with is the reference of object "obj" to the immediate containing subassembly.
+        'The references are always constructed referring the main top assembly, because we want the relationships are being generated there.
+        pRef = CType(pSubOcc.TopLevelDocument.CreateReference(pSubOcc.ThisAsOccurrence, obj), SolidEdgeFramework.Reference)
+
+        While True 'infinite loop
+            Try
+                'In each loop i get the immediate parent for the suboccurrence in the variable pSubOcc (the subassembly containing the subassembly ... etc)
+                pSubOcc = CType(pSubOcc.Parent, SolidEdgeAssembly.SubOccurrence)
+            Catch
+                'When there is an error is because the immediate parent is not a suboccurrence anymore, but an occurrence of the main top assembly.
+                'We have reached the top. pOcc is an Occurrence of the top assembly.
+                'We generate the last reference and exit the loop
+                pOcc = CType(pSubOcc.Parent, SolidEdgeAssembly.Occurrence)
+                pRef = CType(pOcc.TopLevelDocument.CreateReference(pOcc, pRef), SolidEdgeFramework.Reference)
+                Exit While
+            End Try
+            'If there is no error is because pSubOcc is still a suboccurrence (a subassembly inside a subassembly...)
+            'I generate the reference of the last reference i generated to the object. (finally it is a reference of a reference of a reference...)
+            pRef = CType(pSubOcc.TopLevelDocument.CreateReference(pSubOcc.ThisAsOccurrence, pRef), SolidEdgeFramework.Reference)
+        End While
+
+        'When i abandone the loop i have got the reference i was looking for. I return it.
+        createTopASMRef = pRef
+
+        'Clean it all.
+        pSubOcc = Nothing
+        pOcc = Nothing
+        pRef = Nothing
+        GC.Collect()
+    End Function
+
 
 
     ' ###### PROPERTY TAB ######
@@ -1925,30 +2135,9 @@ Public Class Form_Main
         TreeView1.Nodes(0).Expand()
     End Sub
 
-    Private Sub LabelCollapse_Click(sender As Object, e As EventArgs) Handles LabelCollapse.Click
+    Private Sub LabelCollapse_Click(sender As Object, e As EventArgs) Handles LabelSaveIn.Click
         ButtonCollapse.PerformClick()
     End Sub
-
-    'Private Sub ButtonSelectProperties_Click(sender As Object, e As EventArgs) Handles ButtonSelectProperties.Click
-    '    Dim FPTS As New FormPropertiesToSearch(Me)
-    '    FPTS.ShowDialog()
-
-    '    If FPTS.DialogResult = DialogResult.OK Then
-    '        Dim ColIdx As Integer
-
-    '        DataGridView2.Columns.Clear()
-    '        ColIdx = DataGridView2.Columns.Add("Filename", "Filename")
-    '        DataGridView2.Columns(ColIdx).Width = 150
-    '        ColIdx = DataGridView2.Columns.Add("Path", "Path")
-    '        DataGridView2.Columns(ColIdx).Width = 50
-    '        For i = 0 To PropertiesToSearchList.Count - 1
-    '            Dim PropString As String = PropertiesToSearchList(i)
-    '            ColIdx = DataGridView2.Columns.Add($"Prop_{i + 1}", PropString)
-    '            DataGridView2.Columns(ColIdx).AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells
-    '        Next
-    '    End If
-
-    'End Sub
 
     Private Sub ButtonPropertySearchOptions_Click(sender As Object, e As EventArgs) Handles ButtonPropertySearchOptions.Click
         Dim FPSO As New FormPropertySearchOptions(Me)
@@ -2172,6 +2361,18 @@ Public Class Form_Main
         System.Diagnostics.Process.Start(Info)
     End Sub
 
+    Private Sub ButtonSaveInLibrary_Click(sender As Object, e As EventArgs) Handles ButtonSaveInLibrary.Click
+        If Not ButtonSaveInLibrary.Checked Then
+            Me.SaveInLibrary = True
+        End If
+    End Sub
+
+    Private Sub ButtonSaveInOther_Click(sender As Object, e As EventArgs) Handles ButtonSaveInOther.Click
+        If Not ButtonSaveInOther.Checked Then
+            Me.SaveInLibrary = False
+        End If
+    End Sub
+
     Private Sub ButtonPrepopulate_Click(sender As Object, e As EventArgs) Handles ButtonPrepopulate.Click
         Me.PrePopulate = Not ButtonPrepopulate.Checked
     End Sub
@@ -2317,7 +2518,7 @@ Public Class Form_Main
         Dim FFS As New FormFastenerStack(Me)
         'AddHandler FFS.ButtonSelectStyle.Click, AddressOf EventTest
         FFS.FastenerFilename = Filename
-        FFS.Show()
+        FFS.ShowDialog()
 
         Dim i = 0
     End Sub

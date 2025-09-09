@@ -268,6 +268,7 @@ Public Class FormTreeSearchOptions
 
 
         Me.AlwaysReadExcel = FMain.AlwaysReadExcel
+        Me.AutoPattern = FMain.AutoPattern
         Me.AddProp = FMain.AddProp
         Me.DisableFineThreadWarning = FMain.DisableFineThreadWarning
         Me.ProcessTemplateInBackground = FMain.ProcessTemplateInBackground

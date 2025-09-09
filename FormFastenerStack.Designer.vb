@@ -22,6 +22,7 @@ Partial Class FormFastenerStack
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        components = New ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FormFastenerStack))
         PictureBox1 = New PictureBox()
         TableLayoutPanel1 = New TableLayoutPanel()
@@ -39,6 +40,8 @@ Partial Class FormFastenerStack
         LabelThreadEngagementMin = New Label()
         TableLayoutPanel5 = New TableLayoutPanel()
         TextBoxThreadDepth = New TextBox()
+        ContextMenuStrip1 = New ContextMenuStrip(components)
+        GetThreadDepthToolStripMenuItem = New ToolStripMenuItem()
         LabelThreadDepth = New Label()
         TableLayoutPanel6 = New TableLayoutPanel()
         TextBoxExtensionMin = New TextBox()
@@ -70,11 +73,13 @@ Partial Class FormFastenerStack
         ButtonHelp = New Button()
         ButtonClose = New Button()
         ButtonAddToAssy = New Button()
+        LabelStatus = New Label()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         TableLayoutPanel1.SuspendLayout()
         TableLayoutPanel3.SuspendLayout()
         TableLayoutPanel4.SuspendLayout()
         TableLayoutPanel5.SuspendLayout()
+        ContextMenuStrip1.SuspendLayout()
         TableLayoutPanel6.SuspendLayout()
         TableLayoutPanel2.SuspendLayout()
         ToolStrip1.SuspendLayout()
@@ -298,6 +303,7 @@ Partial Class FormFastenerStack
         ' 
         ' TextBoxThreadDepth
         ' 
+        TextBoxThreadDepth.ContextMenuStrip = ContextMenuStrip1
         TextBoxThreadDepth.Dock = DockStyle.Fill
         TextBoxThreadDepth.Location = New Point(3, 3)
         TextBoxThreadDepth.Name = "TextBoxThreadDepth"
@@ -305,6 +311,18 @@ Partial Class FormFastenerStack
         TextBoxThreadDepth.TabIndex = 0
         TextBoxThreadDepth.Text = "0"
         TextBoxThreadDepth.TextAlign = HorizontalAlignment.Right
+        ' 
+        ' ContextMenuStrip1
+        ' 
+        ContextMenuStrip1.Items.AddRange(New ToolStripItem() {GetThreadDepthToolStripMenuItem})
+        ContextMenuStrip1.Name = "ContextMenuStrip1"
+        ContextMenuStrip1.Size = New Size(164, 26)
+        ' 
+        ' GetThreadDepthToolStripMenuItem
+        ' 
+        GetThreadDepthToolStripMenuItem.Name = "GetThreadDepthToolStripMenuItem"
+        GetThreadDepthToolStripMenuItem.Size = New Size(163, 22)
+        GetThreadDepthToolStripMenuItem.Text = "Get thread depth"
         ' 
         ' LabelThreadDepth
         ' 
@@ -570,6 +588,7 @@ Partial Class FormFastenerStack
         TableLayoutPanel7.Controls.Add(ButtonHelp, 3, 0)
         TableLayoutPanel7.Controls.Add(ButtonClose, 2, 0)
         TableLayoutPanel7.Controls.Add(ButtonAddToAssy, 1, 0)
+        TableLayoutPanel7.Controls.Add(LabelStatus, 0, 0)
         TableLayoutPanel7.Dock = DockStyle.Fill
         TableLayoutPanel7.Location = New Point(3, 433)
         TableLayoutPanel7.Name = "TableLayoutPanel7"
@@ -608,6 +627,16 @@ Partial Class FormFastenerStack
         ButtonAddToAssy.Text = "Add to Assy"
         ButtonAddToAssy.UseVisualStyleBackColor = True
         ' 
+        ' LabelStatus
+        ' 
+        LabelStatus.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left
+        LabelStatus.AutoSize = True
+        LabelStatus.Location = New Point(3, 35)
+        LabelStatus.Name = "LabelStatus"
+        LabelStatus.Size = New Size(39, 15)
+        LabelStatus.TabIndex = 3
+        LabelStatus.Text = "Status"
+        ' 
         ' FormFastenerStack
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -629,6 +658,7 @@ Partial Class FormFastenerStack
         TableLayoutPanel4.PerformLayout()
         TableLayoutPanel5.ResumeLayout(False)
         TableLayoutPanel5.PerformLayout()
+        ContextMenuStrip1.ResumeLayout(False)
         TableLayoutPanel6.ResumeLayout(False)
         TableLayoutPanel6.PerformLayout()
         TableLayoutPanel2.ResumeLayout(False)
@@ -637,6 +667,7 @@ Partial Class FormFastenerStack
         ToolStrip1.PerformLayout()
         Panel1.ResumeLayout(False)
         TableLayoutPanel7.ResumeLayout(False)
+        TableLayoutPanel7.PerformLayout()
         ResumeLayout(False)
     End Sub
 
@@ -687,4 +718,7 @@ Partial Class FormFastenerStack
     Friend WithEvents ButtonHelp As Button
     Friend WithEvents ButtonClose As Button
     Friend WithEvents ButtonAddToAssy As Button
+    Friend WithEvents LabelStatus As Label
+    Friend WithEvents ContextMenuStrip1 As ContextMenuStrip
+    Friend WithEvents GetThreadDepthToolStripMenuItem As ToolStripMenuItem
 End Class

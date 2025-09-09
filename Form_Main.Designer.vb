@@ -23,17 +23,20 @@ Partial Class Form_Main
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         components = New ComponentModel.Container()
-        Dim TreeNode1 As TreeNode = New TreeNode("Node0")
-        Dim TreeNode2 As TreeNode = New TreeNode("Node4")
-        Dim TreeNode3 As TreeNode = New TreeNode("Node2", New TreeNode() {TreeNode2})
-        Dim TreeNode4 As TreeNode = New TreeNode("Node3")
-        Dim TreeNode5 As TreeNode = New TreeNode("Node1", New TreeNode() {TreeNode3, TreeNode4})
+        Dim TreeNode6 As TreeNode = New TreeNode("Node0")
+        Dim TreeNode7 As TreeNode = New TreeNode("Node4")
+        Dim TreeNode8 As TreeNode = New TreeNode("Node2", New TreeNode() {TreeNode7})
+        Dim TreeNode9 As TreeNode = New TreeNode("Node3")
+        Dim TreeNode10 As TreeNode = New TreeNode("Node1", New TreeNode() {TreeNode8, TreeNode9})
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Form_Main))
-        Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
         ToolStrip1 = New ToolStrip()
         ButtonCollapse = New ToolStripButton()
-        LabelCollapse = New ToolStripLabel()
         ToolStripSeparator1 = New ToolStripSeparator()
+        LabelSaveIn = New ToolStripLabel()
+        ButtonSaveInLibrary = New ToolStripButton()
+        ButtonSaveInOther = New ToolStripButton()
+        ToolStripSeparator2 = New ToolStripSeparator()
         ButtonPrepopulate = New ToolStripButton()
         LabelPrePopulate = New ToolStripLabel()
         ButtonAddToLibrary = New ToolStripButton()
@@ -44,6 +47,7 @@ Partial Class Form_Main
         ToolStripMenuItem1 = New ToolStripMenuItem()
         ReplaceSelectedToolStripMenuItem = New ToolStripMenuItem()
         ReplaceAllToolStripMenuItem = New ToolStripMenuItem()
+        FastenerStackToolStripMenuItem = New ToolStripMenuItem()
         DataGridViewDataInspector = New DataGridView()
         Column1 = New DataGridViewTextBoxColumn()
         Column2 = New DataGridViewTextBoxColumn()
@@ -70,7 +74,6 @@ Partial Class Form_Main
         TableLayoutPanel3 = New TableLayoutPanel()
         ButtonHelp = New Button()
         TextBoxStatus = New TextBox()
-        FastenerStackToolStripMenuItem = New ToolStripMenuItem()
         ToolStrip1.SuspendLayout()
         ContextMenuStrip1.SuspendLayout()
         CType(DataGridViewDataInspector, ComponentModel.ISupportInitialize).BeginInit()
@@ -90,11 +93,11 @@ Partial Class Form_Main
         ' 
         ' ToolStrip1
         ' 
-        ToolStrip1.Items.AddRange(New ToolStripItem() {ButtonCollapse, LabelCollapse, ToolStripSeparator1, ButtonPrepopulate, LabelPrePopulate, ButtonAddToLibrary, LabelAddToLibrary, ButtonOptions})
+        ToolStrip1.Items.AddRange(New ToolStripItem() {ButtonCollapse, ToolStripSeparator1, LabelSaveIn, ButtonSaveInLibrary, ButtonSaveInOther, ToolStripSeparator2, ButtonPrepopulate, LabelPrePopulate, ButtonAddToLibrary, LabelAddToLibrary, ButtonOptions})
         ToolStrip1.Location = New Point(0, 0)
         ToolStrip1.Name = "ToolStrip1"
         ToolStrip1.RenderMode = ToolStripRenderMode.System
-        ToolStrip1.Size = New Size(402, 25)
+        ToolStrip1.Size = New Size(478, 25)
         ToolStrip1.Stretch = True
         ToolStrip1.TabIndex = 0
         ToolStrip1.Text = "ToolStrip1"
@@ -108,17 +111,41 @@ Partial Class Form_Main
         ButtonCollapse.Size = New Size(23, 22)
         ButtonCollapse.ToolTipText = "Collapse the tree"
         ' 
-        ' LabelCollapse
-        ' 
-        LabelCollapse.Name = "LabelCollapse"
-        LabelCollapse.Size = New Size(52, 22)
-        LabelCollapse.Text = "Collapse"
-        LabelCollapse.ToolTipText = "Collapse the tree"
-        ' 
         ' ToolStripSeparator1
         ' 
         ToolStripSeparator1.Name = "ToolStripSeparator1"
         ToolStripSeparator1.Size = New Size(6, 25)
+        ' 
+        ' LabelSaveIn
+        ' 
+        LabelSaveIn.Name = "LabelSaveIn"
+        LabelSaveIn.Size = New Size(44, 22)
+        LabelSaveIn.Text = "Save in"
+        LabelSaveIn.ToolTipText = "Collapse the tree"
+        ' 
+        ' ButtonSaveInLibrary
+        ' 
+        ButtonSaveInLibrary.Image = My.Resources.Resources.icons8_Checkbox_Unchecked
+        ButtonSaveInLibrary.ImageTransparentColor = Color.Magenta
+        ButtonSaveInLibrary.Name = "ButtonSaveInLibrary"
+        ButtonSaveInLibrary.Size = New Size(63, 22)
+        ButtonSaveInLibrary.Text = "Library"
+        ButtonSaveInLibrary.TextAlign = ContentAlignment.MiddleRight
+        ButtonSaveInLibrary.ToolTipText = "Save in the library"
+        ' 
+        ' ButtonSaveInOther
+        ' 
+        ButtonSaveInOther.Image = My.Resources.Resources.icons8_Checkbox_Unchecked
+        ButtonSaveInOther.ImageTransparentColor = Color.Magenta
+        ButtonSaveInOther.Name = "ButtonSaveInOther"
+        ButtonSaveInOther.Size = New Size(57, 22)
+        ButtonSaveInOther.Text = "Other"
+        ButtonSaveInOther.ToolTipText = "Save in another location"
+        ' 
+        ' ToolStripSeparator2
+        ' 
+        ToolStripSeparator2.Name = "ToolStripSeparator2"
+        ToolStripSeparator2.Size = New Size(6, 25)
         ' 
         ' ButtonPrepopulate
         ' 
@@ -152,8 +179,8 @@ Partial Class Form_Main
         ' LabelAddToLibrary
         ' 
         LabelAddToLibrary.Name = "LabelAddToLibrary"
-        LabelAddToLibrary.Size = New Size(79, 22)
-        LabelAddToLibrary.Text = "Add to library"
+        LabelAddToLibrary.Size = New Size(29, 22)
+        LabelAddToLibrary.Text = "Add"
         LabelAddToLibrary.ToolTipText = "Add selected items to the library"
         LabelAddToLibrary.Visible = False
         ' 
@@ -173,43 +200,49 @@ Partial Class Form_Main
         TreeView1.Dock = DockStyle.Fill
         TreeView1.Location = New Point(3, 28)
         TreeView1.Name = "TreeView1"
-        TreeNode1.Name = "Node0"
-        TreeNode1.Text = "Node0"
-        TreeNode2.Name = "Node4"
-        TreeNode2.Text = "Node4"
-        TreeNode3.Name = "Node2"
-        TreeNode3.Text = "Node2"
-        TreeNode4.Name = "Node3"
-        TreeNode4.Text = "Node3"
-        TreeNode5.Name = "Node1"
-        TreeNode5.Text = "Node1"
-        TreeView1.Nodes.AddRange(New TreeNode() {TreeNode1, TreeNode5})
-        TreeView1.Size = New Size(396, 392)
+        TreeNode6.Name = "Node0"
+        TreeNode6.Text = "Node0"
+        TreeNode7.Name = "Node4"
+        TreeNode7.Text = "Node4"
+        TreeNode8.Name = "Node2"
+        TreeNode8.Text = "Node2"
+        TreeNode9.Name = "Node3"
+        TreeNode9.Text = "Node3"
+        TreeNode10.Name = "Node1"
+        TreeNode10.Text = "Node1"
+        TreeView1.Nodes.AddRange(New TreeNode() {TreeNode6, TreeNode10})
+        TreeView1.Size = New Size(472, 392)
         TreeView1.TabIndex = 1
         ' 
         ' ContextMenuStrip1
         ' 
         ContextMenuStrip1.Items.AddRange(New ToolStripItem() {ToolStripMenuItem1, ReplaceSelectedToolStripMenuItem, ReplaceAllToolStripMenuItem, FastenerStackToolStripMenuItem})
         ContextMenuStrip1.Name = "ContextMenuStrip1"
-        ContextMenuStrip1.Size = New Size(181, 114)
+        ContextMenuStrip1.Size = New Size(163, 92)
         ' 
         ' ToolStripMenuItem1
         ' 
         ToolStripMenuItem1.Name = "ToolStripMenuItem1"
-        ToolStripMenuItem1.Size = New Size(180, 22)
+        ToolStripMenuItem1.Size = New Size(162, 22)
         ToolStripMenuItem1.Text = "Add to assembly"
         ' 
         ' ReplaceSelectedToolStripMenuItem
         ' 
         ReplaceSelectedToolStripMenuItem.Name = "ReplaceSelectedToolStripMenuItem"
-        ReplaceSelectedToolStripMenuItem.Size = New Size(180, 22)
+        ReplaceSelectedToolStripMenuItem.Size = New Size(162, 22)
         ReplaceSelectedToolStripMenuItem.Text = "Replace selected"
         ' 
         ' ReplaceAllToolStripMenuItem
         ' 
         ReplaceAllToolStripMenuItem.Name = "ReplaceAllToolStripMenuItem"
-        ReplaceAllToolStripMenuItem.Size = New Size(180, 22)
+        ReplaceAllToolStripMenuItem.Size = New Size(162, 22)
         ReplaceAllToolStripMenuItem.Text = "Replace all"
+        ' 
+        ' FastenerStackToolStripMenuItem
+        ' 
+        FastenerStackToolStripMenuItem.Name = "FastenerStackToolStripMenuItem"
+        FastenerStackToolStripMenuItem.Size = New Size(162, 22)
+        FastenerStackToolStripMenuItem.Text = "Fastener stack"
         ' 
         ' DataGridViewDataInspector
         ' 
@@ -220,7 +253,7 @@ Partial Class Form_Main
         DataGridViewDataInspector.Location = New Point(3, 3)
         DataGridViewDataInspector.Name = "DataGridViewDataInspector"
         DataGridViewDataInspector.RowHeadersVisible = False
-        DataGridViewDataInspector.Size = New Size(402, 423)
+        DataGridViewDataInspector.Size = New Size(478, 423)
         DataGridViewDataInspector.TabIndex = 0
         ' 
         ' Column1
@@ -258,7 +291,7 @@ Partial Class Form_Main
         ' 
         ButtonClose.Anchor = AnchorStyles.Bottom
         ButtonClose.BackColor = Color.White
-        ButtonClose.Location = New Point(227, 116)
+        ButtonClose.Location = New Point(303, 116)
         ButtonClose.Name = "ButtonClose"
         ButtonClose.Size = New Size(90, 30)
         ButtonClose.TabIndex = 2
@@ -275,7 +308,7 @@ Partial Class Form_Main
         TabControl1.Location = New Point(3, 3)
         TabControl1.Name = "TabControl1"
         TabControl1.SelectedIndex = 0
-        TabControl1.Size = New Size(416, 457)
+        TabControl1.Size = New Size(492, 457)
         TabControl1.TabIndex = 1
         ' 
         ' TabPageTreeSearch
@@ -285,7 +318,7 @@ Partial Class Form_Main
         TabPageTreeSearch.Location = New Point(4, 24)
         TabPageTreeSearch.Name = "TabPageTreeSearch"
         TabPageTreeSearch.Padding = New Padding(3)
-        TabPageTreeSearch.Size = New Size(408, 429)
+        TabPageTreeSearch.Size = New Size(484, 429)
         TabPageTreeSearch.TabIndex = 0
         TabPageTreeSearch.Text = "Tree Search"
         TabPageTreeSearch.UseVisualStyleBackColor = True
@@ -302,7 +335,7 @@ Partial Class Form_Main
         TableLayoutPanel2.RowCount = 2
         TableLayoutPanel2.RowStyles.Add(New RowStyle())
         TableLayoutPanel2.RowStyles.Add(New RowStyle(SizeType.Percent, 100F))
-        TableLayoutPanel2.Size = New Size(402, 423)
+        TableLayoutPanel2.Size = New Size(478, 423)
         TableLayoutPanel2.TabIndex = 0
         ' 
         ' TabPagePropertySearch
@@ -312,7 +345,7 @@ Partial Class Form_Main
         TabPagePropertySearch.Location = New Point(4, 24)
         TabPagePropertySearch.Name = "TabPagePropertySearch"
         TabPagePropertySearch.Padding = New Padding(3)
-        TabPagePropertySearch.Size = New Size(408, 429)
+        TabPagePropertySearch.Size = New Size(484, 429)
         TabPagePropertySearch.TabIndex = 2
         TabPagePropertySearch.Text = "Property Search"
         TabPagePropertySearch.UseVisualStyleBackColor = True
@@ -329,7 +362,7 @@ Partial Class Form_Main
         TableLayoutPanel4.RowCount = 2
         TableLayoutPanel4.RowStyles.Add(New RowStyle(SizeType.Absolute, 35F))
         TableLayoutPanel4.RowStyles.Add(New RowStyle(SizeType.Percent, 100F))
-        TableLayoutPanel4.Size = New Size(402, 423)
+        TableLayoutPanel4.Size = New Size(478, 423)
         TableLayoutPanel4.TabIndex = 0
         ' 
         ' TableLayoutPanel5
@@ -347,13 +380,13 @@ Partial Class Form_Main
         TableLayoutPanel5.Name = "TableLayoutPanel5"
         TableLayoutPanel5.RowCount = 1
         TableLayoutPanel5.RowStyles.Add(New RowStyle())
-        TableLayoutPanel5.Size = New Size(396, 29)
+        TableLayoutPanel5.Size = New Size(472, 29)
         TableLayoutPanel5.TabIndex = 1
         ' 
         ' ButtonSearchProperties
         ' 
         ButtonSearchProperties.Image = My.Resources.Resources.icons8_search_16
-        ButtonSearchProperties.Location = New Point(339, 3)
+        ButtonSearchProperties.Location = New Point(415, 3)
         ButtonSearchProperties.Name = "ButtonSearchProperties"
         ButtonSearchProperties.Size = New Size(24, 23)
         ButtonSearchProperties.TabIndex = 0
@@ -364,13 +397,13 @@ Partial Class Form_Main
         TextBoxSearchTerms.Dock = DockStyle.Fill
         TextBoxSearchTerms.Location = New Point(3, 3)
         TextBoxSearchTerms.Name = "TextBoxSearchTerms"
-        TextBoxSearchTerms.Size = New Size(330, 23)
+        TextBoxSearchTerms.Size = New Size(406, 23)
         TextBoxSearchTerms.TabIndex = 2
         ' 
         ' ButtonPropertySearchOptions
         ' 
         ButtonPropertySearchOptions.Image = My.Resources.Resources.Support_16
-        ButtonPropertySearchOptions.Location = New Point(369, 3)
+        ButtonPropertySearchOptions.Location = New Point(445, 3)
         ButtonPropertySearchOptions.Name = "ButtonPropertySearchOptions"
         ButtonPropertySearchOptions.Size = New Size(24, 23)
         ButtonPropertySearchOptions.TabIndex = 3
@@ -378,8 +411,8 @@ Partial Class Form_Main
         ' 
         ' DataGridViewVendorParts
         ' 
-        DataGridViewCellStyle1.BackColor = Color.AliceBlue
-        DataGridViewVendorParts.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle1
+        DataGridViewCellStyle2.BackColor = Color.AliceBlue
+        DataGridViewVendorParts.AlternatingRowsDefaultCellStyle = DataGridViewCellStyle2
         DataGridViewVendorParts.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         DataGridViewVendorParts.Columns.AddRange(New DataGridViewColumn() {Filename, Path})
         DataGridViewVendorParts.ContextMenuStrip = ContextMenuStrip2
@@ -389,7 +422,7 @@ Partial Class Form_Main
         DataGridViewVendorParts.MultiSelect = False
         DataGridViewVendorParts.Name = "DataGridViewVendorParts"
         DataGridViewVendorParts.RowHeadersVisible = False
-        DataGridViewVendorParts.Size = New Size(396, 382)
+        DataGridViewVendorParts.Size = New Size(472, 382)
         DataGridViewVendorParts.TabIndex = 2
         ' 
         ' Filename
@@ -423,7 +456,7 @@ Partial Class Form_Main
         TabPageInspectData.Location = New Point(4, 24)
         TabPageInspectData.Name = "TabPageInspectData"
         TabPageInspectData.Padding = New Padding(3)
-        TabPageInspectData.Size = New Size(408, 429)
+        TabPageInspectData.Size = New Size(484, 429)
         TabPageInspectData.TabIndex = 1
         TabPageInspectData.Text = "Data Inspector"
         TabPageInspectData.UseVisualStyleBackColor = True
@@ -451,7 +484,7 @@ Partial Class Form_Main
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Percent, 100F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 155F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle())
-        TableLayoutPanel1.Size = New Size(422, 647)
+        TableLayoutPanel1.Size = New Size(498, 647)
         TableLayoutPanel1.TabIndex = 3
         ' 
         ' TableLayoutPanel3
@@ -469,14 +502,14 @@ Partial Class Form_Main
         TableLayoutPanel3.Name = "TableLayoutPanel3"
         TableLayoutPanel3.RowCount = 1
         TableLayoutPanel3.RowStyles.Add(New RowStyle(SizeType.Percent, 100F))
-        TableLayoutPanel3.Size = New Size(416, 149)
+        TableLayoutPanel3.Size = New Size(492, 149)
         TableLayoutPanel3.TabIndex = 2
         ' 
         ' ButtonHelp
         ' 
         ButtonHelp.Anchor = AnchorStyles.Bottom
         ButtonHelp.BackColor = Color.White
-        ButtonHelp.Location = New Point(323, 116)
+        ButtonHelp.Location = New Point(399, 116)
         ButtonHelp.Name = "ButtonHelp"
         ButtonHelp.Size = New Size(90, 30)
         ButtonHelp.TabIndex = 3
@@ -489,21 +522,15 @@ Partial Class Form_Main
         TextBoxStatus.Dock = DockStyle.Fill
         TextBoxStatus.Location = New Point(3, 621)
         TextBoxStatus.Name = "TextBoxStatus"
-        TextBoxStatus.Size = New Size(416, 23)
+        TextBoxStatus.Size = New Size(492, 23)
         TextBoxStatus.TabIndex = 3
         TextBoxStatus.Text = "Status"
-        ' 
-        ' FastenerStackToolStripMenuItem
-        ' 
-        FastenerStackToolStripMenuItem.Name = "FastenerStackToolStripMenuItem"
-        FastenerStackToolStripMenuItem.Size = New Size(180, 22)
-        FastenerStackToolStripMenuItem.Text = "Fastener stack"
         ' 
         ' Form_Main
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(422, 647)
+        ClientSize = New Size(498, 647)
         Controls.Add(TableLayoutPanel1)
         Icon = CType(resources.GetObject("$this.Icon"), Icon)
         Name = "Form_Main"
@@ -562,7 +589,7 @@ Partial Class Form_Main
     Friend WithEvents ContextMenuStrip2 As ContextMenuStrip
     Friend WithEvents AddToAssemblyToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ImageList1 As ImageList
-    Friend WithEvents LabelCollapse As ToolStripLabel
+    Friend WithEvents LabelSaveIn As ToolStripLabel
     Friend WithEvents ToolStripSeparator1 As ToolStripSeparator
     Friend WithEvents ButtonPrepopulate As ToolStripButton
     Friend WithEvents LabelPrePopulate As ToolStripLabel
@@ -571,5 +598,8 @@ Partial Class Form_Main
     Friend WithEvents ReplaceSelectedToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ReplaceAllToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents FastenerStackToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents ButtonSaveInLibrary As ToolStripButton
+    Friend WithEvents ButtonSaveInOther As ToolStripButton
+    Friend WithEvents ToolStripSeparator2 As ToolStripSeparator
 
 End Class
