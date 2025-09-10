@@ -300,6 +300,8 @@ Public Class FormFastenerStack
 
         FMain.SEApp.DisplayAlerts = True
 
+        Me.TopMost = True
+
     End Sub
 
     Private Function CheckStartConditions() As Boolean
@@ -557,8 +559,9 @@ Public Class FormFastenerStack
         'objApp.GetGlobalParameter(SolidEdgeFramework.ApplicationGlobalConstants.seApplicationGlobalColorSelected, objHLSet.Color)
 
         HighlightSet.AddItem(Occurrence)
-        HighlightSet.Draw()
+        'HighlightSet.Draw()
         FMain.SEApp.ActiveSelectSet.Add(HighlightSet)
+        FMain.SEApp.ActiveSelectSet.RefreshDisplay()
 
         ' TODO Remove the occurrence ground constraint if present
         Dim Relations3d As SolidEdgeAssembly.Relations3d = CType(Occurrence.Relations3d, SolidEdgeAssembly.Relations3d)

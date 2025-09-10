@@ -8,8 +8,8 @@ Public Class Form_Main
 
     Private Property Version As String = "2025.4"
 
-    Private Property PreviewVersion As String = ""  ' Empty string if not a preview
-    'Private Property PreviewVersion As String = "Preview 06"  
+    'Private Property PreviewVersion As String = ""  ' Empty string if not a preview
+    Private Property PreviewVersion As String = "Preview 01"
 
 
     Private _SelectedNodeFullPath As String
@@ -40,6 +40,28 @@ Public Class Form_Main
     Public Property AssemblyTemplate As String
     Public Property PartTemplate As String
     Public Property SheetmetalTemplate As String
+    Private Property AlwaysOnTopTimer As Timer
+
+    Private _AlwaysOnTop As Boolean
+    Public Property AlwaysOnTop As Boolean
+        Get
+            Return _AlwaysOnTop
+        End Get
+        Set(value As Boolean)
+            _AlwaysOnTop = value
+            If Me.TabControl1 IsNot Nothing Then
+
+                If AlwaysOnTop Then
+                    If AlwaysOnTopTimer IsNot Nothing Then AlwaysOnTopTimer.Start()
+                Else
+                    If AlwaysOnTopTimer IsNot Nothing Then AlwaysOnTopTimer.Stop()
+                End If
+            End If
+        End Set
+    End Property
+
+
+
 
     Private _SaveInLibrary As Boolean
     Public Property SaveInLibrary As Boolean
@@ -63,6 +85,7 @@ Public Class Form_Main
             End If
         End Set
     End Property
+
     Private _PrePopulate As Boolean
     Public Property PrePopulate As Boolean
         Get
@@ -126,6 +149,8 @@ Public Class Form_Main
         Splash.Show()
         Splash.UpdateStatus("Initializing")
 
+        OleMessageFilter.Register()
+
         TextBoxStatus.Text = ""
 
         AddHandler TreeView1.AfterSelect, AddressOf TreeView1_AfterSelect
@@ -155,6 +180,7 @@ Public Class Form_Main
             ' First run.  Set defaults.
             Me.AlwaysReadExcel = True
             Me.CheckNewVersion = True
+            Me.SaveInLibrary = True
         End If
 
         UP.CreatePreferencesDirectory(Me)
@@ -192,7 +218,7 @@ Public Class Form_Main
             Me.Text = $"Solid Edge Storekeeper {Me.Version}"
         Else
             Me.Text = $"Solid Edge Storekeeper {Me.Version} {Me.PreviewVersion}"
-            MsgBox(Me.Text, vbOKOnly, "Running a preview version")
+            'MsgBox(Me.Text, vbOKOnly, "Running a preview version")
         End If
 
         If Me.CheckNewVersion Then
@@ -200,6 +226,14 @@ Public Class Form_Main
         End If
 
         TextBoxStatus.Text = $"{Me.NodeCount} items available"
+
+        Splash.UpdateStatus("Initializing timer")
+
+        AlwaysOnTopTimer = New Timer
+        AlwaysOnTopTimer.Interval = 1000
+        AddHandler AlwaysOnTopTimer.Tick, AddressOf HandleAlwaysOnTopTimerTick
+        'AlwaysOnTopTimer.Start()
+
 
         Splash.Close()
 
@@ -308,7 +342,7 @@ Public Class Form_Main
             Exit Sub
         End If
 
-        OleMessageFilter.Register()
+        'OleMessageFilter.Register()
 
         SEAppEvents = CType(SEApp.ApplicationEvents, SolidEdgeFramework.DISEApplicationEvents_Event)
 
@@ -510,7 +544,7 @@ Public Class Form_Main
         End If
         TextBoxStatus.Text = ""
 
-        OleMessageFilter.Revoke()
+        'OleMessageFilter.Revoke()
 
 
     End Sub
@@ -772,9 +806,14 @@ Public Class Form_Main
                 tmpFileDialog.EnsureFileExists = False
                 tmpFileDialog.DefaultExtension = DefaultExtension.Replace(".", "")
 
+                If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
+                Me.TopMost = False
+
                 If tmpFileDialog.ShowDialog() = DialogResult.OK Then
+                    If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
                     Filename = tmpFileDialog.FileName
                 Else
+                    If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
                     Return Nothing
                 End If
 
@@ -2073,6 +2112,8 @@ Public Class Form_Main
             UP.SaveFormMainSettings(Me, SavingPresets:=False)
             Me.PropertiesData.Save()
 
+            OleMessageFilter.Revoke()
+
             End
         End If
     End Sub
@@ -2084,6 +2125,8 @@ Public Class Form_Main
         Dim UP As New UtilsPreferences
         UP.SaveFormMainSettings(Me, SavingPresets:=False)
         Me.PropertiesData.Save()
+
+        OleMessageFilter.Revoke()
 
         End
     End Sub
@@ -2104,23 +2147,34 @@ Public Class Form_Main
     '    LabelSaveDirectory.Text = TruncateDirectoryName(LibraryDirectory)
     'End Sub
 
-    Private Sub ButtonSaveDirectory_Click(sender As Object, e As EventArgs)
-        Dim tmpFolderDialog As New CommonOpenFileDialog
-        tmpFolderDialog.IsFolderPicker = True
+    'Private Sub ButtonSaveDirectory_Click(sender As Object, e As EventArgs)
+    '    Dim tmpFolderDialog As New CommonOpenFileDialog
+    '    tmpFolderDialog.IsFolderPicker = True
 
-        If tmpFolderDialog.ShowDialog = DialogResult.OK Then
-            LibraryDirectory = tmpFolderDialog.FileName
-        End If
+    '    If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
+    '    Me.TopMost = False
 
-    End Sub
+    '    If tmpFolderDialog.ShowDialog = DialogResult.OK Then
+    '        LibraryDirectory = tmpFolderDialog.FileName
+    '    End If
+
+    '    If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
+
+    'End Sub
 
     Private Sub ButtonOptions_Click(sender As Object, e As EventArgs) Handles ButtonOptions.Click
+
+        If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
+        Me.TopMost = False
+
         Dim FO As New FormTreeSearchOptions(Me)
         FO.ShowDialog()
 
         If FO.DialogResult = DialogResult.OK Then
             ' Nothing to do here.  The options dialog updates parameters in Form_Main.
         End If
+
+        If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
 
     End Sub
 
@@ -2140,6 +2194,10 @@ Public Class Form_Main
     End Sub
 
     Private Sub ButtonPropertySearchOptions_Click(sender As Object, e As EventArgs) Handles ButtonPropertySearchOptions.Click
+
+        If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
+        Me.TopMost = False
+
         Dim FPSO As New FormPropertySearchOptions(Me)
         FPSO.ShowDialog()
 
@@ -2159,6 +2217,8 @@ Public Class Form_Main
                 DataGridViewVendorParts.Columns(ColIdx).AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells
             Next
         End If
+
+        If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
 
     End Sub
 
@@ -2513,14 +2573,25 @@ Public Class Form_Main
     End Sub
 
     Private Sub FastenerStackToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles FastenerStackToolStripMenuItem.Click
-        Dim Node = TreeView1.SelectedNode
-        Dim Filename = GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(GetTemplateNameFormula()))
-        Dim FFS As New FormFastenerStack(Me)
-        'AddHandler FFS.ButtonSelectStyle.Click, AddressOf EventTest
-        FFS.FastenerFilename = Filename
-        FFS.ShowDialog()
 
-        Dim i = 0
+        If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
+        Me.TopMost = False
+
+        Dim InDevelopment As Boolean = True
+
+        If InDevelopment Then
+            MsgBox("In development -- not available at this time", vbOKOnly, "In Development")
+        Else
+            Dim Node = TreeView1.SelectedNode
+            Dim Filename = GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(GetTemplateNameFormula()))
+            Dim FFS As New FormFastenerStack(Me)
+            'AddHandler FFS.ButtonSelectStyle.Click, AddressOf EventTest
+            FFS.FastenerFilename = Filename
+            FFS.ShowDialog()
+        End If
+
+        If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
+
     End Sub
 
     Private Sub EventTest(sender As Object, e As EventArgs)
@@ -2530,6 +2601,12 @@ Public Class Form_Main
             TextBoxStatus.Text = ""
         End If
         Dim i = 0
+    End Sub
+
+    Private Sub HandleAlwaysOnTopTimerTick(sender As Object, e As EventArgs)
+
+        Me.TopMost = True
+
     End Sub
 
 End Class

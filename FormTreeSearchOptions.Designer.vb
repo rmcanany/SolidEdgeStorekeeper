@@ -48,6 +48,7 @@ Partial Class FormTreeSearchOptions
         CheckBoxFailedConstraintAllow = New CheckBox()
         CheckBoxSuspendMRU = New CheckBox()
         CheckBoxAllowCommaDelimiters = New CheckBox()
+        CheckBoxAlwaysOnTop = New CheckBox()
         ToolTip1 = New ToolTip(components)
         TableLayoutPanel1.SuspendLayout()
         TableLayoutPanel2.SuspendLayout()
@@ -79,6 +80,7 @@ Partial Class FormTreeSearchOptions
         TableLayoutPanel1.Controls.Add(CheckBoxFailedConstraintAllow, 0, 11)
         TableLayoutPanel1.Controls.Add(CheckBoxSuspendMRU, 0, 12)
         TableLayoutPanel1.Controls.Add(CheckBoxAllowCommaDelimiters, 0, 13)
+        TableLayoutPanel1.Controls.Add(CheckBoxAlwaysOnTop, 0, 14)
         TableLayoutPanel1.Dock = DockStyle.Fill
         TableLayoutPanel1.Location = New Point(0, 0)
         TableLayoutPanel1.Name = "TableLayoutPanel1"
@@ -97,10 +99,10 @@ Partial Class FormTreeSearchOptions
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
-        TableLayoutPanel1.RowStyles.Add(New RowStyle())
+        TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Percent, 100F))
-        TableLayoutPanel1.Size = New Size(472, 496)
+        TableLayoutPanel1.Size = New Size(472, 569)
         TableLayoutPanel1.TabIndex = 0
         ' 
         ' CheckBoxDisableFineThreadWarning
@@ -263,17 +265,17 @@ Partial Class FormTreeSearchOptions
         TableLayoutPanel2.Controls.Add(ButtonCancel, 1, 0)
         TableLayoutPanel2.Controls.Add(ButtonHelp, 2, 0)
         TableLayoutPanel2.Dock = DockStyle.Fill
-        TableLayoutPanel2.Location = New Point(99, 453)
+        TableLayoutPanel2.Location = New Point(99, 483)
         TableLayoutPanel2.Name = "TableLayoutPanel2"
         TableLayoutPanel2.RowCount = 1
         TableLayoutPanel2.RowStyles.Add(New RowStyle(SizeType.Percent, 100F))
-        TableLayoutPanel2.Size = New Size(370, 40)
+        TableLayoutPanel2.Size = New Size(370, 83)
         TableLayoutPanel2.TabIndex = 5
         ' 
         ' ButtonOK
         ' 
         ButtonOK.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        ButtonOK.Location = New Point(130, 14)
+        ButtonOK.Location = New Point(130, 57)
         ButtonOK.Name = "ButtonOK"
         ButtonOK.Size = New Size(75, 23)
         ButtonOK.TabIndex = 1
@@ -283,7 +285,7 @@ Partial Class FormTreeSearchOptions
         ' ButtonCancel
         ' 
         ButtonCancel.Anchor = AnchorStyles.Bottom
-        ButtonCancel.Location = New Point(211, 14)
+        ButtonCancel.Location = New Point(211, 57)
         ButtonCancel.Name = "ButtonCancel"
         ButtonCancel.Size = New Size(75, 23)
         ButtonCancel.TabIndex = 0
@@ -293,7 +295,7 @@ Partial Class FormTreeSearchOptions
         ' ButtonHelp
         ' 
         ButtonHelp.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        ButtonHelp.Location = New Point(292, 14)
+        ButtonHelp.Location = New Point(292, 57)
         ButtonHelp.Name = "ButtonHelp"
         ButtonHelp.Size = New Size(75, 23)
         ButtonHelp.TabIndex = 2
@@ -307,7 +309,7 @@ Partial Class FormTreeSearchOptions
         CheckBoxCheckNewVersion.Checked = True
         CheckBoxCheckNewVersion.CheckState = CheckState.Checked
         TableLayoutPanel1.SetColumnSpan(CheckBoxCheckNewVersion, 2)
-        CheckBoxCheckNewVersion.Location = New Point(3, 425)
+        CheckBoxCheckNewVersion.Location = New Point(3, 455)
         CheckBoxCheckNewVersion.Name = "CheckBoxCheckNewVersion"
         CheckBoxCheckNewVersion.Padding = New Padding(5, 0, 0, 0)
         CheckBoxCheckNewVersion.Size = New Size(197, 19)
@@ -384,11 +386,24 @@ Partial Class FormTreeSearchOptions
         CheckBoxAllowCommaDelimiters.Text = "Allow comma delimiters (experimental)"
         CheckBoxAllowCommaDelimiters.UseVisualStyleBackColor = True
         ' 
+        ' CheckBoxAlwaysOnTop
+        ' 
+        CheckBoxAlwaysOnTop.Anchor = AnchorStyles.Left
+        CheckBoxAlwaysOnTop.AutoSize = True
+        TableLayoutPanel1.SetColumnSpan(CheckBoxAlwaysOnTop, 2)
+        CheckBoxAlwaysOnTop.Location = New Point(3, 425)
+        CheckBoxAlwaysOnTop.Name = "CheckBoxAlwaysOnTop"
+        CheckBoxAlwaysOnTop.Padding = New Padding(5, 0, 0, 0)
+        CheckBoxAlwaysOnTop.Size = New Size(169, 19)
+        CheckBoxAlwaysOnTop.TabIndex = 25
+        CheckBoxAlwaysOnTop.Text = "Storekeeper always on top"
+        CheckBoxAlwaysOnTop.UseVisualStyleBackColor = True
+        ' 
         ' FormTreeSearchOptions
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(472, 496)
+        ClientSize = New Size(472, 569)
         Controls.Add(TableLayoutPanel1)
         Icon = CType(resources.GetObject("$this.Icon"), Icon)
         Name = "FormTreeSearchOptions"
@@ -425,4 +440,5 @@ Partial Class FormTreeSearchOptions
     Friend WithEvents CheckBoxFailedConstraintAllow As CheckBox
     Friend WithEvents CheckBoxSuspendMRU As CheckBox
     Friend WithEvents CheckBoxAllowCommaDelimiters As CheckBox
+    Friend WithEvents CheckBoxAlwaysOnTop As CheckBox
 End Class

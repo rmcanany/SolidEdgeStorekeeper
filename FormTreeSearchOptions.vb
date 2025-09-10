@@ -175,6 +175,19 @@ Public Class FormTreeSearchOptions
         End Set
     End Property
 
+    Private _AlwaysOnTop As Boolean
+    Public Property AlwaysOnTop As Boolean
+        Get
+            Return _AlwaysOnTop
+        End Get
+        Set(value As Boolean)
+            _AlwaysOnTop = value
+            If Me.TableLayoutPanel1 IsNot Nothing Then
+                CheckBoxAlwaysOnTop.Checked = value
+            End If
+        End Set
+    End Property
+
     Private _CheckNewVersion As Boolean
     Public Property CheckNewVersion As Boolean
         Get
@@ -276,6 +289,7 @@ Public Class FormTreeSearchOptions
         Me.FailedConstraintAllow = FMain.FailedConstraintAllow
         Me.SuspendMRU = FMain.SuspendMRU
         Me.AllowCommaDelimiters = FMain.AllowCommaDelimiters
+        Me.AlwaysOnTop = FMain.AlwaysOnTop
         Me.CheckNewVersion = FMain.CheckNewVersion
     End Sub
 
@@ -298,6 +312,7 @@ Public Class FormTreeSearchOptions
         FMain.FailedConstraintAllow = Me.FailedConstraintAllow
         FMain.SuspendMRU = Me.SuspendMRU
         FMain.AllowCommaDelimiters = Me.AllowCommaDelimiters
+        FMain.AlwaysOnTop = Me.AlwaysOnTop
         FMain.CheckNewVersion = Me.CheckNewVersion
 
         Me.DialogResult = DialogResult.OK
@@ -357,4 +372,7 @@ Public Class FormTreeSearchOptions
         Me.AllowCommaDelimiters = CheckBoxAllowCommaDelimiters.Checked
     End Sub
 
+    Private Sub CheckBoxAlwaysOnTop_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBoxAlwaysOnTop.CheckedChanged
+        Me.AlwaysOnTop = CheckBoxAlwaysOnTop.Checked
+    End Sub
 End Class
