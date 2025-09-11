@@ -311,6 +311,10 @@ Public Class FormFastenerStack
 
         If Not IO.File.Exists(Me.FastenerFilename) Then ErrorMessages.Add($"Fastener not found: '{Me.FastenerFilename}'")
 
+        If Not (Me.Units = "in" Or Me.Units = "mm") Then
+            ErrorMessages.Add("Units not set to 'in' or 'mm'")
+        End If
+
         Try
             Dim V = CDbl(Me.ClampedThickness)
         Catch ex As Exception
@@ -559,9 +563,12 @@ Public Class FormFastenerStack
         'objApp.GetGlobalParameter(SolidEdgeFramework.ApplicationGlobalConstants.seApplicationGlobalColorSelected, objHLSet.Color)
 
         HighlightSet.AddItem(Occurrence)
-        'HighlightSet.Draw()
+        HighlightSet.Draw()
         FMain.SEApp.ActiveSelectSet.Add(HighlightSet)
         FMain.SEApp.ActiveSelectSet.RefreshDisplay()
+
+        Threading.Thread.Sleep(750)
+        HighlightSet.Delete()
 
         ' TODO Remove the occurrence ground constraint if present
         Dim Relations3d As SolidEdgeAssembly.Relations3d = CType(Occurrence.Relations3d, SolidEdgeAssembly.Relations3d)
@@ -1567,6 +1574,11 @@ Public Class FormFastenerStack
         Dim tmpFastenerFilename As String = Me.FastenerFilename
         UP.GetFormFastenerStackSettings(Me)
         Me.FastenerFilename = tmpFastenerFilename
+
+        If Not (Me.Units = "in" Or Me.Units = "mm") Then
+            Me.Units = "in"
+        End If
+
     End Sub
 
     Private Sub TextBoxClampedThickness_TextChanged(sender As Object, e As EventArgs) Handles TextBoxClampedThickness.TextChanged

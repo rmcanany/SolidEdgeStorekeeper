@@ -66,6 +66,7 @@ Partial Class FormFastenerStack
         ButtonStackConfiguration = New ToolStripButton()
         LabelStackConfiguration = New ToolStripLabel()
         ToolStripSeparator1 = New ToolStripSeparator()
+        LabelUnits = New ToolStripLabel()
         ComboBoxUnits = New ToolStripComboBox()
         ToolStripSeparator2 = New ToolStripSeparator()
         Panel1 = New Panel()
@@ -525,7 +526,7 @@ Partial Class FormFastenerStack
         ' 
         ' ToolStrip1
         ' 
-        ToolStrip1.Items.AddRange(New ToolStripItem() {ButtonStackConfiguration, LabelStackConfiguration, ToolStripSeparator1, ComboBoxUnits, ToolStripSeparator2})
+        ToolStrip1.Items.AddRange(New ToolStripItem() {ButtonStackConfiguration, LabelStackConfiguration, ToolStripSeparator1, LabelUnits, ComboBoxUnits, ToolStripSeparator2})
         ToolStrip1.Location = New Point(0, 0)
         ToolStrip1.Name = "ToolStrip1"
         ToolStrip1.Size = New Size(624, 25)
@@ -552,6 +553,12 @@ Partial Class FormFastenerStack
         ' 
         ToolStripSeparator1.Name = "ToolStripSeparator1"
         ToolStripSeparator1.Size = New Size(6, 25)
+        ' 
+        ' LabelUnits
+        ' 
+        LabelUnits.Name = "LabelUnits"
+        LabelUnits.Size = New Size(34, 22)
+        LabelUnits.Text = "Units"
         ' 
         ' ComboBoxUnits
         ' 
@@ -721,4 +728,5 @@ Partial Class FormFastenerStack
     Friend WithEvents LabelStatus As Label
     Friend WithEvents ContextMenuStrip1 As ContextMenuStrip
     Friend WithEvents GetThreadDepthToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents LabelUnits As ToolStripLabel
 End Class

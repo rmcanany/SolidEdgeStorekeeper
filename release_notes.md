@@ -12,6 +12,28 @@ Please note, the program has been tested on thousands of our files, but none of 
 
 Feel free to report bugs and/or ideas for improvement on the [<ins>**Solid Edge Forum**</ins>](https://community.sw.siemens.com/s/topic/0TO4O000000MihiWAC/solid-edge) or [<ins>**GitHub**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/issues).
 
+## V2025.4
+
+### Fastener Stacks
+
+Added the ability to create fastener stacks -- a grouping that consists of a fastener and related components, such as washers and nuts.  
+
+<p align="center">
+  <img src="media/fastener_stack.png">
+</p>
+
+The stack styles are pre-configured.  There are eight versions that employ nuts, and four each for thru and blind tapped holes.  Note, you only choose the fastener.  The related components are automatically selected based on the fastener diameter and thread, and the chosen configuration.
+
+<p align="center">
+  <img src="media/fastener_stack_configuration.png">
+</p>
+
+The program automatically finds the correct length fastener, creates temporary subassemblies of the top and bottom components, and adds and disperses them in turn to the main assembly.  Once you position the parts, they are added to an `Assembly Group` and patterned if applicable.
+
+Note, because of several assumptions regarding variable and file names, this initial release most likely will not work with user-created data or templates.
+
+
+
 ## V2025.3
 
 ### Replace Part

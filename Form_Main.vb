@@ -8,8 +8,8 @@ Public Class Form_Main
 
     Private Property Version As String = "2025.4"
 
-    'Private Property PreviewVersion As String = ""  ' Empty string if not a preview
-    Private Property PreviewVersion As String = "Preview 01"
+    Private Property PreviewVersion As String = ""  ' Empty string if not a preview
+    'Private Property PreviewVersion As String = "Preview 01"
 
 
     Private _SelectedNodeFullPath As String
@@ -59,9 +59,6 @@ Public Class Form_Main
             End If
         End Set
     End Property
-
-
-
 
     Private _SaveInLibrary As Boolean
     Public Property SaveInLibrary As Boolean
@@ -115,6 +112,7 @@ Public Class Form_Main
             End If
         End Set
     End Property
+
     Public Property FileLogger As Logger
     Public Property ProcessTemplateInBackground As Boolean = True
     Public Property FailedConstraintSuppress As Boolean
@@ -2577,7 +2575,7 @@ Public Class Form_Main
         If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
         Me.TopMost = False
 
-        Dim InDevelopment As Boolean = True
+        Dim InDevelopment As Boolean = False
 
         If InDevelopment Then
             MsgBox("In development -- not available at this time", vbOKOnly, "In Development")

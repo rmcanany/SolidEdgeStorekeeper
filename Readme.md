@@ -45,6 +45,7 @@ For items like fasteners, use **Tree Search**.  Navigate to the desired item, ri
 - `Add to assembly`  Adds the part to the assembly and activates the `Place part` command.
 - `Replace selected`  Replaces a selected part in the assembly.
 - `Replace all`  Replaces all occurrences of a selected part in the assembly.
+- `Fastener stack`  Opens the fastener stack dialog.  See the separate section below for details.
 
 <p align="center">
   <img src="media/property_search.png">
@@ -58,7 +59,7 @@ You can set the file names according to your preference.  You can specify the ma
 
 ![Filename Formula](media/filename_formula.png)
 
-Structural shapes are not quite the same as fasteners.  While the cross section is standard, the length and the possibility of additional features is not.  Usually the part doesn't even belong in the library.  So rather than assuming a name and location, the program prompts for both.
+Structural shapes are not quite the same as fasteners.  While the cross section is standard, the length and the possibility of additional features is not.  Usually the part doesn't even belong in the library.  For these, you can change the `Save in` option from `Library` to `Other`.  Rather than assuming a name and location, with this setting the program prompts for both.
 
 Unlike Family of Parts, files are only created as needed.  Also, each part is stand-alone, not tied back to a master file.
 
@@ -160,6 +161,9 @@ The material table is usually your normal SE material table.  However, for a qui
   - `Allow comma delimiters (experimental)`  
 	Allows the use of a comma as the decimal delimiter.  This is somewhat experimental because commas are not allowed `*.xml` headers.  There is a workaround in place, but has not been thouroughly tested.  Disabling this option causes causes commas to be replaced with periods in the `*.xml` file.
 	
+  - `Storekeeper always on top`  
+	Keeps the storekeeper dialog on top of other windows.
+
   - `Check for new version at startup`  
 	If you don't need a reminder about new versions, disable the check here.
 
@@ -190,6 +194,34 @@ These are your normal template files, not the ones used by the program to create
 You may have more work to do if you're not using English in Solid Edge.  In the spreadsheet `Storekeeper.xls`, there are some property names that probably need to be changed.
 
 Open the file (located in the `Preferences\Data` directory) and look for entries like `%{System.Title}` and update as required.
+
+## FASTENER STACK
+
+A fastener stack is a grouping that consists of a fastener and related components, such as washers and nuts.  To create one, on the `Tree Search` dialog, right-click a fastener and select the `Fastener stack` command.  The following form is shown.
+
+<p align="center">
+  <img src="media/fastener_stack.png">
+</p>
+
+To select the stack style, click the `Configuration` button.  There are eight versions that employ nuts, and four each for thru and blind tapped holes.  Note, you only choose the fastener.  The related components are automatically selected based on the fastener diameter and thread, and the chosen configuration.
+
+<p align="center">
+  <img src="media/fastener_stack_configuration.png">
+</p>
+
+Once the desired configuration is selected, choose the units and enter the appropriate parameters.  Click `Add to Assy` to start the process.  
+
+The program first searches the library for a fastener length that meets the criteria.  If none is found, an error is diplayed.
+
+If a fastener is found, it then opens separate temporary subassemblies for the top and bottom parts of the stack, and populates them with the components you chose.
+
+Next, it adds each updated subassembly, in turn, to the main assembly.  The subassembly is dispersed into the main assembly and the `Place part` command is activated.
+
+The program waits for the `Place part` command to finish before proceeding to the next step.  Confusingly, the command does not automatically finish when the parts have been fully constrained.  You have to either right-click the mouse or press the `Escape` key.  If you notice nothing happening for a while, the program could be waiting for your input.
+
+After the components are placed, they are converted to an `Assembly group`.  Finally, the group is patterned if applicable, assuming that option is enabled.
+
+
 
 ## PRE-POPULATING THE LIBRARY
 
