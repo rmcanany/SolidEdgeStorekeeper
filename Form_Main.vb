@@ -160,7 +160,8 @@ Public Class Form_Main
 
         Dim tmpStartupDirectory As String = UP.GetStartupDirectory
         Dim s As String = ""
-        Dim tmpDirList As New List(Of String) From {UP.GetDefaultDataDirectory, UP.GetDefaultTemplatesDirectory}
+        Dim Suffix As String = "SE2024"
+        Dim tmpDirList As New List(Of String) From {UP.GetDefaultDataDirectory(Suffix), UP.GetDefaultTemplatesDirectory(Suffix)}
         For Each d As String In tmpDirList
             If Not IO.Directory.Exists(d) Then s = $"{s}  {d}{vbCrLf}"
         Next
@@ -793,12 +794,12 @@ Public Class Form_Main
                 FileLogger.AddMessage("Cannot process prompted filename in batch mode")
                 Return Nothing
             Else
-                'FilenameWasPrompted = True
 
-                'Filename = Filename.Split(CChar(":"))(1).Trim
                 Filename = Props.SubstitutePropFormulas(Filename)
 
                 Dim tmpFileDialog As New CommonOpenFileDialog
+                'Dim tmpFileDialog As New CommonSaveFileDialog
+
                 tmpFileDialog.Title = "Enter the file name for the new part"
                 tmpFileDialog.DefaultFileName = Filename
                 tmpFileDialog.EnsureFileExists = False
@@ -819,7 +820,7 @@ Public Class Form_Main
         Else
             Filename = Props.SubstitutePropFormulas(Filename)
             If Filename Is Nothing Then
-                'MsgBox($"Could not resolve filename formula '{FilenameFormula}'", vbOKOnly, "File name formula")
+                FileLogger.AddMessage($"Could not resolve filename formula: '{FilenameFormula}'")
                 Return Nothing
             End If
             Filename = $"{Me.LibraryDirectory}\{Filename}"
@@ -2673,9 +2674,7 @@ Public Class Props
         Pattern = "%{[^}]*}"  ' Any number of substrings that start with "%{" and end with the first encountered "}".
         Matches = Regex.Matches(OutString, Pattern)
         If Not Matches.Count = 0 Then
-            Dim s As String = $"Some properties could not be resolved in '{OutString}'"
-            'MsgBox(s, vbOKOnly, "Property substitution")
-            Form_Main.FileLogger.AddMessage(s)
+            Form_Main.FileLogger.AddMessage($"Some properties could not be resolved in '{OutString}'")
             Return Nothing
         End If
 

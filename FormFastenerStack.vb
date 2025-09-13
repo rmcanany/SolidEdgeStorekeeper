@@ -1260,61 +1260,61 @@ Public Class FormFastenerStack
                 PictureBox1.Image = My.Resources.FastenerStack_F_CO_N
 
                 LabelBottomNut.Visible = True
-                ButtonPasteBottomNut.Visible = True
-                ButtonLockBottomNut.Visible = True
+                'ButtonPasteBottomNut.Visible = True
+                'ButtonLockBottomNut.Visible = True
 
                 LabelExtensionMin.Visible = True
                 TextBoxExtensionMin.Visible = True
-                ButtonLockExtensionMin.Visible = True
+                'ButtonLockExtensionMin.Visible = True
 
             Case StackConfigurationConstants.F_CO_FW_N
                 PictureBox1.Image = My.Resources.FastenerStack_F_CO_FW_N
 
                 LabelBottomFlatWasher.Visible = True
-                ButtonPasteBottomFlatWasher.Visible = True
-                ButtonLockBottomFlatWasher.Visible = True
+                'ButtonPasteBottomFlatWasher.Visible = True
+                'ButtonLockBottomFlatWasher.Visible = True
 
                 LabelBottomNut.Visible = True
-                ButtonPasteBottomNut.Visible = True
-                ButtonLockBottomNut.Visible = True
+                'ButtonPasteBottomNut.Visible = True
+                'ButtonLockBottomNut.Visible = True
 
                 LabelExtensionMin.Visible = True
                 TextBoxExtensionMin.Visible = True
-                ButtonLockExtensionMin.Visible = True
+                'ButtonLockExtensionMin.Visible = True
 
             Case StackConfigurationConstants.F_CO_LW_N
                 PictureBox1.Image = My.Resources.FastenerStack_F_CO_LW_N
 
                 LabelBottomLockwasher.Visible = True
-                ButtonPasteBottomLockwasher.Visible = True
-                ButtonLockBottomLockwasher.Visible = True
+                'ButtonPasteBottomLockwasher.Visible = True
+                'ButtonLockBottomLockwasher.Visible = True
 
                 LabelBottomNut.Visible = True
-                ButtonPasteBottomNut.Visible = True
-                ButtonLockBottomNut.Visible = True
+                'ButtonPasteBottomNut.Visible = True
+                'ButtonLockBottomNut.Visible = True
 
                 LabelExtensionMin.Visible = True
                 TextBoxExtensionMin.Visible = True
-                ButtonLockExtensionMin.Visible = True
+                'ButtonLockExtensionMin.Visible = True
 
             Case StackConfigurationConstants.F_CO_FW_LW_N
                 PictureBox1.Image = My.Resources.FastenerStack_F_CO_FW_LW_N
 
                 LabelBottomLockwasher.Visible = True
-                ButtonPasteBottomLockwasher.Visible = True
-                ButtonLockBottomLockwasher.Visible = True
+                'ButtonPasteBottomLockwasher.Visible = True
+                'ButtonLockBottomLockwasher.Visible = True
 
                 LabelBottomFlatWasher.Visible = True
-                ButtonPasteBottomFlatWasher.Visible = True
-                ButtonLockBottomFlatWasher.Visible = True
+                'ButtonPasteBottomFlatWasher.Visible = True
+                'ButtonLockBottomFlatWasher.Visible = True
 
                 LabelBottomNut.Visible = True
-                ButtonPasteBottomNut.Visible = True
-                ButtonLockBottomNut.Visible = True
+                'ButtonPasteBottomNut.Visible = True
+                'ButtonLockBottomNut.Visible = True
 
                 LabelExtensionMin.Visible = True
                 TextBoxExtensionMin.Visible = True
-                ButtonLockExtensionMin.Visible = True
+                'ButtonLockExtensionMin.Visible = True
 
         ' #### Top Flat Washer ####
 
@@ -1322,77 +1322,77 @@ Public Class FormFastenerStack
                 PictureBox1.Image = My.Resources.FastenerStack_F_FW_CO_N
 
                 LabelTopFlatWasher.Visible = True
-                ButtonPasteTopFlatWasher.Visible = True
-                ButtonLockTopFlatWasher.Visible = True
+                'ButtonPasteTopFlatWasher.Visible = True
+                'ButtonLockTopFlatWasher.Visible = True
 
                 LabelBottomNut.Visible = True
-                ButtonPasteBottomNut.Visible = True
-                ButtonLockBottomNut.Visible = True
+                'ButtonPasteBottomNut.Visible = True
+                'ButtonLockBottomNut.Visible = True
 
                 LabelExtensionMin.Visible = True
                 TextBoxExtensionMin.Visible = True
-                ButtonLockExtensionMin.Visible = True
+                'ButtonLockExtensionMin.Visible = True
 
             Case StackConfigurationConstants.F_FW_CO_FW_N
                 PictureBox1.Image = My.Resources.FastenerStack_F_FW_CO_FW_N
 
                 LabelTopFlatWasher.Visible = True
-                ButtonPasteTopFlatWasher.Visible = True
-                ButtonLockTopFlatWasher.Visible = True
+                'ButtonPasteTopFlatWasher.Visible = True
+                'ButtonLockTopFlatWasher.Visible = True
 
                 LabelBottomFlatWasher.Visible = True
-                ButtonPasteBottomFlatWasher.Visible = True
-                ButtonLockBottomFlatWasher.Visible = True
+                'ButtonPasteBottomFlatWasher.Visible = True
+                'ButtonLockBottomFlatWasher.Visible = True
 
                 LabelBottomNut.Visible = True
-                ButtonPasteBottomNut.Visible = True
-                ButtonLockBottomNut.Visible = True
+                'ButtonPasteBottomNut.Visible = True
+                'ButtonLockBottomNut.Visible = True
 
                 LabelExtensionMin.Visible = True
                 TextBoxExtensionMin.Visible = True
-                ButtonLockExtensionMin.Visible = True
+                'ButtonLockExtensionMin.Visible = True
 
             Case StackConfigurationConstants.F_FW_CO_LW_N
                 PictureBox1.Image = My.Resources.FastenerStack_F_FW_CO_LW_N
 
                 LabelTopFlatWasher.Visible = True
-                ButtonPasteTopFlatWasher.Visible = True
-                ButtonLockTopFlatWasher.Visible = True
+                'ButtonPasteTopFlatWasher.Visible = True
+                'ButtonLockTopFlatWasher.Visible = True
 
                 LabelBottomLockwasher.Visible = True
-                ButtonPasteBottomLockwasher.Visible = True
-                ButtonLockBottomLockwasher.Visible = True
+                'ButtonPasteBottomLockwasher.Visible = True
+                'ButtonLockBottomLockwasher.Visible = True
 
                 LabelBottomNut.Visible = True
-                ButtonPasteBottomNut.Visible = True
-                ButtonLockBottomNut.Visible = True
+                'ButtonPasteBottomNut.Visible = True
+                'ButtonLockBottomNut.Visible = True
 
                 LabelExtensionMin.Visible = True
                 TextBoxExtensionMin.Visible = True
-                ButtonLockExtensionMin.Visible = True
+                'ButtonLockExtensionMin.Visible = True
 
             Case StackConfigurationConstants.F_FW_CO_FW_LW_N
                 PictureBox1.Image = My.Resources.FastenerStack_F_FW_CO_FW_LW_N
 
                 LabelTopFlatWasher.Visible = True
-                ButtonPasteTopFlatWasher.Visible = True
-                ButtonLockTopFlatWasher.Visible = True
+                'ButtonPasteTopFlatWasher.Visible = True
+                'ButtonLockTopFlatWasher.Visible = True
 
                 LabelBottomFlatWasher.Visible = True
-                ButtonPasteBottomFlatWasher.Visible = True
-                ButtonLockBottomFlatWasher.Visible = True
+                'ButtonPasteBottomFlatWasher.Visible = True
+                'ButtonLockBottomFlatWasher.Visible = True
 
                 LabelBottomLockwasher.Visible = True
-                ButtonPasteBottomLockwasher.Visible = True
-                ButtonLockBottomLockwasher.Visible = True
+                'ButtonPasteBottomLockwasher.Visible = True
+                'ButtonLockBottomLockwasher.Visible = True
 
                 LabelBottomNut.Visible = True
-                ButtonPasteBottomNut.Visible = True
-                ButtonLockBottomNut.Visible = True
+                'ButtonPasteBottomNut.Visible = True
+                'ButtonLockBottomNut.Visible = True
 
                 LabelExtensionMin.Visible = True
                 TextBoxExtensionMin.Visible = True
-                ButtonLockExtensionMin.Visible = True
+                'ButtonLockExtensionMin.Visible = True
 
         ' #### Thread Thru ####
 
@@ -1401,44 +1401,44 @@ Public Class FormFastenerStack
 
                 LabelExtensionMin.Visible = True
                 TextBoxExtensionMin.Visible = True
-                ButtonLockExtensionMin.Visible = True
+                'ButtonLockExtensionMin.Visible = True
 
             Case StackConfigurationConstants.F_FW_CO_TT
                 PictureBox1.Image = My.Resources.FastenerStack_F_FW_CO_TT
 
                 LabelTopFlatWasher.Visible = True
-                ButtonPasteTopFlatWasher.Visible = True
-                ButtonLockTopFlatWasher.Visible = True
+                'ButtonPasteTopFlatWasher.Visible = True
+                'ButtonLockTopFlatWasher.Visible = True
 
                 LabelExtensionMin.Visible = True
                 TextBoxExtensionMin.Visible = True
-                ButtonLockExtensionMin.Visible = True
+                'ButtonLockExtensionMin.Visible = True
 
             Case StackConfigurationConstants.F_LW_CO_TT
                 PictureBox1.Image = My.Resources.FastenerStack_F_LW_CO_TT
 
                 LabelTopLockwasher.Visible = True
-                ButtonPasteTopLockwasher.Visible = True
-                ButtonLockTopLockwasher.Visible = True
+                'ButtonPasteTopLockwasher.Visible = True
+                'ButtonLockTopLockwasher.Visible = True
 
                 LabelExtensionMin.Visible = True
                 TextBoxExtensionMin.Visible = True
-                ButtonLockExtensionMin.Visible = True
+                'ButtonLockExtensionMin.Visible = True
 
             Case StackConfigurationConstants.F_LW_FW_CO_TT
                 PictureBox1.Image = My.Resources.FastenerStack_F_LW_FW_CO_TT
 
                 LabelTopLockwasher.Visible = True
-                ButtonPasteTopLockwasher.Visible = True
-                ButtonLockTopLockwasher.Visible = True
+                'ButtonPasteTopLockwasher.Visible = True
+                'ButtonLockTopLockwasher.Visible = True
 
                 LabelTopFlatWasher.Visible = True
-                ButtonPasteTopFlatWasher.Visible = True
-                ButtonLockTopFlatWasher.Visible = True
+                'ButtonPasteTopFlatWasher.Visible = True
+                'ButtonLockTopFlatWasher.Visible = True
 
                 LabelExtensionMin.Visible = True
                 TextBoxExtensionMin.Visible = True
-                ButtonLockExtensionMin.Visible = True
+                'ButtonLockExtensionMin.Visible = True
 
 
         ' #### Thread Blind ####
@@ -1448,61 +1448,61 @@ Public Class FormFastenerStack
 
                 LabelThreadEngagementMin.Visible = True
                 TextBoxThreadEngagementMin.Visible = True
-                ButtonLockThreadEngagementMin.Visible = True
+                'ButtonLockThreadEngagementMin.Visible = True
 
                 LabelThreadDepth.Visible = True
                 TextBoxThreadDepth.Visible = True
-                ButtonLockThreadDepth.Visible = True
+                'ButtonLockThreadDepth.Visible = True
 
             Case StackConfigurationConstants.F_FW_CO_TB
                 PictureBox1.Image = My.Resources.FastenerStack_F_FW_CO_TB
 
                 LabelTopFlatWasher.Visible = True
-                ButtonPasteTopFlatWasher.Visible = True
-                ButtonLockTopFlatWasher.Visible = True
+                'ButtonPasteTopFlatWasher.Visible = True
+                'ButtonLockTopFlatWasher.Visible = True
 
                 LabelThreadEngagementMin.Visible = True
                 TextBoxThreadEngagementMin.Visible = True
-                ButtonLockThreadEngagementMin.Visible = True
+                'ButtonLockThreadEngagementMin.Visible = True
 
                 LabelThreadDepth.Visible = True
                 TextBoxThreadDepth.Visible = True
-                ButtonLockThreadDepth.Visible = True
+                'ButtonLockThreadDepth.Visible = True
 
             Case StackConfigurationConstants.F_LW_CO_TB
                 PictureBox1.Image = My.Resources.FastenerStack_F_LW_CO_TB
 
                 LabelTopLockwasher.Visible = True
-                ButtonPasteTopLockwasher.Visible = True
-                ButtonLockTopLockwasher.Visible = True
+                'ButtonPasteTopLockwasher.Visible = True
+                'ButtonLockTopLockwasher.Visible = True
 
                 LabelThreadEngagementMin.Visible = True
                 TextBoxThreadEngagementMin.Visible = True
-                ButtonLockThreadEngagementMin.Visible = True
+                'ButtonLockThreadEngagementMin.Visible = True
 
                 LabelThreadDepth.Visible = True
                 TextBoxThreadDepth.Visible = True
-                ButtonLockThreadDepth.Visible = True
+                'ButtonLockThreadDepth.Visible = True
 
 
             Case StackConfigurationConstants.F_LW_FW_CO_TB
                 PictureBox1.Image = My.Resources.FastenerStack_F_LW_FW_CO_TB
 
                 LabelTopLockwasher.Visible = True
-                ButtonPasteTopLockwasher.Visible = True
-                ButtonLockTopLockwasher.Visible = True
+                'ButtonPasteTopLockwasher.Visible = True
+                'ButtonLockTopLockwasher.Visible = True
 
                 LabelTopFlatWasher.Visible = True
-                ButtonPasteTopFlatWasher.Visible = True
-                ButtonLockTopFlatWasher.Visible = True
+                'ButtonPasteTopFlatWasher.Visible = True
+                'ButtonLockTopFlatWasher.Visible = True
 
                 LabelThreadEngagementMin.Visible = True
                 TextBoxThreadEngagementMin.Visible = True
-                ButtonLockThreadEngagementMin.Visible = True
+                'ButtonLockThreadEngagementMin.Visible = True
 
                 LabelThreadDepth.Visible = True
                 TextBoxThreadDepth.Visible = True
-                ButtonLockThreadDepth.Visible = True
+                'ButtonLockThreadDepth.Visible = True
 
 
 
@@ -1511,36 +1511,36 @@ Public Class FormFastenerStack
 
     Public Sub HideOptionControls()
         LabelTopFlatWasher.Visible = False
-        ButtonPasteTopFlatWasher.Visible = False
-        ButtonLockTopFlatWasher.Visible = False
+        'ButtonPasteTopFlatWasher.Visible = False
+        'ButtonLockTopFlatWasher.Visible = False
 
         LabelTopLockwasher.Visible = False
-        ButtonPasteTopLockwasher.Visible = False
-        ButtonLockTopLockwasher.Visible = False
+        'ButtonPasteTopLockwasher.Visible = False
+        'ButtonLockTopLockwasher.Visible = False
 
         LabelThreadEngagementMin.Visible = False
         TextBoxThreadEngagementMin.Visible = False
-        ButtonLockThreadEngagementMin.Visible = False
+        'ButtonLockThreadEngagementMin.Visible = False
 
         LabelThreadDepth.Visible = False
         TextBoxThreadDepth.Visible = False
-        ButtonLockThreadDepth.Visible = False
+        'ButtonLockThreadDepth.Visible = False
 
         LabelBottomFlatWasher.Visible = False
-        ButtonPasteBottomFlatWasher.Visible = False
-        ButtonLockBottomFlatWasher.Visible = False
+        'ButtonPasteBottomFlatWasher.Visible = False
+        'ButtonLockBottomFlatWasher.Visible = False
 
         LabelBottomLockwasher.Visible = False
-        ButtonPasteBottomLockwasher.Visible = False
-        ButtonLockBottomLockwasher.Visible = False
+        'ButtonPasteBottomLockwasher.Visible = False
+        'ButtonLockBottomLockwasher.Visible = False
 
         LabelBottomNut.Visible = False
-        ButtonPasteBottomNut.Visible = False
-        ButtonLockBottomNut.Visible = False
+        'ButtonPasteBottomNut.Visible = False
+        'ButtonLockBottomNut.Visible = False
 
         LabelExtensionMin.Visible = False
         TextBoxExtensionMin.Visible = False
-        ButtonLockExtensionMin.Visible = False
+        'ButtonLockExtensionMin.Visible = False
 
 
     End Sub

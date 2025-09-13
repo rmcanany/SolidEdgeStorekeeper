@@ -46,21 +46,6 @@ Partial Class FormFastenerStack
         TableLayoutPanel6 = New TableLayoutPanel()
         TextBoxExtensionMin = New TextBox()
         LabelExtensionMin = New Label()
-        ButtonPasteTopFastener = New Button()
-        ButtonPasteTopLockwasher = New Button()
-        ButtonPasteTopFlatWasher = New Button()
-        ButtonPasteBottomFlatWasher = New Button()
-        ButtonPasteBottomLockwasher = New Button()
-        ButtonPasteBottomNut = New Button()
-        ButtonLockTopLockwasher = New Button()
-        ButtonLockTopFlatWasher = New Button()
-        ButtonLockClampedThickness = New Button()
-        ButtonLockThreadEngagementMin = New Button()
-        ButtonLockThreadDepth = New Button()
-        ButtonLockBottomFlatWasher = New Button()
-        ButtonLockBottomLockwasher = New Button()
-        ButtonLockBottomNut = New Button()
-        ButtonLockExtensionMin = New Button()
         TableLayoutPanel2 = New TableLayoutPanel()
         ToolStrip1 = New ToolStrip()
         ButtonStackConfiguration = New ToolStripButton()
@@ -104,31 +89,16 @@ Partial Class FormFastenerStack
         TableLayoutPanel1.ColumnStyles.Add(New ColumnStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.ColumnStyles.Add(New ColumnStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.ColumnStyles.Add(New ColumnStyle(SizeType.Percent, 100F))
-        TableLayoutPanel1.Controls.Add(LabelTopFastener, 2, 0)
-        TableLayoutPanel1.Controls.Add(LabelTopLockwasher, 2, 1)
-        TableLayoutPanel1.Controls.Add(LabelTopFlatWasher, 2, 2)
-        TableLayoutPanel1.Controls.Add(LabelBottomFlatWasher, 2, 10)
-        TableLayoutPanel1.Controls.Add(LabelBottomLockwasher, 2, 11)
-        TableLayoutPanel1.Controls.Add(LabelBottomNut, 2, 12)
-        TableLayoutPanel1.Controls.Add(TableLayoutPanel3, 1, 7)
-        TableLayoutPanel1.Controls.Add(TableLayoutPanel4, 1, 8)
-        TableLayoutPanel1.Controls.Add(TableLayoutPanel5, 1, 9)
-        TableLayoutPanel1.Controls.Add(TableLayoutPanel6, 1, 13)
-        TableLayoutPanel1.Controls.Add(ButtonPasteTopFastener, 1, 0)
-        TableLayoutPanel1.Controls.Add(ButtonPasteTopLockwasher, 1, 1)
-        TableLayoutPanel1.Controls.Add(ButtonPasteTopFlatWasher, 1, 2)
-        TableLayoutPanel1.Controls.Add(ButtonPasteBottomFlatWasher, 1, 10)
-        TableLayoutPanel1.Controls.Add(ButtonPasteBottomLockwasher, 1, 11)
-        TableLayoutPanel1.Controls.Add(ButtonPasteBottomNut, 1, 12)
-        TableLayoutPanel1.Controls.Add(ButtonLockTopLockwasher, 0, 1)
-        TableLayoutPanel1.Controls.Add(ButtonLockTopFlatWasher, 0, 2)
-        TableLayoutPanel1.Controls.Add(ButtonLockClampedThickness, 0, 7)
-        TableLayoutPanel1.Controls.Add(ButtonLockThreadEngagementMin, 0, 8)
-        TableLayoutPanel1.Controls.Add(ButtonLockThreadDepth, 0, 9)
-        TableLayoutPanel1.Controls.Add(ButtonLockBottomFlatWasher, 0, 10)
-        TableLayoutPanel1.Controls.Add(ButtonLockBottomLockwasher, 0, 11)
-        TableLayoutPanel1.Controls.Add(ButtonLockBottomNut, 0, 12)
-        TableLayoutPanel1.Controls.Add(ButtonLockExtensionMin, 0, 13)
+        TableLayoutPanel1.Controls.Add(LabelTopFastener, 0, 0)
+        TableLayoutPanel1.Controls.Add(LabelTopLockwasher, 0, 1)
+        TableLayoutPanel1.Controls.Add(LabelTopFlatWasher, 0, 2)
+        TableLayoutPanel1.Controls.Add(LabelBottomFlatWasher, 0, 10)
+        TableLayoutPanel1.Controls.Add(LabelBottomLockwasher, 0, 11)
+        TableLayoutPanel1.Controls.Add(LabelBottomNut, 0, 12)
+        TableLayoutPanel1.Controls.Add(TableLayoutPanel3, 0, 7)
+        TableLayoutPanel1.Controls.Add(TableLayoutPanel4, 0, 8)
+        TableLayoutPanel1.Controls.Add(TableLayoutPanel5, 0, 9)
+        TableLayoutPanel1.Controls.Add(TableLayoutPanel6, 0, 13)
         TableLayoutPanel1.Location = New Point(318, 13)
         TableLayoutPanel1.Name = "TableLayoutPanel1"
         TableLayoutPanel1.RowCount = 16
@@ -148,14 +118,15 @@ Partial Class FormFastenerStack
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 26F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 26F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 26F))
-        TableLayoutPanel1.Size = New Size(297, 369)
+        TableLayoutPanel1.Size = New Size(257, 369)
         TableLayoutPanel1.TabIndex = 1
         ' 
         ' LabelTopFastener
         ' 
         LabelTopFastener.Anchor = AnchorStyles.Left
         LabelTopFastener.AutoSize = True
-        LabelTopFastener.Location = New Point(63, 5)
+        TableLayoutPanel1.SetColumnSpan(LabelTopFastener, 3)
+        LabelTopFastener.Location = New Point(3, 5)
         LabelTopFastener.Name = "LabelTopFastener"
         LabelTopFastener.Size = New Size(51, 15)
         LabelTopFastener.TabIndex = 1
@@ -165,7 +136,8 @@ Partial Class FormFastenerStack
         ' 
         LabelTopLockwasher.Anchor = AnchorStyles.Left
         LabelTopLockwasher.AutoSize = True
-        LabelTopLockwasher.Location = New Point(63, 31)
+        TableLayoutPanel1.SetColumnSpan(LabelTopLockwasher, 3)
+        LabelTopLockwasher.Location = New Point(3, 31)
         LabelTopLockwasher.Name = "LabelTopLockwasher"
         LabelTopLockwasher.Size = New Size(72, 15)
         LabelTopLockwasher.TabIndex = 8
@@ -175,7 +147,8 @@ Partial Class FormFastenerStack
         ' 
         LabelTopFlatWasher.Anchor = AnchorStyles.Left
         LabelTopFlatWasher.AutoSize = True
-        LabelTopFlatWasher.Location = New Point(63, 57)
+        TableLayoutPanel1.SetColumnSpan(LabelTopFlatWasher, 3)
+        LabelTopFlatWasher.Location = New Point(3, 57)
         LabelTopFlatWasher.Name = "LabelTopFlatWasher"
         LabelTopFlatWasher.Size = New Size(68, 15)
         LabelTopFlatWasher.TabIndex = 9
@@ -185,7 +158,8 @@ Partial Class FormFastenerStack
         ' 
         LabelBottomFlatWasher.Anchor = AnchorStyles.Left
         LabelBottomFlatWasher.AutoSize = True
-        LabelBottomFlatWasher.Location = New Point(63, 265)
+        TableLayoutPanel1.SetColumnSpan(LabelBottomFlatWasher, 3)
+        LabelBottomFlatWasher.Location = New Point(3, 265)
         LabelBottomFlatWasher.Name = "LabelBottomFlatWasher"
         LabelBottomFlatWasher.Size = New Size(66, 15)
         LabelBottomFlatWasher.TabIndex = 13
@@ -195,7 +169,8 @@ Partial Class FormFastenerStack
         ' 
         LabelBottomLockwasher.Anchor = AnchorStyles.Left
         LabelBottomLockwasher.AutoSize = True
-        LabelBottomLockwasher.Location = New Point(63, 291)
+        TableLayoutPanel1.SetColumnSpan(LabelBottomLockwasher, 3)
+        LabelBottomLockwasher.Location = New Point(3, 291)
         LabelBottomLockwasher.Name = "LabelBottomLockwasher"
         LabelBottomLockwasher.Size = New Size(72, 15)
         LabelBottomLockwasher.TabIndex = 14
@@ -205,7 +180,8 @@ Partial Class FormFastenerStack
         ' 
         LabelBottomNut.Anchor = AnchorStyles.Left
         LabelBottomNut.AutoSize = True
-        LabelBottomNut.Location = New Point(63, 317)
+        TableLayoutPanel1.SetColumnSpan(LabelBottomNut, 3)
+        LabelBottomNut.Location = New Point(3, 317)
         LabelBottomNut.Name = "LabelBottomNut"
         LabelBottomNut.Size = New Size(27, 15)
         LabelBottomNut.TabIndex = 15
@@ -214,18 +190,18 @@ Partial Class FormFastenerStack
         ' TableLayoutPanel3
         ' 
         TableLayoutPanel3.ColumnCount = 2
-        TableLayoutPanel1.SetColumnSpan(TableLayoutPanel3, 2)
+        TableLayoutPanel1.SetColumnSpan(TableLayoutPanel3, 3)
         TableLayoutPanel3.ColumnStyles.Add(New ColumnStyle(SizeType.Absolute, 50F))
         TableLayoutPanel3.ColumnStyles.Add(New ColumnStyle(SizeType.Percent, 100F))
         TableLayoutPanel3.Controls.Add(TextBoxClampedThickness, 0, 0)
         TableLayoutPanel3.Controls.Add(LabelClampedThickness, 1, 0)
         TableLayoutPanel3.Dock = DockStyle.Fill
-        TableLayoutPanel3.Location = New Point(33, 185)
+        TableLayoutPanel3.Location = New Point(3, 185)
         TableLayoutPanel3.Name = "TableLayoutPanel3"
         TableLayoutPanel3.RowCount = 1
         TableLayoutPanel3.RowStyles.Add(New RowStyle(SizeType.Percent, 100F))
         TableLayoutPanel3.RowStyles.Add(New RowStyle(SizeType.Absolute, 20F))
-        TableLayoutPanel3.Size = New Size(261, 20)
+        TableLayoutPanel3.Size = New Size(251, 20)
         TableLayoutPanel3.TabIndex = 2
         ' 
         ' TextBoxClampedThickness
@@ -251,18 +227,18 @@ Partial Class FormFastenerStack
         ' TableLayoutPanel4
         ' 
         TableLayoutPanel4.ColumnCount = 2
-        TableLayoutPanel1.SetColumnSpan(TableLayoutPanel4, 2)
+        TableLayoutPanel1.SetColumnSpan(TableLayoutPanel4, 3)
         TableLayoutPanel4.ColumnStyles.Add(New ColumnStyle(SizeType.Absolute, 50F))
         TableLayoutPanel4.ColumnStyles.Add(New ColumnStyle(SizeType.Percent, 100F))
         TableLayoutPanel4.Controls.Add(TextBoxThreadEngagementMin, 0, 0)
         TableLayoutPanel4.Controls.Add(LabelThreadEngagementMin, 1, 0)
         TableLayoutPanel4.Dock = DockStyle.Fill
-        TableLayoutPanel4.Location = New Point(33, 211)
+        TableLayoutPanel4.Location = New Point(3, 211)
         TableLayoutPanel4.Name = "TableLayoutPanel4"
         TableLayoutPanel4.RowCount = 1
         TableLayoutPanel4.RowStyles.Add(New RowStyle(SizeType.Percent, 100F))
         TableLayoutPanel4.RowStyles.Add(New RowStyle(SizeType.Absolute, 20F))
-        TableLayoutPanel4.Size = New Size(261, 20)
+        TableLayoutPanel4.Size = New Size(251, 20)
         TableLayoutPanel4.TabIndex = 3
         ' 
         ' TextBoxThreadEngagementMin
@@ -288,18 +264,18 @@ Partial Class FormFastenerStack
         ' TableLayoutPanel5
         ' 
         TableLayoutPanel5.ColumnCount = 2
-        TableLayoutPanel1.SetColumnSpan(TableLayoutPanel5, 2)
+        TableLayoutPanel1.SetColumnSpan(TableLayoutPanel5, 3)
         TableLayoutPanel5.ColumnStyles.Add(New ColumnStyle(SizeType.Absolute, 50F))
         TableLayoutPanel5.ColumnStyles.Add(New ColumnStyle(SizeType.Percent, 100F))
         TableLayoutPanel5.Controls.Add(TextBoxThreadDepth, 0, 0)
         TableLayoutPanel5.Controls.Add(LabelThreadDepth, 1, 0)
         TableLayoutPanel5.Dock = DockStyle.Fill
-        TableLayoutPanel5.Location = New Point(33, 237)
+        TableLayoutPanel5.Location = New Point(3, 237)
         TableLayoutPanel5.Name = "TableLayoutPanel5"
         TableLayoutPanel5.RowCount = 1
         TableLayoutPanel5.RowStyles.Add(New RowStyle(SizeType.Percent, 100F))
         TableLayoutPanel5.RowStyles.Add(New RowStyle(SizeType.Absolute, 20F))
-        TableLayoutPanel5.Size = New Size(261, 20)
+        TableLayoutPanel5.Size = New Size(251, 20)
         TableLayoutPanel5.TabIndex = 4
         ' 
         ' TextBoxThreadDepth
@@ -338,18 +314,18 @@ Partial Class FormFastenerStack
         ' TableLayoutPanel6
         ' 
         TableLayoutPanel6.ColumnCount = 2
-        TableLayoutPanel1.SetColumnSpan(TableLayoutPanel6, 2)
+        TableLayoutPanel1.SetColumnSpan(TableLayoutPanel6, 3)
         TableLayoutPanel6.ColumnStyles.Add(New ColumnStyle(SizeType.Absolute, 50F))
         TableLayoutPanel6.ColumnStyles.Add(New ColumnStyle(SizeType.Percent, 100F))
         TableLayoutPanel6.Controls.Add(TextBoxExtensionMin, 0, 0)
         TableLayoutPanel6.Controls.Add(LabelExtensionMin, 1, 0)
         TableLayoutPanel6.Dock = DockStyle.Fill
-        TableLayoutPanel6.Location = New Point(33, 341)
+        TableLayoutPanel6.Location = New Point(3, 341)
         TableLayoutPanel6.Name = "TableLayoutPanel6"
         TableLayoutPanel6.RowCount = 1
         TableLayoutPanel6.RowStyles.Add(New RowStyle(SizeType.Percent, 100F))
         TableLayoutPanel6.RowStyles.Add(New RowStyle(SizeType.Absolute, 20F))
-        TableLayoutPanel6.Size = New Size(261, 20)
+        TableLayoutPanel6.Size = New Size(251, 20)
         TableLayoutPanel6.TabIndex = 5
         ' 
         ' TextBoxExtensionMin
@@ -372,141 +348,6 @@ Partial Class FormFastenerStack
         LabelExtensionMin.TabIndex = 1
         LabelExtensionMin.Text = "Minimum extension (in)"
         ' 
-        ' ButtonPasteTopFastener
-        ' 
-        ButtonPasteTopFastener.Image = My.Resources.Resources.icons8_paste_16
-        ButtonPasteTopFastener.Location = New Point(33, 3)
-        ButtonPasteTopFastener.Name = "ButtonPasteTopFastener"
-        ButtonPasteTopFastener.Size = New Size(19, 20)
-        ButtonPasteTopFastener.TabIndex = 0
-        ButtonPasteTopFastener.UseVisualStyleBackColor = True
-        ' 
-        ' ButtonPasteTopLockwasher
-        ' 
-        ButtonPasteTopLockwasher.Image = My.Resources.Resources.icons8_paste_16
-        ButtonPasteTopLockwasher.Location = New Point(33, 29)
-        ButtonPasteTopLockwasher.Name = "ButtonPasteTopLockwasher"
-        ButtonPasteTopLockwasher.Size = New Size(19, 20)
-        ButtonPasteTopLockwasher.TabIndex = 6
-        ButtonPasteTopLockwasher.UseVisualStyleBackColor = True
-        ' 
-        ' ButtonPasteTopFlatWasher
-        ' 
-        ButtonPasteTopFlatWasher.Image = My.Resources.Resources.icons8_paste_16
-        ButtonPasteTopFlatWasher.Location = New Point(33, 55)
-        ButtonPasteTopFlatWasher.Name = "ButtonPasteTopFlatWasher"
-        ButtonPasteTopFlatWasher.Size = New Size(19, 20)
-        ButtonPasteTopFlatWasher.TabIndex = 7
-        ButtonPasteTopFlatWasher.UseVisualStyleBackColor = True
-        ' 
-        ' ButtonPasteBottomFlatWasher
-        ' 
-        ButtonPasteBottomFlatWasher.Image = My.Resources.Resources.icons8_paste_16
-        ButtonPasteBottomFlatWasher.Location = New Point(33, 263)
-        ButtonPasteBottomFlatWasher.Name = "ButtonPasteBottomFlatWasher"
-        ButtonPasteBottomFlatWasher.Size = New Size(19, 20)
-        ButtonPasteBottomFlatWasher.TabIndex = 10
-        ButtonPasteBottomFlatWasher.UseVisualStyleBackColor = True
-        ' 
-        ' ButtonPasteBottomLockwasher
-        ' 
-        ButtonPasteBottomLockwasher.Image = My.Resources.Resources.icons8_paste_16
-        ButtonPasteBottomLockwasher.Location = New Point(33, 289)
-        ButtonPasteBottomLockwasher.Name = "ButtonPasteBottomLockwasher"
-        ButtonPasteBottomLockwasher.Size = New Size(19, 20)
-        ButtonPasteBottomLockwasher.TabIndex = 11
-        ButtonPasteBottomLockwasher.UseVisualStyleBackColor = True
-        ' 
-        ' ButtonPasteBottomNut
-        ' 
-        ButtonPasteBottomNut.Image = My.Resources.Resources.icons8_paste_16
-        ButtonPasteBottomNut.Location = New Point(33, 315)
-        ButtonPasteBottomNut.Name = "ButtonPasteBottomNut"
-        ButtonPasteBottomNut.Size = New Size(19, 20)
-        ButtonPasteBottomNut.TabIndex = 12
-        ButtonPasteBottomNut.UseVisualStyleBackColor = True
-        ' 
-        ' ButtonLockTopLockwasher
-        ' 
-        ButtonLockTopLockwasher.Image = My.Resources.Resources.unlocked
-        ButtonLockTopLockwasher.Location = New Point(3, 29)
-        ButtonLockTopLockwasher.Name = "ButtonLockTopLockwasher"
-        ButtonLockTopLockwasher.Size = New Size(24, 20)
-        ButtonLockTopLockwasher.TabIndex = 16
-        ButtonLockTopLockwasher.UseVisualStyleBackColor = True
-        ' 
-        ' ButtonLockTopFlatWasher
-        ' 
-        ButtonLockTopFlatWasher.Image = My.Resources.Resources.unlocked
-        ButtonLockTopFlatWasher.Location = New Point(3, 55)
-        ButtonLockTopFlatWasher.Name = "ButtonLockTopFlatWasher"
-        ButtonLockTopFlatWasher.Size = New Size(24, 20)
-        ButtonLockTopFlatWasher.TabIndex = 17
-        ButtonLockTopFlatWasher.UseVisualStyleBackColor = True
-        ' 
-        ' ButtonLockClampedThickness
-        ' 
-        ButtonLockClampedThickness.Image = My.Resources.Resources.unlocked
-        ButtonLockClampedThickness.Location = New Point(3, 185)
-        ButtonLockClampedThickness.Name = "ButtonLockClampedThickness"
-        ButtonLockClampedThickness.Size = New Size(24, 20)
-        ButtonLockClampedThickness.TabIndex = 18
-        ButtonLockClampedThickness.UseVisualStyleBackColor = True
-        ' 
-        ' ButtonLockThreadEngagementMin
-        ' 
-        ButtonLockThreadEngagementMin.Image = My.Resources.Resources.unlocked
-        ButtonLockThreadEngagementMin.Location = New Point(3, 211)
-        ButtonLockThreadEngagementMin.Name = "ButtonLockThreadEngagementMin"
-        ButtonLockThreadEngagementMin.Size = New Size(24, 20)
-        ButtonLockThreadEngagementMin.TabIndex = 19
-        ButtonLockThreadEngagementMin.UseVisualStyleBackColor = True
-        ' 
-        ' ButtonLockThreadDepth
-        ' 
-        ButtonLockThreadDepth.Image = My.Resources.Resources.unlocked
-        ButtonLockThreadDepth.Location = New Point(3, 237)
-        ButtonLockThreadDepth.Name = "ButtonLockThreadDepth"
-        ButtonLockThreadDepth.Size = New Size(24, 20)
-        ButtonLockThreadDepth.TabIndex = 20
-        ButtonLockThreadDepth.UseVisualStyleBackColor = True
-        ' 
-        ' ButtonLockBottomFlatWasher
-        ' 
-        ButtonLockBottomFlatWasher.Image = My.Resources.Resources.unlocked
-        ButtonLockBottomFlatWasher.Location = New Point(3, 263)
-        ButtonLockBottomFlatWasher.Name = "ButtonLockBottomFlatWasher"
-        ButtonLockBottomFlatWasher.Size = New Size(24, 20)
-        ButtonLockBottomFlatWasher.TabIndex = 21
-        ButtonLockBottomFlatWasher.UseVisualStyleBackColor = True
-        ' 
-        ' ButtonLockBottomLockwasher
-        ' 
-        ButtonLockBottomLockwasher.Image = My.Resources.Resources.unlocked
-        ButtonLockBottomLockwasher.Location = New Point(3, 289)
-        ButtonLockBottomLockwasher.Name = "ButtonLockBottomLockwasher"
-        ButtonLockBottomLockwasher.Size = New Size(24, 20)
-        ButtonLockBottomLockwasher.TabIndex = 22
-        ButtonLockBottomLockwasher.UseVisualStyleBackColor = True
-        ' 
-        ' ButtonLockBottomNut
-        ' 
-        ButtonLockBottomNut.Image = My.Resources.Resources.unlocked
-        ButtonLockBottomNut.Location = New Point(3, 315)
-        ButtonLockBottomNut.Name = "ButtonLockBottomNut"
-        ButtonLockBottomNut.Size = New Size(24, 20)
-        ButtonLockBottomNut.TabIndex = 23
-        ButtonLockBottomNut.UseVisualStyleBackColor = True
-        ' 
-        ' ButtonLockExtensionMin
-        ' 
-        ButtonLockExtensionMin.Image = My.Resources.Resources.unlocked
-        ButtonLockExtensionMin.Location = New Point(3, 341)
-        ButtonLockExtensionMin.Name = "ButtonLockExtensionMin"
-        ButtonLockExtensionMin.Size = New Size(24, 20)
-        ButtonLockExtensionMin.TabIndex = 24
-        ButtonLockExtensionMin.UseVisualStyleBackColor = True
-        ' 
         ' TableLayoutPanel2
         ' 
         TableLayoutPanel2.ColumnCount = 1
@@ -521,7 +362,7 @@ Partial Class FormFastenerStack
         TableLayoutPanel2.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel2.RowStyles.Add(New RowStyle(SizeType.Absolute, 400F))
         TableLayoutPanel2.RowStyles.Add(New RowStyle(SizeType.Absolute, 50F))
-        TableLayoutPanel2.Size = New Size(624, 486)
+        TableLayoutPanel2.Size = New Size(584, 486)
         TableLayoutPanel2.TabIndex = 2
         ' 
         ' ToolStrip1
@@ -529,7 +370,7 @@ Partial Class FormFastenerStack
         ToolStrip1.Items.AddRange(New ToolStripItem() {ButtonStackConfiguration, LabelStackConfiguration, ToolStripSeparator1, LabelUnits, ComboBoxUnits, ToolStripSeparator2})
         ToolStrip1.Location = New Point(0, 0)
         ToolStrip1.Name = "ToolStrip1"
-        ToolStrip1.Size = New Size(624, 25)
+        ToolStrip1.Size = New Size(584, 25)
         ToolStrip1.TabIndex = 0
         ToolStrip1.Text = "ToolStrip1"
         ' 
@@ -582,7 +423,7 @@ Partial Class FormFastenerStack
         Panel1.Dock = DockStyle.Fill
         Panel1.Location = New Point(3, 33)
         Panel1.Name = "Panel1"
-        Panel1.Size = New Size(618, 394)
+        Panel1.Size = New Size(578, 394)
         Panel1.TabIndex = 1
         ' 
         ' TableLayoutPanel7
@@ -601,13 +442,13 @@ Partial Class FormFastenerStack
         TableLayoutPanel7.Name = "TableLayoutPanel7"
         TableLayoutPanel7.RowCount = 1
         TableLayoutPanel7.RowStyles.Add(New RowStyle(SizeType.Percent, 100F))
-        TableLayoutPanel7.Size = New Size(618, 50)
+        TableLayoutPanel7.Size = New Size(578, 50)
         TableLayoutPanel7.TabIndex = 2
         ' 
         ' ButtonHelp
         ' 
         ButtonHelp.Anchor = AnchorStyles.Bottom
-        ButtonHelp.Location = New Point(546, 22)
+        ButtonHelp.Location = New Point(506, 22)
         ButtonHelp.Name = "ButtonHelp"
         ButtonHelp.Size = New Size(69, 25)
         ButtonHelp.TabIndex = 0
@@ -617,7 +458,7 @@ Partial Class FormFastenerStack
         ' ButtonClose
         ' 
         ButtonClose.Anchor = AnchorStyles.Bottom
-        ButtonClose.Location = New Point(471, 22)
+        ButtonClose.Location = New Point(431, 22)
         ButtonClose.Name = "ButtonClose"
         ButtonClose.Size = New Size(69, 25)
         ButtonClose.TabIndex = 1
@@ -627,7 +468,7 @@ Partial Class FormFastenerStack
         ' ButtonAddToAssy
         ' 
         ButtonAddToAssy.Anchor = AnchorStyles.Bottom
-        ButtonAddToAssy.Location = New Point(381, 22)
+        ButtonAddToAssy.Location = New Point(341, 22)
         ButtonAddToAssy.Name = "ButtonAddToAssy"
         ButtonAddToAssy.Size = New Size(84, 25)
         ButtonAddToAssy.TabIndex = 2
@@ -648,12 +489,12 @@ Partial Class FormFastenerStack
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(624, 486)
+        ClientSize = New Size(584, 486)
         Controls.Add(TableLayoutPanel2)
         Icon = CType(resources.GetObject("$this.Icon"), Icon)
         MaximizeBox = False
-        MaximumSize = New Size(640, 525)
-        MinimumSize = New Size(640, 525)
+        MaximumSize = New Size(600, 525)
+        MinimumSize = New Size(600, 525)
         Name = "FormFastenerStack"
         Text = "Fastener Stack"
         CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
@@ -680,7 +521,6 @@ Partial Class FormFastenerStack
 
     Friend WithEvents PictureBox1 As PictureBox
     Friend WithEvents TableLayoutPanel1 As TableLayoutPanel
-    Friend WithEvents ButtonPasteTopFastener As Button
     Friend WithEvents LabelTopFastener As Label
     Friend WithEvents TableLayoutPanel2 As TableLayoutPanel
     Friend WithEvents ToolStrip1 As ToolStrip
@@ -700,27 +540,13 @@ Partial Class FormFastenerStack
     Friend WithEvents TableLayoutPanel6 As TableLayoutPanel
     Friend WithEvents TextBoxExtensionMin As TextBox
     Friend WithEvents LabelExtensionMin As Label
-    Friend WithEvents ButtonPasteTopLockwasher As Button
-    Friend WithEvents ButtonPasteTopFlatWasher As Button
     Friend WithEvents LabelTopLockwasher As Label
     Friend WithEvents LabelTopFlatWasher As Label
-    Friend WithEvents ButtonPasteBottomFlatWasher As Button
-    Friend WithEvents ButtonPasteBottomLockwasher As Button
-    Friend WithEvents ButtonPasteBottomNut As Button
     Friend WithEvents LabelBottomFlatWasher As Label
     Friend WithEvents LabelBottomLockwasher As Label
     Friend WithEvents LabelBottomNut As Label
     Friend WithEvents ComboBoxUnits As ToolStripComboBox
     Friend WithEvents ToolStripSeparator2 As ToolStripSeparator
-    Friend WithEvents ButtonLockTopLockwasher As Button
-    Friend WithEvents ButtonLockTopFlatWasher As Button
-    Friend WithEvents ButtonLockClampedThickness As Button
-    Friend WithEvents ButtonLockThreadEngagementMin As Button
-    Friend WithEvents ButtonLockThreadDepth As Button
-    Friend WithEvents ButtonLockBottomFlatWasher As Button
-    Friend WithEvents ButtonLockBottomLockwasher As Button
-    Friend WithEvents ButtonLockBottomNut As Button
-    Friend WithEvents ButtonLockExtensionMin As Button
     Friend WithEvents TableLayoutPanel7 As TableLayoutPanel
     Friend WithEvents ButtonHelp As Button
     Friend WithEvents ButtonClose As Button

@@ -30,8 +30,31 @@ The stack styles are pre-configured.  There are eight versions that employ nuts,
 
 The program automatically finds the correct length fastener, creates temporary subassemblies of the top and bottom components, and adds and disperses them in turn to the main assembly.  Once you position the parts, they are added to an `Assembly Group` and patterned if applicable.
 
-Note, because of several assumptions regarding variable and file names, this initial release most likely will not work with user-created data or templates.
+Note, because of several assumptions regarding variable and file names, this initial release most likely will not work with customized files.  A mapping feature to bridge nomenclature differences is envisioned, however it has yet to be implemented.
 
+See the [<ins>**Fastener Stack**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#fastener-stack) section of the Readme for details.
+
+### Alternate Data and Templates
+
+Contributed by **@TeeVar.**  Thank you!
+
+Added new templates created with SE2019 for users who don't use SE2024 or later.
+
+Included are ISO screws, nuts, washers, and pins; EN structural steel; and DIN parallel keys.  They were created by an ISO native speaker, unlike me, so should be more familiar and useful to all of those in mm-land.
+
+See the [<ins>**Setup**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#setup) section of the Readme for details.
+
+### Property Cache
+
+Added an option to store property values of files in the library.  Set it on the `Property Search` options dialog.  It is meant to speed up property searches for large libraries.  Previously all files were searched every time.
+
+### Other
+
+- Added the ability to set standard parts name and location interactively (Thank you **@TeeVar!**).  Previously that option was set in the spreadsheet.
+
+- Added the ability to use subdirectories in file names (Thank you again **@TeeVar!**).  The file names are specified in the spreadsheet.  To include subdirectories, simply preceed the file name with the directory names, eg. `Fasteners\BHCS\bhcs_%{Name}_%{Length}.par`.
+
+- Added an option to keep the Storekeeper window always on top (Thank you one more time **@TeeVar!**).
 
 
 ## V2025.3

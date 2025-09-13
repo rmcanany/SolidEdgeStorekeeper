@@ -30,7 +30,7 @@
 
 ## DESCRIPTION
 
-Solid Edge Storekeeper is a utility to create, organize, and share standard parts.  It is free and open source and you can find it [<ins>**Here**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#readme).  Please note the standard part templates were created with SE2024.  You will need that version or newer to use them.
+Solid Edge Storekeeper is a utility to create, organize, and share standard parts.  It is free and open source and you can find it [<ins>**Here**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#readme).  Please note the standard part templates were created with SE2024.  You will need that version or newer to use them.  (Update: A user, @TeeVar, generously contributed a set of templates created with SE2019.)
 
 Fasteners, retainers, structural shapes, and more in ANSI and ISO format are included.  There are over 15k items available.  There is no database; everything is done in Excel.  It is fully customizable.  If you upgrade Solid Edge, no change to the program or its data is required.
 
@@ -117,12 +117,16 @@ The library is where the standard parts you create are stored.  The default is i
   Note it is created the first time you run the program; it won't be there before that.  As noted above, if you want to access your vendor-specific standard parts, they must be in the library.  You can place them in one or more subdirectories if desired.
 
 - **TEMPLATE DIRECTORY**  
-The templates are SE part files that have variable-table-driven geometry to create new parts of a given type.  By default they are stored in the `Preferences\Templates` folder.
+The templates are SE part files that have variable-table-driven geometry to create new parts of a given type.  By default they are stored in the `Preferences\TemplatesSE2024` folder.
 
-  As noted at the outset, the templates were created in SE2024.  They will only work if you're using that version or newer.  If you create new ones for an older version, I would be happy to host them on GitHub -- crediting you as a **Contributor**, of course!
+  As noted at the outset, the original templates were created in SE2024.  They will only work if you're using that version or newer.  An alternative set of templates, created with SE2019, was generously contributed by @TeeVar.  To use them, change the template directory to `Preferences\TemplatesSE2019`.  
+
+  Even if you have a newer version of Solid Edge, you may still want to use the SE2019 templates.  Unlike me, @TeeVar is an ISO native speaker.  If you're an mm type, his naming conventions may be more familiar and useful to you.
 
 - **DATA DIRECTORY**  
-The spreadsheet contains the variables required for each size of each type of part.  By default, it is stored in the `Preferences\Data` directory.  
+The spreadsheet contains the variables required for each size of each type of part.  By default, it is stored in the `Preferences\DataSE2024` directory. 
+
+  Change the data directory to `Preferences\DataSE2019` if you want to use the alternative templates.  You will have to restart the program for the change to take effect.
 
 - **MATERIAL TABLE**  
 The material table is usually your normal SE material table.  However, for a quick test of the program, an alternative is to use `Storekeeper.mtl` from `Preferences\Templates`.  Copy it to your Solid Edge Materials directory to make it available.  On my machine, that location is `C:\Program Files\Siemens\Solid Edge 2024\Preferences\Materials`.  
@@ -213,15 +217,15 @@ Once the desired configuration is selected, choose the units and enter the appro
 
 The program first searches the library for a fastener length that meets the criteria.  If none is found, an error is diplayed.
 
-If a fastener is found, it then opens separate temporary subassemblies for the top and bottom parts of the stack, and populates them with the components you chose.
+If a fastener is found, the program then opens separate temporary subassemblies for the top and bottom parts of the stack, and populates them with the components you chose.
 
 Next, it adds each updated subassembly, in turn, to the main assembly.  The subassembly is dispersed into the main assembly and the `Place part` command is activated.
 
-The program waits for the `Place part` command to finish before proceeding to the next step.  Confusingly, the command does not automatically finish when the parts have been fully constrained.  You have to either right-click the mouse or press the `Escape` key.  If you notice nothing happening for a while, the program could be waiting for your input.
+The program waits for the `Place part` command to finish before proceeding.  Confusingly, the command does not automatically finish when the parts have been fully constrained.  You have to either right-click the mouse or press the `Escape` key.  If you notice nothing happening for a while, the program could be waiting for your input.
 
 After the components are placed, they are converted to an `Assembly group`.  Finally, the group is patterned if applicable, assuming that option is enabled.
 
-
+Note, there are several assumptions regarding variable and file names, and structure of the data.  That means the fastener stack functionality most likely will not work with customized data and templates.  A mapping feature to bridge nomenclature differences is envisioned, however it has yet to be implemented.
 
 ## PRE-POPULATING THE LIBRARY
 

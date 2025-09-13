@@ -203,19 +203,25 @@ Public Class UtilsPreferences
             Try
                 FileIO.FileSystem.CreateDirectory(PreferencesDirectory)
 
-                Dim tmpDataDirectory As String = $"{PreferencesDirectory}\Data"
-                FileIO.FileSystem.CreateDirectory(tmpDataDirectory)
-                FileIO.FileSystem.CopyDirectory(GetDefaultDataDirectory, tmpDataDirectory)
-                FMain.DataDirectory = tmpDataDirectory
+                Dim tmpDir As String
+                Dim SuffixList As New List(Of String)
+                SuffixList.AddRange({"SE2019", "SE2024"})
 
-                Dim tmpTemplatesDirectory As String = $"{PreferencesDirectory}\Templates"
-                FileIO.FileSystem.CreateDirectory(tmpTemplatesDirectory)
-                FileIO.FileSystem.CopyDirectory(GetDefaultTemplatesDirectory, tmpTemplatesDirectory)
-                FMain.TemplateDirectory = tmpTemplatesDirectory
+                For Each Suffix As String In SuffixList
+                    tmpDir = $"{PreferencesDirectory}\Data{Suffix}"
+                    FileIO.FileSystem.CreateDirectory(tmpDir)
+                    FileIO.FileSystem.CopyDirectory(GetDefaultDataDirectory(Suffix), tmpDir)
+                    If Suffix = "SE2024" Then FMain.DataDirectory = tmpDir
 
-                Dim tmpLibraryDirectory As String = $"{PreferencesDirectory}\Library"
-                FileIO.FileSystem.CreateDirectory(tmpLibraryDirectory)
-                FMain.LibraryDirectory = tmpLibraryDirectory
+                    tmpDir = $"{PreferencesDirectory}\Templates{Suffix}"
+                    FileIO.FileSystem.CreateDirectory(tmpDir)
+                    FileIO.FileSystem.CopyDirectory(GetDefaultTemplatesDirectory(Suffix), tmpDir)
+                    If Suffix = "SE2024" Then FMain.TemplateDirectory = tmpDir
+                Next
+
+                tmpDir = $"{PreferencesDirectory}\Library"
+                FileIO.FileSystem.CreateDirectory(tmpDir)
+                FMain.LibraryDirectory = tmpDir
 
             Catch ex As Exception
                 Dim s As String = String.Format("Unable to create Preferences directory '{0}'.  ", PreferencesDirectory)
@@ -225,15 +231,15 @@ Public Class UtilsPreferences
         End If
     End Sub
 
-    Public Function GetDefaultDataDirectory() As String
+    Public Function GetDefaultDataDirectory(Suffix As String) As String
         Dim StartupPath As String = GetStartupDirectory()
-        Dim DefaultDataDirectory = "DefaultData"
+        Dim DefaultDataDirectory = $"DefaultData{Suffix}"
         Return String.Format("{0}\{1}", StartupPath, DefaultDataDirectory)
     End Function
 
-    Public Function GetDefaultTemplatesDirectory() As String
+    Public Function GetDefaultTemplatesDirectory(Suffix As String) As String
         Dim StartupPath As String = GetStartupDirectory()
-        Dim DefaultTemplatesDirectory = "DefaultTemplates"
+        Dim DefaultTemplatesDirectory = $"DefaultTemplates{Suffix}"
         Return String.Format("{0}\{1}", StartupPath, DefaultTemplatesDirectory)
     End Function
 
