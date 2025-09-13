@@ -225,7 +225,7 @@ The program waits for the `Place part` command to finish before proceeding.  Con
 
 After the components are placed, they are converted to an `Assembly group`.  Finally, the group is patterned if applicable, assuming that option is enabled.
 
-Note, there are several assumptions regarding variable and file names, and structure of the data.  That means the fastener stack functionality most likely will not work with customized data and templates.  A mapping feature to bridge nomenclature differences is envisioned, however it has yet to be implemented.
+
 
 ## PRE-POPULATING THE LIBRARY
 

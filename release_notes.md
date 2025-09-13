@@ -30,7 +30,7 @@ The stack styles are pre-configured.  There are eight versions that employ nuts,
 
 The program automatically finds the correct length fastener, creates temporary subassemblies of the top and bottom components, and adds and disperses them in turn to the main assembly.  Once you position the parts, they are added to an `Assembly Group` and patterned if applicable.
 
-Note, because of several assumptions regarding variable and file names, this initial release most likely will not work with customized files.  A mapping feature to bridge nomenclature differences is envisioned, however it has yet to be implemented.
+
 
 See the [<ins>**Fastener Stack**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#fastener-stack) section of the Readme for details.
 
