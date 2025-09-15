@@ -217,17 +217,17 @@ Public Class FormFastenerStack
 
     ' Xml relative search paths starting from a fastener
 
-    ' SE2024 ..\..\Washer_Flat
-    ' SE2019 ..\..\..\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series
-    Public Property FlatWasherSearchPath As List(Of String)
+    ' SE2024 ..\..\..\Washer_Flat
+    ' SE2019 ..\..\..\..\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series
+    Public Property FlatWasherSearchPaths As List(Of String)
 
-    ' SE2024 ..\..\Washer_Lock
+    ' SE2024 ..\..\..\Washer_Lock
     ' SE2019 NA
-    Public Property LockWasherSearchPath As List(Of String)
+    Public Property LockWasherSearchPaths As List(Of String)
 
     ' SE2024 ..\..\Nut_Hex
-    ' SE2019 ..\..\..\ISO_NUTS_-_Steel\ISO_4032_-_Hexagon_regular_nuts, ..\..\..\ISO_NUTS_-_Steel\ISO_8673_-_Hexagon_regular_nuts_-_fine_pitch
-    Public Property NutSearchPath As List(Of String)
+    ' SE2019 ..\..\..\..\ISO_NUTS_-_Steel\ISO_4032_-_Hexagon_regular_nuts, ..\..\..\ISO_NUTS_-_Steel\ISO_8673_-_Hexagon_regular_nuts_-_fine_pitch
+    Public Property NutSearchPaths As List(Of String)
 
 
     Private Property AssembleCommandComplete As Boolean
@@ -1008,81 +1008,249 @@ Public Class FormFastenerStack
         End If
 
         Dim SelectedNodeFullPath As String = FMain.SelectedNodeFullPath  ' Saving to reset back
+
         Me.TreeviewFastenerFullPath = SelectedNodeFullPath
         Dim tmpSelectedNodeFullPath As String = FMain.SpaceToUnderscore(SelectedNodeFullPath)
-        Dim tmpList = tmpSelectedNodeFullPath.Split("\")
+        Dim FastenerNodeNameList = tmpSelectedNodeFullPath.Split("\")
 
         Dim XmlDoc As System.Xml.XmlDocument = FMain.XmlDoc
         Dim ParentNode As XmlNode
 
+
+        ' ###### Find the fastener size node ######
+
         Dim FastenerPath As String = ""
-        Dim FlatWasherFullPath As String = ""
-        Dim LockwasherFullPath As String = ""
-        Dim NutFullPath As String = ""
-
         ' The fastener size node will be one level up from the selected length node
-        For i = 0 To tmpList.Count - 1 - 1
+        For i = 0 To FastenerNodeNameList.Count - 1 - 1
             If i = 0 Then
-                FastenerPath = tmpList(i) '                      Solid_Edge_Storekeeper
+                FastenerPath = FastenerNodeNameList(i) '                      Solid_Edge_Storekeeper
             Else
-                FastenerPath = $"{FastenerPath}\{tmpList(i)}"  ' Solid_Edge_Storekeeper\node_name\node_name\...
+                FastenerPath = $"{FastenerPath}\{FastenerNodeNameList(i)}"  ' Solid_Edge_Storekeeper\node_name\node_name\...
             End If
         Next
-
-        ' The nut and washer category nodes will be 3 levels up from the fastener length node
-        For i = 0 To tmpList.Count - 1 - 3
-            If i = 0 Then
-                FlatWasherFullPath = tmpList(i)
-                LockwasherFullPath = tmpList(i)
-                NutFullPath = tmpList(i)
-            Else
-                FlatWasherFullPath = $"{FlatWasherFullPath}\{tmpList(i)}"
-                LockwasherFullPath = $"{LockwasherFullPath}\{tmpList(i)}"
-                NutFullPath = $"{NutFullPath}\{tmpList(i)}"
-            End If
-        Next
-
-        ' Add category-specific node names
-        FlatWasherFullPath = $"{FlatWasherFullPath}\Washer_Flat"
-        LockwasherFullPath = $"{LockwasherFullPath}\Washer_Lock"
-        NutFullPath = $"{NutFullPath}\Nut_Hex"
 
         Dim NominalDiameter As Double
         Dim ThreadDescription As String
         Dim MatchingNode As XmlNode
 
-        ' Find the Fastener NominalDiameter and ThreadDescription
+        ' ###### Find the Fastener NominalDiameter and ThreadDescription ######
+
         ParentNode = FMain.XmlNodeFromPath(FastenerPath)
-        'Me.TreeviewFastenerFullPath = FastenerPath
         NominalDiameter = GetNominalDiameter(ParentNode)
         ThreadDescription = GetThreadDescription(ParentNode)
 
-        ' Find the FlatWasher with the same NominalDiameter as the Fastener
-        ParentNode = FMain.XmlNodeFromPath(FlatWasherFullPath)
-        MatchingNode = GetMatchingNode(ParentNode, NominalDiameter, ThreadDescription:=Nothing)
-        FlatWasherThickness = GetThickness(MatchingNode)
-        FlatWasherFullPath = $"{FlatWasherFullPath}\{MatchingNode.Name}"
-        Me.TreeviewFlatWasherFullPath = FlatWasherFullPath
-        FMain.SelectedNodeFullPath = FlatWasherFullPath
-        FlatWasherFilename = FMain.GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(FMain.GetTemplateNameFormula()))
 
-        ' Find the Lockwasher with the same NominalDiameter as the Fastener
-        ParentNode = FMain.XmlNodeFromPath(LockwasherFullPath)
-        MatchingNode = GetMatchingNode(ParentNode, NominalDiameter, ThreadDescription:=Nothing)
-        LockWasherThickness = GetThickness(MatchingNode)
-        LockwasherFullPath = $"{LockwasherFullPath}\{MatchingNode.Name}"
-        Me.TreeviewLockwasherFullPath = LockwasherFullPath
-        FMain.SelectedNodeFullPath = LockwasherFullPath
-        LockwasherFilename = FMain.GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(FMain.GetTemplateNameFormula()))
+        ' ###### Find the FlatWasher filename ######
 
-        ' Find the Nut with the same NominalDiameter and ThreadDescription as the Fastener
-        ParentNode = FMain.XmlNodeFromPath(NutFullPath)
-        MatchingNode = GetMatchingNode(ParentNode, NominalDiameter, ThreadDescription)
-        NutThickness = GetThickness(MatchingNode)
-        NutFullPath = $"{NutFullPath}\{MatchingNode.Name}"
-        Me.TreeviewNutFullPath = NutFullPath
-        FMain.SelectedNodeFullPath = NutFullPath
-        NutFilename = FMain.GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(FMain.GetTemplateNameFormula()))
+        For Each FlatWasherSearchPath As String In Me.FlatWasherSearchPaths
+            ' SE2024 ..\..\..\Washer_Flat
+            ' SE2019 ..\..\..\..\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series
+
+            Dim tmpPathList As List(Of String) = FlatWasherSearchPath.Split(CChar("\")).ToList
+            Dim FlatWasherFullPath As String = ""
+
+            ' ###### Find the number of '..' in the search path ######
+            Dim n As Integer = 0 ' the number of '..' in the path
+            For i = 0 To tmpPathList.Count - 1
+                If tmpPathList(i) = ".." Then n += 1
+            Next
+
+            ' ###### Populate the beginning from the fastener path ######
+            ' Examples
+            ' Fastener path: Solid_Edge_Storekeeper\Ansi_Fasteners_Steel\HHCS\Size_0.250-20\Length_0.500
+            ' Search path:   ..\..\..\Washer_Flat
+            ' Output:        Solid_Edge_Storekeeper\Ansi_Fasteners_Steel
+            For i = 0 To FastenerNodeNameList.Count - 1 - n
+                If i = 0 Then
+                    FlatWasherFullPath = FastenerNodeNameList(i)
+                Else
+                    FlatWasherFullPath = $"{FlatWasherFullPath}\{FastenerNodeNameList(i)}"
+                End If
+            Next
+
+            ' ###### Populate the end from the search path ######
+            ' Output: Solid_Edge_Storekeeper\Ansi_Fasteners_Steel\Washer_Flat
+            For i = 0 To tmpPathList.Count - 1
+                If Not tmpPathList(i) = ".." Then
+                    FlatWasherFullPath = $"{FlatWasherFullPath}\{tmpPathList(i)}"
+                End If
+            Next
+
+            ' ###### Find the FlatWasher with the same NominalDiameter as the Fastener ######
+            ParentNode = FMain.XmlNodeFromPath(FlatWasherFullPath)
+            MatchingNode = GetMatchingNode(ParentNode, NominalDiameter, ThreadDescription:=Nothing)
+
+            If MatchingNode IsNot Nothing Then
+                FlatWasherThickness = GetThickness(MatchingNode)
+                FlatWasherFullPath = $"{FlatWasherFullPath}\{MatchingNode.Name}"
+                Me.TreeviewFlatWasherFullPath = FlatWasherFullPath
+                FMain.SelectedNodeFullPath = FlatWasherFullPath
+                FlatWasherFilename = FMain.GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(FMain.GetTemplateNameFormula()))
+                Exit For
+            End If
+
+        Next
+
+
+        ' ###### Find the LockWasher filename ######
+
+        For Each LockWasherSearchPath As String In Me.LockWasherSearchPaths
+            ' SE2024 ..\..\..\Washer_Lock
+            ' SE2019 NA ..\..\..\..\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series
+
+            Dim tmpPathList As List(Of String) = LockWasherSearchPath.Split(CChar("\")).ToList
+            Dim LockWasherFullPath As String = ""
+
+            ' ###### Find the number of '..' in the search path ######
+            Dim n As Integer = 0 ' the number of '..' in the path
+            For i = 0 To tmpPathList.Count - 1
+                If tmpPathList(i) = ".." Then n += 1
+            Next
+
+            ' ###### Populate the beginning from the FASTENER path ######
+
+            ' Example
+            ' Fastener path: Solid_Edge_Storekeeper\Ansi_Fasteners_Steel\HHCS\Size_0.250-20\Length_0.500
+            ' Search path:   ..\..\..\Washer_Flat
+            ' Output:        Solid_Edge_Storekeeper\Ansi_Fasteners_Steel
+
+            ' Example
+            ' Fastener path: Solid_Edge_Storekeeper\ISO_SCREWS_-_Steel\ISO_4014_-_Hexagon_head_bolts_-_normal_pitch\Size_M5\Length_25
+            ' Search path:   ..\..\..\..\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series
+            ' Output:        Solid_Edge_Storekeeper
+
+            For i = 0 To FastenerNodeNameList.Count - 1 - n
+                If i = 0 Then
+                    LockWasherFullPath = FastenerNodeNameList(i)
+                Else
+                    LockWasherFullPath = $"{LockWasherFullPath}\{FastenerNodeNameList(i)}"
+                End If
+            Next
+
+            ' ###### Populate the end from the SEARCH path ######
+            ' Output: Solid_Edge_Storekeeper\Ansi_Fasteners_Steel\Washer_Flat
+            ' Output: Solid_Edge_Storekeeper\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series
+
+            For i = 0 To tmpPathList.Count - 1
+                If Not tmpPathList(i) = ".." Then
+                    LockWasherFullPath = $"{LockWasherFullPath}\{tmpPathList(i)}"
+                End If
+            Next
+
+            ' ###### Find the LockWasher with the same NominalDiameter as the Fastener ######
+            ParentNode = FMain.XmlNodeFromPath(LockWasherFullPath)
+            MatchingNode = GetMatchingNode(ParentNode, NominalDiameter, ThreadDescription:=Nothing)
+
+            If MatchingNode IsNot Nothing Then
+                LockWasherThickness = GetThickness(MatchingNode)
+                LockWasherFullPath = $"{LockWasherFullPath}\{MatchingNode.Name}"
+                Me.TreeviewLockwasherFullPath = LockWasherFullPath
+                FMain.SelectedNodeFullPath = LockWasherFullPath
+                LockwasherFilename = FMain.GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(FMain.GetTemplateNameFormula()))
+                Exit For
+            End If
+
+        Next
+
+
+        ' ###### Find the Nut filename ######
+
+        For Each NutSearchPath As String In Me.NutSearchPaths
+            ' SE2024 ..\..\..\Washer_Flat
+            ' SE2019 ..\..\..\..\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series
+
+            Dim tmpPathList As List(Of String) = NutSearchPath.Split(CChar("\")).ToList
+            Dim NutFullPath As String = ""
+
+            ' ###### Find the number of '..' in the search path ######
+            Dim n As Integer = 0 ' the number of '..' in the path
+            For i = 0 To tmpPathList.Count - 1
+                If tmpPathList(i) = ".." Then n += 1
+            Next
+
+            ' ###### Populate the beginning from the fastener path ######
+            ' Examples
+            ' Fastener path: Solid_Edge_Storekeeper\Ansi_Fasteners_Steel\HHCS\Size_0.250-20\Length_0.500
+            ' Search path:   ..\..\..\Washer_Flat
+            ' Output:        Solid_Edge_Storekeeper\Ansi_Fasteners_Steel
+            For i = 0 To FastenerNodeNameList.Count - 1 - n
+                If i = 0 Then
+                    NutFullPath = FastenerNodeNameList(i)
+                Else
+                    NutFullPath = $"{NutFullPath}\{FastenerNodeNameList(i)}"
+                End If
+            Next
+
+            ' ###### Populate the end from the search path ######
+            ' Output: Solid_Edge_Storekeeper\Ansi_Fasteners_Steel\Washer_Flat
+            For i = 0 To tmpPathList.Count - 1
+                If Not tmpPathList(i) = ".." Then
+                    NutFullPath = $"{NutFullPath}\{tmpPathList(i)}"
+                End If
+            Next
+
+            ' ###### Find the Nut with the same NominalDiameter and ThreadDescription as the Fastener ######
+            ParentNode = FMain.XmlNodeFromPath(NutFullPath)
+            MatchingNode = GetMatchingNode(ParentNode, NominalDiameter, ThreadDescription)
+
+            If MatchingNode IsNot Nothing Then
+                NutThickness = GetThickness(MatchingNode)
+                NutFullPath = $"{NutFullPath}\{MatchingNode.Name}"
+                Me.TreeviewNutFullPath = NutFullPath
+                FMain.SelectedNodeFullPath = NutFullPath
+                NutFilename = FMain.GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(FMain.GetTemplateNameFormula()))
+                Exit For
+            End If
+
+        Next
+
+        'Dim LockwasherFullPath As String = ""
+        'Dim NutFullPath As String = ""
+
+        '' The nut and washer category nodes will be 3 levels up from the fastener length node
+        'For i = 0 To tmpList.Count - 1 - 3
+        '    If i = 0 Then
+        '        FlatWasherFullPath = tmpList(i)
+        '        LockwasherFullPath = tmpList(i)
+        '        NutFullPath = tmpList(i)
+        '    Else
+        '        FlatWasherFullPath = $"{FlatWasherFullPath}\{tmpList(i)}"
+        '        LockwasherFullPath = $"{LockwasherFullPath}\{tmpList(i)}"
+        '        NutFullPath = $"{NutFullPath}\{tmpList(i)}"
+        '    End If
+        'Next
+
+        '' Add category-specific node names
+        'FlatWasherFullPath = $"{FlatWasherFullPath}\Washer_Flat"
+        'LockwasherFullPath = $"{LockwasherFullPath}\Washer_Lock"
+        'NutFullPath = $"{NutFullPath}\Nut_Hex"
+
+        ''' Find the FlatWasher with the same NominalDiameter as the Fastener
+        ''ParentNode = FMain.XmlNodeFromPath(FlatWasherFullPath)
+        ''MatchingNode = GetMatchingNode(ParentNode, NominalDiameter, ThreadDescription:=Nothing)
+        ''FlatWasherThickness = GetThickness(MatchingNode)
+        ''FlatWasherFullPath = $"{FlatWasherFullPath}\{MatchingNode.Name}"
+        ''Me.TreeviewFlatWasherFullPath = FlatWasherFullPath
+        ''FMain.SelectedNodeFullPath = FlatWasherFullPath
+        ''FlatWasherFilename = FMain.GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(FMain.GetTemplateNameFormula()))
+
+        '' Find the Lockwasher with the same NominalDiameter as the Fastener
+        'ParentNode = FMain.XmlNodeFromPath(LockwasherFullPath)
+        'MatchingNode = GetMatchingNode(ParentNode, NominalDiameter, ThreadDescription:=Nothing)
+        'LockWasherThickness = GetThickness(MatchingNode)
+        'LockwasherFullPath = $"{LockwasherFullPath}\{MatchingNode.Name}"
+        'Me.TreeviewLockwasherFullPath = LockwasherFullPath
+        'FMain.SelectedNodeFullPath = LockwasherFullPath
+        'LockwasherFilename = FMain.GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(FMain.GetTemplateNameFormula()))
+
+        '' Find the Nut with the same NominalDiameter and ThreadDescription as the Fastener
+        'ParentNode = FMain.XmlNodeFromPath(NutFullPath)
+        'MatchingNode = GetMatchingNode(ParentNode, NominalDiameter, ThreadDescription)
+        'NutThickness = GetThickness(MatchingNode)
+        'NutFullPath = $"{NutFullPath}\{MatchingNode.Name}"
+        'Me.TreeviewNutFullPath = NutFullPath
+        'FMain.SelectedNodeFullPath = NutFullPath
+        'NutFilename = FMain.GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(FMain.GetTemplateNameFormula()))
 
         FMain.SelectedNodeFullPath = SelectedNodeFullPath
 
@@ -1628,9 +1796,9 @@ Public Class FormFastenerStack
                 MsgBox($"FFS.Load: Unrecognzied data directory '{FMain.DataDirectory}'")
             End If
 
-            Me.FlatWasherSearchPath = UP.GetFlatWasherSearchPath(DataVersion)
-            Me.LockWasherSearchPath = UP.GetLockWasherSearchPath(DataVersion)
-            Me.NutSearchPath = UP.GetNutSearchPath(DataVersion)
+            Me.FlatWasherSearchPaths = UP.GetFlatWasherSearchPath(DataVersion)
+            Me.LockWasherSearchPaths = UP.GetLockWasherSearchPath(DataVersion)
+            Me.NutSearchPaths = UP.GetNutSearchPath(DataVersion)
         End If
 
     End Sub
