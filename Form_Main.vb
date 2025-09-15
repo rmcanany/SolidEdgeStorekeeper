@@ -8,8 +8,8 @@ Public Class Form_Main
 
     Private Property Version As String = "2025.4"
 
-    Private Property PreviewVersion As String = ""  ' Empty string if not a preview
-    'Private Property PreviewVersion As String = "Preview 01"
+    'Private Property PreviewVersion As String = ""  ' Empty string if not a preview
+    Private Property PreviewVersion As String = "Preview 02"
 
 
     Private _SelectedNodeFullPath As String
@@ -234,8 +234,11 @@ Public Class Form_Main
         AddHandler AlwaysOnTopTimer.Tick, AddressOf HandleAlwaysOnTopTimerTick
         'AlwaysOnTopTimer.Start()
 
-
         Splash.Close()
+
+        If Not IO.File.Exists(Me.MaterialTable) Then
+            MsgBox($"Specify a material table before continuing.{vbCrLf}It is set on the Tree Search Options page.")
+        End If
 
     End Sub
 
@@ -2575,18 +2578,29 @@ Public Class Form_Main
         If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
         Me.TopMost = False
 
-        Dim InDevelopment As Boolean = False
+        Dim Node = TreeView1.SelectedNode
 
-        If InDevelopment Then
-            MsgBox("In development -- not available at this time", vbOKOnly, "In Development")
-        Else
-            Dim Node = TreeView1.SelectedNode
-            Dim Filename = GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(GetTemplateNameFormula()))
-            Dim FFS As New FormFastenerStack(Me)
-            'AddHandler FFS.ButtonSelectStyle.Click, AddressOf EventTest
-            FFS.FastenerFilename = Filename
-            FFS.ShowDialog()
-        End If
+        Me.ErrorLogger = New HCErrorLogger
+        Me.FileLogger = Me.ErrorLogger.AddFile(Node.FullPath)
+
+        Dim Filename = GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(GetTemplateNameFormula()))
+        Dim FFS As New FormFastenerStack(Me)
+        'AddHandler FFS.ButtonSelectStyle.Click, AddressOf EventTest
+        FFS.FastenerFilename = Filename
+        FFS.ShowDialog()
+
+        'Dim InDevelopment As Boolean = False
+
+        'If InDevelopment Then
+        '    MsgBox("In development -- not available at this time", vbOKOnly, "In Development")
+        'Else
+        '    Dim Node = TreeView1.SelectedNode
+        '    Dim Filename = GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(GetTemplateNameFormula()))
+        '    Dim FFS As New FormFastenerStack(Me)
+        '    'AddHandler FFS.ButtonSelectStyle.Click, AddressOf EventTest
+        '    FFS.FastenerFilename = Filename
+        '    FFS.ShowDialog()
+        'End If
 
         If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
 

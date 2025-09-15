@@ -588,12 +588,12 @@ Public Class UtilsPreferences
 
                 Select Case BareFilename
                     Case "FlatWasherSE2019"
-                        SearchPathList.Add("..\..\..\..\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series")
+                        SearchPathList.Add("..\..\..\..\..\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series")
                     Case "LockWasherSE2019"
-                        SearchPathList.Add("..\..\..\..\OTHER_-_Steel\ISO_2982-2_-_Lockwashers")
+                        SearchPathList.Add("..\..\..\..\..\OTHER_-_Steel\ISO_2982-2_-_Lockwashers")
                     Case "NutSE2019"
-                        SearchPathList.Add("..\..\..\..\ISO_NUTS_-_Steel\ISO_4032_-_Hexagon_regular_nuts")
-                        SearchPathList.Add("..\..\..\..\ISO_NUTS_-_Steel\ISO_8673_-_Hexagon_regular_nuts_-_fine_pitch")
+                        SearchPathList.Add("..\..\..\..\..\ISO_NUTS_-_Steel\ISO_4032_-_Hexagon_regular_nuts")
+                        SearchPathList.Add("..\..\..\..\..\ISO_NUTS_-_Steel\ISO_8673_-_Hexagon_regular_nuts_-_fine_pitch")
                     Case "FlatWasherSE2024"
                         SearchPathList.Add("..\..\..\Washer_Flat")
                     Case "LockWasherSE2024"

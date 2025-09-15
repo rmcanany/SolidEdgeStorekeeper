@@ -55,6 +55,27 @@ Public Class FormFastenerStack
             _FastenerFilename = value
             If Me.TableLayoutPanel1 IsNot Nothing Then
                 Me.LabelTopFastener.Text = IO.Path.GetFileName(_FastenerFilename)
+
+                Dim UP As New UtilsPreferences
+
+                Dim Proceed As Boolean = UP.CreateSearchPathFiles()
+
+                If Not Proceed Then
+                    MsgBox("FFS.Load: Could not create Xml search path files")
+                Else
+                    Dim DataVersion As String = Nothing
+                    If FMain.DataDirectory.Contains("SE2019") Then
+                        DataVersion = "SE2019"
+                    ElseIf FMain.DataDirectory.Contains("SE2024") Then
+                        DataVersion = "SE2024"
+                    Else
+                        MsgBox($"FFS.Load: Unrecognzied data directory '{FMain.DataDirectory}'")
+                    End If
+
+                    Me.FlatWasherSearchPaths = UP.GetFlatWasherSearchPath(DataVersion)
+                    Me.LockWasherSearchPaths = UP.GetLockWasherSearchPath(DataVersion)
+                    Me.NutSearchPaths = UP.GetNutSearchPath(DataVersion)
+                End If
                 GetRelatedFilenames()
             End If
         End Set
@@ -938,19 +959,22 @@ Public Class FormFastenerStack
 
     Private Sub RemoveUnusedStackAssyFiles()
         Dim Directory As String = $"{FMain.TemplateDirectory}\FastenerStackTemplates\Temp"
-        Dim FoundFiles As IReadOnlyCollection(Of String) = Nothing
 
-        FoundFiles = FileIO.FileSystem.GetFiles(Directory,
+        If IO.Directory.Exists(Directory) Then
+            Dim FoundFiles As IReadOnlyCollection(Of String) = Nothing
+
+            FoundFiles = FileIO.FileSystem.GetFiles(Directory,
                                      FileIO.SearchOption.SearchTopLevelOnly,
                                      {"*.asm", "*.cfg"})
 
-        If FoundFiles IsNot Nothing AndAlso FoundFiles.Count > 0 Then
-            For Each FoundFile As String In FoundFiles
-                Try
-                    IO.File.Delete(FoundFile)
-                Catch ex As Exception
-                End Try
-            Next
+            If FoundFiles IsNot Nothing AndAlso FoundFiles.Count > 0 Then
+                For Each FoundFile As String In FoundFiles
+                    Try
+                        IO.File.Delete(FoundFile)
+                    Catch ex As Exception
+                    End Try
+                Next
+            End If
         End If
 
     End Sub

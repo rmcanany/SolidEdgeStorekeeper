@@ -496,6 +496,7 @@ Partial Class FormFastenerStack
         MaximumSize = New Size(600, 525)
         MinimumSize = New Size(600, 525)
         Name = "FormFastenerStack"
+        StartPosition = FormStartPosition.CenterParent
         Text = "Fastener Stack"
         CType(PictureBox1, ComponentModel.ISupportInitialize).EndInit()
         TableLayoutPanel1.ResumeLayout(False)
