@@ -205,6 +205,7 @@ Public Class FormFastenerStack
         End Set
     End Property
 
+
     Public Property FastenerMinLength As Double
     Public Property FastenerMaxLength As Double
 
@@ -212,6 +213,22 @@ Public Class FormFastenerStack
     Public Property TreeviewFlatWasherFullPath As String
     Public Property TreeviewLockwasherFullPath As String
     Public Property TreeviewNutFullPath As String
+
+
+    ' Xml relative search paths starting from a fastener
+
+    ' SE2024 ..\..\Washer_Flat
+    ' SE2019 ..\..\..\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series
+    Public Property FlatWasherSearchPath As List(Of String)
+
+    ' SE2024 ..\..\Washer_Lock
+    ' SE2019 NA
+    Public Property LockWasherSearchPath As List(Of String)
+
+    ' SE2024 ..\..\Nut_Hex
+    ' SE2019 ..\..\..\ISO_NUTS_-_Steel\ISO_4032_-_Hexagon_regular_nuts, ..\..\..\ISO_NUTS_-_Steel\ISO_8673_-_Hexagon_regular_nuts_-_fine_pitch
+    Public Property NutSearchPath As List(Of String)
+
 
     Private Property AssembleCommandComplete As Boolean
 
@@ -972,6 +989,24 @@ Public Class FormFastenerStack
     End Function
 
     Public Sub GetRelatedFilenames()
+
+        ' Traverses the Xml tree to find a flat washer, lock washer and nut
+        ' The SelectedNodeFullPath will be a fastener length node
+        ' Examples for SE2024
+        ' Solid_Edge_Storekeeper\Ansi_Fasteners_Steel\HHCS\Size_0.250-20\Length_0.500
+        ' Solid_Edge_Storekeeper\Ansi_Fasteners_Stainless\HHCS\Size_0.250-20\Length_0.500
+        ' Examples for SE2019
+        ' Solid_Edge_Storekeeper\ISO_Screws_-_Steel\ISO_4014_-_Hexagon_head_bolts_-_normal_pitch\Size_M5\L_30
+
+        Dim DataVersion As String = Nothing
+        If FMain.DataDirectory.Contains("SE2019") Then
+            DataVersion = "SE2019"
+        ElseIf FMain.DataDirectory.Contains("SE2024") Then
+            DataVersion = "SE2024"
+        Else
+            MsgBox($"FFS.GetRelatedFilenames: DataVersion not recognized '{FMain.DataDirectory}'")
+        End If
+
         Dim SelectedNodeFullPath As String = FMain.SelectedNodeFullPath  ' Saving to reset back
         Me.TreeviewFastenerFullPath = SelectedNodeFullPath
         Dim tmpSelectedNodeFullPath As String = FMain.SpaceToUnderscore(SelectedNodeFullPath)
@@ -985,17 +1020,17 @@ Public Class FormFastenerStack
         Dim LockwasherFullPath As String = ""
         Dim NutFullPath As String = ""
 
-        ' The selected fastener will be 1 level down from the fastener size node
-        For i = 0 To tmpList.Count - 2
+        ' The fastener size node will be one level up from the selected length node
+        For i = 0 To tmpList.Count - 1 - 1
             If i = 0 Then
-                FastenerPath = tmpList(i)
+                FastenerPath = tmpList(i) '                      Solid_Edge_Storekeeper
             Else
-                FastenerPath = $"{FastenerPath}\{tmpList(i)}"
+                FastenerPath = $"{FastenerPath}\{tmpList(i)}"  ' Solid_Edge_Storekeeper\node_name\node_name\...
             End If
         Next
 
         ' The nut and washer category nodes will be 3 levels up from the fastener length node
-        For i = 0 To tmpList.Count - 4
+        For i = 0 To tmpList.Count - 1 - 3
             If i = 0 Then
                 FlatWasherFullPath = tmpList(i)
                 LockwasherFullPath = tmpList(i)
@@ -1577,6 +1612,25 @@ Public Class FormFastenerStack
 
         If Not (Me.Units = "in" Or Me.Units = "mm") Then
             Me.Units = "in"
+        End If
+
+        Dim Proceed As Boolean = UP.CreateSearchPathFiles()
+
+        If Not Proceed Then
+            MsgBox("FFS.Load: Could not create Xml search path files")
+        Else
+            Dim DataVersion As String = Nothing
+            If FMain.DataDirectory.Contains("SE2019") Then
+                DataVersion = "SE2019"
+            ElseIf FMain.DataDirectory.Contains("SE2024") Then
+                DataVersion = "SE2024"
+            Else
+                MsgBox($"FFS.Load: Unrecognzied data directory '{FMain.DataDirectory}'")
+            End If
+
+            Me.FlatWasherSearchPath = UP.GetFlatWasherSearchPath(DataVersion)
+            Me.LockWasherSearchPath = UP.GetLockWasherSearchPath(DataVersion)
+            Me.NutSearchPath = UP.GetNutSearchPath(DataVersion)
         End If
 
     End Sub

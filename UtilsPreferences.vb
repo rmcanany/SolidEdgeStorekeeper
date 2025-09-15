@@ -3,6 +3,7 @@
 Imports System.Net.Http
 Imports System.Security.AccessControl
 Imports Newtonsoft.Json
+Imports SolidEdgeAssembly
 
 Public Class UtilsPreferences
 
@@ -536,5 +537,119 @@ Public Class UtilsPreferences
         End If
 
     End Sub
+
+
+    '###### FASTENER STACK XML SEARCH PATHS ######
+
+    'Private Function GetSearchPathFilename(ComponentType As String, DataVersion As String) As String
+    '    Dim Filename As String = Nothing
+
+    '    Select Case ComponentType
+    '        Case "FlatWasher", "LockWasher", "Nut"
+    '            Filename = $"{GetPreferencesDirectory()}\{ComponentType}"
+    '        Case Else
+    '            MsgBox($"UP.GetSearchPathFilename: Unrecognized ComponentType '{ComponentType}'")
+    '            Filename = Nothing
+    '    End Select
+
+    '    Select Case DataVersion
+    '        Case "SE2019", "SE2024"
+    '            If Filename IsNot Nothing Then Filename = $"{Filename}{DataVersion}.json"
+    '        Case Else
+    '            MsgBox($"UP.GetSearchPathFilename: Unrecognized DataVersion '{DataVersion}'")
+    '    End Select
+
+    '    If Filename IsNot Nothing AndAlso Not IO.File.Exists(Filename) Then
+    '        Dim Success As Boolean = CreateSearchPathFiles()
+    '        If Not Success Then Filename = Nothing
+    '    End If
+
+    '    Return Filename
+    'End Function
+
+    Public Function CreateSearchPathFiles() As Boolean
+        Dim Success As Boolean = True
+
+        Dim ComponentTypes As New List(Of String)
+        ComponentTypes.AddRange({"FlatWasher", "LockWasher", "Nut"})
+
+        Dim DataVersions As New List(Of String)
+        DataVersions.AddRange({"SE2019", "SE2024"})
+
+        Dim SearchPathList As New List(Of String)
+        Dim BareFilename As String
+        Dim Filename As String
+
+        For Each ComponentType As String In ComponentTypes
+            For Each DataVersion As String In DataVersions
+
+                SearchPathList.Clear()
+                BareFilename = $"{ComponentType}{DataVersion}"
+
+                Select Case BareFilename
+                    Case "FlatWasherSE2019"
+                        SearchPathList.Add("..\..\..\..\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series")
+                    Case "LockWasherSE2019"
+                        ' NA
+                    Case "NutSE2019"
+                        SearchPathList.Add("..\..\..\..\ISO_NUTS_-_Steel\ISO_4032_-_Hexagon_regular_nuts")
+                        SearchPathList.Add("..\..\..\..\ISO_NUTS_-_Steel\ISO_8673_-_Hexagon_regular_nuts_-_fine_pitch")
+                    Case "FlatWasherSE2024"
+                        SearchPathList.Add("..\..\..\Washer_Flat")
+                    Case "LockWasherSE2024"
+                        SearchPathList.Add("..\..\..\Washer_Lock")
+                    Case "NutSE2024"
+                        SearchPathList.Add("..\..\..\Nut_Hex")
+
+                End Select
+
+                Filename = $"{GetPreferencesDirectory()}\{BareFilename}.json"
+
+                If SearchPathList.Count > 0 Then
+                    Dim JSONString = JsonConvert.SerializeObject(SearchPathList)
+
+                    IO.File.WriteAllText(Filename, JSONString)
+
+                End If
+            Next
+        Next
+        Return Success
+    End Function
+
+    Public Function GetFlatWasherSearchPath(DataVersion As String) As List(Of String)
+        Dim OutList As List(Of String) = Nothing
+
+        Dim Filename As String = $"{GetPreferencesDirectory()}\FlatWasher{DataVersion}.json"
+        If IO.File.Exists(Filename) Then
+            Dim JSONString = IO.File.ReadAllText(Filename)
+            OutList = JsonConvert.DeserializeObject(Of List(Of String))(JSONString)
+        End If
+
+        Return OutList
+    End Function
+
+    Public Function GetLockWasherSearchPath(DataVersion As String) As List(Of String)
+        Dim OutList As List(Of String) = Nothing
+
+        Dim Filename As String = $"{GetPreferencesDirectory()}\LockWasher{DataVersion}.json"
+        If IO.File.Exists(Filename) Then
+            Dim JSONString = IO.File.ReadAllText(Filename)
+            OutList = JsonConvert.DeserializeObject(Of List(Of String))(JSONString)
+        End If
+
+        Return OutList
+    End Function
+
+    Public Function GetNutSearchPath(DataVersion As String) As List(Of String)
+        Dim OutList As List(Of String) = Nothing
+
+        Dim Filename As String = $"{GetPreferencesDirectory()}\Nut{DataVersion}.json"
+        If IO.File.Exists(Filename) Then
+            Dim JSONString = IO.File.ReadAllText(Filename)
+            OutList = JsonConvert.DeserializeObject(Of List(Of String))(JSONString)
+        End If
+
+        Return OutList
+    End Function
 
 End Class

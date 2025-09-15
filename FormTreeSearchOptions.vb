@@ -270,7 +270,7 @@ Public Class FormTreeSearchOptions
         If Not FMain.DataDirectory = "" Then
             Me.DataDirectory = Me.FMain.DataDirectory
         Else
-            Me.TemplateDirectory = "Select a directory with your data files"
+            Me.DataDirectory = "Select a directory with your data files"
         End If
 
         If Not FMain.MaterialTable = "" Then

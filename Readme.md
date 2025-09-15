@@ -114,7 +114,7 @@ The program needs to know where to store the standard parts, and for fastener-li
 - **LIBRARY DIRECTORY**  
 The library is where the standard parts you create are stored.  The default is in `Preferences\Library` under the `Storekeeper` main directory.  
 
-  Note it is created the first time you run the program; it won't be there before that.  As noted above, if you want to access your vendor-specific standard parts, they must be in the library.  You can place them in one or more subdirectories if desired.
+  Note it is created the first time you run the program; it won't be there before that.  As noted above, if you want to access your vendor-type standard parts, they must be in the library.  You can place them in one or more subdirectories if desired.
 
 - **TEMPLATE DIRECTORY**  
 The templates are SE part files that have variable-table-driven geometry to create new parts of a given type.  By default they are stored in the `Preferences\TemplatesSE2024` folder.
@@ -152,6 +152,10 @@ The material table is usually your normal SE material table.  However, for a qui
 	
   - `Process templates in background`  
 	A new part must be opened in Solid Edge to update its parameters.  This setting tells the program to not display it in the user interface.
+
+	Note, processing in background does not support `Fit View`.  If you need usable thumbnail images, this option is probably not for you.
+
+	Also note, there is an issue when creating a part whose units do not match the default units of your Solid Edge installation.  Processing in background appears to ignore the file's unit setting.
 	
   - `Replace part: Suppress failed constraint`  
 	When replacing a part, some constraints may fail to get resolved.  If this occurs, this option tells the program to suppress the constraint.
@@ -207,7 +211,7 @@ A fastener stack is a grouping that consists of a fastener and related component
   <img src="media/fastener_stack.png">
 </p>
 
-To select the stack style, click the `Configuration` button.  There are eight versions that employ nuts, and four each for thru and blind tapped holes.  Note, you only choose the fastener.  The related components are automatically selected based on the fastener diameter and thread, and the chosen configuration.
+To select the stack style, click the `Configuration` button.  There are eight versions that employ nuts, and four each for thru and blind tapped holes.  Note, you only choose the fastener.  The related components are automatically selected based on the fastener diameter and thread.
 
 <p align="center">
   <img src="media/fastener_stack_configuration.png">
@@ -345,6 +349,8 @@ In this example, we are also updating the description property.  That isn't nece
 
 This project uses these awesome open source packages.
 
-- JSON Converter [<ins>**Newtonsoft.Json**</ins>](https://github.com/JamesNK/Newtonsoft.Json)
 - Excel reader [<ins>**ExcelDataReader**</ins>](https://github.com/ExcelDataReader/ExcelDataReader)
+- File and folder dialogs [<ins>**CommonFileDialogs**</ins>](https://github.com/emako/CommonFileDialogs)
 - Icons [<ins>**Icons8**</ins>](https://icons8.com)
+- JSON Converter [<ins>**Newtonsoft.Json**</ins>](https://github.com/JamesNK/Newtonsoft.Json)
+- Structured storage editor [<ins>**OpenMCDF**</ins>](https://github.com/ironfede/openmcdf)

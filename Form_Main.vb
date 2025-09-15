@@ -180,6 +180,7 @@ Public Class Form_Main
             Me.AlwaysReadExcel = True
             Me.CheckNewVersion = True
             Me.SaveInLibrary = True
+            Me.ProcessTemplateInBackground = False
         End If
 
         UP.CreatePreferencesDirectory(Me)
@@ -384,9 +385,6 @@ Public Class Form_Main
             End If
             SEDoc.SaveAs(Filename)
             SEApp.DoIdle()
-
-            'TextBoxStatus.Text = "Processing units"
-            'Proceed = ProcessUnits(SEApp, SEDoc)
 
             TextBoxStatus.Text = "Processing variables"
             If Proceed Then Proceed = ProcessVariables(SEApp, SEDoc)

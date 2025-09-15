@@ -22,7 +22,7 @@ Added the ability to create fastener stacks -- a grouping that consists of a fas
   <img src="media/fastener_stack.png">
 </p>
 
-The stack styles are pre-configured.  There are eight versions that employ nuts, and four each for thru and blind tapped holes.  Note, you only choose the fastener.  The related components are automatically selected based on the fastener diameter and thread, and the chosen configuration.
+The stack styles are pre-configured.  There are eight versions that employ nuts, and four each for thru and blind tapped holes.  Note, you only choose the fastener.  The related components are automatically selected based on the fastener diameter and thread.
 
 <p align="center">
   <img src="media/fastener_stack_configuration.png">
