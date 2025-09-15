@@ -797,13 +797,14 @@ Public Class Form_Main
 
                 Filename = Props.SubstitutePropFormulas(Filename)
 
-                Dim tmpFileDialog As New CommonOpenFileDialog
-                'Dim tmpFileDialog As New CommonSaveFileDialog
+                'Dim tmpFileDialog As New CommonOpenFileDialog
+                Dim tmpFileDialog As New CommonSaveFileDialog
 
                 tmpFileDialog.Title = "Enter the file name for the new part"
                 tmpFileDialog.DefaultFileName = Filename
                 tmpFileDialog.EnsureFileExists = False
-                tmpFileDialog.DefaultExtension = DefaultExtension.Replace(".", "")
+                tmpFileDialog.Filters.Add(New CommonFileDialogFilter("Solid Edge Files", $"*{DefaultExtension}"))
+                'tmpFileDialog.DefaultExtension = DefaultExtension '.Replace(".", "")
 
                 If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
                 Me.TopMost = False
