@@ -245,57 +245,72 @@ Public Class Form_Main
 
     ' ###### PROCESS SELECTED ITEM ######
 
-    Private Function CheckStartConditions(PropertySearchFilename As String) As Boolean
+    Private Function CheckStartConditions(
+        PropertySearchFilename As String,
+        ErrorLogger As Logger
+        ) As Boolean
+
         Dim Success As Boolean = True
-        Dim ErrorMessageList As New List(Of String)
+        'Dim ErrorMessageList As New List(Of String)
         Dim IsTreeSearch = PropertySearchFilename Is Nothing
 
         If Not IO.Directory.Exists(Me.LibraryDirectory) Then
-            ErrorMessageList.Add($"Library directory not found '{Me.LibraryDirectory}'")
+            Success = False
+            ErrorLogger.AddMessage($"Library directory not found '{Me.LibraryDirectory}'")
         End If
 
         If IsTreeSearch Then
             If Not IO.Directory.Exists(Me.TemplateDirectory) Then
-                ErrorMessageList.Add($"Template directory not found '{Me.TemplateDirectory}'")
+                Success = False
+                ErrorLogger.AddMessage($"Template directory not found '{Me.TemplateDirectory}'")
             End If
             If Not IO.Directory.Exists(Me.DataDirectory) Then
-                ErrorMessageList.Add($"Data directory not found '{Me.DataDirectory}'")
+                Success = False
+                ErrorLogger.AddMessage($"Data directory not found '{Me.DataDirectory}'")
             End If
             If Not IO.File.Exists(Me.MaterialTable) Then
-                ErrorMessageList.Add($"Material table not found '{Me.MaterialTable}'")
+                Success = False
+                ErrorLogger.AddMessage($"Material table not found '{Me.MaterialTable}'")
             End If
         Else
             If PropertiesToSearchList.Count = 0 Then
-                ErrorMessageList.Add("Enter at least one property to search on the options page")
+                Success = False
+                ErrorLogger.AddMessage("Enter at least one property to search on the options page")
             End If
             If Not IO.File.Exists(Me.AssemblyTemplate) Then
-                ErrorMessageList.Add($"Assembly template not found '{Me.AssemblyTemplate}'")
+                Success = False
+                ErrorLogger.AddMessage($"Assembly template not found '{Me.AssemblyTemplate}'")
             End If
             If Not IO.File.Exists(Me.PartTemplate) Then
-                ErrorMessageList.Add($"Part template not found '{Me.PartTemplate}'")
+                Success = False
+                ErrorLogger.AddMessage($"Part template not found '{Me.PartTemplate}'")
             End If
             If Not IO.File.Exists(Me.SheetmetalTemplate) Then
-                ErrorMessageList.Add($"Sheetmetal template not found '{Me.SheetmetalTemplate}'")
+                Success = False
+                ErrorLogger.AddMessage($"Sheetmetal template not found '{Me.SheetmetalTemplate}'")
             End If
         End If
 
         Try
             SEApp = CType(MarshalHelper.GetActiveObject("SolidEdge.Application", throwOnError:=True), SolidEdgeFramework.Application)
         Catch ex As Exception
-            ErrorMessageList.Add("Solid Edge not detected.  This command requires a running instance of Solid Edge with an assembly file active")
+            Success = False
+            ErrorLogger.AddMessage("Solid Edge not detected.  This command requires a running instance of Solid Edge with an assembly file active")
         End Try
 
         If SEApp IsNot Nothing And Not Me.PrePopulate Then
             Try
                 AsmDoc = CType(SEApp.ActiveDocument, SolidEdgeAssembly.AssemblyDocument)
             Catch ex As Exception
-                ErrorMessageList.Add("No assembly file active.  This command requires a running instance of Solid Edge with an assembly file active")
+                Success = False
+                ErrorLogger.AddMessage("No assembly file active.  This command requires a running instance of Solid Edge with an assembly file active")
             End Try
         End If
 
         If Not Me.PrePopulate Then
             If SEApp IsNot Nothing And AsmDoc IsNot Nothing AndAlso AsmDoc.Path = "" Then
-                ErrorMessageList.Add("Assembly must be saved before adding parts")
+                Success = False
+                ErrorLogger.AddMessage("Assembly must be saved before adding parts")
             End If
         End If
 
@@ -310,39 +325,46 @@ Public Class Form_Main
             Try
                 MaterialTableFolder = CStr(MaterialTableFolderObject)
                 If Not Me.MaterialTable.Contains(MaterialTableFolder) Then
-                    ErrorMessageList.Add($"Material table not in required folder: '{MaterialTableFolder}'")
+                    Success = False
+                    ErrorLogger.AddMessage($"Material table not in required folder: '{MaterialTableFolder}'")
                 End If
             Catch ex As Exception
 
             End Try
         End If
 
-        If Not ErrorMessageList.Count = 0 Then
-            Success = False
+        'If Not ErrorMessageList.Count = 0 Then
+        '    Success = False
 
-            Dim msg As String = $"Please resolve the following before proceeding{vbCrLf}"
-            Dim Indent As String = "    "
-            For Each s As String In ErrorMessageList
-                msg = $"{msg}{Indent}{s}{vbCrLf}"
-            Next
-            MsgBox(msg, vbOKOnly, "Check Start Conditions")
-            'Me.ErrorLogger.RequestAbort()
-        End If
+        '    Dim msg As String = $"Please resolve the following before proceeding{vbCrLf}{vbCrLf}"
+        '    Dim Indent As String = "    "
+        '    For Each s As String In ErrorMessageList
+        '        msg = $"{msg}{Indent}{s}{vbCrLf}"
+        '    Next
+        '    MsgBox(msg, vbOKOnly, "Check Start Conditions")
+        '    'Me.ErrorLogger.RequestAbort()
+        'End If
 
         Return Success
     End Function
 
-    Public Sub Process(
+    Public Function Process(
         Optional PropertySearchFilename As String = Nothing,
         Optional Replace As Boolean = False,
-        Optional ReplaceAll As Boolean = False)
+        Optional ReplaceAll As Boolean = False,
+        Optional ErrorLogger As Logger = Nothing
+        ) As Boolean
 
         Dim Proceed As Boolean = True
+        'Dim ErrorMessages As New List(Of String)
+
+        If ErrorLogger Is Nothing Then ErrorLogger = Me.FileLogger
+
         Dim UC As New UtilsCommon
 
-        If Not CheckStartConditions(PropertySearchFilename) Then
+        If Not CheckStartConditions(PropertySearchFilename, ErrorLogger) Then
             TextBoxStatus.Text = ""
-            Exit Sub
+            Return False
         End If
 
         'OleMessageFilter.Register()
@@ -355,13 +377,15 @@ Public Class Form_Main
             Filename = GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(GetTemplateNameFormula()))
             If Filename Is Nothing Then
                 TextBoxStatus.Text = ""
-                Exit Sub
+                Proceed = False
+                'ErrorMessages.Add("Unable to get filename")
+                ErrorLogger.AddMessage("Unable to get filename")
             End If
         Else
             Filename = PropertySearchFilename
         End If
 
-        If Not IO.File.Exists(Filename) Then
+        If Proceed And Not IO.File.Exists(Filename) Then
 
             If Me.SuspendMRU Then SEApp.SuspendMRU() ' Suspend MRU to prevent adding the file to the MRU list
 
@@ -369,34 +393,57 @@ Public Class Form_Main
             Dim TemplateName As String = GetTemplateNameFormula()
             If TemplateName Is Nothing Then
                 TextBoxStatus.Text = ""
-                Exit Sub
+                Proceed = False
+                'ErrorMessages.Add("Unable to get template name")
+                ErrorLogger.AddMessage("Unable to get template name")
             End If
 
             TextBoxStatus.Text = $"Opening '{IO.Path.GetFileName(TemplateName)}'"
             Dim SEDoc As SolidEdgeFramework.SolidEdgeDocument = Nothing
-            If Me.ProcessTemplateInBackground Then
-                SEDoc = CType(SEApp.Documents.Open(TemplateName, 8), SolidEdgeFramework.SolidEdgeDocument)
-            Else
-                SEDoc = CType(SEApp.Documents.Open(TemplateName), SolidEdgeFramework.SolidEdgeDocument)
-            End If
-            SEApp.DoIdle()
 
-            TextBoxStatus.Text = $"Saving '{IO.Path.GetFileName(Filename)}'"
-            Dim Dir As String = IO.Path.GetDirectoryName(Filename)
-            If Not IO.Directory.Exists(Dir) Then
-                IO.Directory.CreateDirectory(Dir)
+            If Proceed Then
+                If Me.ProcessTemplateInBackground Then
+                    SEDoc = CType(SEApp.Documents.Open(TemplateName, 8), SolidEdgeFramework.SolidEdgeDocument)
+                Else
+                    SEDoc = CType(SEApp.Documents.Open(TemplateName), SolidEdgeFramework.SolidEdgeDocument)
+                End If
+                SEApp.DoIdle()
+
+                TextBoxStatus.Text = $"Saving '{IO.Path.GetFileName(Filename)}'"
+                Dim Dir As String = IO.Path.GetDirectoryName(Filename)
+                If Not IO.Directory.Exists(Dir) Then
+                    IO.Directory.CreateDirectory(Dir)
+                End If
+                SEDoc.SaveAs(Filename)
+                SEApp.DoIdle()
             End If
-            SEDoc.SaveAs(Filename)
-            SEApp.DoIdle()
 
             TextBoxStatus.Text = "Processing variables"
-            If Proceed Then Proceed = ProcessVariables(SEApp, SEDoc)
+            If Proceed Then
+                Proceed = ProcessVariables(SEApp, SEDoc)
+                If Not Proceed Then
+                    'ErrorMessages.Add("Unable to process variables")
+                    ErrorLogger.AddMessage("Unable to process variables")
+                End If
+            End If
 
             TextBoxStatus.Text = "Processing parameters"
-            If Proceed Then Proceed = ProcessParameters(SEApp, SEDoc)
+            If Proceed Then
+                Proceed = ProcessParameters(SEApp, SEDoc)
+                If Not Proceed Then
+                    'ErrorMessages.Add("Unable to process parameters")
+                    ErrorLogger.AddMessage("Unable to process parameters")
+                End If
+            End If
 
             TextBoxStatus.Text = "Processing SE properties"
-            If Proceed Then Proceed = ProcessSEProperties(SEApp, SEDoc)
+            If Proceed Then
+                Proceed = ProcessSEProperties(SEApp, SEDoc)
+                If Not Proceed Then
+                    'ErrorMessages.Add("Unable to process properties")
+                    ErrorLogger.AddMessage("Unable to process properties")
+                End If
+            End If
 
             TextBoxStatus.Text = "Saving file"
             If Proceed Then
@@ -408,7 +455,6 @@ Public Class Form_Main
                 SEDoc.Close()
                 SEApp.DoIdle()
                 If Me.SuspendMRU Then SEApp.ResumeMRU()
-                Exit Sub
             End If
 
             If Me.SuspendMRU Then SEApp.ResumeMRU()
@@ -417,7 +463,7 @@ Public Class Form_Main
 
         ' ###### ADD PART TO ASSEMBLY ######
 
-        If Not AddToLibraryOnly Then
+        If Proceed And Not AddToLibraryOnly Then
             AddHandler SEAppEvents.AfterCommandRun, AddressOf DISEApplicationEvents_AfterCommandRun
             SEApp.DoIdle()
             AssemblyPasteComplete = False
@@ -464,14 +510,16 @@ Public Class Form_Main
                         End While
                     Catch ex2 As Exception
                         'MsgBox("Could not add part.  Please try again.", vbOKOnly, "Part not added")
-                        Me.FileLogger.AddMessage("Could not add part.  Please try again.")
+                        Proceed = False
+                        'ErrorMessages.Add("Could not add part.  Please try again.")
+                        ErrorLogger.AddMessage("Could not add part.  Please try again.")
                     End Try
 
                 End Try
 
                 RemoveHandler SEAppEvents.AfterCommandRun, AddressOf DISEApplicationEvents_AfterCommandRun
 
-                If Me.AutoPattern And Occurrences.Count > PreviousOccurrencesCount Then
+                If Proceed And Me.AutoPattern And Occurrences.Count > PreviousOccurrencesCount Then
                     Occurrence = CType(Occurrences(Occurrences.Count - 1), SolidEdgeAssembly.Occurrence)
                     MaybePatternOccurrence(Occurrence, PiggybackOccurrences:=Nothing)
                 End If
@@ -503,7 +551,9 @@ Public Class Form_Main
                             ElseIf Me.FailedConstraintAllow Then
                                 objAsm.ReplaceComponents(CType(tmpOcc, Array), Filename, SolidEdgeAssembly.ConstraintReplacementConstants.seConstraintReplacementNone)
                             Else
-                                Me.FileLogger.AddMessage("Option not set for treatment of failed constraints.  Set it on the Tree Search Options dialog.")
+                                Proceed = False
+                                'ErrorMessages.Add("Option not set for treatment of failed constraints.  Set it on the Tree Search Options dialog.")
+                                ErrorLogger.AddMessage("Option not set for treatment of failed constraints.  Set it on the Tree Search Options dialog.")
                             End If
 
                         Else
@@ -514,7 +564,9 @@ Public Class Form_Main
                             ElseIf Me.FailedConstraintAllow Then
                                 objAsm.ReplaceComponents(tmpOcc, Filename, SolidEdgeAssembly.ConstraintReplacementConstants.seConstraintReplacementNone)
                             Else
-                                Me.FileLogger.AddMessage("Option not set for treatment of for failed constraints.  Set it on the Tree Search Options dialog.")
+                                Proceed = False
+                                'ErrorMessages.Add("Option not set for treatment of failed constraints.  Set it on the Tree Search Options dialog.")
+                                ErrorLogger.AddMessage("Option not set for treatment of failed constraints.  Set it on the Tree Search Options dialog.")
                             End If
 
                         End If
@@ -545,9 +597,18 @@ Public Class Form_Main
         TextBoxStatus.Text = ""
 
         'OleMessageFilter.Revoke()
+        'If FileLogger Is Nothing And ErrorMessages.Count > 0 Then
+        '    Dim s As String = $"Processing did not succeed{vbCrLf}"
+        '    Dim Indent As String = "    "
+        '    For Each s1 As String In ErrorMessages
+        '        s = $"{s}{Indent}{s1}{vbCrLf}"
+        '    Next
+        '    MsgBox(s, vbOKOnly, "Processing did not succeed")
+        'End If
 
+        Return Proceed
 
-    End Sub
+    End Function
 
     Private Function ProcessVariables(
         SEApp As SolidEdgeFramework.Application,
@@ -903,19 +964,21 @@ Public Class Form_Main
         Return Filename
     End Function
 
-    Public Function GetTemplateNameFormula() As String
+    Public Function GetTemplateNameFormula(Optional ErrorLogger As Logger = Nothing) As String
         Dim TemplateName As String
+
+        If ErrorLogger Is Nothing Then ErrorLogger = Me.FileLogger
 
         Dim tmpProps As List(Of Prop) = Props.GetPropsOfType("TemplateFormula")
         If tmpProps.Count = 0 Then
             'MsgBox("No TemplateFormula specified", vbOKOnly, "Template name formula")
-            Me.FileLogger.AddMessage("No TemplateFormula specified")
+            ErrorLogger.AddMessage("No TemplateFormula specified")
             TextBoxStatus.Text = ""
             Return Nothing
         End If
         If tmpProps.Count > 1 Then
             'MsgBox("Multiple TemplateFormulas specified", vbOKOnly, "Template name formula")
-            Me.FileLogger.AddMessage("Multiple TemplateFormulas specified")
+            ErrorLogger.AddMessage("Multiple TemplateFormulas specified")
             TextBoxStatus.Text = ""
             Return Nothing
         End If
@@ -924,7 +987,7 @@ Public Class Form_Main
 
         If Not IO.File.Exists(TemplateName) Then
             'MsgBox($"Template not found '{TemplateName}'", vbOKOnly, "File not found")
-            Me.FileLogger.AddMessage($"Template not found '{TemplateName}'")
+            ErrorLogger.AddMessage($"Template not found '{TemplateName}'")
             TextBoxStatus.Text = ""
             Return Nothing
         End If
@@ -2055,15 +2118,15 @@ Public Class Form_Main
 
     ' ###### ERROR REPORTING ######
 
-    Private Sub ReportErrors()
-        If Me.ErrorLogger.HasErrors Then
-            Me.ErrorLogger.Save()
+    Public Sub ReportErrors(tmpErrorLogger As HCErrorLogger)
+        If tmpErrorLogger.HasErrors Then
+            tmpErrorLogger.Save()
             Try
                 ' Try to use the default application to open the file.
-                Diagnostics.Process.Start(Me.ErrorLogger.LogfileName)
+                Diagnostics.Process.Start(tmpErrorLogger.LogfileName)
             Catch ex As Exception
                 ' If none, open with notepad.exe
-                Diagnostics.Process.Start("notepad.exe", Me.ErrorLogger.LogfileName)
+                Diagnostics.Process.Start("notepad.exe", tmpErrorLogger.LogfileName)
             End Try
         End If
 
@@ -2138,7 +2201,7 @@ Public Class Form_Main
             Me.ErrorLogger = New HCErrorLogger
             Me.FileLogger = Me.ErrorLogger.AddFile(Node.FullPath)
             Process()
-            ReportErrors()
+            ReportErrors(Me.ErrorLogger)
         Else
             MsgBox("This is a category header, not an individual part.  It cannot be added to an assembly", vbOKOnly, "Category header")
         End If
@@ -2412,7 +2475,7 @@ Public Class Form_Main
         Me.ErrorLogger = New HCErrorLogger
         Me.FileLogger = Me.ErrorLogger.AddFile(PropertySearchFilename)
         Process(PropertySearchFilename:=PropertySearchFilename)
-        ReportErrors()
+        ReportErrors(Me.ErrorLogger)
     End Sub
 
     Private Sub ButtonHelp_Click(sender As Object, e As EventArgs) Handles ButtonHelp.Click
@@ -2512,7 +2575,7 @@ Public Class Form_Main
                 AddedCount += 1
             Next
 
-            ReportErrors()
+            ReportErrors(Me.ErrorLogger)
 
             ButtonClose.Text = "Close"
             ButtonClose.BackColor = Color.White
@@ -2548,7 +2611,7 @@ Public Class Form_Main
             Me.ErrorLogger = New HCErrorLogger
             Me.FileLogger = Me.ErrorLogger.AddFile(Node.FullPath)
             Process(Replace:=True)
-            ReportErrors()
+            ReportErrors(Me.ErrorLogger)
         Else
             MsgBox("This is a category header, not an individual part.  It cannot be added to an assembly", vbOKOnly, "Category header")
         End If
@@ -2566,7 +2629,7 @@ Public Class Form_Main
             Me.ErrorLogger = New HCErrorLogger
             Me.FileLogger = Me.ErrorLogger.AddFile(Node.FullPath)
             Process(Replace:=True, ReplaceAll:=True)
-            ReportErrors()
+            ReportErrors(Me.ErrorLogger)
         Else
             MsgBox("This is a category header, not an individual part.  It cannot be added to an assembly", vbOKOnly, "Category header")
         End If
@@ -2580,13 +2643,13 @@ Public Class Form_Main
 
         Dim Node = TreeView1.SelectedNode
 
-        Me.ErrorLogger = New HCErrorLogger
-        Me.FileLogger = Me.ErrorLogger.AddFile(Node.FullPath)
+        'Me.ErrorLogger = New HCErrorLogger
+        'Me.FileLogger = Me.ErrorLogger.AddFile(Node.FullPath)
 
-        Dim Filename = GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(GetTemplateNameFormula()))
+        'Dim Filename = GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(GetTemplateNameFormula()))
         Dim FFS As New FormFastenerStack(Me)
         'AddHandler FFS.ButtonSelectStyle.Click, AddressOf EventTest
-        FFS.FastenerFilename = Filename
+        'FFS.FastenerFilename = Filename
         FFS.ShowDialog()
 
         'Dim InDevelopment As Boolean = False

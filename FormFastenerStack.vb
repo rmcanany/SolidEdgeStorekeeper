@@ -1,6 +1,5 @@
 ﻿Option Strict On
 Imports System.Xml
-'Imports SolidEdgeAssembly
 
 Public Class FormFastenerStack
 
@@ -56,26 +55,6 @@ Public Class FormFastenerStack
             If Me.TableLayoutPanel1 IsNot Nothing Then
                 Me.LabelTopFastener.Text = IO.Path.GetFileName(_FastenerFilename)
 
-                Dim UP As New UtilsPreferences
-
-                Dim Proceed As Boolean = UP.CreateSearchPathFiles()
-
-                If Not Proceed Then
-                    MsgBox("FFS.Load: Could not create Xml search path files")
-                Else
-                    Dim DataVersion As String = Nothing
-                    If FMain.DataDirectory.Contains("SE2019") Then
-                        DataVersion = "SE2019"
-                    ElseIf FMain.DataDirectory.Contains("SE2024") Then
-                        DataVersion = "SE2024"
-                    Else
-                        MsgBox($"FFS.Load: Unrecognzied data directory '{FMain.DataDirectory}'")
-                    End If
-
-                    Me.FlatWasherSearchPaths = UP.GetFlatWasherSearchPath(DataVersion)
-                    Me.LockWasherSearchPaths = UP.GetLockWasherSearchPath(DataVersion)
-                    Me.NutSearchPaths = UP.GetNutSearchPath(DataVersion)
-                End If
                 GetRelatedFilenames()
             End If
         End Set
@@ -250,6 +229,8 @@ Public Class FormFastenerStack
     ' SE2019 ..\..\..\..\ISO_NUTS_-_Steel\ISO_4032_-_Hexagon_regular_nuts, ..\..\..\ISO_NUTS_-_Steel\ISO_8673_-_Hexagon_regular_nuts_-_fine_pitch
     Public Property NutSearchPaths As List(Of String)
 
+    Private Property ErrorLogger As HCErrorLogger
+    Private Property FileLogger As Logger
 
     Private Property AssembleCommandComplete As Boolean
 
@@ -300,16 +281,32 @@ Public Class FormFastenerStack
     Public Sub Process()
         Dim Proceed As Boolean = True
 
-        If Not GenerateNeededFiles() Then Proceed = False
+        'If FMain.SEApp Is Nothing Then
+        '    Proceed = False
+        '    Me.FileLogger.AddMessage("Solid Edge not running")
+        'End If
 
-        If Proceed And Not CheckStartConditions() Then Proceed = False
+        'If Proceed And FMain.AsmDoc Is Nothing Then
+        '    Proceed = False
+        '    Me.FileLogger.AddMessage("Assembly file not active")
+        'End If
 
-        FMain.SEApp.DisplayAlerts = False
+        If Proceed AndAlso Not CheckStartConditions() Then
+            Proceed = False
+            'Me.FileLogger.AddMessage("Some start conditions not met")
+        End If
 
-        Dim StackAssyFilenames As List(Of String) = Nothing
-        Dim NumAddedItems As Dictionary(Of String, Integer) = Nothing
+        If Proceed AndAlso Not GenerateNeededFiles() Then
+            Proceed = False
+            'Me.FileLogger.AddMessage("Could not generate all needed files")
+        End If
 
         If Proceed Then
+            FMain.SEApp.DisplayAlerts = False
+
+            Dim StackAssyFilenames As List(Of String) = Nothing
+            Dim NumAddedItems As Dictionary(Of String, Integer) = Nothing
+
             StackAssyFilenames = PrepStackAssemblies()
             If StackAssyFilenames.Count = 1 Then
                 Me.TopFilename = StackAssyFilenames(0)
@@ -319,24 +316,32 @@ Public Class FormFastenerStack
                 Me.BottomFilename = StackAssyFilenames(1)
             Else
                 Proceed = False
+                Me.FileLogger.AddMessage("Problem getting temporary assembly filenames")
             End If
         End If
 
-        Dim InitialNumOccurrences As Integer = FMain.AsmDoc.Occurrences.Count
+        Dim InitialNumOccurrences As Integer = 0
+
+        If Proceed Then
+            InitialNumOccurrences = FMain.AsmDoc.Occurrences.Count
+        End If
 
         If Proceed Then
             Proceed = AddStackElementAndDisperse(Me.TopFilename)
+            If Not Proceed Then Me.FileLogger.AddMessage("Problem adding or dispersing top fastener stack")
         End If
 
         If Proceed And Not Me.BottomFilename = "" Then
             Proceed = AddStackElementAndDisperse(Me.BottomFilename)
+            If Not Proceed Then Me.FileLogger.AddMessage("Problem adding or dispersing bottom fastener stack")
         End If
 
         If Proceed Then
             Proceed = CreateFastenerStackGroup(InitialNumOccurrences)
+            If Not Proceed Then Me.FileLogger.AddMessage("Problem creating assembly group")
         End If
 
-        FMain.SEApp.DisplayAlerts = True
+        If FMain.SEApp IsNot Nothing Then FMain.SEApp.DisplayAlerts = True
 
         Me.TopMost = True
 
@@ -345,39 +350,54 @@ Public Class FormFastenerStack
     Private Function CheckStartConditions() As Boolean
 
         Dim Success As Boolean = True
-        Dim ErrorMessages As New List(Of String)
+        'Dim ErrorMessages As New List(Of String)
 
-        If Not IO.File.Exists(Me.FastenerFilename) Then ErrorMessages.Add($"Fastener not found: '{Me.FastenerFilename}'")
+        'If Not IO.File.Exists(Me.FastenerFilename) Then
+        '    Success = False
+        '    Me.FileLogger.AddMessage($"Fastener not found: '{Me.FastenerFilename}'")
+        'End If
 
         If Not (Me.Units = "in" Or Me.Units = "mm") Then
-            ErrorMessages.Add("Units not set to 'in' or 'mm'")
+            Success = False
+            Me.FileLogger.AddMessage("Units not set to 'in' or 'mm'")
         End If
 
         Try
             Dim V = CDbl(Me.ClampedThickness)
         Catch ex As Exception
-            ErrorMessages.Add($"Could not resolve clamped thickness: '{Me.ClampedThickness}'")
+            Success = False
+            Me.FileLogger.AddMessage($"Could not resolve clamped thickness: '{Me.ClampedThickness}'")
         End Try
 
         Dim ConfigString As String = Me.StackConfiguration.ToString
 
         If ConfigString.Contains("_N") Then
-            If Not IO.File.Exists(Me.NutFilename) Then ErrorMessages.Add($"Nut not found: '{Me.NutFilename}'")
+            If Me.NutFilename.ToLower.Contains("not found") Then
+                Success = False
+                Me.FileLogger.AddMessage(Me.NutFilename)
+            End If
         End If
 
         If ConfigString.Contains("_FW_") Then
-            If Not IO.File.Exists(Me.FlatWasherFilename) Then ErrorMessages.Add($"Flat washer not found: '{Me.FlatWasherFilename}'")
+            If Me.FlatWasherFilename.ToLower.Contains("not found") Then
+                Success = False
+                Me.FileLogger.AddMessage(Me.FlatWasherFilename)
+            End If
         End If
 
         If ConfigString.Contains("_LW_") Then
-            If Not IO.File.Exists(Me.LockwasherFilename) Then ErrorMessages.Add($"Lock washer not found: '{Me.LockwasherFilename}'")
+            If Me.LockwasherFilename.ToLower.Contains("not found") Then
+                Success = False
+                Me.FileLogger.AddMessage(Me.LockwasherFilename)
+            End If
         End If
 
         If ConfigString.Contains("_N") Or ConfigString.Contains("_TT") Then
             Try
                 Dim V = CDbl(Me.ExtensionMin)
             Catch ex As Exception
-                ErrorMessages.Add($"Could not resolve minimum extension: '{Me.ExtensionMin}'")
+                Success = False
+                Me.FileLogger.AddMessage($"Could not resolve minimum extension: '{Me.ExtensionMin}'")
             End Try
         End If
 
@@ -385,24 +405,26 @@ Public Class FormFastenerStack
             Try
                 Dim V = CDbl(Me.ThreadEngagementMin)
             Catch ex As Exception
-                ErrorMessages.Add($"Could not resolve minimum thread engagement: '{Me.ThreadEngagementMin}'")
+                Success = False
+                Me.FileLogger.AddMessage($"Could not resolve minimum thread engagement: '{Me.ThreadEngagementMin}'")
             End Try
             Try
                 Dim V = CDbl(Me.ThreadDepth)
             Catch ex As Exception
-                ErrorMessages.Add($"Could not resolve thread depth: '{Me.ThreadDepth}'")
+                Success = False
+                Me.FileLogger.AddMessage($"Could not resolve thread depth: '{Me.ThreadDepth}'")
             End Try
         End If
 
-        If ErrorMessages.Count > 0 Then
-            Success = False
-            Dim msg As String = $"Please resolve the following before proceeding {vbCrLf}{vbCrLf}"
-            Dim Indent As String = "    "
-            For Each s As String In ErrorMessages
-                msg = $"{msg}{Indent}{s}{vbCrLf}"
-            Next
-            MsgBox(msg, vbOKOnly, "Check Start Conditions")
-        End If
+        'If ErrorMessages.Count > 0 Then
+        '    Success = False
+        '    Dim msg As String = $"Please resolve the following before proceeding {vbCrLf}{vbCrLf}"
+        '    Dim Indent As String = "    "
+        '    For Each s As String In ErrorMessages
+        '        msg = $"{msg}{Indent}{s}{vbCrLf}"
+        '    Next
+        '    MsgBox(msg, vbOKOnly, "Check Start Conditions")
+        'End If
 
         Return Success
 
@@ -410,7 +432,7 @@ Public Class FormFastenerStack
 
     Private Function GenerateNeededFiles() As Boolean
 
-        Dim Success As Boolean = True
+        Dim Proceed As Boolean = True
 
         Dim tmpTreeviewFastenerFullPath As String
 
@@ -422,7 +444,7 @@ Public Class FormFastenerStack
         If tmpTreeviewFastenerFullPath IsNot Nothing Then
             Me.TreeviewFastenerFullPath = tmpTreeviewFastenerFullPath
         Else
-            MsgBox("No fastener length satisfies given parameters", vbOKOnly, "Fastener Length Not Found")
+            Me.FileLogger.AddMessage("No fastener length satisfies given parameters")
             LabelStatus.Text = ""
             Return False
         End If
@@ -436,28 +458,28 @@ Public Class FormFastenerStack
         ' Generate the fastener if needed
         LabelStatus.Text = "Generating fastener"
         FMain.SelectedNodeFullPath = Me.TreeviewFastenerFullPath
-        Me.FastenerFilename = FMain.GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(FMain.GetTemplateNameFormula()))
-        FMain.Process()
+        Me.FastenerFilename = FMain.GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(FMain.GetTemplateNameFormula(ErrorLogger:=Me.FileLogger)))
+        Proceed = FMain.Process(ErrorLogger:=Me.FileLogger)
 
         ' Generate the flat washer if needed
-        If ConfigString.Contains("_FW_") Then
+        If Proceed And ConfigString.Contains("_FW_") Then
             LabelStatus.Text = "Generating flat washer"
             FMain.SelectedNodeFullPath = Me.TreeviewFlatWasherFullPath
-            FMain.Process()
+            Proceed = FMain.Process(ErrorLogger:=Me.FileLogger)
         End If
 
         ' Generate the lock washer if needed
-        If ConfigString.Contains("_LW_") Then
+        If Proceed And ConfigString.Contains("_LW_") Then
             LabelStatus.Text = "Generating lock washer"
             FMain.SelectedNodeFullPath = Me.TreeviewLockwasherFullPath
-            FMain.Process()
+            Proceed = FMain.Process(ErrorLogger:=Me.FileLogger)
         End If
 
         ' Generate the nut if needed
-        If ConfigString.Contains("_N") Then
+        If Proceed And ConfigString.Contains("_N") Then
             LabelStatus.Text = "Generating nut"
             FMain.SelectedNodeFullPath = Me.TreeviewNutFullPath
-            FMain.Process()
+            Proceed = FMain.Process(ErrorLogger:=Me.FileLogger)
         End If
 
         ' Reset to original conditions
@@ -466,7 +488,7 @@ Public Class FormFastenerStack
 
         LabelStatus.Text = ""
 
-        Return Success
+        Return Proceed
 
     End Function
 
@@ -1012,7 +1034,7 @@ Public Class FormFastenerStack
         Return LastIdx
     End Function
 
-    Public Sub GetRelatedFilenames()
+    Public Function GetRelatedFilenames() As Boolean
 
         ' Traverses the Xml tree to find a flat washer, lock washer and nut
         ' The SelectedNodeFullPath will be a fastener length node
@@ -1022,14 +1044,8 @@ Public Class FormFastenerStack
         ' Examples for SE2019
         ' Solid_Edge_Storekeeper\ISO_Screws_-_Steel\ISO_4014_-_Hexagon_head_bolts_-_normal_pitch\Size_M5\L_30
 
-        Dim DataVersion As String = Nothing
-        If FMain.DataDirectory.Contains("SE2019") Then
-            DataVersion = "SE2019"
-        ElseIf FMain.DataDirectory.Contains("SE2024") Then
-            DataVersion = "SE2024"
-        Else
-            MsgBox($"FFS.GetRelatedFilenames: DataVersion not recognized '{FMain.DataDirectory}'")
-        End If
+        Dim Proceed As Boolean = True
+        Dim ErrorMessages As New List(Of String)
 
         Dim SelectedNodeFullPath As String = FMain.SelectedNodeFullPath  ' Saving to reset back
 
@@ -1041,7 +1057,7 @@ Public Class FormFastenerStack
         Dim ParentNode As XmlNode
 
 
-        ' ###### Find the fastener size node ######
+        ' ###### FASTENER SIZE NODE ######
 
         Dim FastenerPath As String = ""
         ' The fastener size node will be one level up from the selected length node
@@ -1057,14 +1073,25 @@ Public Class FormFastenerStack
         Dim ThreadDescription As String
         Dim MatchingNode As XmlNode
 
-        ' ###### Find the Fastener NominalDiameter and ThreadDescription ######
+        ' ###### FASTENER NOMINAL DIAMETER AND THREAD DESCRIPTION ######
 
         ParentNode = FMain.XmlNodeFromPath(FastenerPath)
         NominalDiameter = GetNominalDiameter(ParentNode)
+        If NominalDiameter = -1 Then
+            Proceed = False
+            ErrorMessages.Add("Fastener nominal diameter not found")
+        End If
         ThreadDescription = GetThreadDescription(ParentNode)
+        If ThreadDescription = Nothing Then
+            Proceed = False
+            ErrorMessages.Add("Fastener thread description not found")
+        End If
 
 
-        ' ###### Find the FlatWasher filename ######
+        ' ###### FLAT WASHER FILENAME ######
+
+        Me.FlatWasherFilename = "Flat washer not found"
+        Me.TreeviewFlatWasherFullPath = ""
 
         For Each FlatWasherSearchPath As String In Me.FlatWasherSearchPaths
             ' SE2024 ..\..\..\Washer_Flat
@@ -1109,18 +1136,21 @@ Public Class FormFastenerStack
                 FlatWasherFullPath = $"{FlatWasherFullPath}\{MatchingNode.Name}"
                 Me.TreeviewFlatWasherFullPath = FlatWasherFullPath
                 FMain.SelectedNodeFullPath = FlatWasherFullPath
-                FlatWasherFilename = FMain.GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(FMain.GetTemplateNameFormula()))
+                Me.FlatWasherFilename = FMain.GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(FMain.GetTemplateNameFormula(ErrorLogger:=Me.FileLogger)))
                 Exit For
             End If
 
         Next
 
 
-        ' ###### Find the LockWasher filename ######
+        ' ###### LOCKWASHER FILENAME ######
+
+        Me.LockwasherFilename = "Lock washer not found"
+        Me.TreeviewLockwasherFullPath = ""
 
         For Each LockWasherSearchPath As String In Me.LockWasherSearchPaths
             ' SE2024 ..\..\..\Washer_Lock
-            ' SE2019 NA ..\..\..\..\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series
+            ' SE2019 NA 
 
             Dim tmpPathList As List(Of String) = LockWasherSearchPath.Split(CChar("\")).ToList
             Dim LockWasherFullPath As String = ""
@@ -1170,14 +1200,17 @@ Public Class FormFastenerStack
                 LockWasherFullPath = $"{LockWasherFullPath}\{MatchingNode.Name}"
                 Me.TreeviewLockwasherFullPath = LockWasherFullPath
                 FMain.SelectedNodeFullPath = LockWasherFullPath
-                LockwasherFilename = FMain.GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(FMain.GetTemplateNameFormula()))
+                LockwasherFilename = FMain.GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(FMain.GetTemplateNameFormula(ErrorLogger:=Me.FileLogger)))
                 Exit For
             End If
 
         Next
 
 
-        ' ###### Find the Nut filename ######
+        ' ###### NUT FILENAME ######
+
+        Me.NutFilename = "Nut not found"
+        Me.TreeviewNutFullPath = ""
 
         For Each NutSearchPath As String In Me.NutSearchPaths
             ' SE2024 ..\..\..\Washer_Flat
@@ -1222,64 +1255,29 @@ Public Class FormFastenerStack
                 NutFullPath = $"{NutFullPath}\{MatchingNode.Name}"
                 Me.TreeviewNutFullPath = NutFullPath
                 FMain.SelectedNodeFullPath = NutFullPath
-                NutFilename = FMain.GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(FMain.GetTemplateNameFormula()))
+                NutFilename = FMain.GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(FMain.GetTemplateNameFormula(ErrorLogger:=Me.FileLogger)))
                 Exit For
             End If
 
         Next
 
-        'Dim LockwasherFullPath As String = ""
-        'Dim NutFullPath As String = ""
 
-        '' The nut and washer category nodes will be 3 levels up from the fastener length node
-        'For i = 0 To tmpList.Count - 1 - 3
-        '    If i = 0 Then
-        '        FlatWasherFullPath = tmpList(i)
-        '        LockwasherFullPath = tmpList(i)
-        '        NutFullPath = tmpList(i)
-        '    Else
-        '        FlatWasherFullPath = $"{FlatWasherFullPath}\{tmpList(i)}"
-        '        LockwasherFullPath = $"{LockwasherFullPath}\{tmpList(i)}"
-        '        NutFullPath = $"{NutFullPath}\{tmpList(i)}"
-        '    End If
-        'Next
-
-        '' Add category-specific node names
-        'FlatWasherFullPath = $"{FlatWasherFullPath}\Washer_Flat"
-        'LockwasherFullPath = $"{LockwasherFullPath}\Washer_Lock"
-        'NutFullPath = $"{NutFullPath}\Nut_Hex"
-
-        ''' Find the FlatWasher with the same NominalDiameter as the Fastener
-        ''ParentNode = FMain.XmlNodeFromPath(FlatWasherFullPath)
-        ''MatchingNode = GetMatchingNode(ParentNode, NominalDiameter, ThreadDescription:=Nothing)
-        ''FlatWasherThickness = GetThickness(MatchingNode)
-        ''FlatWasherFullPath = $"{FlatWasherFullPath}\{MatchingNode.Name}"
-        ''Me.TreeviewFlatWasherFullPath = FlatWasherFullPath
-        ''FMain.SelectedNodeFullPath = FlatWasherFullPath
-        ''FlatWasherFilename = FMain.GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(FMain.GetTemplateNameFormula()))
-
-        '' Find the Lockwasher with the same NominalDiameter as the Fastener
-        'ParentNode = FMain.XmlNodeFromPath(LockwasherFullPath)
-        'MatchingNode = GetMatchingNode(ParentNode, NominalDiameter, ThreadDescription:=Nothing)
-        'LockWasherThickness = GetThickness(MatchingNode)
-        'LockwasherFullPath = $"{LockwasherFullPath}\{MatchingNode.Name}"
-        'Me.TreeviewLockwasherFullPath = LockwasherFullPath
-        'FMain.SelectedNodeFullPath = LockwasherFullPath
-        'LockwasherFilename = FMain.GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(FMain.GetTemplateNameFormula()))
-
-        '' Find the Nut with the same NominalDiameter and ThreadDescription as the Fastener
-        'ParentNode = FMain.XmlNodeFromPath(NutFullPath)
-        'MatchingNode = GetMatchingNode(ParentNode, NominalDiameter, ThreadDescription)
-        'NutThickness = GetThickness(MatchingNode)
-        'NutFullPath = $"{NutFullPath}\{MatchingNode.Name}"
-        'Me.TreeviewNutFullPath = NutFullPath
-        'FMain.SelectedNodeFullPath = NutFullPath
-        'NutFilename = FMain.GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(FMain.GetTemplateNameFormula()))
+        ' ###### Reset the selected node back to the fastener ######
 
         FMain.SelectedNodeFullPath = SelectedNodeFullPath
 
-        Dim j = 0
-    End Sub
+        If Not Proceed Then
+            Dim s As String = $"Please resolve the following before continuing{vbCrLf}{vbCrLf}"
+            Dim Indent As String = "    "
+            For Each s1 As String In ErrorMessages
+                s = $"{s}{Indent}{s1}{vbCrLf}"
+            Next
+            MsgBox(s, vbOKOnly, "Components not found")
+        End If
+
+        Return Proceed
+
+    End Function
 
     Private Function GetThickness(ParentNode As XmlNode) As Double
         Dim Value As Double = Nothing
@@ -1373,7 +1371,7 @@ Public Class FormFastenerStack
     End Function
 
     Private Function GetNominalDiameter(ParentNode As XmlNode) As Double
-        Dim Value As Double = Nothing
+        Dim Value As Double = -1
 
         If ParentNode.HasChildNodes Then
             For Each ChildNode As XmlNode In ParentNode.ChildNodes
@@ -1797,10 +1795,14 @@ Public Class FormFastenerStack
     End Sub
 
     Private Sub FormFastenerStack_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+        'Me.ErrorLogger = New HCErrorLogger
+
         Dim UP As New UtilsPreferences
-        Dim tmpFastenerFilename As String = Me.FastenerFilename
+
+        'Dim tmpFastenerFilename As String = Me.FastenerFilename
         UP.GetFormFastenerStackSettings(Me)
-        Me.FastenerFilename = tmpFastenerFilename
+        'Me.FastenerFilename = tmpFastenerFilename
 
         If Not (Me.Units = "in" Or Me.Units = "mm") Then
             Me.Units = "in"
@@ -1810,6 +1812,7 @@ Public Class FormFastenerStack
 
         If Not Proceed Then
             MsgBox("FFS.Load: Could not create Xml search path files")
+            Me.Dispose()
         Else
             Dim DataVersion As String = Nothing
             If FMain.DataDirectory.Contains("SE2019") Then
@@ -1818,11 +1821,18 @@ Public Class FormFastenerStack
                 DataVersion = "SE2024"
             Else
                 MsgBox($"FFS.Load: Unrecognzied data directory '{FMain.DataDirectory}'")
+                Me.Dispose()
             End If
 
             Me.FlatWasherSearchPaths = UP.GetFlatWasherSearchPath(DataVersion)
             Me.LockWasherSearchPaths = UP.GetLockWasherSearchPath(DataVersion)
             Me.NutSearchPaths = UP.GetNutSearchPath(DataVersion)
+
+            Dim TemplateFilename As String = FMain.GetTemplateNameFormula(ErrorLogger:=New Logger("Form Load", Nothing))
+            Dim Extension As String = IO.Path.GetExtension(TemplateFilename)
+            Me.FastenerFilename = FMain.GetFilenameFormula(DefaultExtension:=Extension)
+
+            'Me.FileLogger = Me.ErrorLogger.AddFile(Me.FastenerFilename)
         End If
 
     End Sub
@@ -1848,7 +1858,12 @@ Public Class FormFastenerStack
     End Sub
 
     Private Sub ButtonAddToAssy_Click(sender As Object, e As EventArgs) Handles ButtonAddToAssy.Click
+        Me.ErrorLogger = New HCErrorLogger
+        Dim Config As String = Me.StackConfiguration.ToString
+        Dim Filename As String = IO.Path.GetFileName(Me.FastenerFilename)
+        Me.FileLogger = ErrorLogger.AddFile($"Fastener: {Filename}, Config: {Config}")
         Process()
+        FMain.ReportErrors(Me.ErrorLogger)
     End Sub
 
     Public Sub DISEApplicationEvents_AfterCommandRun(ByVal theCommandID As Integer)
@@ -2071,47 +2086,3 @@ Public Class FormFastenerStack
 
 End Class
 
-'Public Class FastenerStack
-
-'    Public Property StackConfiguration As StackConfigurationConstants
-'    Public Property TopFilename As String
-'    Public Property BottomFilename As String
-'    Public Property FastenerFilename As String
-'    Public Property FlatWasherFilename As String
-'    Public Property LockwasherFilename As String
-'    Public Property NutFilename As String
-
-
-'    Public Enum StackConfigurationConstants
-
-'        F Fastener
-'         CO Clamped Object
-'          N Nut
-'         FW Flat Washer
-'         LW Lock Washer
-'         TT Thread Thru
-'         TB Thread Blind
-
-'        F_CO_N
-'        F_CO_FW_N
-'        F_CO_LW_N
-'        F_CO_FW_LW_N
-'        F_FW_CO_N
-'        F_FW_CO_FW_N
-'        F_FW_CO_LW_N
-'        F_FW_CO_FW_LW_N
-'        F_CO_TT
-'        F_FW_CO_TT
-'        F_LW_CO_TT
-'        F_LW_FW_CO_TT
-'        F_CO_TB
-'        F_FW_CO_TB
-'        F_LW_CO_TB
-'        F_LW_FW_CO_TB
-'    End Enum
-
-'    Public Sub New()
-
-'    End Sub
-
-'End Class

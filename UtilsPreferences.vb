@@ -419,14 +419,11 @@ Public Class UtilsPreferences
 
             Dim tf As Boolean
             tf = PropInfo.Module.ToString.ToLower.Contains("storekeeper")
-            tf = tf Or {"Left", "Top", "Width", "Height"}.ToList.Contains(PropInfo.Name)
+            'tf = tf Or {"Left", "Top", "Width", "Height"}.ToList.Contains(PropInfo.Name)
 
             If Not tf Then Continue For
+            If {"FastenerFilename", "FlatWasherFilename", "LockWasherFilename", "NutFilename"}.ToList.Contains(PropInfo.Name) Then Continue For
             If PropType = "form_main" Then Continue For
-
-            'If PropInfo.Name = "Width" Then
-            '    MsgBox($"{PropInfo.GetValue(FFS, Nothing)} {FFS.Width}")
-            'End If
 
             Value = Nothing
 
@@ -435,13 +432,8 @@ Public Class UtilsPreferences
                     Value = CStr(PropInfo.GetValue(FFS, Nothing))
                 Case "stackconfigurationconstants"
                     Value = CStr(CInt(PropInfo.GetValue(FFS, Nothing)))
-                    Dim i = 0
                 Case "list`1"
                     Value = JsonConvert.SerializeObject(PropInfo.GetValue(FFS, Nothing))
-                    'Case "hcpropertiesdata", "logger"
-                    '    ' Nothing to do here.  HCPropertiesData is saved separately.
-                    'Case "hcpropertiescache"
-                    '    ' Nothing to do here.  HCPropertiesCache is saved separately.
                 Case Else
                     'MsgBox(String.Format("PropInfo.PropertyType.Name '{0}' not recognized", PropType))
             End Select
@@ -460,10 +452,6 @@ Public Class UtilsPreferences
                     Case "list`1"
                         Value = JsonConvert.SerializeObject(New List(Of String))
                         MsgBox(String.Format("PropInfo.PropertyType.Name '{0}' detected", PropInfo.PropertyType.Name))
-                        'Case "hcpropertiesdata", "logger"
-                        '    ' Nothing to do here.  HCPropertiesData is saved separately.
-                        'Case "hcpropertiescache"
-                        '    ' Nothing to do here.  HCPropertiesCache is saved separately.
                     Case Else
                         If s = "" Then
                             s = $"In UtilsPreferences.SaveFormMainSettings: PropInfo.PropertyType.Name not recognized{vbCrLf}"

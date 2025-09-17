@@ -95,7 +95,7 @@ Double-click `Storekeeper.exe` to run.  The first time you do, you may get a `Wi
 
 ### Cloning
 
-The data and templates are not in the GitHub repo.  You need to download a Release to get them.  To make them available in your development environment, copy the `DefaultData`, `DefaultTemplates` directories to the locations where your compiled `Storekeeper.exe` is located.
+The data and templates are not in the GitHub repo.  You need to download a Release to get them.  To make them available in your development environment, copy the directories `DefaultDataSE2019`, `DefaultTemplatesSE2019`, `DefaultDataSE2024`, `DefaultTemplatesSE2024` to the locations where your compiled `Storekeeper.exe` is located.
 
 On my machine, the executable resides in two places: `bin\Debug\net8.0-windows\` and `bin\Release\net8.0-windows\`.  I have copies of those directories in both places.
 
