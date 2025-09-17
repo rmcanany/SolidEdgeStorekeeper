@@ -1779,13 +1779,16 @@ Public Class FormFastenerStack
     End Sub
 
     Private Sub ButtonStackConfiguration_Click(sender As Object, e As EventArgs) Handles ButtonStackConfiguration.Click
-        'Me.FMain.TextBoxStatus.Text = ""
+        Me.TopMost = False
+
         Dim FSS As New FormStackConfiguration(Me.FMain)
         Dim Result = FSS.ShowDialog()
 
         If Result = DialogResult.OK Then
             Me.StackConfiguration = CType(FSS.StackConfiguration, StackConfigurationConstants)
         End If
+
+        Me.TopMost = True
     End Sub
 
     Private Sub ButtonClose_Click(sender As Object, e As EventArgs) Handles ButtonClose.Click
