@@ -9,7 +9,7 @@ Public Class Form_Main
     Private Property Version As String = "2025.4"
 
     'Private Property PreviewVersion As String = ""  ' Empty string if not a preview
-    Private Property PreviewVersion As String = "Preview 02"
+    Private Property PreviewVersion As String = "Preview 03"
 
 
     Private _SelectedNodeFullPath As String
@@ -125,6 +125,7 @@ Public Class Form_Main
     Public Property AddToLibraryOnly As Boolean
     Public Property SEApp As SolidEdgeFramework.Application
     Public Property AsmDoc As SolidEdgeAssembly.AssemblyDocument
+    Public Property IncludeDrawing As Boolean
 
 
 
@@ -416,33 +417,42 @@ Public Class Form_Main
                 End If
                 SEDoc.SaveAs(Filename)
                 SEApp.DoIdle()
+
+                ' Copy template drawing if present
+                If Me.IncludeDrawing Then
+                    Dim SubLogger As Logger = ErrorLogger.AddLogger("Copy template drawing")
+                    CopyTemplateDrawing(SEApp, SEDoc, TemplateName, SubLogger)
+                End If
             End If
 
             TextBoxStatus.Text = "Processing variables"
             If Proceed Then
-                Proceed = ProcessVariables(SEApp, SEDoc)
-                If Not Proceed Then
-                    'ErrorMessages.Add("Unable to process variables")
-                    ErrorLogger.AddMessage("Unable to process variables")
-                End If
+                Dim SubLogger As Logger = ErrorLogger.AddLogger("Process variables")
+                Proceed = ProcessVariables(SEApp, SEDoc, SubLogger)
+                'If Not Proceed Then
+                '    'ErrorMessages.Add("Unable to process variables")
+                '    ErrorLogger.AddMessage("Unable to process variables")
+                'End If
             End If
 
             TextBoxStatus.Text = "Processing parameters"
             If Proceed Then
-                Proceed = ProcessParameters(SEApp, SEDoc)
-                If Not Proceed Then
-                    'ErrorMessages.Add("Unable to process parameters")
-                    ErrorLogger.AddMessage("Unable to process parameters")
-                End If
+                Dim SubLogger As Logger = ErrorLogger.AddLogger("Process parameters")
+                Proceed = ProcessParameters(SEApp, SEDoc, SubLogger)
+                'If Not Proceed Then
+                '    'ErrorMessages.Add("Unable to process parameters")
+                '    ErrorLogger.AddMessage("Unable to process parameters")
+                'End If
             End If
 
             TextBoxStatus.Text = "Processing SE properties"
             If Proceed Then
-                Proceed = ProcessSEProperties(SEApp, SEDoc)
-                If Not Proceed Then
-                    'ErrorMessages.Add("Unable to process properties")
-                    ErrorLogger.AddMessage("Unable to process properties")
-                End If
+                Dim SubLogger As Logger = ErrorLogger.AddLogger("Process SE properties")
+                Proceed = ProcessSEProperties(SEApp, SEDoc, SubLogger)
+                'If Not Proceed Then
+                '    'ErrorMessages.Add("Unable to process properties")
+                '    ErrorLogger.AddMessage("Unable to process properties")
+                'End If
             End If
 
             TextBoxStatus.Text = "Saving file"
@@ -454,7 +464,7 @@ Public Class Form_Main
             Else
                 SEDoc.Close()
                 SEApp.DoIdle()
-                If Me.SuspendMRU Then SEApp.ResumeMRU()
+                'If Me.SuspendMRU Then SEApp.ResumeMRU()
             End If
 
             If Me.SuspendMRU Then SEApp.ResumeMRU()
@@ -610,9 +620,80 @@ Public Class Form_Main
 
     End Function
 
+    Private Function CopyTemplateDrawing(
+        SEApp As SolidEdgeFramework.Application,
+        SEDoc As SolidEdgeFramework.SolidEdgeDocument,
+        ModelTemplateName As String,
+        ErrorLogger As Logger
+        ) As Boolean
+
+        Dim Success As Boolean = True
+
+        Dim DraftTemplateName As String = IO.Path.ChangeExtension(ModelTemplateName, "dft")
+        Dim DraftName As String = IO.Path.ChangeExtension(SEDoc.FullName, "dft")
+        Dim DraftDoc As SolidEdgeDraft.DraftDocument
+
+        If Not IO.File.Exists(DraftTemplateName) Then
+            Return True
+        Else
+            If Me.ProcessTemplateInBackground Then
+                DraftDoc = CType(SEApp.Documents.Open(DraftTemplateName, 8), SolidEdgeDraft.DraftDocument)
+            Else
+                DraftDoc = CType(SEApp.Documents.Open(DraftTemplateName), SolidEdgeDraft.DraftDocument)
+            End If
+            SEApp.DoIdle()
+
+            DraftDoc.SaveAs(DraftName)
+            SEApp.DoIdle()
+
+            Dim ModelLinks As SolidEdgeDraft.ModelLinks = DraftDoc.ModelLinks
+
+            If ModelLinks IsNot Nothing Then
+                For Each ModelLink As SolidEdgeDraft.ModelLink In ModelLinks
+                    Dim tmpFilename As String = Nothing
+                    If ModelLink.IsAssemblyFamilyMember Then
+                        tmpFilename = ModelLink.FileName.Split("!"c)(0)
+                    Else
+                        tmpFilename = ModelLink.FileName
+                    End If
+                    If tmpFilename = ModelTemplateName Then
+                        Try
+                            ModelLink.ChangeSource(SEDoc.FullName)
+                            SEApp.DoIdle()
+                        Catch ex As Exception
+                            Success = False
+                            ErrorLogger.AddMessage("Unable to change drawing link")
+                        End Try
+                    End If
+                Next
+            End If
+
+            For Each Sheet As SolidEdgeDraft.Sheet In DraftDoc.Sheets
+                If Sheet.SectionType = SolidEdgeDraft.SheetSectionTypeConstants.igWorkingSection Then
+                    For Each DrawingView As SolidEdgeDraft.DrawingView In Sheet.DrawingViews
+                        Try
+                            DrawingView.Update()
+                            SEApp.DoIdle()
+                        Catch ex As Exception
+                            Success = False
+                            ErrorLogger.AddMessage("Unable to update drawing view")
+                        End Try
+                    Next
+                End If
+            Next
+
+            DraftDoc.Save()
+            SEApp.DoIdle()
+            DraftDoc.Close()
+            SEApp.DoIdle()
+        End If
+
+        Return Success
+    End Function
     Private Function ProcessVariables(
         SEApp As SolidEdgeFramework.Application,
-        SEDoc As SolidEdgeFramework.SolidEdgeDocument
+        SEDoc As SolidEdgeFramework.SolidEdgeDocument,
+        ErrorLogger As Logger
         ) As Boolean
 
         Dim Success As Boolean = True
@@ -631,13 +712,13 @@ Public Class Form_Main
                     VariableDict(Prop.Name).Formula = Prop.Value
                     'VariableDict(Prop.Name).Formula = Prop.Value.Replace(".", ",")
                 Catch ex As Exception
-                    Me.FileLogger.AddMessage($"Cannot process value for '{Prop.Name}': '{Prop.Value}'")
+                    ErrorLogger.AddMessage($"Cannot process value for '{Prop.Name}': '{Prop.Value}'")
                 End Try
                 'If IsNumeric(Prop.Value) Then
                 'Else
                 'End If
             Else
-                Me.FileLogger.AddMessage($"Variable not found: '{Prop.Name}'")
+                ErrorLogger.AddMessage($"Variable not found: '{Prop.Name}'")
             End If
         Next
 
@@ -659,8 +740,10 @@ Public Class Form_Main
 
     Private Function ProcessParameters(
         SEApp As SolidEdgeFramework.Application,
-        SEDoc As SolidEdgeFramework.SolidEdgeDocument
+        SEDoc As SolidEdgeFramework.SolidEdgeDocument,
+        ErrorLogger As Logger
         ) As Boolean
+
         Dim Success As Boolean = True
         Dim UC As New UtilsCommon
 
@@ -710,7 +793,7 @@ Public Class Form_Main
 
         If HasExternalThreads And HasThreadedHoles Then
             'MsgBox("Cannot currently process models with both threaded holes AND external threads", vbOKOnly, "External and Internal threads")
-            Me.FileLogger.AddMessage("Cannot currently process models with both threaded holes AND external threads")
+            ErrorLogger.AddMessage("Cannot currently process models with both threaded holes AND external threads")
             Return False
         End If
 
@@ -735,24 +818,7 @@ Public Class Form_Main
             HoleData.Size = ThreadDescription
 
             If Not Me.DisableFineThreadWarning And HasExternalThreads And ThreadDescription.ToLower.Contains("unf") Then
-                Dim s As String
-                s = $"Currently unable to correctly create external fine threads.{vbCrLf}"
-                s = $"{s}This can cause issues with interference checking.{vbCrLf}"
-                s = $"{s}{vbCrLf}"
-
-                s = $"{s}Fixing it is optional.  To do so, edit the Thread and change{vbCrLf}"
-                s = $"{s}   {ThreadDescription}* to {ThreadDescription}.{vbCrLf}"
-                s = $"{s}in the Parameter section's dropdown box.{vbCrLf}"
-                s = $"{s}Be sure to click Finish.{vbCrLf}"
-                s = $"{s}{vbCrLf}"
-
-                s = $"{s}To continue, come back and dismiss this message.{vbCrLf}"
-                s = $"{s}{vbCrLf}"
-
-                s = $"{s}Disable this warning on the Options dialog.{vbCrLf}"
-
-                'MsgBox(s, vbOKOnly, "External UNF threads")
-                Me.FileLogger.AddMessage("Cannot correctly create external fine threads.  See Readme for details.")
+                ErrorLogger.AddMessage("Cannot correctly create external fine threads.  See Readme for details.")
             End If
         End If
 
@@ -762,7 +828,8 @@ Public Class Form_Main
 
     Private Function ProcessSEProperties(
         SEApp As SolidEdgeFramework.Application,
-        SEDoc As SolidEdgeFramework.SolidEdgeDocument
+        SEDoc As SolidEdgeFramework.SolidEdgeDocument,
+        ErrorLogger As Logger
         ) As Boolean
 
         ' DescriptionProperty Type="SEPropertyName"	%{Custom.Description}
@@ -790,7 +857,10 @@ Public Class Form_Main
                 Dim PropertySetName As String = UC.PropSetFromFormula(SEPropertyNameProp.Value) ' Custom
                 Dim PropertyName As String = UC.PropNameFromFormula(SEPropertyNameProp.Value) ' Description
                 Dim Value = Props.SubstitutePropFormulas(StringFormula.Value) ' shcs_%{Name}_%{Length}.par -> shcs_0.250-20_0.500.par
-                If Value Is Nothing Then Return False
+                If Value Is Nothing Then
+                    Success = False
+                    ErrorLogger.AddMessage($"Unable to process formula {StringFormula.Value}")
+                End If
                 UC.SetPropValue(SEDoc, PropertySetName, PropertyName, ModelLinkIdx:=0, AddProp, Value)
             End If
         Next
@@ -801,15 +871,20 @@ Public Class Form_Main
             If SEPropertyNames.Contains(SEPropertyNameProp) Then
                 Dim PropertySetName As String = UC.PropSetFromFormula(SEPropertyNameProp.Value) ' System
                 Dim PropertyName As String = UC.PropNameFromFormula(SEPropertyNameProp.Value) ' Hardware
-                Dim Value = CBool(BooleanFormula.Value)
-                UC.SetPropValue(SEDoc, PropertySetName, PropertyName, ModelLinkIdx:=0, AddProp, Value)
+                Try
+                    Dim Value = CBool(BooleanFormula.Value)
+                    UC.SetPropValue(SEDoc, PropertySetName, PropertyName, ModelLinkIdx:=0, AddProp, Value)
+                Catch ex As Exception
+                    Success = False
+                    ErrorLogger.AddMessage($"Unable to process formula {BooleanFormula.Value}")
+                End Try
             End If
         Next
 
         For Each MaterialFormula As Prop In MaterialFormulas
             Dim UM As New UtilsMaterials
-            Dim ErrorLogger As New HCErrorLogger
-            Dim FileLogger As Logger = ErrorLogger.AddFile(Me.MaterialTable)
+            'Dim ErrorLogger As New HCErrorLogger
+            Dim SubLogger As Logger = ErrorLogger.AddLogger(Me.MaterialTable)
 
             Dim PropName As String = MaterialFormula.Name.Replace("Formula", "Property") ' MaterialFormula -> MaterialProperty
             Dim SEPropertyNameProp As Prop = Props.GetProp(PropName) ' .Value = %{System.Material}
@@ -818,7 +893,7 @@ Public Class Form_Main
                 Dim PropertyName As String = UC.PropNameFromFormula(SEPropertyNameProp.Value) ' Material
                 Dim Value = MaterialFormula.Value ' STEEL
                 UC.SetPropValue(SEDoc, PropertySetName, PropertyName, ModelLinkIdx:=0, AddProp, Value)
-                UM.UpdateMaterialFromMaterialTable(SEApp, SEDoc, Me.MaterialTable, False, True, False, "", Nothing, False, False, FileLogger)
+                UM.UpdateMaterialFromMaterialTable(SEApp, SEDoc, Me.MaterialTable, False, True, False, "", Nothing, False, False, SubLogger)
             End If
         Next
 
@@ -1521,7 +1596,10 @@ Public Class Form_Main
 
                     'Dim n As Integer = inTreeNode.Nodes.Add(New TreeNode(UnderscoreToSpace(xNode.Name)))
                     Dim tmpName As String = UnderscoreToSpace(xNode.Name.Replace(Me.XmlCommaIndicator, ","))
-                    Dim n As Integer = inTreeNode.Nodes.Add(New TreeNode(tmpName))
+                    Dim tmpTreeNode As TreeNode = New TreeNode(tmpName)
+                    Dim Tooltip As String = ExtractTooltip(xNode.InnerXml)
+                    If Not Tooltip = "" Then tmpTreeNode.ToolTipText = Tooltip
+                    Dim n As Integer = inTreeNode.Nodes.Add(tmpTreeNode)
 
                     tNode = inTreeNode.Nodes(n)
                     AddNode(xNode, tNode, Splash)
@@ -1539,6 +1617,23 @@ Public Class Form_Main
 
         End If
     End Sub
+
+    Private Function ExtractTooltip(InnerXml As String) As String
+        Dim Tooltip As String = ""
+
+        If InnerXml.Contains("TooltipFormula") Then
+            ' <TooltipFormula Type="TooltipFormula">Button head capscrew</TooltipFormula><blah><blah><blah>
+            Dim delimiter As String = "TooltipFormula"
+            Dim result As List(Of String) = InnerXml.Split(New String() {delimiter}, StringSplitOptions.None).ToList
+            If result(0).Count = 1 Then
+                Tooltip = result(2)
+                Tooltip = Tooltip.Split(CChar(">"))(1)
+                Tooltip = Tooltip.Split(CChar("<"))(0)
+            End If
+        End If
+
+        Return Tooltip
+    End Function
 
     Public Function SpaceToUnderscore(InString As String) As String
         Return InString.Replace(" ", "_")

@@ -188,6 +188,19 @@ Public Class FormTreeSearchOptions
         End Set
     End Property
 
+    Private _IncludeDrawing As Boolean
+    Public Property IncludeDrawing As Boolean
+        Get
+            Return _IncludeDrawing
+        End Get
+        Set(value As Boolean)
+            _IncludeDrawing = value
+            If Me.TableLayoutPanel1 IsNot Nothing Then
+                CheckBoxIncludeDrawing.Checked = value
+            End If
+        End Set
+    End Property
+
     Private _CheckNewVersion As Boolean
     Public Property CheckNewVersion As Boolean
         Get
@@ -290,6 +303,7 @@ Public Class FormTreeSearchOptions
         Me.SuspendMRU = FMain.SuspendMRU
         Me.AllowCommaDelimiters = FMain.AllowCommaDelimiters
         Me.AlwaysOnTop = FMain.AlwaysOnTop
+        Me.IncludeDrawing = FMain.IncludeDrawing
         Me.CheckNewVersion = FMain.CheckNewVersion
     End Sub
 
@@ -313,6 +327,7 @@ Public Class FormTreeSearchOptions
         FMain.SuspendMRU = Me.SuspendMRU
         FMain.AllowCommaDelimiters = Me.AllowCommaDelimiters
         FMain.AlwaysOnTop = Me.AlwaysOnTop
+        FMain.IncludeDrawing = Me.IncludeDrawing
         FMain.CheckNewVersion = Me.CheckNewVersion
 
         Me.DialogResult = DialogResult.OK
@@ -374,5 +389,9 @@ Public Class FormTreeSearchOptions
 
     Private Sub CheckBoxAlwaysOnTop_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBoxAlwaysOnTop.CheckedChanged
         Me.AlwaysOnTop = CheckBoxAlwaysOnTop.Checked
+    End Sub
+
+    Private Sub CheckBoxIncludeDrawing_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBoxIncludeDrawing.CheckedChanged
+        Me.IncludeDrawing = CheckBoxIncludeDrawing.Checked
     End Sub
 End Class

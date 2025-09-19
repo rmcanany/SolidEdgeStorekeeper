@@ -40,9 +40,19 @@ Contributed by **@TeeVar.**  Thank you!
 
 Added new templates created with SE2019 for users who don't use SE2024 or later.
 
-Included are ISO screws, nuts, washers, and pins; EN structural steel; and DIN parallel keys.  They were created by an ISO native speaker, unlike me, so should be more familiar and useful to all of those in mm-land.
+Included are ISO screws, nuts, washers, and pins; EN structural steel; and more.  They were created by an ISO native speaker, unlike me, so should be more familiar and useful to those who work with that standard.
 
 See the [<ins>**Setup**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#setup) section of the Readme for details.
+
+### Drawings of Standard Parts
+
+Added support for parts with associated drawings.  (Thank you **@Seva!**)
+
+This can be helpful in cases where users work with simple parts, like a pipe with side holes, but still need a basic drawing send to the shop.
+
+If a file in the templates directory includes a drawing, the drawing is automatically copied when a new part is created.  It is renamed to match the new part and the links are updated accordingly.
+
+See the [<ins>**Creating New Templates**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#creating-new-templates) section of the Readme for details.
 
 ### Property Cache
 

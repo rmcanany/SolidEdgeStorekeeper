@@ -105,7 +105,7 @@ As noted earlier, some setup is required before using the program.  If you run S
 
 ### Tree Search
 
-The program needs to know where to store the standard parts, and for fastener-like items, where to find the files defining their shape and spreadsheet containing their dimensions.  The settings are accessed on the Options dialog.  Click ![Options](media/Support_16.png) on the toolbar to open it.
+The program needs to know where to store the standard parts, and for fastener-like items, where to find the files defining their shape and spreadsheet containing their dimensions.  The settings are accessed on the **Tree Search Options** page.  Click ![Options](media/Support_16.png) on the toolbar to open it.
 
 <p align="center">
   <img src="media/tree_search_options.png">
@@ -119,9 +119,13 @@ The library is where the standard parts you create are stored.  The default is i
 - **TEMPLATE DIRECTORY**  
 The templates are SE part files that have variable-table-driven geometry to create new parts of a given type.  By default they are stored in the `Preferences\TemplatesSE2024` folder.
 
-  As noted at the outset, the original templates were created in SE2024.  They will only work if you're using that version or newer.  An alternative set of templates, created with SE2019, was generously contributed by @TeeVar.  To use them, change the template directory to `Preferences\TemplatesSE2019`.  
+  As noted at the outset, the original templates were created in SE2024.  They will only work if you're using that version or newer.  An alternative set of templates, created with SE2019, was generously contributed by **@TeeVar**.  To use them, change the template directory to `Preferences\TemplatesSE2019`.  
 
-  Even if you have a newer version of Solid Edge, you may still want to use the SE2019 templates.  Unlike me, @TeeVar is an ISO native speaker.  If you're an mm type, his naming conventions may be more familiar and useful to you.
+  Even if you have a newer version of Solid Edge, you may still want to use the SE2019 templates.  Unlike me, **@TeeVar** is an ISO native speaker.  If you work with that standard, his naming conventions will probably be more familiar and useful to you.
+
+  Note, the templates and the spreadsheet that drives them go together.  If you change one, you have to change the other.
+
+  You don't have to stick with your first choice, by the way.  You can switch between the original and alternative templates as needed.
 
 - **DATA DIRECTORY**  
 The spreadsheet contains the variables required for each size of each type of part.  By default, it is stored in the `Preferences\DataSE2024` directory. 
@@ -163,7 +167,7 @@ The material table is usually your normal SE material table.  However, for a qui
   - `Replace part: Allow failed constraint`  
 	With the same situation as above, this option tells the program to leave the constraint in the failed state.
 	
-  - `Do not show processed files in the Most Recently Used list`  
+  - `Do not add files in the Recently Used list`  
 	Enable this option to keep the program from adding newly-generated standard parts to the Most Recently Used list.  Note this function was added to Solid Edge in version 2020.  If you are running an earlier version, this option must be disabled.
 	
   - `Allow comma delimiters (experimental)`  
@@ -172,12 +176,15 @@ The material table is usually your normal SE material table.  However, for a qui
   - `Storekeeper always on top`  
 	Keeps the storekeeper dialog on top of other windows.
 
+  - `Include drawing of part if present`  
+	If a file in the templates directory has an associated drawing, the program can copy it to the library along with the part.  Enable this option to do so.
+
   - `Check for new version at startup`  
 	If you don't need a reminder about new versions, disable the check here.
 
 ### Property Search
 
-Additional settings for **Property Search** are accessed from that tab's toolbar.  Click the options button ![Options](media/Support_16.png) to display the form.
+Additional settings for **Property Search** are accessed from that tab's toolbar.  Click the **Property Search Options** button ![Options](media/Support_16.png) to display the form.
 
 <p align="center">
   <img src="media/property_search_options.png">
@@ -266,6 +273,7 @@ Another thing to think about is the effect of replacing one standard part with a
 
 Variable names are something else to consider.  To minimize confusion in creating and maintaining the companion spreadsheets, see if you can reuse names that have been previously established.  You can check the supplied templates or spreadsheets to see what may apply to your parts.
 
+I don't know where to mention this, so I'll do it here.  Some standard parts require a drawing.  That is supported as an option.  Simply create a drawing with the same name as the template.  If the program finds such a drawing, and the option is enabled, it copies it to the library, renames it and updates the links.  Enable the option `Include drawing of part if present` on the **Tree Search Options** page.
 
 ## CUSTOMIZATION
 

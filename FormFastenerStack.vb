@@ -205,10 +205,8 @@ Public Class FormFastenerStack
         End Set
     End Property
 
-
     Public Property FastenerMinLength As Double
     Public Property FastenerMaxLength As Double
-
     Public Property TreeviewFastenerFullPath As String
     Public Property TreeviewFlatWasherFullPath As String
     Public Property TreeviewLockwasherFullPath As String
@@ -350,7 +348,6 @@ Public Class FormFastenerStack
     Private Function CheckStartConditions() As Boolean
 
         Dim Success As Boolean = True
-        'Dim ErrorMessages As New List(Of String)
 
         'If Not IO.File.Exists(Me.FastenerFilename) Then
         '    Success = False
@@ -415,16 +412,6 @@ Public Class FormFastenerStack
                 Me.FileLogger.AddMessage($"Could not resolve thread depth: '{Me.ThreadDepth}'")
             End Try
         End If
-
-        'If ErrorMessages.Count > 0 Then
-        '    Success = False
-        '    Dim msg As String = $"Please resolve the following before proceeding {vbCrLf}{vbCrLf}"
-        '    Dim Indent As String = "    "
-        '    For Each s As String In ErrorMessages
-        '        msg = $"{msg}{Indent}{s}{vbCrLf}"
-        '    Next
-        '    MsgBox(msg, vbOKOnly, "Check Start Conditions")
-        'End If
 
         Return Success
 
@@ -721,204 +708,202 @@ Public Class FormFastenerStack
         Return Success
     End Function
 
-    Private Function AddStackToAssembly() As Dictionary(Of String, Integer)
+    'Private Function AddStackToAssembly() As Dictionary(Of String, Integer)
 
-        Dim NumAddedItems As New Dictionary(Of String, Integer)
-        NumAddedItems("NumOccurrencesAdded") = 0
-        NumAddedItems("NumTopSubOccurrencesAdded") = 0
-        NumAddedItems("NumBottomSubOccurrencesAdded") = 0
-        NumAddedItems("NumRelations3dAdded") = 0
+    '    Dim NumAddedItems As New Dictionary(Of String, Integer)
+    '    NumAddedItems("NumOccurrencesAdded") = 0
+    '    NumAddedItems("NumTopSubOccurrencesAdded") = 0
+    '    NumAddedItems("NumBottomSubOccurrencesAdded") = 0
+    '    NumAddedItems("NumRelations3dAdded") = 0
 
-        Dim Success As Boolean = True
+    '    Dim Success As Boolean = True
 
-        AddHandler FMain.SEAppEvents.AfterCommandRun, AddressOf FMain.DISEApplicationEvents_AfterCommandRun
-        FMain.SEApp.DoIdle()
-        Me.TopMost = False
-        System.Windows.Forms.Application.DoEvents()
-        FMain.AsmDoc.Activate()
-        FMain.SEApp.DoIdle()
+    '    AddHandler FMain.SEAppEvents.AfterCommandRun, AddressOf FMain.DISEApplicationEvents_AfterCommandRun
+    '    FMain.SEApp.DoIdle()
+    '    Me.TopMost = False
+    '    System.Windows.Forms.Application.DoEvents()
+    '    FMain.AsmDoc.Activate()
+    '    FMain.SEApp.DoIdle()
 
-        Dim Occurrences As SolidEdgeAssembly.Occurrences = FMain.AsmDoc.Occurrences
-        Dim StartingNumOccurrences As Integer = Occurrences.Count
+    '    Dim Occurrences As SolidEdgeAssembly.Occurrences = FMain.AsmDoc.Occurrences
+    '    Dim StartingNumOccurrences As Integer = Occurrences.Count
 
-        Dim Relations3d As SolidEdgeAssembly.Relations3d = FMain.AsmDoc.Relations3d
-        Dim StartingNumRelations3d As Integer = Relations3d.Count
+    '    Dim Relations3d As SolidEdgeAssembly.Relations3d = FMain.AsmDoc.Relations3d
+    '    Dim StartingNumRelations3d As Integer = Relations3d.Count
 
-        Dim NumFilesAdded As Integer = 0
+    '    Dim NumFilesAdded As Integer = 0
 
-        For Each Filename As String In ({Me.TopFilename, Me.BottomFilename})
-            If Filename = "" Then Continue For
+    '    For Each Filename As String In ({Me.TopFilename, Me.BottomFilename})
+    '        If Filename = "" Then Continue For
 
-            Dim IsTop As Boolean = False
-            Dim IsBottom As Boolean = False
+    '        Dim IsTop As Boolean = False
+    '        Dim IsBottom As Boolean = False
 
-            If IO.Path.GetFileName(Filename).Contains("Top") Then IsTop = True
-            If IO.Path.GetFileName(Filename).Contains("Bottom") Then IsBottom = True
+    '        If IO.Path.GetFileName(Filename).Contains("Top") Then IsTop = True
+    '        If IO.Path.GetFileName(Filename).Contains("Bottom") Then IsBottom = True
 
-            If Not (IsTop Or IsBottom) Then
-                MsgBox($"FormFastenerStack.AddStackToAssembly: Filename error '{Filename}'", vbOKOnly, "Filename Error")
-                Return Nothing
-            End If
+    '        If Not (IsTop Or IsBottom) Then
+    '            MsgBox($"FormFastenerStack.AddStackToAssembly: Filename error '{Filename}'", vbOKOnly, "Filename Error")
+    '            Return Nothing
+    '        End If
 
-            Dim PreviousOccurrencesCount As Integer = Occurrences.Count
-            Dim Occurrence As SolidEdgeAssembly.Occurrence = Nothing
-
-
-            While Not FMain.AssemblyPasteComplete
-                Threading.Thread.Sleep(100)
-            End While
-
-            Threading.Thread.Sleep(500)
-
-            If Occurrences.Count > PreviousOccurrencesCount Then
-                Occurrence = CType(Occurrences(Occurrences.Count - 1), SolidEdgeAssembly.Occurrence)
-                If IsTop Then
-                    NumAddedItems("NumTopSubOccurrencesAdded") += Occurrence.SubOccurrences.Count
-                Else
-                    NumAddedItems("NumBottomSubOccurrencesAdded") += Occurrence.SubOccurrences.Count
-                End If
-            End If
-
-        Next
-
-        RemoveHandler FMain.SEAppEvents.AfterCommandRun, AddressOf FMain.DISEApplicationEvents_AfterCommandRun
-
-        NumAddedItems("NumOccurrencesAdded") = Occurrences.Count - StartingNumOccurrences
-        NumAddedItems("NumRelations3dAdded") = Relations3d.Count - StartingNumRelations3d
-
-        Return NumAddedItems
-
-    End Function
-
-    Private Function Disperse(NumAddedItems As Dictionary(Of String, Integer)) As Boolean
-        Dim Success As Boolean = True
-
-        Dim NumOccurrencesAdded = NumAddedItems("NumOccurrencesAdded")
-        Dim NumTopSubOccurrencesAdded = NumAddedItems("NumTopSubOccurrencesAdded")
-        Dim NumBottomSubOccurrencesAdded = NumAddedItems("NumBottomSubOccurrencesAdded")
-        Dim NumRelations3dAdded = NumAddedItems("NumRelations3dAdded")
-
-        ' The stack subassemblies have not been dispersed.  When they are, 
-        ' the assembly relationships will be deleted.  If the first part in the
-        ' subassembly was grounded, it will be grounded in the assembly.
-        ' If not, no new relationships will be added.
-        ' We need to capture the relationships from the subassembly and reapply
-        ' to the dipersed parts in the assembly.
-
-        Dim Relations3d As SolidEdgeAssembly.Relations3d = FMain.AsmDoc.Relations3d
-        'Dim Relations3dList As New List(Of Object)
-        Dim AxialRelation3dNeededInfo As New List(Of Tuple(Of SolidEdgeGeometry.Face, SolidEdgeAssembly.TopologyReference, Boolean))
-        Dim PlanarRelation3dNeededInfo As New List(Of Tuple(Of SolidEdgeGeometry.Face, SolidEdgeAssembly.TopologyReference, Boolean))
-
-        For i = Relations3d.Count - NumRelations3dAdded To Relations3d.Count - 1
-
-            Dim AxialRelation3d As SolidEdgeAssembly.AxialRelation3d = TryCast(Relations3d(i), SolidEdgeAssembly.AxialRelation3d)
-            If AxialRelation3d IsNot Nothing Then
-                AxialRelation3dNeededInfo.Add(ExtractAxialRelation3dInfo(AxialRelation3d))
-            End If
-
-            Dim PlanarRelation3d As SolidEdgeAssembly.PlanarRelation3d = TryCast(Relations3d(i), SolidEdgeAssembly.PlanarRelation3d)
-            If PlanarRelation3d IsNot Nothing Then
-                PlanarRelation3dNeededInfo.Add(ExtractPlanarRelation3dInfo(PlanarRelation3d))
-            End If
-
-        Next
-
-        Dim Occurrences As SolidEdgeAssembly.Occurrences = FMain.AsmDoc.Occurrences
-
-        Dim IdxTopAssy As Integer = Occurrences.Count - 2
-
-        FMain.AsmDoc.DisperseSubassembly(Occurrences(IdxTopAssy), bAllOccurrences:=False)
-        FMain.AsmDoc.DisperseSubassembly(Occurrences(IdxTopAssy), bAllOccurrences:=False) ' Not a typo.  TopAssy occurence was removed.
-
-        Dim IdxTopFirstOccurrence = Occurrences.Count - (NumTopSubOccurrencesAdded + NumBottomSubOccurrencesAdded)
-        Dim IdxBottomFirstOccurrence = Occurrences.Count - NumBottomSubOccurrencesAdded
-
-        Dim Face1Ref As SolidEdgeAssembly.TopologyReference
-        Dim tmpOccurrence As SolidEdgeAssembly.Occurrence = CType(Occurrences(IdxTopFirstOccurrence), SolidEdgeAssembly.Occurrence)
-        Face1Ref = CType(FMain.AsmDoc.CreateReference(tmpOccurrence, AxialRelation3dNeededInfo.Item(0)), SolidEdgeAssembly.TopologyReference)
-
-        Relations3d.AddAxial(Face1Ref, AxialRelation3dNeededInfo.Item(1), NormalsAligned:=True)
-
-        Dim NumFilesAdded = NumTopSubOccurrencesAdded + NumBottomSubOccurrencesAdded
-        Dim NewOccurrenceList As New List(Of SolidEdgeAssembly.Occurrence)
-
-        ' Single files do not need to be added to a group
-        If NumFilesAdded > 1 Then
-            For i = 0 To NumFilesAdded - 1
-                ' Need to add in reverse order
-                NewOccurrenceList.Add(CType(Occurrences(Occurrences.Count - 1 - i), SolidEdgeAssembly.Occurrence))
-            Next
-            Dim NewGroup As SolidEdgeAssembly.AssemblyGroup = FMain.AsmDoc.AssemblyGroups.Add(NumFilesAdded, NewOccurrenceList.ToArray)
-            NewGroup.Name = $"FastenerStack {FMain.AsmDoc.AssemblyGroups.Count}"
-        End If
-
-        Return Success
-    End Function
-
-    Private Function ExtractAxialRelation3dInfo(
-        AxialRelation3d As SolidEdgeAssembly.AxialRelation3d
-        ) As Tuple(Of SolidEdgeGeometry.Face, SolidEdgeAssembly.TopologyReference, Boolean)
-
-        'https://docs.sw.siemens.com/documentation/external/PL20220830878154140/en-US/api/content/SolidEdgeAssembly~Relations3d~AddAxial.html
-        'Public Function AddAxial( _
-        '   ByVal Axis1 As Object, _
-        '   ByVal Axis2 As Object, _
-        '   ByVal NormalsAligned As Boolean _
-        ') As AxialRelation3d
-
-        Dim IsTopoRef1 As Boolean
-        Dim IsTopoRef2 As Boolean
-        Dim Element1 As SolidEdgeAssembly.TopologyReference = CType(AxialRelation3d.GetElement1(IsTopoRef1), SolidEdgeAssembly.TopologyReference)
-        Dim Element2 As SolidEdgeAssembly.TopologyReference = CType(AxialRelation3d.GetElement2(IsTopoRef2), SolidEdgeAssembly.TopologyReference)
-
-        Dim Face1 As SolidEdgeGeometry.Face = TryCast(Element1.Object, SolidEdgeGeometry.Face)
-        Dim Face2 As SolidEdgeGeometry.Face = TryCast(Element2.Object, SolidEdgeGeometry.Face)
-
-        Dim Occurrence2 As SolidEdgeAssembly.Occurrence = AxialRelation3d.Occurrence2
-
-        Dim FaceRef2 As SolidEdgeAssembly.TopologyReference = CType(FMain.AsmDoc.CreateReference(Occurrence2, Face2), SolidEdgeAssembly.TopologyReference)
-
-        Dim OutTuple As Tuple(Of SolidEdgeGeometry.Face, SolidEdgeAssembly.TopologyReference, Boolean) = Nothing
-        OutTuple = Tuple.Create(Face1, FaceRef2, False)
-
-        Return OutTuple
-    End Function
-
-    Private Function ExtractPlanarRelation3dInfo(
-        PlanarRelation3d As SolidEdgeAssembly.PlanarRelation3d
-        ) As Tuple(Of SolidEdgeGeometry.Face, SolidEdgeAssembly.TopologyReference, Boolean)
-
-        'https://docs.sw.siemens.com/documentation/external/PL20220830878154140/en-US/api/content/SolidEdgeAssembly~Relations3d~AddPlanar.html
-        'Public Function AddPlanar( _
-        '   ByVal Plane1 As Object, _
-        '   ByVal Plane2 As Object, _
-        '   ByVal NormalsAligned As Boolean, _
-        '   ByRef ConstrainingPoint1() As Double, _
-        '   ByRef ConstrainingPoint2() As Double _
-        ') As PlanarRelation3d
-        ' For a Mate, NormalsAligned = True (even if that is backwards)
-
-        Dim IsTopoRef1 As Boolean
-        Dim IsTopoRef2 As Boolean
-        Dim Element1 As SolidEdgeAssembly.TopologyReference = CType(PlanarRelation3d.GetElement1(IsTopoRef1), SolidEdgeAssembly.TopologyReference)
-        Dim Element2 As SolidEdgeAssembly.TopologyReference = CType(PlanarRelation3d.GetElement1(IsTopoRef2), SolidEdgeAssembly.TopologyReference)
-
-        Dim Face1 As SolidEdgeGeometry.Face = TryCast(Element1.Object, SolidEdgeGeometry.Face)
-        Dim Face2 As SolidEdgeGeometry.Face = TryCast(Element2.Object, SolidEdgeGeometry.Face)
-
-        Dim Occurrence2 As SolidEdgeAssembly.Occurrence = PlanarRelation3d.Occurrence2
-
-        Dim FaceRef2 As SolidEdgeAssembly.TopologyReference = CType(FMain.AsmDoc.CreateReference(Occurrence2, Face2), SolidEdgeAssembly.TopologyReference)
-
-        Dim OutTuple As Tuple(Of SolidEdgeGeometry.Face, SolidEdgeAssembly.TopologyReference, Boolean) = Nothing
-        OutTuple = Tuple.Create(Face1, FaceRef2, False)
-
-        Return OutTuple
-
-    End Function
+    '        Dim PreviousOccurrencesCount As Integer = Occurrences.Count
+    '        Dim Occurrence As SolidEdgeAssembly.Occurrence = Nothing
 
 
+    '        While Not FMain.AssemblyPasteComplete
+    '            Threading.Thread.Sleep(100)
+    '        End While
+
+    '        Threading.Thread.Sleep(500)
+
+    '        If Occurrences.Count > PreviousOccurrencesCount Then
+    '            Occurrence = CType(Occurrences(Occurrences.Count - 1), SolidEdgeAssembly.Occurrence)
+    '            If IsTop Then
+    '                NumAddedItems("NumTopSubOccurrencesAdded") += Occurrence.SubOccurrences.Count
+    '            Else
+    '                NumAddedItems("NumBottomSubOccurrencesAdded") += Occurrence.SubOccurrences.Count
+    '            End If
+    '        End If
+
+    '    Next
+
+    '    RemoveHandler FMain.SEAppEvents.AfterCommandRun, AddressOf FMain.DISEApplicationEvents_AfterCommandRun
+
+    '    NumAddedItems("NumOccurrencesAdded") = Occurrences.Count - StartingNumOccurrences
+    '    NumAddedItems("NumRelations3dAdded") = Relations3d.Count - StartingNumRelations3d
+
+    '    Return NumAddedItems
+
+    'End Function
+
+    'Private Function Disperse(NumAddedItems As Dictionary(Of String, Integer)) As Boolean
+    '    Dim Success As Boolean = True
+
+    '    Dim NumOccurrencesAdded = NumAddedItems("NumOccurrencesAdded")
+    '    Dim NumTopSubOccurrencesAdded = NumAddedItems("NumTopSubOccurrencesAdded")
+    '    Dim NumBottomSubOccurrencesAdded = NumAddedItems("NumBottomSubOccurrencesAdded")
+    '    Dim NumRelations3dAdded = NumAddedItems("NumRelations3dAdded")
+
+    '    ' The stack subassemblies have not been dispersed.  When they are, 
+    '    ' the assembly relationships will be deleted.  If the first part in the
+    '    ' subassembly was grounded, it will be grounded in the assembly.
+    '    ' If not, no new relationships will be added.
+    '    ' We need to capture the relationships from the subassembly and reapply
+    '    ' to the dipersed parts in the assembly.
+
+    '    Dim Relations3d As SolidEdgeAssembly.Relations3d = FMain.AsmDoc.Relations3d
+    '    'Dim Relations3dList As New List(Of Object)
+    '    Dim AxialRelation3dNeededInfo As New List(Of Tuple(Of SolidEdgeGeometry.Face, SolidEdgeAssembly.TopologyReference, Boolean))
+    '    Dim PlanarRelation3dNeededInfo As New List(Of Tuple(Of SolidEdgeGeometry.Face, SolidEdgeAssembly.TopologyReference, Boolean))
+
+    '    For i = Relations3d.Count - NumRelations3dAdded To Relations3d.Count - 1
+
+    '        Dim AxialRelation3d As SolidEdgeAssembly.AxialRelation3d = TryCast(Relations3d(i), SolidEdgeAssembly.AxialRelation3d)
+    '        If AxialRelation3d IsNot Nothing Then
+    '            AxialRelation3dNeededInfo.Add(ExtractAxialRelation3dInfo(AxialRelation3d))
+    '        End If
+
+    '        Dim PlanarRelation3d As SolidEdgeAssembly.PlanarRelation3d = TryCast(Relations3d(i), SolidEdgeAssembly.PlanarRelation3d)
+    '        If PlanarRelation3d IsNot Nothing Then
+    '            PlanarRelation3dNeededInfo.Add(ExtractPlanarRelation3dInfo(PlanarRelation3d))
+    '        End If
+
+    '    Next
+
+    '    Dim Occurrences As SolidEdgeAssembly.Occurrences = FMain.AsmDoc.Occurrences
+
+    '    Dim IdxTopAssy As Integer = Occurrences.Count - 2
+
+    '    FMain.AsmDoc.DisperseSubassembly(Occurrences(IdxTopAssy), bAllOccurrences:=False)
+    '    FMain.AsmDoc.DisperseSubassembly(Occurrences(IdxTopAssy), bAllOccurrences:=False) ' Not a typo.  TopAssy occurence was removed.
+
+    '    Dim IdxTopFirstOccurrence = Occurrences.Count - (NumTopSubOccurrencesAdded + NumBottomSubOccurrencesAdded)
+    '    Dim IdxBottomFirstOccurrence = Occurrences.Count - NumBottomSubOccurrencesAdded
+
+    '    Dim Face1Ref As SolidEdgeAssembly.TopologyReference
+    '    Dim tmpOccurrence As SolidEdgeAssembly.Occurrence = CType(Occurrences(IdxTopFirstOccurrence), SolidEdgeAssembly.Occurrence)
+    '    Face1Ref = CType(FMain.AsmDoc.CreateReference(tmpOccurrence, AxialRelation3dNeededInfo.Item(0)), SolidEdgeAssembly.TopologyReference)
+
+    '    Relations3d.AddAxial(Face1Ref, AxialRelation3dNeededInfo.Item(1), NormalsAligned:=True)
+
+    '    Dim NumFilesAdded = NumTopSubOccurrencesAdded + NumBottomSubOccurrencesAdded
+    '    Dim NewOccurrenceList As New List(Of SolidEdgeAssembly.Occurrence)
+
+    '    ' Single files do not need to be added to a group
+    '    If NumFilesAdded > 1 Then
+    '        For i = 0 To NumFilesAdded - 1
+    '            ' Need to add in reverse order
+    '            NewOccurrenceList.Add(CType(Occurrences(Occurrences.Count - 1 - i), SolidEdgeAssembly.Occurrence))
+    '        Next
+    '        Dim NewGroup As SolidEdgeAssembly.AssemblyGroup = FMain.AsmDoc.AssemblyGroups.Add(NumFilesAdded, NewOccurrenceList.ToArray)
+    '        NewGroup.Name = $"FastenerStack {FMain.AsmDoc.AssemblyGroups.Count}"
+    '    End If
+
+    '    Return Success
+    'End Function
+
+    'Private Function ExtractAxialRelation3dInfo(
+    '    AxialRelation3d As SolidEdgeAssembly.AxialRelation3d
+    '    ) As Tuple(Of SolidEdgeGeometry.Face, SolidEdgeAssembly.TopologyReference, Boolean)
+
+    '    'https://docs.sw.siemens.com/documentation/external/PL20220830878154140/en-US/api/content/SolidEdgeAssembly~Relations3d~AddAxial.html
+    '    'Public Function AddAxial( _
+    '    '   ByVal Axis1 As Object, _
+    '    '   ByVal Axis2 As Object, _
+    '    '   ByVal NormalsAligned As Boolean _
+    '    ') As AxialRelation3d
+
+    '    Dim IsTopoRef1 As Boolean
+    '    Dim IsTopoRef2 As Boolean
+    '    Dim Element1 As SolidEdgeAssembly.TopologyReference = CType(AxialRelation3d.GetElement1(IsTopoRef1), SolidEdgeAssembly.TopologyReference)
+    '    Dim Element2 As SolidEdgeAssembly.TopologyReference = CType(AxialRelation3d.GetElement2(IsTopoRef2), SolidEdgeAssembly.TopologyReference)
+
+    '    Dim Face1 As SolidEdgeGeometry.Face = TryCast(Element1.Object, SolidEdgeGeometry.Face)
+    '    Dim Face2 As SolidEdgeGeometry.Face = TryCast(Element2.Object, SolidEdgeGeometry.Face)
+
+    '    Dim Occurrence2 As SolidEdgeAssembly.Occurrence = AxialRelation3d.Occurrence2
+
+    '    Dim FaceRef2 As SolidEdgeAssembly.TopologyReference = CType(FMain.AsmDoc.CreateReference(Occurrence2, Face2), SolidEdgeAssembly.TopologyReference)
+
+    '    Dim OutTuple As Tuple(Of SolidEdgeGeometry.Face, SolidEdgeAssembly.TopologyReference, Boolean) = Nothing
+    '    OutTuple = Tuple.Create(Face1, FaceRef2, False)
+
+    '    Return OutTuple
+    'End Function
+
+    'Private Function ExtractPlanarRelation3dInfo(
+    '    PlanarRelation3d As SolidEdgeAssembly.PlanarRelation3d
+    '    ) As Tuple(Of SolidEdgeGeometry.Face, SolidEdgeAssembly.TopologyReference, Boolean)
+
+    '    'https://docs.sw.siemens.com/documentation/external/PL20220830878154140/en-US/api/content/SolidEdgeAssembly~Relations3d~AddPlanar.html
+    '    'Public Function AddPlanar( _
+    '    '   ByVal Plane1 As Object, _
+    '    '   ByVal Plane2 As Object, _
+    '    '   ByVal NormalsAligned As Boolean, _
+    '    '   ByRef ConstrainingPoint1() As Double, _
+    '    '   ByRef ConstrainingPoint2() As Double _
+    '    ') As PlanarRelation3d
+    '    ' For a Mate, NormalsAligned = True (even if that is backwards)
+
+    '    Dim IsTopoRef1 As Boolean
+    '    Dim IsTopoRef2 As Boolean
+    '    Dim Element1 As SolidEdgeAssembly.TopologyReference = CType(PlanarRelation3d.GetElement1(IsTopoRef1), SolidEdgeAssembly.TopologyReference)
+    '    Dim Element2 As SolidEdgeAssembly.TopologyReference = CType(PlanarRelation3d.GetElement1(IsTopoRef2), SolidEdgeAssembly.TopologyReference)
+
+    '    Dim Face1 As SolidEdgeGeometry.Face = TryCast(Element1.Object, SolidEdgeGeometry.Face)
+    '    Dim Face2 As SolidEdgeGeometry.Face = TryCast(Element2.Object, SolidEdgeGeometry.Face)
+
+    '    Dim Occurrence2 As SolidEdgeAssembly.Occurrence = PlanarRelation3d.Occurrence2
+
+    '    Dim FaceRef2 As SolidEdgeAssembly.TopologyReference = CType(FMain.AsmDoc.CreateReference(Occurrence2, Face2), SolidEdgeAssembly.TopologyReference)
+
+    '    Dim OutTuple As Tuple(Of SolidEdgeGeometry.Face, SolidEdgeAssembly.TopologyReference, Boolean) = Nothing
+    '    OutTuple = Tuple.Create(Face1, FaceRef2, False)
+
+    '    Return OutTuple
+
+    'End Function
 
     Private Function GetTopAssyTemplateName() As String
 
@@ -1133,6 +1118,10 @@ Public Class FormFastenerStack
 
             If MatchingNode IsNot Nothing Then
                 FlatWasherThickness = GetThickness(MatchingNode)
+                If FlatWasherThickness = -1 Then
+                    Proceed = False
+                    ErrorMessages.Add("Flat washer thickness variable not found")
+                End If
                 FlatWasherFullPath = $"{FlatWasherFullPath}\{MatchingNode.Name}"
                 Me.TreeviewFlatWasherFullPath = FlatWasherFullPath
                 FMain.SelectedNodeFullPath = FlatWasherFullPath
@@ -1197,6 +1186,10 @@ Public Class FormFastenerStack
 
             If MatchingNode IsNot Nothing Then
                 LockWasherThickness = GetThickness(MatchingNode)
+                If LockWasherThickness = -1 Then
+                    Proceed = False
+                    ErrorMessages.Add("Lock washer thickness variable not found")
+                End If
                 LockWasherFullPath = $"{LockWasherFullPath}\{MatchingNode.Name}"
                 Me.TreeviewLockwasherFullPath = LockWasherFullPath
                 FMain.SelectedNodeFullPath = LockWasherFullPath
@@ -1252,6 +1245,10 @@ Public Class FormFastenerStack
 
             If MatchingNode IsNot Nothing Then
                 NutThickness = GetThickness(MatchingNode)
+                If NutThickness = -1 Then
+                    Proceed = False
+                    ErrorMessages.Add("Nut thickness variable not found")
+                End If
                 NutFullPath = $"{NutFullPath}\{MatchingNode.Name}"
                 Me.TreeviewNutFullPath = NutFullPath
                 FMain.SelectedNodeFullPath = NutFullPath
@@ -1280,7 +1277,7 @@ Public Class FormFastenerStack
     End Function
 
     Private Function GetThickness(ParentNode As XmlNode) As Double
-        Dim Value As Double = Nothing
+        Dim Value As Double = -1
 
         If ParentNode.HasChildNodes Then
             For Each ChildNode As XmlNode In ParentNode.ChildNodes
