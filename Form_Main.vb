@@ -1588,7 +1588,7 @@ Public Class Form_Main
         TreeView1.Nodes.Add(New TreeNode(XmlDoc.DocumentElement.Name.Replace(Me.XmlCommaIndicator, ",")))
 
         Dim tNode As TreeNode = TreeView1.Nodes(0)
-        AddNode(xmlnode, tNode, Splash)
+        AddNode(xmlnode, tNode, Splash, 1)
 
         TreeView1.Nodes(0).Expand()
 
@@ -1596,12 +1596,12 @@ Public Class Form_Main
 
     End Sub
 
-    Private Sub AddNode(ByVal inXmlNode As Xml.XmlNode, ByVal inTreeNode As TreeNode, Splash As FormSplash)
+    Private Sub AddNode(ByVal inXmlNode As Xml.XmlNode, ByVal inTreeNode As TreeNode, Splash As FormSplash, NodeMultiplier As Integer)
         Dim xNode As Xml.XmlNode
         Dim tNode As TreeNode
         Dim childNodes As Xml.XmlNodeList
 
-        NodeCount += 1
+        NodeCount += NodeMultiplier
 
         Dim StatusMessage As String = inTreeNode.Text
         Dim ParentNode As TreeNode = inTreeNode.Parent
@@ -1616,6 +1616,9 @@ Public Class Form_Main
 
             For i As Integer = 0 To childNodes.Count - 1
                 xNode = childNodes(i)
+                If xNode.Name = "MaterialFormula" Then
+                    NodeMultiplier = xNode.InnerText.Split(CChar(",")).Count
+                End If
                 If IsTreenode(xNode) Then
                     Splash.UpdateStatus(StatusMessage)
 
@@ -1627,7 +1630,7 @@ Public Class Form_Main
                     Dim n As Integer = inTreeNode.Nodes.Add(tmpTreeNode)
 
                     tNode = inTreeNode.Nodes(n)
-                    AddNode(xNode, tNode, Splash)
+                    AddNode(xNode, tNode, Splash, NodeMultiplier)
                 End If
             Next
 
