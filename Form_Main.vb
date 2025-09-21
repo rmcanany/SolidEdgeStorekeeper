@@ -175,12 +175,11 @@ Public Class Form_Main
         End Get
         Set(value As String)
             _CurrentMaterial = value
-            If Me.XmlDoc IsNot Nothing Then
+            If Me.LabelCurrentMaterial IsNot Nothing Then
                 If Not LabelCurrentMaterial.Text = _CurrentMaterial Then LabelCurrentMaterial.Text = _CurrentMaterial
             End If
         End Set
     End Property
-
 
 
     Private Property Props As Props
@@ -188,8 +187,6 @@ Public Class Form_Main
     Public Property AssemblyPasteComplete As Boolean
     Private Property NodeCount As Integer
     Private Property ErrorLogger As HCErrorLogger
-
-
 
 
     ' https://community.sw.siemens.com/s/question/0D5Vb00000Krsy5KAB/handling-events-how-to-use-help-example
@@ -236,6 +233,7 @@ Public Class Form_Main
             Me.CheckNewVersion = True
             Me.SaveInLibrary = True
             Me.ProcessTemplateInBackground = False
+            Me.CurrentMaterial = "NA"
         End If
 
         UP.CreatePreferencesDirectory(Me)
@@ -294,8 +292,6 @@ Public Class Form_Main
         If Not IO.File.Exists(Me.MaterialTable) Then
             MsgBox($"Specify a material table before continuing.{vbCrLf}It is set on the Tree Search Options page.")
         End If
-
-        Me.CurrentMaterial = "NA"
 
     End Sub
 

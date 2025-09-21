@@ -312,14 +312,18 @@ Public Class UtilsPreferences
         CurrentYear = CInt(CurrentVersionList(0))
         CurrentIdx = CInt(CurrentVersionList(1))
 
-        ' https://stackoverflow.com/questions/70185058/how-to-replace-obsolete-webclient-with-httpclient-in-net-6
-        Dim HttpClient As New HttpClient
-        HttpClient.DefaultRequestHeaders.Add("User-Agent", {"Other"}.ToList)
-        Dim Request = New HttpRequestMessage(HttpMethod.Get, "https://api.github.com/repos/rmcanany/solidedgestorekeeper/releases/latest")
-        Dim Response = HttpClient.Send(Request)
-        Dim Reader = New IO.StreamReader(Response.Content.ReadAsStream())
-        s = Reader.ReadToEnd
-        Reader.Close()
+        Try
+            ' https://stackoverflow.com/questions/70185058/how-to-replace-obsolete-webclient-with-httpclient-in-net-6
+            Dim HttpClient As New HttpClient
+            HttpClient.DefaultRequestHeaders.Add("User-Agent", {"Other"}.ToList)
+            Dim Request = New HttpRequestMessage(HttpMethod.Get, "https://api.github.com/repos/rmcanany/solidedgestorekeeper/releases/latest")
+            Dim Response = HttpClient.Send(Request)
+            Dim Reader = New IO.StreamReader(Response.Content.ReadAsStream())
+            s = Reader.ReadToEnd
+            Reader.Close()
+        Catch ex As Exception
+            Exit Sub
+        End Try
 
         NewList = s.Split(CChar(",")).ToList
 

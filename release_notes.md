@@ -30,8 +30,6 @@ The stack styles are pre-configured.  There are eight versions that employ nuts,
 
 The program automatically finds the correct length fastener, creates temporary subassemblies of the top and bottom components, and adds and disperses them in turn to the main assembly.  Once you position the parts, they are added to an `Assembly Group` and patterned if applicable.
 
-
-
 See the [<ins>**Fastener Stack**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#fastener-stack) section of the Readme for details.
 
 ### Alternate Data and Templates
@@ -40,19 +38,33 @@ Contributed by **@TeeVar.**  Thank you!
 
 Added new templates created with SE2019 for users who don't use SE2024 or later.
 
-Included are ISO screws, nuts, washers, and pins; EN structural steel; and more.  They were created by an ISO native speaker, unlike me, so should be more familiar and useful to those who work with that standard.
+Included are ISO screws, nuts, washers, etc., EN structural steel, and more.  Even if you have a newer version of SE, you may still want to use them.  **@TeeVar** is an ISO native speaker.  His contribution should be more familiar and useful to those who work with that standard.
 
-See the [<ins>**Setup**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#setup) section of the Readme for details.
+See the [<ins>**Tree Search Options**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#tree-search-options) section of the Readme for details.
 
 ### Drawings of Standard Parts
 
 Added support for parts with associated drawings.  (Thank you **@Seva!**)
 
-This can be helpful in cases where users work with simple parts, like a pipe with side holes, but still need a basic drawing send to the shop.
+This can be helpful in cases where users work with simple parts, like a pipe with side holes, but still need a basic drawing to send to the shop.
 
 If a file in the templates directory includes a drawing, the drawing is automatically copied when a new part is created.  It is renamed to match the new part and the links are updated accordingly.
 
 See the [<ins>**Creating New Templates**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#creating-new-templates) section of the Readme for details.
+
+### Material Selection
+
+Concept by **@TeeVar.**  Thank you!
+
+Added the option to have multiple materials available in a single category.  This can dramatically reduce the size of the tree, which eliminates tedious scrolling for the user.
+
+<p align="center">
+  <img src="media/select_material.png">
+</p>
+
+To set the material, simply click on an item in the tree.  If multiple materials are available, it will prompt you to select one.  The setting persists until you reset it.  To do so, click the active material name on the toolbar.
+
+See the [<ins>**Creating New Templates**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#tree-search) section of the Readme for details.
 
 ### Property Cache
 
@@ -60,7 +72,7 @@ Added an option to store property values of files in the library.  Set it on the
 
 ### Other
 
-- Added the ability to set standard parts name and location interactively (Thank you **@TeeVar!**).  Previously that option was set in the spreadsheet.
+- Added the ability to set standard parts name and location interactively (Thank you **@TeeVar!**).  On the toolbar, set the `Save in` option to `Other` to enable it.  Previously that option was set in the spreadsheet.
 
 - Added the ability to use subdirectories in file names (Thank you again **@TeeVar!**).  The file names are specified in the spreadsheet.  To include subdirectories, simply preceed the file name with the directory names, eg. `Fasteners\BHCS\bhcs_%{Name}_%{Length}.par`.
 

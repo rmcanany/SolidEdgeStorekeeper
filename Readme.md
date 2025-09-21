@@ -14,7 +14,7 @@
 @hawcad, @rob.wolbrink7456, @[Francesco Arfilli], @pedja, @TeeVar, @Seva
 
 **Helpful feedback and bug reports**  
-@SeanCresswell, @[Francesco Arfilli], @arekkul, @[Imre Szucs], @64Pacific, @Seva, @hawcad, @rob.wolbrink7456, @pedja, @TeeVar
+@SeanCresswell, @[Francesco Arfilli], @arekkul, @[Imre Szucs], @64Pacific, @Seva, @hawcad, @rob.wolbrink7456, @pedja, @TeeVar, @jpoat-seesai
 
 *Feedback from users*
 
@@ -42,7 +42,7 @@ The program handles two types of standard parts.  One consists of items like fas
   <img src="media/tree_search.png">
 </p>
 
-For items like fasteners, use **Tree Search**.  Navigate to the desired item, right-click and choose an action. If the part is not already in the library, the program creates it and saves it in the library.  The possible actions are:
+For items like fasteners, use **Tree Search**.  Navigate to the desired item, right-click and choose an action. If the part is not already in the library, the program creates and saves it.  (Unless the toolbar `Save in` option is set to `Other`, in which case it prompts for a name and location.)  The possible actions are:
 
 - `Add to assembly`  Adds the part to the assembly and activates the `Place part` command.
 - `Replace selected`  Replaces a selected part in the assembly.
