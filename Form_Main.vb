@@ -3,6 +3,7 @@
 Imports System.Text.RegularExpressions
 Imports System.Xml
 Imports Microsoft.WindowsAPICodePack.Dialogs
+Imports SolidEdgeConstants
 
 Public Class Form_Main
 
@@ -21,6 +22,46 @@ Public Class Form_Main
             _SelectedNodeFullPath = value
             If Me.XmlDoc IsNot Nothing Then
                 UpdatePropertyTab()
+
+                ' Deal with possible multiple entries in MaterialFormula
+
+                '%{MaterialFormula}:STEEL
+                '%{MaterialFormula}:STAINLESS, NYLON, TITANIUM, Wood\, Walnut
+
+                Dim MaterialFormulas As List(Of Prop) = Props.GetPropsOfType("SEPropertyFormulaMaterial")
+
+                If MaterialFormulas.Count > 0 Then
+
+                    Dim MaterialName = MaterialFormulas(0).Value
+
+                    If Not Me.CurrentMaterial = "NA" Then
+                        MaterialName = Me.CurrentMaterial
+                    Else
+                        ' Temporarily replace escaped commas for splitting
+                        MaterialName = MaterialName.Replace("\,", "LITERALCOMMA")
+                        Dim tmpList As List(Of String) = MaterialName.Split(CChar(",")).ToList
+
+                        ' Restore escaped commas
+                        For i = 0 To tmpList.Count - 1
+                            tmpList(i) = tmpList(i).Replace("LITERALCOMMA", ",").Trim
+                        Next
+
+                        ' If only one material found, use it.  Otherwise prompt.
+                        If tmpList.Count = 1 Then
+                            MaterialName = tmpList(0)
+                        Else
+                            Dim FSM As New FormSelectMaterial(tmpList)
+                            Dim Result = FSM.ShowDialog()
+                            If Result = DialogResult.OK Then
+                                MaterialName = FSM.SelectedMaterial
+                                Me.CurrentMaterial = MaterialName
+                            End If
+                        End If
+                    End If
+
+                    MaterialFormulas(0).Value = MaterialName
+
+                End If
             End If
         End Set
     End Property
@@ -118,7 +159,7 @@ Public Class Form_Main
     Public Property FailedConstraintSuppress As Boolean
     Public Property FailedConstraintAllow As Boolean = True
     Public Property SuspendMRU As Boolean = False
-    Public Property AllowCommaDelimiters As Boolean = False
+    'Public Property AllowCommaDelimiters As Boolean = False
     Public Property XmlCommaIndicator As String = "...."
     Public Property CacheProperties As Boolean
     Public Property XmlDoc As System.Xml.XmlDocument
@@ -126,6 +167,19 @@ Public Class Form_Main
     Public Property SEApp As SolidEdgeFramework.Application
     Public Property AsmDoc As SolidEdgeAssembly.AssemblyDocument
     Public Property IncludeDrawing As Boolean
+
+    Private _CurrentMaterial As String
+    Public Property CurrentMaterial As String
+        Get
+            Return _CurrentMaterial
+        End Get
+        Set(value As String)
+            _CurrentMaterial = value
+            If Me.XmlDoc IsNot Nothing Then
+                If Not LabelCurrentMaterial.Text = _CurrentMaterial Then LabelCurrentMaterial.Text = _CurrentMaterial
+            End If
+        End Set
+    End Property
 
 
 
@@ -241,6 +295,8 @@ Public Class Form_Main
             MsgBox($"Specify a material table before continuing.{vbCrLf}It is set on the Tree Search Options page.")
         End If
 
+        Me.CurrentMaterial = "NA"
+
     End Sub
 
 
@@ -273,6 +329,27 @@ Public Class Form_Main
                 Success = False
                 ErrorLogger.AddMessage($"Material table not found '{Me.MaterialTable}'")
             End If
+
+            '' Select a material if multiple choices are present
+            'Dim MaterialFormulas As List(Of Prop) = Props.GetPropsOfType("SEPropertyFormulaMaterial")
+            'Dim tmpProp As Prop = MaterialFormulas(0)
+            'Dim tmpValue As String = tmpProp.Value
+            'tmpValue = tmpValue.Replace("\,", "LITERALCOMMA")
+            'Dim tmpList As List(Of String) = tmpValue.Split(CChar(",")).ToList
+            'For i = 0 To tmpList.Count - 1
+            '    tmpList(i) = tmpList(i).Replace("LITERALCOMMA", ",").Trim
+            'Next
+            'If tmpList.Count = 1 Then
+            '    tmpValue = tmpList(0)
+            'Else
+            '    Dim FSM As New FormSelectMaterial(tmpList)
+            '    Dim Result = FSM.ShowDialog()
+            '    If Result = DialogResult.OK Then
+            '        tmpValue = FSM.SelectedMaterial
+            '    End If
+            'End If
+            'tmpProp.Value = tmpValue
+            'Dim j = 0
         Else
             If PropertiesToSearchList.Count = 0 Then
                 Success = False
@@ -375,12 +452,13 @@ Public Class Form_Main
         Dim Filename As String = Nothing
         If PropertySearchFilename Is Nothing Then
             TextBoxStatus.Text = "Getting filename"
-            Filename = GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(GetTemplateNameFormula()))
+            Dim SubLogger As Logger = ErrorLogger.AddLogger("Get filename")
+            Filename = GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(GetTemplateNameFormula()), SubLogger)
             If Filename Is Nothing Then
                 TextBoxStatus.Text = ""
                 Proceed = False
                 'ErrorMessages.Add("Unable to get filename")
-                ErrorLogger.AddMessage("Unable to get filename")
+                'ErrorLogger.AddMessage("Unable to get filename")
             End If
         Else
             Filename = PropertySearchFilename
@@ -388,7 +466,13 @@ Public Class Form_Main
 
         If Proceed And Not IO.File.Exists(Filename) Then
 
-            If Me.SuspendMRU Then SEApp.SuspendMRU() ' Suspend MRU to prevent adding the file to the MRU list
+            If Me.SuspendMRU Then
+                ' API in SE2020 and earlier does not have SuspendMRU
+                Try
+                    SEApp.SuspendMRU()
+                Catch ex As Exception
+                End Try
+            End If
 
             TextBoxStatus.Text = "Getting template name"
             Dim TemplateName As String = GetTemplateNameFormula()
@@ -429,30 +513,18 @@ Public Class Form_Main
             If Proceed Then
                 Dim SubLogger As Logger = ErrorLogger.AddLogger("Process variables")
                 Proceed = ProcessVariables(SEApp, SEDoc, SubLogger)
-                'If Not Proceed Then
-                '    'ErrorMessages.Add("Unable to process variables")
-                '    ErrorLogger.AddMessage("Unable to process variables")
-                'End If
             End If
 
             TextBoxStatus.Text = "Processing parameters"
             If Proceed Then
                 Dim SubLogger As Logger = ErrorLogger.AddLogger("Process parameters")
                 Proceed = ProcessParameters(SEApp, SEDoc, SubLogger)
-                'If Not Proceed Then
-                '    'ErrorMessages.Add("Unable to process parameters")
-                '    ErrorLogger.AddMessage("Unable to process parameters")
-                'End If
             End If
 
             TextBoxStatus.Text = "Processing SE properties"
             If Proceed Then
                 Dim SubLogger As Logger = ErrorLogger.AddLogger("Process SE properties")
                 Proceed = ProcessSEProperties(SEApp, SEDoc, SubLogger)
-                'If Not Proceed Then
-                '    'ErrorMessages.Add("Unable to process properties")
-                '    ErrorLogger.AddMessage("Unable to process properties")
-                'End If
             End If
 
             TextBoxStatus.Text = "Saving file"
@@ -467,7 +539,12 @@ Public Class Form_Main
                 'If Me.SuspendMRU Then SEApp.ResumeMRU()
             End If
 
-            If Me.SuspendMRU Then SEApp.ResumeMRU()
+            If Me.SuspendMRU Then
+                Try
+                    SEApp.ResumeMRU()
+                Catch ex As Exception
+                End Try
+            End If
 
         End If
 
@@ -838,7 +915,7 @@ Public Class Form_Main
 
         ' DescriptionFormula Type="SEPropertyFormulaString"	FHCS %{Description} X %{Length}
         ' HardwareFormula Type="SEPropertyFormulaBoolean"	TRUE
-        ' MaterialFormula Type="SEPropertyFormulaMaterial"	STEEL
+        ' MaterialFormula Type="SEPropertyFormulaMaterial"	STEEL, STAINLESS, BRASS, NYLON
 
         Dim Success As Boolean = True
 
@@ -901,7 +978,11 @@ Public Class Form_Main
     End Function
 
 
-    Public Function GetFilenameFormula(DefaultExtension As String) As String
+    Public Function GetFilenameFormula(
+         DefaultExtension As String,
+         ErrorLogger As Logger
+         ) As String
+
         ' Examples
         ' bhcs_%{Name}_%{Length}.par
         ' Fasteners\BHCS\bhcs_%{Name}_%{Length}.par
@@ -912,36 +993,34 @@ Public Class Form_Main
         Dim tmpProps As List(Of Prop) = Props.GetPropsOfType("FilenameFormula")
         If tmpProps.Count = 0 Then
             'MsgBox("No FilenameFormula specified", vbOKOnly, "No file name formula")
-            Me.FileLogger.AddMessage("No FilenameFormula specified")
+            ErrorLogger.AddMessage("No FilenameFormula specified")
             TextBoxStatus.Text = ""
             Return Nothing
         End If
         If tmpProps.Count > 1 Then
             'MsgBox("Multiple FilenameFormulas specified", vbOKOnly, "Multiple file name formulas")
-            Me.FileLogger.AddMessage("Multiple FilenameFormulas specified")
+            ErrorLogger.AddMessage("Multiple FilenameFormulas specified")
             TextBoxStatus.Text = ""
             Return Nothing
         End If
 
         FilenameFormula = tmpProps(0).Value.Trim
-        Filename = FilenameFormula
+        Filename = Props.SubstitutePropFormulas(FilenameFormula)
+        'Filename = FilenameFormula
 
         If Not Me.SaveInLibrary Then
             If Me.AddToLibraryOnly Then
-                FileLogger.AddMessage("Cannot process prompted filename in batch mode")
+                ErrorLogger.AddMessage("Cannot process prompted filename in batch mode")
                 Return Nothing
             Else
+                If Filename Is Nothing Then Filename = ""
 
-                Filename = Props.SubstitutePropFormulas(Filename)
-
-                'Dim tmpFileDialog As New CommonOpenFileDialog
                 Dim tmpFileDialog As New CommonSaveFileDialog
 
                 tmpFileDialog.Title = "Enter the file name for the new part"
                 tmpFileDialog.DefaultFileName = Filename
                 tmpFileDialog.EnsureFileExists = False
                 tmpFileDialog.Filters.Add(New CommonFileDialogFilter("Solid Edge Files", $"*{DefaultExtension}"))
-                'tmpFileDialog.DefaultExtension = DefaultExtension '.Replace(".", "")
 
                 If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
                 Me.TopMost = False
@@ -956,68 +1035,13 @@ Public Class Form_Main
 
             End If
         Else
-            Filename = Props.SubstitutePropFormulas(Filename)
             If Filename Is Nothing Then
-                FileLogger.AddMessage($"Could not resolve filename formula: '{FilenameFormula}'")
+                ErrorLogger.AddMessage($"Could not resolve filename formula: '{FilenameFormula}'")
                 Return Nothing
             End If
             Filename = $"{Me.LibraryDirectory}\{Filename}"
         End If
 
-        'Dim FilenameWasPrompted As Boolean = False
-        'If Filename.ToLower.Trim = "prompt" Then
-        '    If Me.AddToLibraryOnly Then
-        '        FileLogger.AddMessage("Cannot process prompted filename in batch mode")
-        '        Return Nothing
-        '    Else
-        '        FilenameWasPrompted = True
-
-        '        Dim tmpFileDialog As New CommonOpenFileDialog
-        '        tmpFileDialog.Title = "Enter the file name for the new part"
-        '        tmpFileDialog.EnsureFileExists = False
-        '        tmpFileDialog.DefaultExtension = DefaultExtension.Replace(".", "")
-
-        '        If tmpFileDialog.ShowDialog() = DialogResult.OK Then
-        '            Filename = tmpFileDialog.FileName
-        '        Else
-        '            Return Nothing
-        '        End If
-
-        '    End If
-
-        'ElseIf Filename.ToLower.Contains("promptwithdefault") Then
-
-        '    If Me.AddToLibraryOnly Then
-        '        FileLogger.AddMessage("Cannot process prompted filename in batch mode")
-        '        Return Nothing
-        '    Else
-        '        FilenameWasPrompted = True
-
-        '        Filename = Filename.Split(CChar(":"))(1).Trim
-        '        Filename = Props.SubstitutePropFormulas(Filename)
-
-        '        Dim tmpFileDialog As New CommonOpenFileDialog
-        '        tmpFileDialog.Title = "Enter the file name for the new part"
-        '        tmpFileDialog.DefaultFileName = Filename
-        '        tmpFileDialog.EnsureFileExists = False
-        '        tmpFileDialog.DefaultExtension = DefaultExtension.Replace(".", "")
-
-        '        If tmpFileDialog.ShowDialog() = DialogResult.OK Then
-        '            Filename = tmpFileDialog.FileName
-        '        Else
-        '            Return Nothing
-        '        End If
-
-        '    End If
-
-        'Else
-        '    Filename = Props.SubstitutePropFormulas(Filename)
-        '    If Filename Is Nothing Then
-        '        'MsgBox($"Could not resolve filename formula '{FilenameFormula}'", vbOKOnly, "File name formula")
-        '        Return Nothing
-        '    End If
-        '    Filename = $"{Me.LibraryDirectory}\{Filename}"
-        'End If
 
         Dim UFC As New UtilsFilenameCharmap
 
@@ -1489,6 +1513,11 @@ Public Class Form_Main
                                 UpdateThumbnail(tmpValue)
                                 TemplateFound = True
                             End If
+                            If tmpName = "MaterialFormula" Then
+                                If Not Me.CurrentMaterial = "NA" Then
+                                    Prop.Value = Me.CurrentMaterial
+                                End If
+                            End If
                         End If
                     End If
                 Next
@@ -1798,37 +1827,64 @@ Public Class Form_Main
 
         For Each Line As String In XmlList
 
-            If Not Me.AllowCommaDelimiters Then
-                XmlOutList.Add(Line.Replace(",", "."))
+            'If Not Me.AllowCommaDelimiters Then
+            '    XmlOutList.Add(Line.Replace(",", "."))
 
-            Else
-                ' Deal with repeated doublequotes
-                Line = Line.Replace("""", Chr(182))
+            'Else
+            '    ' Deal with repeated doublequotes
+            '    Line = Line.Replace("""", Chr(182))
 
-                Dim OutLine As String = ""
+            '    Dim OutLine As String = ""
 
-                For Each Character As String In Line
-                    If Character = Chr(182) Then InQuotes = Not InQuotes
-                    If Character = "<" And Not InQuotes Then InTag = True
-                    If Character = ">" And Not InQuotes Then InTag = False
+            '    For Each Character As String In Line
+            '        If Character = Chr(182) Then InQuotes = Not InQuotes
+            '        If Character = "<" And Not InQuotes Then InTag = True
+            '        If Character = ">" And Not InQuotes Then InTag = False
 
-                    If InQuotes Then
-                        OutLine = $"{OutLine}{Character}"  ' Must be checked first to capture '<' or '>'
-                    ElseIf InTag Then
-                        If Character = "," Then
-                            OutLine = $"{OutLine}{Me.XmlCommaIndicator}"
-                        Else
-                            OutLine = $"{OutLine}{Character}"
-                        End If
+            '        If InQuotes Then
+            '            OutLine = $"{OutLine}{Character}"  ' Must be checked first to capture '<' or '>'
+            '        ElseIf InTag Then
+            '            If Character = "," Then
+            '                OutLine = $"{OutLine}{Me.XmlCommaIndicator}"
+            '            Else
+            '                OutLine = $"{OutLine}{Character}"
+            '            End If
+            '        Else
+            '            OutLine = $"{OutLine}{Character}"
+            '        End If
+            '    Next
+
+            '    OutLine = OutLine.Replace(Chr(182), """")
+            '    XmlOutList.Add(OutLine)
+
+            'End If
+
+            ' Deal with repeated doublequotes
+            Line = Line.Replace("""", Chr(182))
+
+            Dim OutLine As String = ""
+
+            For Each Character As String In Line
+                If Character = Chr(182) Then InQuotes = Not InQuotes
+                If Character = "<" And Not InQuotes Then InTag = True
+                If Character = ">" And Not InQuotes Then InTag = False
+
+                If InQuotes Then
+                    OutLine = $"{OutLine}{Character}"  ' Must be checked first to capture '<' or '>'
+                ElseIf InTag Then
+                    If Character = "," Then
+                        OutLine = $"{OutLine}{Me.XmlCommaIndicator}"
                     Else
                         OutLine = $"{OutLine}{Character}"
                     End If
-                Next
+                Else
+                    OutLine = $"{OutLine}{Character}"
+                End If
+            Next
 
-                OutLine = OutLine.Replace(Chr(182), """")
-                XmlOutList.Add(OutLine)
+            OutLine = OutLine.Replace(Chr(182), """")
+            XmlOutList.Add(OutLine)
 
-            End If
         Next
 
         Return XmlOutList
@@ -2238,6 +2294,47 @@ Public Class Form_Main
     Private Sub TreeView1_AfterSelect(sender As Object, e As EventArgs)
 
         Me.SelectedNodeFullPath = CType(e, TreeViewEventArgs).Node.FullPath
+
+        '' Deal with possible multiple entries in MaterialFormula
+
+        ''%{MaterialFormula}:STEEL
+        ''%{MaterialFormula}:STAINLESS, NYLON, TITANIUM, Wood\, Walnut
+
+        'Dim MaterialFormulas As List(Of Prop) = Props.GetPropsOfType("SEPropertyFormulaMaterial")
+
+        'If MaterialFormulas.Count > 0 Then
+
+        '    Dim MaterialName = MaterialFormulas(0).Value
+
+        '    If Not Me.CurrentMaterial = "NA" Then
+        '        MaterialName = Me.CurrentMaterial
+        '    Else
+        '        ' Temporarily replace escaped commas for splitting
+        '        MaterialName = MaterialName.Replace("\,", "LITERALCOMMA")
+        '        Dim tmpList As List(Of String) = MaterialName.Split(CChar(",")).ToList
+
+        '        ' Restore escaped commas
+        '        For i = 0 To tmpList.Count - 1
+        '            tmpList(i) = tmpList(i).Replace("LITERALCOMMA", ",").Trim
+        '        Next
+
+        '        ' If only one material found, use it.  Otherwise prompt.
+        '        If tmpList.Count = 1 Then
+        '            MaterialName = tmpList(0)
+        '        Else
+        '            Dim FSM As New FormSelectMaterial(tmpList)
+        '            Dim Result = FSM.ShowDialog()
+        '            If Result = DialogResult.OK Then
+        '                MaterialName = FSM.SelectedMaterial
+        '                Me.CurrentMaterial = MaterialName
+        '            End If
+        '        End If
+        '    End If
+
+        '    MaterialFormulas(0).Value = MaterialName
+
+        'End If
+
 
     End Sub
 
@@ -2738,27 +2835,10 @@ Public Class Form_Main
 
         Dim Node = TreeView1.SelectedNode
 
-        'Me.ErrorLogger = New HCErrorLogger
-        'Me.FileLogger = Me.ErrorLogger.AddFile(Node.FullPath)
+        CheckStartConditions(Nothing, New Logger("Fastenerstack", Nothing)) ' Handles multiple material choices
 
-        'Dim Filename = GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(GetTemplateNameFormula()))
         Dim FFS As New FormFastenerStack(Me)
-        'AddHandler FFS.ButtonSelectStyle.Click, AddressOf EventTest
-        'FFS.FastenerFilename = Filename
         FFS.ShowDialog()
-
-        'Dim InDevelopment As Boolean = False
-
-        'If InDevelopment Then
-        '    MsgBox("In development -- not available at this time", vbOKOnly, "In Development")
-        'Else
-        '    Dim Node = TreeView1.SelectedNode
-        '    Dim Filename = GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(GetTemplateNameFormula()))
-        '    Dim FFS As New FormFastenerStack(Me)
-        '    'AddHandler FFS.ButtonSelectStyle.Click, AddressOf EventTest
-        '    FFS.FastenerFilename = Filename
-        '    FFS.ShowDialog()
-        'End If
 
         If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
 
@@ -2779,6 +2859,10 @@ Public Class Form_Main
 
     End Sub
 
+    Private Sub LabelCurrentMaterial_Click(sender As Object, e As EventArgs) Handles LabelCurrentMaterial.Click
+        LabelCurrentMaterial.Text = "NA"
+        Me.CurrentMaterial = "NA"
+    End Sub
 End Class
 
 Public Class Props
@@ -2831,7 +2915,37 @@ Public Class Props
         Dim PropDict As New Dictionary(Of String, String)
 
         For Each Item As Prop In Items
-            PropDict($"%{{{Item.Name}}}") = Item.Value  ' "%{Length}": "0.500"
+
+            Dim tmpValue = Item.Value
+
+            '' Deal with multiple possible entries in MaterialFormula
+
+            ''%{MaterialFormula}:STEEL
+            ''%{MaterialFormula}:STAINLESS, NYLON, TITANIUM, Wood\, Walnut
+
+            'If Item.Name = "MaterialFormula" And InString.Contains("MaterialFormula") Then
+            '    If Not Form_Main.CurrentMaterial = "NA" Then
+            '        tmpValue = Form_Main.CurrentMaterial
+            '    Else
+            '        tmpValue = tmpValue.Replace("\,", "LITERALCOMMA")
+            '        Dim tmpList As List(Of String) = tmpValue.Split(CChar(",")).ToList
+            '        For i = 0 To tmpList.Count - 1
+            '            tmpList(i) = tmpList(i).Replace("LITERALCOMMA", ",").Trim
+            '        Next
+            '        If tmpList.Count = 1 Then
+            '            tmpValue = tmpList(0)
+            '        Else
+            '            Dim FSM As New FormSelectMaterial(tmpList)
+            '            Dim Result = FSM.ShowDialog()
+            '            If Result = DialogResult.OK Then
+            '                tmpValue = FSM.SelectedMaterial
+            '                Form_Main.CurrentMaterial = tmpValue
+            '            End If
+            '        End If
+            '    End If
+            'End If
+
+            PropDict($"%{{{Item.Name}}}") = tmpValue  ' "%{Length}": "0.500"
         Next
 
         For Each FormulaID In PropDict.Keys

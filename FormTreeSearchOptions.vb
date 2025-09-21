@@ -162,18 +162,18 @@ Public Class FormTreeSearchOptions
         End Set
     End Property
 
-    Private _AllowCommaDelimiters As Boolean
-    Public Property AllowCommaDelimiters As Boolean
-        Get
-            Return _AllowCommaDelimiters
-        End Get
-        Set(value As Boolean)
-            _AllowCommaDelimiters = value
-            If Me.TableLayoutPanel1 IsNot Nothing Then
-                CheckBoxAllowCommaDelimiters.Checked = AllowCommaDelimiters
-            End If
-        End Set
-    End Property
+    'Private _AllowCommaDelimiters As Boolean
+    'Public Property AllowCommaDelimiters As Boolean
+    '    Get
+    '        Return _AllowCommaDelimiters
+    '    End Get
+    '    Set(value As Boolean)
+    '        _AllowCommaDelimiters = value
+    '        If Me.TableLayoutPanel1 IsNot Nothing Then
+    '            CheckBoxAllowCommaDelimiters.Checked = AllowCommaDelimiters
+    '        End If
+    '    End Set
+    'End Property
 
     Private _AlwaysOnTop As Boolean
     Public Property AlwaysOnTop As Boolean
@@ -225,6 +225,46 @@ Public Class FormTreeSearchOptions
 
     End Sub
 
+    Private Sub FormOptions_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+        If Not FMain.LibraryDirectory = "" Then
+            Me.LibraryDirectory = Me.FMain.LibraryDirectory
+        Else
+            Me.LibraryDirectory = "Select a directory to store your standard parts"
+        End If
+
+        If Not FMain.TemplateDirectory = "" Then
+            Me.TemplateDirectory = Me.FMain.TemplateDirectory
+        Else
+            Me.TemplateDirectory = "Select a directory with your standard part templates"
+        End If
+
+        If Not FMain.DataDirectory = "" Then
+            Me.DataDirectory = Me.FMain.DataDirectory
+        Else
+            Me.DataDirectory = "Select a directory with your data files"
+        End If
+
+        If Not FMain.MaterialTable = "" Then
+            Me.MaterialTable = Me.FMain.MaterialTable
+        Else
+            Me.MaterialTable = "Select a material table"
+        End If
+
+
+        Me.AlwaysReadExcel = FMain.AlwaysReadExcel
+        Me.AutoPattern = FMain.AutoPattern
+        Me.AddProp = FMain.AddProp
+        Me.DisableFineThreadWarning = FMain.DisableFineThreadWarning
+        Me.ProcessTemplateInBackground = FMain.ProcessTemplateInBackground
+        Me.FailedConstraintSuppress = FMain.FailedConstraintSuppress
+        Me.FailedConstraintAllow = FMain.FailedConstraintAllow
+        Me.SuspendMRU = FMain.SuspendMRU
+        'Me.AllowCommaDelimiters = FMain.AllowCommaDelimiters
+        Me.AlwaysOnTop = FMain.AlwaysOnTop
+        Me.IncludeDrawing = FMain.IncludeDrawing
+        Me.CheckNewVersion = FMain.CheckNewVersion
+    End Sub
     Private Sub ButtonLibraryDirectory_Click(sender As Object, e As EventArgs) Handles ButtonLibraryDirectory.Click
         Dim tmpFolderDialog As New CommonOpenFileDialog
         tmpFolderDialog.IsFolderPicker = True
@@ -266,46 +306,7 @@ Public Class FormTreeSearchOptions
 
     End Sub
 
-    Private Sub FormOptions_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-        If Not FMain.LibraryDirectory = "" Then
-            Me.LibraryDirectory = Me.FMain.LibraryDirectory
-        Else
-            Me.LibraryDirectory = "Select a directory to store your standard parts"
-        End If
-
-        If Not FMain.TemplateDirectory = "" Then
-            Me.TemplateDirectory = Me.FMain.TemplateDirectory
-        Else
-            Me.TemplateDirectory = "Select a directory with your standard part templates"
-        End If
-
-        If Not FMain.DataDirectory = "" Then
-            Me.DataDirectory = Me.FMain.DataDirectory
-        Else
-            Me.DataDirectory = "Select a directory with your data files"
-        End If
-
-        If Not FMain.MaterialTable = "" Then
-            Me.MaterialTable = Me.FMain.MaterialTable
-        Else
-            Me.MaterialTable = "Select a material table"
-        End If
-
-
-        Me.AlwaysReadExcel = FMain.AlwaysReadExcel
-        Me.AutoPattern = FMain.AutoPattern
-        Me.AddProp = FMain.AddProp
-        Me.DisableFineThreadWarning = FMain.DisableFineThreadWarning
-        Me.ProcessTemplateInBackground = FMain.ProcessTemplateInBackground
-        Me.FailedConstraintSuppress = FMain.FailedConstraintSuppress
-        Me.FailedConstraintAllow = FMain.FailedConstraintAllow
-        Me.SuspendMRU = FMain.SuspendMRU
-        Me.AllowCommaDelimiters = FMain.AllowCommaDelimiters
-        Me.AlwaysOnTop = FMain.AlwaysOnTop
-        Me.IncludeDrawing = FMain.IncludeDrawing
-        Me.CheckNewVersion = FMain.CheckNewVersion
-    End Sub
 
     Private Sub ButtonOK_Click(sender As Object, e As EventArgs) Handles ButtonOK.Click
         If Me.TemplateDirectory(Me.TemplateDirectory.Count - 1) = "\" Then
@@ -325,7 +326,7 @@ Public Class FormTreeSearchOptions
         FMain.FailedConstraintSuppress = Me.FailedConstraintSuppress
         FMain.FailedConstraintAllow = Me.FailedConstraintAllow
         FMain.SuspendMRU = Me.SuspendMRU
-        FMain.AllowCommaDelimiters = Me.AllowCommaDelimiters
+        'FMain.AllowCommaDelimiters = Me.AllowCommaDelimiters
         FMain.AlwaysOnTop = Me.AlwaysOnTop
         FMain.IncludeDrawing = Me.IncludeDrawing
         FMain.CheckNewVersion = Me.CheckNewVersion
@@ -383,9 +384,9 @@ Public Class FormTreeSearchOptions
         Me.SuspendMRU = CheckBoxSuspendMRU.Checked
     End Sub
 
-    Private Sub CheckBoxAllowCommaDelimiters_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBoxAllowCommaDelimiters.CheckedChanged
-        Me.AllowCommaDelimiters = CheckBoxAllowCommaDelimiters.Checked
-    End Sub
+    'Private Sub CheckBoxAllowCommaDelimiters_CheckedChanged(sender As Object, e As EventArgs)
+    '    AllowCommaDelimiters = CheckBoxAllowCommaDelimiters.Checked
+    'End Sub
 
     Private Sub CheckBoxAlwaysOnTop_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBoxAlwaysOnTop.CheckedChanged
         Me.AlwaysOnTop = CheckBoxAlwaysOnTop.Checked

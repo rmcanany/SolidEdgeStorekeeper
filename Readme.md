@@ -30,11 +30,13 @@
 
 ## DESCRIPTION
 
-Solid Edge Storekeeper is a utility to create, organize, and share standard parts.  It is free and open source and you can find it [<ins>**Here**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#readme).  Please note the standard part templates were created with SE2024.  You will need that version or newer to use them.  (Update: A user, @TeeVar, generously contributed a set of templates created with SE2019.)
+Solid Edge Storekeeper is a utility to create, organize, and share standard parts.  It is free and open source and you can find it [<ins>**Here**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#readme).  Please note the standard part templates were created with SE2024.  You will need that version or newer to use them.  (Update: A user, **@TeeVar**, generously contributed a set of templates created with SE2019.)
 
 Fasteners, retainers, structural shapes, and more in ANSI and ISO format are included.  There are over 15k items available.  There is no database; everything is done in Excel.  It is fully customizable.  If you upgrade Solid Edge, no change to the program or its data is required.
 
 The program handles two types of standard parts.  One consists of items like fasteners.  These are defined in dimension tables and created as needed.  The other consists of vendor-type items like pneumatic fittings.  Each of these has its own model file.  Both types are eligible for the handy automatic patterning option.
+
+### Tree Search
 
 <p align="center">
   <img src="media/tree_search.png">
@@ -46,6 +48,10 @@ For items like fasteners, use **Tree Search**.  Navigate to the desired item, ri
 - `Replace selected`  Replaces a selected part in the assembly.
 - `Replace all`  Replaces all occurrences of a selected part in the assembly.
 - `Fastener stack`  Opens the fastener stack dialog.  See the separate section below for details.
+
+Note, depending how the data is set up, you may be prompted to select a material after choosing an action.  Once chosen, the setting persists.  To reset it, click the material name on the toolbar.
+
+### Property Search
 
 <p align="center">
   <img src="media/property_search.png">

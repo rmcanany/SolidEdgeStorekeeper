@@ -42,7 +42,6 @@ Partial Class FormTreeSearchOptions
         CheckBoxFailedConstraintSuppress = New CheckBox()
         CheckBoxFailedConstraintAllow = New CheckBox()
         CheckBoxSuspendMRU = New CheckBox()
-        CheckBoxAllowCommaDelimiters = New CheckBox()
         CheckBoxAlwaysOnTop = New CheckBox()
         TableLayoutPanel2 = New TableLayoutPanel()
         ButtonOK = New Button()
@@ -78,11 +77,10 @@ Partial Class FormTreeSearchOptions
         TableLayoutPanel1.Controls.Add(CheckBoxFailedConstraintSuppress, 0, 10)
         TableLayoutPanel1.Controls.Add(CheckBoxFailedConstraintAllow, 0, 11)
         TableLayoutPanel1.Controls.Add(CheckBoxSuspendMRU, 0, 12)
-        TableLayoutPanel1.Controls.Add(CheckBoxAllowCommaDelimiters, 0, 13)
-        TableLayoutPanel1.Controls.Add(CheckBoxAlwaysOnTop, 0, 14)
         TableLayoutPanel1.Controls.Add(TableLayoutPanel2, 1, 20)
-        TableLayoutPanel1.Controls.Add(CheckBoxCheckNewVersion, 0, 16)
-        TableLayoutPanel1.Controls.Add(CheckBoxIncludeDrawing, 0, 15)
+        TableLayoutPanel1.Controls.Add(CheckBoxAlwaysOnTop, 0, 13)
+        TableLayoutPanel1.Controls.Add(CheckBoxIncludeDrawing, 0, 14)
+        TableLayoutPanel1.Controls.Add(CheckBoxCheckNewVersion, 0, 15)
         TableLayoutPanel1.Dock = DockStyle.Fill
         TableLayoutPanel1.Location = New Point(0, 0)
         TableLayoutPanel1.Name = "TableLayoutPanel1"
@@ -103,12 +101,12 @@ Partial Class FormTreeSearchOptions
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
-        TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
+        TableLayoutPanel1.RowStyles.Add(New RowStyle())
         TableLayoutPanel1.RowStyles.Add(New RowStyle())
         TableLayoutPanel1.RowStyles.Add(New RowStyle())
         TableLayoutPanel1.RowStyles.Add(New RowStyle())
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Percent, 100F))
-        TableLayoutPanel1.Size = New Size(472, 554)
+        TableLayoutPanel1.Size = New Size(472, 522)
         TableLayoutPanel1.TabIndex = 0
         ' 
         ' CheckBoxDisableFineThreadWarning
@@ -315,25 +313,12 @@ Partial Class FormTreeSearchOptions
         CheckBoxSuspendMRU.Text = "Do not add files to the Recently Used list (SE2020 and up)"
         CheckBoxSuspendMRU.UseVisualStyleBackColor = True
         ' 
-        ' CheckBoxAllowCommaDelimiters
-        ' 
-        CheckBoxAllowCommaDelimiters.Anchor = AnchorStyles.Left
-        CheckBoxAllowCommaDelimiters.AutoSize = True
-        TableLayoutPanel1.SetColumnSpan(CheckBoxAllowCommaDelimiters, 2)
-        CheckBoxAllowCommaDelimiters.Location = New Point(3, 395)
-        CheckBoxAllowCommaDelimiters.Name = "CheckBoxAllowCommaDelimiters"
-        CheckBoxAllowCommaDelimiters.Padding = New Padding(5, 0, 0, 0)
-        CheckBoxAllowCommaDelimiters.Size = New Size(239, 19)
-        CheckBoxAllowCommaDelimiters.TabIndex = 24
-        CheckBoxAllowCommaDelimiters.Text = "Allow comma delimiters (experimental)"
-        CheckBoxAllowCommaDelimiters.UseVisualStyleBackColor = True
-        ' 
         ' CheckBoxAlwaysOnTop
         ' 
         CheckBoxAlwaysOnTop.Anchor = AnchorStyles.Left
         CheckBoxAlwaysOnTop.AutoSize = True
         TableLayoutPanel1.SetColumnSpan(CheckBoxAlwaysOnTop, 2)
-        CheckBoxAlwaysOnTop.Location = New Point(3, 425)
+        CheckBoxAlwaysOnTop.Location = New Point(3, 395)
         CheckBoxAlwaysOnTop.Name = "CheckBoxAlwaysOnTop"
         CheckBoxAlwaysOnTop.Padding = New Padding(5, 0, 0, 0)
         CheckBoxAlwaysOnTop.Size = New Size(169, 19)
@@ -351,17 +336,17 @@ Partial Class FormTreeSearchOptions
         TableLayoutPanel2.Controls.Add(ButtonCancel, 1, 0)
         TableLayoutPanel2.Controls.Add(ButtonHelp, 2, 0)
         TableLayoutPanel2.Dock = DockStyle.Fill
-        TableLayoutPanel2.Location = New Point(99, 513)
+        TableLayoutPanel2.Location = New Point(99, 483)
         TableLayoutPanel2.Name = "TableLayoutPanel2"
         TableLayoutPanel2.RowCount = 1
         TableLayoutPanel2.RowStyles.Add(New RowStyle(SizeType.Percent, 100F))
-        TableLayoutPanel2.Size = New Size(370, 38)
+        TableLayoutPanel2.Size = New Size(370, 36)
         TableLayoutPanel2.TabIndex = 5
         ' 
         ' ButtonOK
         ' 
         ButtonOK.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        ButtonOK.Location = New Point(130, 12)
+        ButtonOK.Location = New Point(130, 10)
         ButtonOK.Name = "ButtonOK"
         ButtonOK.Size = New Size(75, 23)
         ButtonOK.TabIndex = 1
@@ -371,7 +356,7 @@ Partial Class FormTreeSearchOptions
         ' ButtonCancel
         ' 
         ButtonCancel.Anchor = AnchorStyles.Bottom
-        ButtonCancel.Location = New Point(211, 12)
+        ButtonCancel.Location = New Point(211, 10)
         ButtonCancel.Name = "ButtonCancel"
         ButtonCancel.Size = New Size(75, 23)
         ButtonCancel.TabIndex = 0
@@ -381,7 +366,7 @@ Partial Class FormTreeSearchOptions
         ' ButtonHelp
         ' 
         ButtonHelp.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        ButtonHelp.Location = New Point(292, 12)
+        ButtonHelp.Location = New Point(292, 10)
         ButtonHelp.Name = "ButtonHelp"
         ButtonHelp.Size = New Size(75, 23)
         ButtonHelp.TabIndex = 2
@@ -395,7 +380,7 @@ Partial Class FormTreeSearchOptions
         CheckBoxCheckNewVersion.Checked = True
         CheckBoxCheckNewVersion.CheckState = CheckState.Checked
         TableLayoutPanel1.SetColumnSpan(CheckBoxCheckNewVersion, 2)
-        CheckBoxCheckNewVersion.Location = New Point(3, 485)
+        CheckBoxCheckNewVersion.Location = New Point(3, 455)
         CheckBoxCheckNewVersion.Name = "CheckBoxCheckNewVersion"
         CheckBoxCheckNewVersion.Padding = New Padding(5, 0, 0, 0)
         CheckBoxCheckNewVersion.Size = New Size(197, 19)
@@ -408,7 +393,7 @@ Partial Class FormTreeSearchOptions
         CheckBoxIncludeDrawing.Anchor = AnchorStyles.Left
         CheckBoxIncludeDrawing.AutoSize = True
         TableLayoutPanel1.SetColumnSpan(CheckBoxIncludeDrawing, 2)
-        CheckBoxIncludeDrawing.Location = New Point(3, 455)
+        CheckBoxIncludeDrawing.Location = New Point(3, 425)
         CheckBoxIncludeDrawing.Name = "CheckBoxIncludeDrawing"
         CheckBoxIncludeDrawing.Padding = New Padding(5, 0, 0, 0)
         CheckBoxIncludeDrawing.Size = New Size(206, 19)
@@ -420,7 +405,7 @@ Partial Class FormTreeSearchOptions
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(472, 554)
+        ClientSize = New Size(472, 522)
         Controls.Add(TableLayoutPanel1)
         Icon = CType(resources.GetObject("$this.Icon"), Icon)
         Name = "FormTreeSearchOptions"
@@ -456,7 +441,6 @@ Partial Class FormTreeSearchOptions
     Friend WithEvents CheckBoxFailedConstraintSuppress As CheckBox
     Friend WithEvents CheckBoxFailedConstraintAllow As CheckBox
     Friend WithEvents CheckBoxSuspendMRU As CheckBox
-    Friend WithEvents CheckBoxAllowCommaDelimiters As CheckBox
     Friend WithEvents CheckBoxAlwaysOnTop As CheckBox
     Friend WithEvents CheckBoxIncludeDrawing As CheckBox
 End Class

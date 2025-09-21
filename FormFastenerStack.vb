@@ -275,6 +275,46 @@ Public Class FormFastenerStack
 
     End Sub
 
+    Private Sub Startup()
+        'Me.ErrorLogger = New HCErrorLogger
+
+        Dim UP As New UtilsPreferences
+
+        'Dim tmpFastenerFilename As String = Me.FastenerFilename
+        UP.GetFormFastenerStackSettings(Me)
+        'Me.FastenerFilename = tmpFastenerFilename
+
+        If Not (Me.Units = "in" Or Me.Units = "mm") Then
+            Me.Units = "in"
+        End If
+
+        Dim Proceed As Boolean = UP.CreateSearchPathFiles()
+
+        If Not Proceed Then
+            MsgBox("FFS.Load: Could not create Xml search path files")
+            Me.Dispose()
+        Else
+            Dim DataVersion As String = Nothing
+            If FMain.DataDirectory.Contains("SE2019") Then
+                DataVersion = "SE2019"
+            ElseIf FMain.DataDirectory.Contains("SE2024") Then
+                DataVersion = "SE2024"
+            Else
+                MsgBox($"FFS.Load: Unrecognzied data directory '{FMain.DataDirectory}'")
+                Me.Dispose()
+            End If
+
+            Me.FlatWasherSearchPaths = UP.GetFlatWasherSearchPath(DataVersion)
+            Me.LockWasherSearchPaths = UP.GetLockWasherSearchPath(DataVersion)
+            Me.NutSearchPaths = UP.GetNutSearchPath(DataVersion)
+
+            Dim TemplateFilename As String = FMain.GetTemplateNameFormula(ErrorLogger:=New Logger("Form Load", Nothing))
+            Dim Extension As String = IO.Path.GetExtension(TemplateFilename)
+            Me.FastenerFilename = FMain.GetFilenameFormula(DefaultExtension:=Extension, New Logger("Form Load", Nothing))
+            Dim i = 0
+            'Me.FileLogger = Me.ErrorLogger.AddFile(Me.FastenerFilename)
+        End If
+    End Sub
 
     Public Sub Process()
         Dim Proceed As Boolean = True
@@ -445,7 +485,8 @@ Public Class FormFastenerStack
         ' Generate the fastener if needed
         LabelStatus.Text = "Generating fastener"
         FMain.SelectedNodeFullPath = Me.TreeviewFastenerFullPath
-        Me.FastenerFilename = FMain.GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(FMain.GetTemplateNameFormula(ErrorLogger:=Me.FileLogger)))
+        Dim DefaultExtension As String = IO.Path.GetExtension(FMain.GetTemplateNameFormula(ErrorLogger:=Me.FileLogger))
+        Me.FastenerFilename = FMain.GetFilenameFormula(DefaultExtension:=DefaultExtension, Me.FileLogger)
         Proceed = FMain.Process(ErrorLogger:=Me.FileLogger)
 
         ' Generate the flat washer if needed
@@ -1125,7 +1166,8 @@ Public Class FormFastenerStack
                 FlatWasherFullPath = $"{FlatWasherFullPath}\{MatchingNode.Name}"
                 Me.TreeviewFlatWasherFullPath = FlatWasherFullPath
                 FMain.SelectedNodeFullPath = FlatWasherFullPath
-                Me.FlatWasherFilename = FMain.GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(FMain.GetTemplateNameFormula(ErrorLogger:=Me.FileLogger)))
+                Dim DefaultExtension As String = IO.Path.GetExtension(FMain.GetTemplateNameFormula(ErrorLogger:=Me.FileLogger))
+                Me.FlatWasherFilename = FMain.GetFilenameFormula(DefaultExtension:=DefaultExtension, Me.FileLogger)
                 Exit For
             End If
 
@@ -1193,7 +1235,8 @@ Public Class FormFastenerStack
                 LockWasherFullPath = $"{LockWasherFullPath}\{MatchingNode.Name}"
                 Me.TreeviewLockwasherFullPath = LockWasherFullPath
                 FMain.SelectedNodeFullPath = LockWasherFullPath
-                LockwasherFilename = FMain.GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(FMain.GetTemplateNameFormula(ErrorLogger:=Me.FileLogger)))
+                Dim DefaultExtension As String = IO.Path.GetExtension(FMain.GetTemplateNameFormula(ErrorLogger:=Me.FileLogger))
+                LockwasherFilename = FMain.GetFilenameFormula(DefaultExtension:=DefaultExtension, Me.FileLogger)
                 Exit For
             End If
 
@@ -1252,7 +1295,8 @@ Public Class FormFastenerStack
                 NutFullPath = $"{NutFullPath}\{MatchingNode.Name}"
                 Me.TreeviewNutFullPath = NutFullPath
                 FMain.SelectedNodeFullPath = NutFullPath
-                NutFilename = FMain.GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(FMain.GetTemplateNameFormula(ErrorLogger:=Me.FileLogger)))
+                Dim DefaultExtension As String = IO.Path.GetExtension(FMain.GetTemplateNameFormula(ErrorLogger:=Me.FileLogger))
+                NutFilename = FMain.GetFilenameFormula(DefaultExtension:=DefaultExtension, Me.FileLogger)
                 Exit For
             End If
 
@@ -1794,46 +1838,10 @@ Public Class FormFastenerStack
         Me.Dispose()
     End Sub
 
+
     Private Sub FormFastenerStack_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-        'Me.ErrorLogger = New HCErrorLogger
-
-        Dim UP As New UtilsPreferences
-
-        'Dim tmpFastenerFilename As String = Me.FastenerFilename
-        UP.GetFormFastenerStackSettings(Me)
-        'Me.FastenerFilename = tmpFastenerFilename
-
-        If Not (Me.Units = "in" Or Me.Units = "mm") Then
-            Me.Units = "in"
-        End If
-
-        Dim Proceed As Boolean = UP.CreateSearchPathFiles()
-
-        If Not Proceed Then
-            MsgBox("FFS.Load: Could not create Xml search path files")
-            Me.Dispose()
-        Else
-            Dim DataVersion As String = Nothing
-            If FMain.DataDirectory.Contains("SE2019") Then
-                DataVersion = "SE2019"
-            ElseIf FMain.DataDirectory.Contains("SE2024") Then
-                DataVersion = "SE2024"
-            Else
-                MsgBox($"FFS.Load: Unrecognzied data directory '{FMain.DataDirectory}'")
-                Me.Dispose()
-            End If
-
-            Me.FlatWasherSearchPaths = UP.GetFlatWasherSearchPath(DataVersion)
-            Me.LockWasherSearchPaths = UP.GetLockWasherSearchPath(DataVersion)
-            Me.NutSearchPaths = UP.GetNutSearchPath(DataVersion)
-
-            Dim TemplateFilename As String = FMain.GetTemplateNameFormula(ErrorLogger:=New Logger("Form Load", Nothing))
-            Dim Extension As String = IO.Path.GetExtension(TemplateFilename)
-            Me.FastenerFilename = FMain.GetFilenameFormula(DefaultExtension:=Extension)
-
-            'Me.FileLogger = Me.ErrorLogger.AddFile(Me.FastenerFilename)
-        End If
+        Startup()
 
     End Sub
 

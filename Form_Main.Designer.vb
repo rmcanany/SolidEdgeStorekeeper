@@ -42,6 +42,7 @@ Partial Class Form_Main
         ButtonAddToLibrary = New ToolStripButton()
         LabelAddToLibrary = New ToolStripLabel()
         ButtonOptions = New ToolStripButton()
+        LabelCurrentMaterial = New ToolStripLabel()
         TreeView1 = New TreeView()
         ContextMenuStrip1 = New ContextMenuStrip(components)
         ToolStripMenuItem1 = New ToolStripMenuItem()
@@ -93,7 +94,7 @@ Partial Class Form_Main
         ' 
         ' ToolStrip1
         ' 
-        ToolStrip1.Items.AddRange(New ToolStripItem() {ButtonCollapse, ToolStripSeparator1, LabelSaveIn, ButtonSaveInLibrary, ButtonSaveInOther, ToolStripSeparator2, ButtonPrepopulate, LabelPrePopulate, ButtonAddToLibrary, LabelAddToLibrary, ButtonOptions})
+        ToolStrip1.Items.AddRange(New ToolStripItem() {ButtonCollapse, ToolStripSeparator1, LabelSaveIn, ButtonSaveInLibrary, ButtonSaveInOther, ToolStripSeparator2, ButtonPrepopulate, LabelPrePopulate, ButtonAddToLibrary, LabelAddToLibrary, ButtonOptions, LabelCurrentMaterial})
         ToolStrip1.Location = New Point(0, 0)
         ToolStrip1.Name = "ToolStrip1"
         ToolStrip1.RenderMode = ToolStripRenderMode.System
@@ -194,6 +195,13 @@ Partial Class Form_Main
         ButtonOptions.Size = New Size(23, 22)
         ButtonOptions.Text = "ToolStripButton1"
         ButtonOptions.ToolTipText = "Options"
+        ' 
+        ' LabelCurrentMaterial
+        ' 
+        LabelCurrentMaterial.Alignment = ToolStripItemAlignment.Right
+        LabelCurrentMaterial.Name = "LabelCurrentMaterial"
+        LabelCurrentMaterial.Size = New Size(24, 22)
+        LabelCurrentMaterial.Text = "NA"
         ' 
         ' TreeView1
         ' 
@@ -602,5 +610,6 @@ Partial Class Form_Main
     Friend WithEvents ButtonSaveInLibrary As ToolStripButton
     Friend WithEvents ButtonSaveInOther As ToolStripButton
     Friend WithEvents ToolStripSeparator2 As ToolStripSeparator
+    Friend WithEvents LabelCurrentMaterial As ToolStripLabel
 
 End Class
