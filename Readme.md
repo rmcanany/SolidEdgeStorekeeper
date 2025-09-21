@@ -109,7 +109,7 @@ On my machine, the executable resides in two places: `bin\Debug\net8.0-windows\`
 
 As noted earlier, some setup is required before using the program.  If you run Solid Edge in a localized language please be sure to see the information at the end of this section.
 
-### Tree Search
+### Tree Search Options
 
 The program needs to know where to store the standard parts, and for fastener-like items, where to find the files defining their shape and spreadsheet containing their dimensions.  The settings are accessed on the **Tree Search Options** page.  Click ![Options](media/Support_16.png) on the toolbar to open it.
 
@@ -188,7 +188,7 @@ The material table is usually your normal SE material table.  However, for a qui
   - `Check for new version at startup`  
 	If you don't need a reminder about new versions, disable the check here.
 
-### Property Search
+### Property Search Options
 
 Additional settings for **Property Search** are accessed from that tab's toolbar.  Click the **Property Search Options** button ![Options](media/Support_16.png) to display the form.
 
