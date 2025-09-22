@@ -35,13 +35,13 @@ Partial Class FormSelectMaterial
         ComboBoxMaterial.FormattingEnabled = True
         ComboBoxMaterial.Location = New Point(15, 30)
         ComboBoxMaterial.Name = "ComboBoxMaterial"
-        ComboBoxMaterial.Size = New Size(200, 23)
+        ComboBoxMaterial.Size = New Size(225, 23)
         ComboBoxMaterial.TabIndex = 0
         ' 
         ' ButtonOK
         ' 
         ButtonOK.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        ButtonOK.Location = New Point(135, 70)
+        ButtonOK.Location = New Point(160, 70)
         ButtonOK.Name = "ButtonOK"
         ButtonOK.Size = New Size(75, 23)
         ButtonOK.TabIndex = 1
@@ -61,7 +61,7 @@ Partial Class FormSelectMaterial
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(234, 101)
+        ClientSize = New Size(259, 101)
         Controls.Add(Label1)
         Controls.Add(ButtonOK)
         Controls.Add(ComboBoxMaterial)

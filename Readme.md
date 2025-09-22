@@ -243,10 +243,11 @@ The program waits for the `Place part` command to finish before proceeding.  Con
 After the components are placed, they are converted to an `Assembly group`.  Finally, the group is patterned if applicable, assuming that option is enabled.
 
 
-
 ## PRE-POPULATING THE LIBRARY
 
-You can add items to the library ahead of time.  Enable the `Pre-populate` checkbox to get started.
+You can add items to the library ahead of time.  Enable the `Pre-populate` checkbox to get started.  
+
+Note, for items with multiple materials available, the material must be selected before starting this process.  Click on an applicable item and select the desired material when prompted.
 
 <p align="center">
   <img src="media/prepopulate_library.png">
@@ -355,9 +356,11 @@ So, for example to update the part number in the file, the program will use the 
 
 Here we are setting up the processing of button head capscrews.  You can see we need to specify what template to use and how to name the file.  We must also provide the companion spreadsheet name and the tab in that file where the information is stored.  
 
-As mentioned previously, formulas can contain entries such as `%{Name}` and `%{Length}`.  Variables not proceeded by `System.` or `Custom.` are assumed to come from the companion spreadsheet.
+As mentioned previously, formulas can contain entries such as `%{Name}` and `%{MaterialFormula}`.  Variables are *populating* the part file, not *reading from it*.  That means you cannot reference a file property like `%{Custom.Engineer}` in a formula.  Variables can only come from the `Storekeeper.xls` or a companion spreadsheet.
 
 In this example, we are also updating the description property.  That isn't necessary for the program to function.  It just illustrates how to update Solid Edge file properties.  Any property in the file can be updated in this way.  
+
+One more thing about this example.  Note there is a tooltip being specified.  If you want one, it needs to be on the first line after a `Node` definition.  There is a fix coming for that restriction, but it's not in there now.
 
 ## OPEN SOURCE PACKAGES
 

@@ -48,7 +48,7 @@ Added support for parts with associated drawings.  (Thank you **@Seva!**)
 
 This can be helpful in cases where users work with simple parts, like a pipe with side holes, but still need a basic drawing to send to the shop.
 
-If a file in the templates directory includes a drawing, the drawing is automatically copied when a new part is created.  It is renamed to match the new part and the links are updated accordingly.
+If a file in the templates directory includes a drawing, the drawing is optionally copied when a new part is created.  It is renamed to match the new part and the links are updated accordingly.  Set the option on the **Tree Search Options** page.
 
 See the [<ins>**Creating New Templates**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#creating-new-templates) section of the Readme for details.
 
