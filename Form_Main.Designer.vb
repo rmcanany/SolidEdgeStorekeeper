@@ -34,15 +34,11 @@ Partial Class Form_Main
         ButtonCollapse = New ToolStripButton()
         ToolStripSeparator1 = New ToolStripSeparator()
         LabelSaveIn = New ToolStripLabel()
-        ButtonSaveInLibrary = New ToolStripButton()
-        ButtonSaveInOther = New ToolStripButton()
+        ComboBoxSaveIn = New ToolStripComboBox()
         ToolStripSeparator2 = New ToolStripSeparator()
-        ButtonPrepopulate = New ToolStripButton()
-        LabelPrePopulate = New ToolStripLabel()
-        ButtonAddToLibrary = New ToolStripButton()
-        LabelAddToLibrary = New ToolStripLabel()
         ButtonOptions = New ToolStripButton()
-        LabelCurrentMaterial = New ToolStripLabel()
+        ComboBoxMaterials = New ToolStripComboBox()
+        LabelMaterials = New ToolStripLabel()
         TreeView1 = New TreeView()
         ContextMenuStrip1 = New ContextMenuStrip(components)
         ToolStripMenuItem1 = New ToolStripMenuItem()
@@ -94,7 +90,7 @@ Partial Class Form_Main
         ' 
         ' ToolStrip1
         ' 
-        ToolStrip1.Items.AddRange(New ToolStripItem() {ButtonCollapse, ToolStripSeparator1, LabelSaveIn, ButtonSaveInLibrary, ButtonSaveInOther, ToolStripSeparator2, ButtonPrepopulate, LabelPrePopulate, ButtonAddToLibrary, LabelAddToLibrary, ButtonOptions, LabelCurrentMaterial})
+        ToolStrip1.Items.AddRange(New ToolStripItem() {ButtonCollapse, ToolStripSeparator1, LabelSaveIn, ComboBoxSaveIn, ToolStripSeparator2, ButtonOptions, ComboBoxMaterials, LabelMaterials})
         ToolStrip1.Location = New Point(0, 0)
         ToolStrip1.Name = "ToolStrip1"
         ToolStrip1.RenderMode = ToolStripRenderMode.System
@@ -124,66 +120,18 @@ Partial Class Form_Main
         LabelSaveIn.Text = "Save in"
         LabelSaveIn.ToolTipText = "Collapse the tree"
         ' 
-        ' ButtonSaveInLibrary
+        ' ComboBoxSaveIn
         ' 
-        ButtonSaveInLibrary.Image = My.Resources.Resources.icons8_Checkbox_Unchecked
-        ButtonSaveInLibrary.ImageTransparentColor = Color.Magenta
-        ButtonSaveInLibrary.Name = "ButtonSaveInLibrary"
-        ButtonSaveInLibrary.Size = New Size(63, 22)
-        ButtonSaveInLibrary.Text = "Library"
-        ButtonSaveInLibrary.TextAlign = ContentAlignment.MiddleRight
-        ButtonSaveInLibrary.ToolTipText = "Save in the library"
-        ' 
-        ' ButtonSaveInOther
-        ' 
-        ButtonSaveInOther.Image = My.Resources.Resources.icons8_Checkbox_Unchecked
-        ButtonSaveInOther.ImageTransparentColor = Color.Magenta
-        ButtonSaveInOther.Name = "ButtonSaveInOther"
-        ButtonSaveInOther.Size = New Size(57, 22)
-        ButtonSaveInOther.Text = "Other"
-        ButtonSaveInOther.ToolTipText = "Save in another location"
+        ComboBoxSaveIn.DropDownStyle = ComboBoxStyle.DropDownList
+        ComboBoxSaveIn.Items.AddRange(New Object() {"Library", "Assy Dir", "Other"})
+        ComboBoxSaveIn.Name = "ComboBoxSaveIn"
+        ComboBoxSaveIn.Size = New Size(75, 25)
+        ComboBoxSaveIn.ToolTipText = "Save in directory"
         ' 
         ' ToolStripSeparator2
         ' 
         ToolStripSeparator2.Name = "ToolStripSeparator2"
         ToolStripSeparator2.Size = New Size(6, 25)
-        ' 
-        ' ButtonPrepopulate
-        ' 
-        ButtonPrepopulate.DisplayStyle = ToolStripItemDisplayStyle.Image
-        ButtonPrepopulate.Image = My.Resources.Resources.icons8_Checkbox_Unchecked
-        ButtonPrepopulate.ImageTransparentColor = Color.Magenta
-        ButtonPrepopulate.Name = "ButtonPrepopulate"
-        ButtonPrepopulate.Size = New Size(23, 22)
-        ButtonPrepopulate.Text = "Prepopulate the library"
-        ButtonPrepopulate.ToolTipText = "Enable multi select"
-        ' 
-        ' LabelPrePopulate
-        ' 
-        LabelPrePopulate.BackColor = Color.Transparent
-        LabelPrePopulate.Name = "LabelPrePopulate"
-        LabelPrePopulate.Size = New Size(76, 22)
-        LabelPrePopulate.Text = "Pre-populate"
-        LabelPrePopulate.ToolTipText = "Prepopulate the library"
-        ' 
-        ' ButtonAddToLibrary
-        ' 
-        ButtonAddToLibrary.DisplayStyle = ToolStripItemDisplayStyle.Image
-        ButtonAddToLibrary.Image = My.Resources.Resources.icons8_add_list_16
-        ButtonAddToLibrary.ImageTransparentColor = Color.Magenta
-        ButtonAddToLibrary.Name = "ButtonAddToLibrary"
-        ButtonAddToLibrary.Size = New Size(23, 22)
-        ButtonAddToLibrary.Text = "ToolStripButton1"
-        ButtonAddToLibrary.ToolTipText = "Add selected items to the library"
-        ButtonAddToLibrary.Visible = False
-        ' 
-        ' LabelAddToLibrary
-        ' 
-        LabelAddToLibrary.Name = "LabelAddToLibrary"
-        LabelAddToLibrary.Size = New Size(29, 22)
-        LabelAddToLibrary.Text = "Add"
-        LabelAddToLibrary.ToolTipText = "Add selected items to the library"
-        LabelAddToLibrary.Visible = False
         ' 
         ' ButtonOptions
         ' 
@@ -196,12 +144,20 @@ Partial Class Form_Main
         ButtonOptions.Text = "ToolStripButton1"
         ButtonOptions.ToolTipText = "Options"
         ' 
-        ' LabelCurrentMaterial
+        ' ComboBoxMaterials
         ' 
-        LabelCurrentMaterial.Alignment = ToolStripItemAlignment.Right
-        LabelCurrentMaterial.Name = "LabelCurrentMaterial"
-        LabelCurrentMaterial.Size = New Size(24, 22)
-        LabelCurrentMaterial.Text = "NA"
+        ComboBoxMaterials.Alignment = ToolStripItemAlignment.Right
+        ComboBoxMaterials.DropDownStyle = ComboBoxStyle.DropDownList
+        ComboBoxMaterials.Name = "ComboBoxMaterials"
+        ComboBoxMaterials.Size = New Size(150, 25)
+        ComboBoxMaterials.ToolTipText = "Materials"
+        ' 
+        ' LabelMaterials
+        ' 
+        LabelMaterials.Alignment = ToolStripItemAlignment.Right
+        LabelMaterials.Name = "LabelMaterials"
+        LabelMaterials.Size = New Size(31, 22)
+        LabelMaterials.Text = "Matl"
         ' 
         ' TreeView1
         ' 
@@ -600,16 +556,12 @@ Partial Class Form_Main
     Friend WithEvents ImageList1 As ImageList
     Friend WithEvents LabelSaveIn As ToolStripLabel
     Friend WithEvents ToolStripSeparator1 As ToolStripSeparator
-    Friend WithEvents ButtonPrepopulate As ToolStripButton
-    Friend WithEvents LabelPrePopulate As ToolStripLabel
-    Friend WithEvents ButtonAddToLibrary As ToolStripButton
-    Friend WithEvents LabelAddToLibrary As ToolStripLabel
     Friend WithEvents ReplaceSelectedToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ReplaceAllToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents FastenerStackToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents ButtonSaveInLibrary As ToolStripButton
-    Friend WithEvents ButtonSaveInOther As ToolStripButton
     Friend WithEvents ToolStripSeparator2 As ToolStripSeparator
-    Friend WithEvents LabelCurrentMaterial As ToolStripLabel
+    Friend WithEvents ComboBoxMaterials As ToolStripComboBox
+    Friend WithEvents ComboBoxSaveIn As ToolStripComboBox
+    Friend WithEvents LabelMaterials As ToolStripLabel
 
 End Class

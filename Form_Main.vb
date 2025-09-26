@@ -3,7 +3,7 @@
 Imports System.Text.RegularExpressions
 Imports System.Xml
 Imports Microsoft.WindowsAPICodePack.Dialogs
-Imports SolidEdgeConstants
+'Imports SolidEdgeConstants
 
 Public Class Form_Main
 
@@ -32,36 +32,38 @@ Public Class Form_Main
 
                 If MaterialFormulas.Count > 0 Then
 
-                    Dim MaterialName = MaterialFormulas(0).Value
+                    ' Use the lowest material formula in the tree
+                    Dim LastIdx As Integer = MaterialFormulas.Count - 1
+                    Dim MaterialName = MaterialFormulas(LastIdx).Value  ' Can be a single value or comma delimited list
 
-                    If Not Me.CurrentMaterial = "NA" Then
-                        MaterialName = Me.CurrentMaterial
-                    Else
-                        ' Temporarily replace escaped commas for splitting
-                        MaterialName = MaterialName.Replace("\,", "LITERALCOMMA")
-                        Dim tmpList As List(Of String) = MaterialName.Split(CChar(",")).ToList
+                    ' Temporarily replace escaped commas for splitting
+                    MaterialName = MaterialName.Replace("\,", "LITERALCOMMA")
+                    Dim tmpMaterialsList As List(Of String) = MaterialName.Split(CChar(",")).ToList
 
-                        ' Restore escaped commas
-                        For i = 0 To tmpList.Count - 1
-                            tmpList(i) = tmpList(i).Replace("LITERALCOMMA", ",").Trim
-                        Next
+                    ' Restore escaped commas and trim whitespace
+                    For i = 0 To tmpMaterialsList.Count - 1
+                        tmpMaterialsList(i) = tmpMaterialsList(i).Replace("LITERALCOMMA", ",").Trim
+                    Next
 
-                        ' If only one material found, use it.  Otherwise prompt.
-                        If tmpList.Count = 1 Then
-                            MaterialName = tmpList(0)
+                    Me.MaterialsList = tmpMaterialsList
+
+                    If Me.ActiveMaterial = "" Then
+                        If Me.MaterialsList.Count = 0 Then
+                            ' No materials defined.  No action needed.
+                        ElseIf Me.MaterialsList.Count = 1 Then
+                            ' Only one material found.  Use it.
+                            Me.ActiveMaterial = Me.MaterialsList(0)
                         Else
-                            Dim FSM As New FormSelectMaterial(tmpList)
-                            Dim Result = FSM.ShowDialog()
-                            If Result = DialogResult.OK Then
-                                MaterialName = FSM.SelectedMaterial
-                                Me.CurrentMaterial = MaterialName
-                            End If
+                            ' Prompt
+                            MsgBox("Select a material", vbOKOnly, "Select a Material")
+
                         End If
                     End If
 
-                    MaterialFormulas(0).Value = MaterialName
-
                 End If
+
+                'MaterialFormulas(LastIdx).Value = MaterialName
+
             End If
         End Set
     End Property
@@ -109,50 +111,66 @@ Public Class Form_Main
         Set(value As Boolean)
             _SaveInLibrary = value
             If Me.TabControl1 IsNot Nothing Then
-
-                ButtonSaveInLibrary.Checked = SaveInLibrary
-                ButtonSaveInOther.Checked = Not SaveInLibrary
-
-                If SaveInLibrary Then
-                    ButtonSaveInLibrary.Image = My.Resources.icons8_Checkbox_Checked
-                    ButtonSaveInOther.Image = My.Resources.icons8_Checkbox_Unchecked
-                Else
-                    ButtonSaveInLibrary.Image = My.Resources.icons8_Checkbox_Unchecked
-                    ButtonSaveInOther.Image = My.Resources.icons8_Checkbox_Checked
-                End If
+                If SaveInLibrary Then ComboBoxSaveIn.Text = "Library"
             End If
         End Set
     End Property
 
-    Private _PrePopulate As Boolean
-    Public Property PrePopulate As Boolean
+    Private _SaveInAssemblyDirectory As Boolean
+    Public Property SaveInAssemblyDirectory As Boolean
         Get
-            Return _PrePopulate
+            Return _SaveInAssemblyDirectory
         End Get
         Set(value As Boolean)
-            _PrePopulate = value
+            _SaveInAssemblyDirectory = value
             If Me.TabControl1 IsNot Nothing Then
-
-                ButtonPrepopulate.Checked = PrePopulate
-                ButtonAddToLibrary.Visible = PrePopulate
-                LabelAddToLibrary.Visible = PrePopulate
-
-                If PrePopulate Then
-                    Me.Cursor = Cursors.WaitCursor
-                    TreeView1.CheckBoxes = True
-                    ButtonPrepopulate.Image = My.Resources.icons8_Checkbox_Checked
-                    LabelPrePopulate.BackColor = System.Drawing.Color.Orange
-                    Me.Cursor = Cursors.Default
-                Else
-                    ButtonPrepopulate.Image = My.Resources.icons8_Checkbox_Unchecked
-                    LabelPrePopulate.BackColor = System.Drawing.Color.Transparent
-                    TreeView1.CheckBoxes = False
-                    TreeView1.CollapseAll()
-                    TreeView1.Nodes(0).Expand()
-                End If
+                If SaveInAssemblyDirectory Then ComboBoxSaveIn.Text = "Assy Dir"
             End If
         End Set
     End Property
+
+    Private _SaveInOther As Boolean
+    Public Property SaveInOther As Boolean
+        Get
+            Return _SaveInOther
+        End Get
+        Set(value As Boolean)
+            _SaveInOther = value
+            If Me.TabControl1 IsNot Nothing Then
+                If SaveInOther Then ComboBoxSaveIn.Text = "Other"
+            End If
+        End Set
+    End Property
+
+    'Private _PrePopulate As Boolean
+    'Public Property PrePopulate As Boolean
+    '    Get
+    '        Return _PrePopulate
+    '    End Get
+    '    Set(value As Boolean)
+    '        _PrePopulate = value
+    '        If Me.TabControl1 IsNot Nothing Then
+
+    '            ButtonPrepopulate.Checked = PrePopulate
+    '            ButtonAddToLibrary.Visible = PrePopulate
+    '            LabelAddToLibrary.Visible = PrePopulate
+
+    '            If PrePopulate Then
+    '                Me.Cursor = Cursors.WaitCursor
+    '                TreeView1.CheckBoxes = True
+    '                ButtonPrepopulate.Image = My.Resources.icons8_Checkbox_Checked
+    '                LabelPrePopulate.BackColor = System.Drawing.Color.Orange
+    '                Me.Cursor = Cursors.Default
+    '            Else
+    '                ButtonPrepopulate.Image = My.Resources.icons8_Checkbox_Unchecked
+    '                LabelPrePopulate.BackColor = System.Drawing.Color.Transparent
+    '                TreeView1.CheckBoxes = False
+    '                TreeView1.CollapseAll()
+    '                TreeView1.Nodes(0).Expand()
+    '            End If
+    '        End If
+    '    End Set
+    'End Property
 
     Public Property FileLogger As Logger
     Public Property ProcessTemplateInBackground As Boolean = True
@@ -168,15 +186,37 @@ Public Class Form_Main
     Public Property AsmDoc As SolidEdgeAssembly.AssemblyDocument
     Public Property IncludeDrawing As Boolean
 
-    Private _CurrentMaterial As String
-    Public Property CurrentMaterial As String
+    Private _MaterialsList As List(Of String)
+    Public Property MaterialsList As List(Of String)
         Get
-            Return _CurrentMaterial
+            Return _MaterialsList
+        End Get
+        Set(value As List(Of String))
+            _MaterialsList = value
+            If Me.ComboBoxMaterials IsNot Nothing Then
+                ComboBoxMaterials.Items.Clear()
+                ComboBoxMaterials.Items.Add("")
+                For Each s As String In _MaterialsList
+                    ComboBoxMaterials.Items.Add(s)
+                Next
+                If _MaterialsList.Contains(Me.ActiveMaterial) Then
+                    ComboBoxMaterials.Text = Me.ActiveMaterial
+                Else
+                    Me.ActiveMaterial = ""  ' Should take care of the combobox automatically
+                End If
+            End If
+        End Set
+    End Property
+
+    Private _ActiveMaterial As String
+    Public Property ActiveMaterial As String
+        Get
+            Return _ActiveMaterial
         End Get
         Set(value As String)
-            _CurrentMaterial = value
-            If Me.LabelCurrentMaterial IsNot Nothing Then
-                If Not LabelCurrentMaterial.Text = _CurrentMaterial Then LabelCurrentMaterial.Text = _CurrentMaterial
+            _ActiveMaterial = value
+            If Me.ComboBoxMaterials IsNot Nothing Then
+                If Not ComboBoxMaterials.Text = _ActiveMaterial Then ComboBoxMaterials.Text = _ActiveMaterial
             End If
         End Set
     End Property
@@ -203,7 +243,7 @@ Public Class Form_Main
 
         TextBoxStatus.Text = ""
 
-        AddHandler TreeView1.AfterSelect, AddressOf TreeView1_AfterSelect
+        'AddHandler TreeView1.AfterSelect, AddressOf TreeView1_AfterSelect
         AddHandler TreeView1.NodeMouseClick, AddressOf TreeView1_NodeMouseClick
 
         Me.Props = New Props
@@ -233,7 +273,7 @@ Public Class Form_Main
             Me.CheckNewVersion = True
             Me.SaveInLibrary = True
             Me.ProcessTemplateInBackground = False
-            Me.CurrentMaterial = "NA"
+            Me.ActiveMaterial = ""
         End If
 
         UP.CreatePreferencesDirectory(Me)
@@ -271,7 +311,6 @@ Public Class Form_Main
             Me.Text = $"Solid Edge Storekeeper {Me.Version}"
         Else
             Me.Text = $"Solid Edge Storekeeper {Me.Version} {Me.PreviewVersion}"
-            'MsgBox(Me.Text, vbOKOnly, "Running a preview version")
         End If
 
         If Me.CheckNewVersion Then
@@ -290,7 +329,7 @@ Public Class Form_Main
         Splash.Close()
 
         If Not IO.File.Exists(Me.MaterialTable) Then
-            MsgBox($"Specify a material table before continuing.{vbCrLf}It is set on the Tree Search Options page.")
+            MsgBox($"Specify a material table before continuing.{vbCrLf}It is set on the Tree Search Options page.", vbOKOnly, "Specify a Material Table")
         End If
 
     End Sub
@@ -304,7 +343,6 @@ Public Class Form_Main
         ) As Boolean
 
         Dim Success As Boolean = True
-        'Dim ErrorMessageList As New List(Of String)
         Dim IsTreeSearch = PropertySearchFilename Is Nothing
 
         If Not IO.Directory.Exists(Me.LibraryDirectory) Then
@@ -325,27 +363,11 @@ Public Class Form_Main
                 Success = False
                 ErrorLogger.AddMessage($"Material table not found '{Me.MaterialTable}'")
             End If
+            If Me.ActiveMaterial = "" And Me.MaterialsList.Count > 0 Then
+                Success = False
+                ErrorLogger.AddMessage($"Select a material")
+            End If
 
-            '' Select a material if multiple choices are present
-            'Dim MaterialFormulas As List(Of Prop) = Props.GetPropsOfType("SEPropertyFormulaMaterial")
-            'Dim tmpProp As Prop = MaterialFormulas(0)
-            'Dim tmpValue As String = tmpProp.Value
-            'tmpValue = tmpValue.Replace("\,", "LITERALCOMMA")
-            'Dim tmpList As List(Of String) = tmpValue.Split(CChar(",")).ToList
-            'For i = 0 To tmpList.Count - 1
-            '    tmpList(i) = tmpList(i).Replace("LITERALCOMMA", ",").Trim
-            'Next
-            'If tmpList.Count = 1 Then
-            '    tmpValue = tmpList(0)
-            'Else
-            '    Dim FSM As New FormSelectMaterial(tmpList)
-            '    Dim Result = FSM.ShowDialog()
-            '    If Result = DialogResult.OK Then
-            '        tmpValue = FSM.SelectedMaterial
-            '    End If
-            'End If
-            'tmpProp.Value = tmpValue
-            'Dim j = 0
         Else
             If PropertiesToSearchList.Count = 0 Then
                 Success = False
@@ -372,7 +394,16 @@ Public Class Form_Main
             ErrorLogger.AddMessage("Solid Edge not detected.  This command requires a running instance of Solid Edge with an assembly file active")
         End Try
 
-        If SEApp IsNot Nothing And Not Me.PrePopulate Then
+        'If SEApp IsNot Nothing And Not Me.PrePopulate Then
+        '    Try
+        '        AsmDoc = CType(SEApp.ActiveDocument, SolidEdgeAssembly.AssemblyDocument)
+        '    Catch ex As Exception
+        '        Success = False
+        '        ErrorLogger.AddMessage("No assembly file active.  This command requires a running instance of Solid Edge with an assembly file active")
+        '    End Try
+        'End If
+
+        If SEApp IsNot Nothing Then
             Try
                 AsmDoc = CType(SEApp.ActiveDocument, SolidEdgeAssembly.AssemblyDocument)
             Catch ex As Exception
@@ -381,11 +412,16 @@ Public Class Form_Main
             End Try
         End If
 
-        If Not Me.PrePopulate Then
-            If SEApp IsNot Nothing And AsmDoc IsNot Nothing AndAlso AsmDoc.Path = "" Then
-                Success = False
-                ErrorLogger.AddMessage("Assembly must be saved before adding parts")
-            End If
+        'If Not Me.PrePopulate Then
+        '    If SEApp IsNot Nothing And AsmDoc IsNot Nothing AndAlso AsmDoc.Path = "" Then
+        '        Success = False
+        '        ErrorLogger.AddMessage("Assembly must be saved before adding parts")
+        '    End If
+        'End If
+
+        If SEApp IsNot Nothing And AsmDoc IsNot Nothing AndAlso AsmDoc.Path = "" Then
+            Success = False
+            ErrorLogger.AddMessage("Assembly must be saved before adding parts")
         End If
 
         If SEApp IsNot Nothing Then
@@ -407,18 +443,6 @@ Public Class Form_Main
             End Try
         End If
 
-        'If Not ErrorMessageList.Count = 0 Then
-        '    Success = False
-
-        '    Dim msg As String = $"Please resolve the following before proceeding{vbCrLf}{vbCrLf}"
-        '    Dim Indent As String = "    "
-        '    For Each s As String In ErrorMessageList
-        '        msg = $"{msg}{Indent}{s}{vbCrLf}"
-        '    Next
-        '    MsgBox(msg, vbOKOnly, "Check Start Conditions")
-        '    'Me.ErrorLogger.RequestAbort()
-        'End If
-
         Return Success
     End Function
 
@@ -430,7 +454,6 @@ Public Class Form_Main
         ) As Boolean
 
         Dim Proceed As Boolean = True
-        'Dim ErrorMessages As New List(Of String)
 
         If ErrorLogger Is Nothing Then ErrorLogger = Me.FileLogger
 
@@ -453,8 +476,6 @@ Public Class Form_Main
             If Filename Is Nothing Then
                 TextBoxStatus.Text = ""
                 Proceed = False
-                'ErrorMessages.Add("Unable to get filename")
-                'ErrorLogger.AddMessage("Unable to get filename")
             End If
         Else
             Filename = PropertySearchFilename
@@ -475,7 +496,6 @@ Public Class Form_Main
             If TemplateName Is Nothing Then
                 TextBoxStatus.Text = ""
                 Proceed = False
-                'ErrorMessages.Add("Unable to get template name")
                 ErrorLogger.AddMessage("Unable to get template name")
             End If
 
@@ -532,7 +552,6 @@ Public Class Form_Main
             Else
                 SEDoc.Close()
                 SEApp.DoIdle()
-                'If Me.SuspendMRU Then SEApp.ResumeMRU()
             End If
 
             If Me.SuspendMRU Then
@@ -592,9 +611,7 @@ Public Class Form_Main
                             'SEApp.DoIdle()
                         End While
                     Catch ex2 As Exception
-                        'MsgBox("Could not add part.  Please try again.", vbOKOnly, "Part not added")
                         Proceed = False
-                        'ErrorMessages.Add("Could not add part.  Please try again.")
                         ErrorLogger.AddMessage("Could not add part.  Please try again.")
                     End Try
 
@@ -635,7 +652,6 @@ Public Class Form_Main
                                 objAsm.ReplaceComponents(CType(tmpOcc, Array), Filename, SolidEdgeAssembly.ConstraintReplacementConstants.seConstraintReplacementNone)
                             Else
                                 Proceed = False
-                                'ErrorMessages.Add("Option not set for treatment of failed constraints.  Set it on the Tree Search Options dialog.")
                                 ErrorLogger.AddMessage("Option not set for treatment of failed constraints.  Set it on the Tree Search Options dialog.")
                             End If
 
@@ -648,7 +664,6 @@ Public Class Form_Main
                                 objAsm.ReplaceComponents(tmpOcc, Filename, SolidEdgeAssembly.ConstraintReplacementConstants.seConstraintReplacementNone)
                             Else
                                 Proceed = False
-                                'ErrorMessages.Add("Option not set for treatment of failed constraints.  Set it on the Tree Search Options dialog.")
                                 ErrorLogger.AddMessage("Option not set for treatment of failed constraints.  Set it on the Tree Search Options dialog.")
                             End If
 
@@ -678,16 +693,6 @@ Public Class Form_Main
 
         End If
         TextBoxStatus.Text = ""
-
-        'OleMessageFilter.Revoke()
-        'If FileLogger Is Nothing And ErrorMessages.Count > 0 Then
-        '    Dim s As String = $"Processing did not succeed{vbCrLf}"
-        '    Dim Indent As String = "    "
-        '    For Each s1 As String In ErrorMessages
-        '        s = $"{s}{Indent}{s1}{vbCrLf}"
-        '    Next
-        '    MsgBox(s, vbOKOnly, "Processing did not succeed")
-        'End If
 
         Return Proceed
 
@@ -775,7 +780,6 @@ Public Class Form_Main
 
         Dim VariableProps As List(Of Prop) = Props.GetPropsOfType("Variable")
         Dim VariableDict As Dictionary(Of String, SolidEdgeFramework.variable) = UC.GetDocVariables(SEDoc)
-        'Dim ErrorList As New List(Of String)
 
         SEApp.DelayCompute = True
 
@@ -787,9 +791,6 @@ Public Class Form_Main
                 Catch ex As Exception
                     ErrorLogger.AddMessage($"Cannot process value for '{Prop.Name}': '{Prop.Value}'")
                 End Try
-                'If IsNumeric(Prop.Value) Then
-                'Else
-                'End If
             Else
                 ErrorLogger.AddMessage($"Variable not found: '{Prop.Name}'")
             End If
@@ -865,7 +866,6 @@ Public Class Form_Main
         Dim HasThreadedHoles As Boolean = ThreadedHoles IsNot Nothing AndAlso ThreadedHoles.Count > 0
 
         If HasExternalThreads And HasThreadedHoles Then
-            'MsgBox("Cannot currently process models with both threaded holes AND external threads", vbOKOnly, "External and Internal threads")
             ErrorLogger.AddMessage("Cannot currently process models with both threaded holes AND external threads")
             Return False
         End If
@@ -929,7 +929,7 @@ Public Class Form_Main
             If SEPropertyNames.Contains(SEPropertyNameProp) Then
                 Dim PropertySetName As String = UC.PropSetFromFormula(SEPropertyNameProp.Value) ' Custom
                 Dim PropertyName As String = UC.PropNameFromFormula(SEPropertyNameProp.Value) ' Description
-                Dim Value = Props.SubstitutePropFormulas(StringFormula.Value) ' shcs_%{Name}_%{Length}.par -> shcs_0.250-20_0.500.par
+                Dim Value = Props.SubstitutePropFormulas(StringFormula.Value, Me.ActiveMaterial) ' shcs_%{Name}_%{Length}.par -> shcs_0.250-20_0.500.par
                 If Value Is Nothing Then
                     Success = False
                     ErrorLogger.AddMessage($"Unable to process formula {StringFormula.Value}")
@@ -954,21 +954,28 @@ Public Class Form_Main
             End If
         Next
 
-        For Each MaterialFormula As Prop In MaterialFormulas
+        If MaterialFormulas IsNot Nothing AndAlso MaterialFormulas.Count > 0 Then
+            Dim MaterialFormula As Prop = MaterialFormulas(MaterialFormulas.Count - 1)
+
             Dim UM As New UtilsMaterials
-            'Dim ErrorLogger As New HCErrorLogger
-            Dim SubLogger As Logger = ErrorLogger.AddLogger(Me.MaterialTable)
+            Dim SubLogger As Logger = ErrorLogger.AddLogger("Update material")
 
             Dim PropName As String = MaterialFormula.Name.Replace("Formula", "Property") ' MaterialFormula -> MaterialProperty
             Dim SEPropertyNameProp As Prop = Props.GetProp(PropName) ' .Value = %{System.Material}
             If SEPropertyNames.Contains(SEPropertyNameProp) Then
                 Dim PropertySetName As String = UC.PropSetFromFormula(SEPropertyNameProp.Value) ' System
                 Dim PropertyName As String = UC.PropNameFromFormula(SEPropertyNameProp.Value) ' Material
-                Dim Value = MaterialFormula.Value ' STEEL
-                UC.SetPropValue(SEDoc, PropertySetName, PropertyName, ModelLinkIdx:=0, AddProp, Value)
-                UM.UpdateMaterialFromMaterialTable(SEApp, SEDoc, Me.MaterialTable, False, True, False, "", Nothing, False, False, SubLogger)
+                'Dim Value = MaterialFormula.Value ' STEEL
+                Dim Value = Me.ActiveMaterial
+                If Not Value = "" Then
+                    UC.SetPropValue(SEDoc, PropertySetName, PropertyName, ModelLinkIdx:=0, AddProp, Value)
+                    UM.UpdateMaterialFromMaterialTable(SEApp, SEDoc, Me.MaterialTable, False, True, False, "", Nothing, False, False, SubLogger)
+                Else
+                    ErrorLogger.AddMessage("Active material not set")
+                End If
+
             End If
-        Next
+        End If
 
         Return Success
     End Function
@@ -988,21 +995,18 @@ Public Class Form_Main
 
         Dim tmpProps As List(Of Prop) = Props.GetPropsOfType("FilenameFormula")
         If tmpProps.Count = 0 Then
-            'MsgBox("No FilenameFormula specified", vbOKOnly, "No file name formula")
             ErrorLogger.AddMessage("No FilenameFormula specified")
             TextBoxStatus.Text = ""
             Return Nothing
         End If
         If tmpProps.Count > 1 Then
-            'MsgBox("Multiple FilenameFormulas specified", vbOKOnly, "Multiple file name formulas")
             ErrorLogger.AddMessage("Multiple FilenameFormulas specified")
             TextBoxStatus.Text = ""
             Return Nothing
         End If
 
         FilenameFormula = tmpProps(0).Value.Trim
-        Filename = Props.SubstitutePropFormulas(FilenameFormula)
-        'Filename = FilenameFormula
+        Filename = Props.SubstitutePropFormulas(FilenameFormula, Me.ActiveMaterial)
 
         If Not Me.SaveInLibrary Then
             If Me.AddToLibraryOnly Then
@@ -1066,13 +1070,11 @@ Public Class Form_Main
 
         Dim tmpProps As List(Of Prop) = Props.GetPropsOfType("TemplateFormula")
         If tmpProps.Count = 0 Then
-            'MsgBox("No TemplateFormula specified", vbOKOnly, "Template name formula")
             ErrorLogger.AddMessage("No TemplateFormula specified")
             TextBoxStatus.Text = ""
             Return Nothing
         End If
         If tmpProps.Count > 1 Then
-            'MsgBox("Multiple TemplateFormulas specified", vbOKOnly, "Template name formula")
             ErrorLogger.AddMessage("Multiple TemplateFormulas specified")
             TextBoxStatus.Text = ""
             Return Nothing
@@ -1081,7 +1083,6 @@ Public Class Form_Main
         TemplateName = $"{Me.TemplateDirectory}\{tmpProps(0).Value}"
 
         If Not IO.File.Exists(TemplateName) Then
-            'MsgBox($"Template not found '{TemplateName}'", vbOKOnly, "File not found")
             ErrorLogger.AddMessage($"Template not found '{TemplateName}'")
             TextBoxStatus.Text = ""
             Return Nothing
@@ -1358,7 +1359,6 @@ Public Class Form_Main
             End If
             If TargetPattern IsNot Nothing Then Exit For
         Next
-        'End If
 
         If TargetPattern IsNot Nothing And TargetHole IsNot Nothing Then
 
@@ -1404,26 +1404,6 @@ Public Class Form_Main
 
         Return Success
     End Function
-
-    'Private Function GetSubassyReference(
-    '    Element2 As SolidEdgeAssembly.TopologyReference
-    '    ) As SolidEdgeFramework.Reference
-
-    '    Dim Reference As SolidEdgeFramework.Reference = Nothing
-
-    '    Dim ParentSubOccurrence As SolidEdgeAssembly.SubOccurrence
-    '    ParentSubOccurrence = CType(Element2.Parent, SolidEdgeAssembly.SubOccurrence)
-    '    Dim ParentParent As SolidEdgeAssembly.SubOccurrence
-    '    ParentParent = CType(ParentSubOccurrence.Parent, SolidEdgeAssembly.SubOccurrence)
-
-    '    Dim Face2 = CType(Element2.Object, SolidEdgeGeometry.Face)
-
-    '    'Reference = createTopASMRef(ParentParent, ParentSubOccurrence)
-    '    Reference = createTopASMRef(ParentSubOccurrence, Face2)
-
-
-    '    Return Reference
-    'End Function
 
     Function createTopASMRef(
         ByVal pSubOcc As SolidEdgeAssembly.SubOccurrence,
@@ -1508,11 +1488,6 @@ Public Class Form_Main
                             If tmpType = "TemplateFormula" Then
                                 UpdateThumbnail(tmpValue)
                                 TemplateFound = True
-                            End If
-                            If tmpName = "MaterialFormula" Then
-                                If Not Me.CurrentMaterial = "NA" Then
-                                    Prop.Value = Me.CurrentMaterial
-                                End If
                             End If
                         End If
                     End If
@@ -1726,11 +1701,6 @@ Public Class Form_Main
 
         For i = tmpList.Count - 1 To 0 Step -1
             Dim tmptmpText As String = String.Format("{0}\{1}", tmpList(i), tmpText)
-            'If i = tmpList.Count - 1 Then
-            '    tmptmpText = String.Format("{0}\{1}\", tmpList(i), tmpText)
-            'Else
-            '    tmptmpText = String.Format("{0}\{1}", tmpList(i), tmpText)
-            'End If
             If Not OutText.Count + tmptmpText.Count > MaxCharacters Then
                 tmpText = tmptmpText
             Else
@@ -2003,9 +1973,6 @@ Public Class Form_Main
         Dim OldValue As String
 
         Dim ExcelDataReaderCache As New Dictionary(Of String, List(Of List(Of String)))
-        'Dim UP As New UtilsPreferences
-        'Dim DefaultDataDirectory = UP.GetDefaultDataDirectory
-
 
         Dim Indent = "    "
         Dim Indents As New List(Of String)
@@ -2223,32 +2190,16 @@ Public Class Form_Main
                     Continue For
                 End If
 
-                'For Each Attribute As Xml.XmlAttribute In tmpNode.Attributes
-                '    If Attribute.Name = "Type" Then
-                '        If Not (Attribute.Value = "Node" Or Attribute.Value.Contains("LeafNode")) Then
-                '            Dim tmpName As String = tmpNode.Name
-                '            Dim tmpType As String = Attribute.Value
-                '            Dim tmpValue As String = tmpNode.InnerText
-                '            Dim Prop As New Prop(tmpName, tmpType, tmpValue)
-                '            tmpProps.Items.Add(Prop)
-                '            'If tmpType = "TemplateFormula" Then
-                '            '    UpdateThumbnail(tmpValue)
-                '            '    TemplateFound = True
-                '            'End If
-                '        End If
-                '    End If
-                'Next
             Next
         Next
 
         Return Node
-        'Return tmpProps
+
     End Function
 
     Public Function PathFromXmlNode(Node As XmlNode) As String
         Dim FullPath As String = Nothing
         Dim ReversedList As New List(Of String)
-        'ReversedList.Add(Node.Name)
 
         Dim CurrentNode As XmlNode = Node
 
@@ -2290,68 +2241,16 @@ Public Class Form_Main
     End Sub
 
 
-    Private Sub TreeView1_AfterSelect(sender As Object, e As EventArgs)
-
-        Me.SelectedNodeFullPath = CType(e, TreeViewEventArgs).Node.FullPath
-
-        '' Deal with possible multiple entries in MaterialFormula
-
-        ''%{MaterialFormula}:STEEL
-        ''%{MaterialFormula}:STAINLESS, NYLON, TITANIUM, Wood\, Walnut
-
-        'Dim MaterialFormulas As List(Of Prop) = Props.GetPropsOfType("SEPropertyFormulaMaterial")
-
-        'If MaterialFormulas.Count > 0 Then
-
-        '    Dim MaterialName = MaterialFormulas(0).Value
-
-        '    If Not Me.CurrentMaterial = "NA" Then
-        '        MaterialName = Me.CurrentMaterial
-        '    Else
-        '        ' Temporarily replace escaped commas for splitting
-        '        MaterialName = MaterialName.Replace("\,", "LITERALCOMMA")
-        '        Dim tmpList As List(Of String) = MaterialName.Split(CChar(",")).ToList
-
-        '        ' Restore escaped commas
-        '        For i = 0 To tmpList.Count - 1
-        '            tmpList(i) = tmpList(i).Replace("LITERALCOMMA", ",").Trim
-        '        Next
-
-        '        ' If only one material found, use it.  Otherwise prompt.
-        '        If tmpList.Count = 1 Then
-        '            MaterialName = tmpList(0)
-        '        Else
-        '            Dim FSM As New FormSelectMaterial(tmpList)
-        '            Dim Result = FSM.ShowDialog()
-        '            If Result = DialogResult.OK Then
-        '                MaterialName = FSM.SelectedMaterial
-        '                Me.CurrentMaterial = MaterialName
-        '            End If
-        '        End If
-        '    End If
-
-        '    MaterialFormulas(0).Value = MaterialName
-
-        'End If
-
-
-    End Sub
-
     Private Sub TreeView1_NodeMouseClick(sender As Object, e As TreeNodeMouseClickEventArgs) Handles TreeView1.NodeMouseClick
 
-        Me.SelectedNodeFullPath = e.Node.FullPath
+        If Not Me.SelectedNodeFullPath = e.Node.FullPath Then Me.SelectedNodeFullPath = e.Node.FullPath
+
         TreeView1.SelectedNode = e.Node
-        If e.Node.Nodes.Count > 0 Then
-            'If e.Node.IsExpanded Then
-            '    e.Node.Collapse()
-            'Else
-            '    e.Node.Expand()
-            'End If
-        Else
-            If e.Button = MouseButtons.Right And Not Me.PrePopulate Then
+
+        If e.Node.Nodes.Count = 0 Then
+            If e.Button = MouseButtons.Right Then
                 ContextMenuStrip1.Show(TreeView1.PointToScreen(e.Location))
             End If
-
         End If
 
     End Sub
@@ -2360,7 +2259,7 @@ Public Class Form_Main
         If ButtonClose.Text = "Stop" Then
             Me.ErrorLogger.RequestAbort()
         Else
-            Me.PrePopulate = False
+            'Me.PrePopulate = False
             Me.AddToLibraryOnly = False
 
             Dim UP As New UtilsPreferences
@@ -2374,7 +2273,7 @@ Public Class Form_Main
     End Sub
 
     Private Sub Form1_Closing(sender As Object, e As EventArgs) Handles Me.FormClosing
-        Me.PrePopulate = False
+        'Me.PrePopulate = False
         Me.AddToLibraryOnly = False
 
         Dim UP As New UtilsPreferences
@@ -2397,25 +2296,6 @@ Public Class Form_Main
             MsgBox("This is a category header, not an individual part.  It cannot be added to an assembly", vbOKOnly, "Category header")
         End If
     End Sub
-
-    'Private Sub MyBase_Resize(sender As Object, e As EventArgs) Handles MyBase.Resize
-    '    LabelSaveDirectory.Text = TruncateDirectoryName(LibraryDirectory)
-    'End Sub
-
-    'Private Sub ButtonSaveDirectory_Click(sender As Object, e As EventArgs)
-    '    Dim tmpFolderDialog As New CommonOpenFileDialog
-    '    tmpFolderDialog.IsFolderPicker = True
-
-    '    If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
-    '    Me.TopMost = False
-
-    '    If tmpFolderDialog.ShowDialog = DialogResult.OK Then
-    '        LibraryDirectory = tmpFolderDialog.FileName
-    '    End If
-
-    '    If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
-
-    'End Sub
 
     Private Sub ButtonOptions_Click(sender As Object, e As EventArgs) Handles ButtonOptions.Click
 
@@ -2676,34 +2556,12 @@ Public Class Form_Main
         System.Diagnostics.Process.Start(Info)
     End Sub
 
-    Private Sub ButtonSaveInLibrary_Click(sender As Object, e As EventArgs) Handles ButtonSaveInLibrary.Click
-        If Not ButtonSaveInLibrary.Checked Then
-            Me.SaveInLibrary = True
-        End If
-    End Sub
-
-    Private Sub ButtonSaveInOther_Click(sender As Object, e As EventArgs) Handles ButtonSaveInOther.Click
-        If Not ButtonSaveInOther.Checked Then
-            Me.SaveInLibrary = False
-        End If
-    End Sub
-
-    Private Sub ButtonPrepopulate_Click(sender As Object, e As EventArgs) Handles ButtonPrepopulate.Click
-        Me.PrePopulate = Not ButtonPrepopulate.Checked
-    End Sub
-
-    Private Sub LabelPrePopulate_Click(sender As Object, e As EventArgs) Handles LabelPrePopulate.Click
-        ButtonPrepopulate.PerformClick()
-    End Sub
-
-
     Private Sub treeTestsSelection_AfterCheck(sender As Object, e As TreeViewEventArgs) Handles TreeView1.AfterCheck
         ' https://stackoverflow.com/questions/7257356/checking-treeview-nodes
 
         If e.Action <> TreeViewAction.ByMouse And e.Action <> TreeViewAction.ByKeyboard Then Exit Sub
 
         CheckAllNodes(e.Node)
-        'CheckAllNodesForParent(e.Node)
     End Sub
 
     Public Sub CheckAllNodes(ByRef TreeNodeToCheck As TreeNode)
@@ -2716,13 +2574,13 @@ Public Class Form_Main
         Next
     End Sub
 
-    Private Sub ButtonAddToLibrary_Click(sender As Object, e As EventArgs) Handles ButtonAddToLibrary.Click
+    Private Sub ButtonAddToLibrary_Click(sender As Object, e As EventArgs)
         Dim CheckedNodesList As New List(Of TreeNode)
-        Dim RootNode As TreeNode = TreeView1.Nodes(0)
+        Dim RootNode = TreeView1.Nodes(0)
         GetCheckedNodes(RootNode, CheckedNodesList)
-        Dim Count As Integer = CheckedNodesList.Count
-        Dim MaxMsgCount As Integer = 30
-        Dim s As String = ""
+        Dim Count = CheckedNodesList.Count
+        Dim MaxMsgCount = 30
+        Dim s = ""
 
         If Count = 0 Then
             MsgBox("No checked items found", vbOKOnly)
@@ -2739,34 +2597,34 @@ Public Class Form_Main
 
         For i = 0 To CheckedNodesList.Count - 1
             If i = MaxMsgCount Then Exit For
-            Dim Pathname As String = CheckedNodesList(i).FullPath
+            Dim Pathname = CheckedNodesList(i).FullPath
             Pathname = Pathname.Replace("Solid Edge Storekeeper\", "")
             s = $"{s}    {Pathname}{vbCrLf}"
         Next
 
-        Dim Result As MsgBoxResult = MsgBox(s, vbYesNo, "Add to Library")
+        Dim Result = MsgBox(s, vbYesNo, "Add to Library")
 
         If Result = MsgBoxResult.Yes Then
 
-            Me.ErrorLogger = New HCErrorLogger
+            ErrorLogger = New HCErrorLogger
 
             AddToLibraryOnly = True
             ButtonClose.Text = "Stop"
             ButtonClose.BackColor = Color.Coral
 
-            Dim AddedCount As Integer = 0
+            Dim AddedCount = 0
 
-            For Each Node As TreeNode In CheckedNodesList
-                System.Windows.Forms.Application.DoEvents()
-                If Me.ErrorLogger.Abort Then Exit For
+            For Each Node In CheckedNodesList
+                Application.DoEvents()
+                If ErrorLogger.Abort Then Exit For
                 TreeView1.SelectedNode = Node
-                Me.FileLogger = Me.ErrorLogger.AddFile(Node.FullPath)
+                FileLogger = ErrorLogger.AddFile(Node.FullPath)
                 Node.EnsureVisible()
                 Process()
                 AddedCount += 1
             Next
 
-            ReportErrors(Me.ErrorLogger)
+            ReportErrors(ErrorLogger)
 
             ButtonClose.Text = "Close"
             ButtonClose.BackColor = Color.White
@@ -2787,16 +2645,12 @@ Public Class Form_Main
         End If
     End Sub
 
-    Private Sub LabelAddToLibrary_Click(sender As Object, e As EventArgs) Handles LabelAddToLibrary.Click
-        ButtonAddToLibrary.PerformClick()
-    End Sub
-
     Private Sub ReplaceSelectedToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ReplaceSelectedToolStripMenuItem.Click
 
         Dim Node = TreeView1.SelectedNode
         If Node.Nodes.Count = 0 Then
             If Not (Me.FailedConstraintSuppress Or Me.FailedConstraintAllow) Then
-                MsgBox("Set how to handle failed constraints on the Tree Search Options dialog", vbOKOnly)
+                MsgBox("Set how to handle failed constraints on the Tree Search Options dialog", vbOKOnly, "Handling Failed Constraints")
                 Exit Sub
             End If
             Me.ErrorLogger = New HCErrorLogger
@@ -2814,7 +2668,7 @@ Public Class Form_Main
         Dim Node = TreeView1.SelectedNode
         If Node.Nodes.Count = 0 Then
             If Not (Me.FailedConstraintSuppress Or Me.FailedConstraintAllow) Then
-                MsgBox("Set how to handle failed constraints on the Tree Search Options dialog", vbOKOnly)
+                MsgBox("Set how to handle failed constraints on the Tree Search Options dialog", vbOKOnly, "Handle Failed Constraints")
                 Exit Sub
             End If
             Me.ErrorLogger = New HCErrorLogger
@@ -2834,10 +2688,16 @@ Public Class Form_Main
 
         Dim Node = TreeView1.SelectedNode
 
-        CheckStartConditions(Nothing, New Logger("Fastenerstack", Nothing)) ' Handles multiple material choices
+        Dim tmpErrorLogger As New HCErrorLogger
+        Dim FastenerStackLogger = tmpErrorLogger.AddFile("Fastener Stack")
+        Dim Proceed As Boolean = CheckStartConditions(Nothing, FastenerStackLogger) ' Handles multiple material choices
 
-        Dim FFS As New FormFastenerStack(Me)
-        FFS.ShowDialog()
+        If tmpErrorLogger.HasErrors Then
+            ReportErrors(tmpErrorLogger)
+        Else
+            Dim FFS As New FormFastenerStack(Me)
+            FFS.ShowDialog()
+        End If
 
         If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
 
@@ -2858,9 +2718,27 @@ Public Class Form_Main
 
     End Sub
 
-    Private Sub LabelCurrentMaterial_Click(sender As Object, e As EventArgs) Handles LabelCurrentMaterial.Click
-        LabelCurrentMaterial.Text = "NA"
-        Me.CurrentMaterial = "NA"
+    Private Sub ComboBoxSaveIn_TextChanged(sender As Object, e As EventArgs) Handles ComboBoxSaveIn.SelectedIndexChanged
+
+        Select Case ComboBoxSaveIn.Text
+            Case "Library"
+                Me.SaveInLibrary = True
+                Me.SaveInAssemblyDirectory = False
+                Me.SaveInOther = False
+            Case "Assy Dir"
+                Me.SaveInLibrary = False
+                Me.SaveInAssemblyDirectory = True
+                Me.SaveInOther = False
+            Case "Other"
+                Me.SaveInLibrary = False
+                Me.SaveInAssemblyDirectory = False
+                Me.SaveInOther = True
+        End Select
+
+    End Sub
+
+    Private Sub ComboBoxMaterials_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBoxMaterials.SelectedIndexChanged
+        Me.ActiveMaterial = ComboBoxMaterials.Text
     End Sub
 End Class
 
@@ -2908,43 +2786,18 @@ Public Class Props
         Return FoundProp
     End Function
 
-    Public Function SubstitutePropFormulas(InString As String) As String
+    Public Function SubstitutePropFormulas(InString As String, ActiveMaterial As String) As String
         Dim OutString As String = InString
 
         Dim PropDict As New Dictionary(Of String, String)
 
         For Each Item As Prop In Items
-
-            Dim tmpValue = Item.Value
-
-            '' Deal with multiple possible entries in MaterialFormula
-
-            ''%{MaterialFormula}:STEEL
-            ''%{MaterialFormula}:STAINLESS, NYLON, TITANIUM, Wood\, Walnut
-
-            'If Item.Name = "MaterialFormula" And InString.Contains("MaterialFormula") Then
-            '    If Not Form_Main.CurrentMaterial = "NA" Then
-            '        tmpValue = Form_Main.CurrentMaterial
-            '    Else
-            '        tmpValue = tmpValue.Replace("\,", "LITERALCOMMA")
-            '        Dim tmpList As List(Of String) = tmpValue.Split(CChar(",")).ToList
-            '        For i = 0 To tmpList.Count - 1
-            '            tmpList(i) = tmpList(i).Replace("LITERALCOMMA", ",").Trim
-            '        Next
-            '        If tmpList.Count = 1 Then
-            '            tmpValue = tmpList(0)
-            '        Else
-            '            Dim FSM As New FormSelectMaterial(tmpList)
-            '            Dim Result = FSM.ShowDialog()
-            '            If Result = DialogResult.OK Then
-            '                tmpValue = FSM.SelectedMaterial
-            '                Form_Main.CurrentMaterial = tmpValue
-            '            End If
-            '        End If
-            '    End If
-            'End If
-
-            PropDict($"%{{{Item.Name}}}") = tmpValue  ' "%{Length}": "0.500"
+            If Not Item.Name = "MaterialFormula" Then
+                Dim tmpValue = Item.Value
+                PropDict($"%{{{Item.Name}}}") = tmpValue  ' "%{Length}": "0.500"
+            Else
+                PropDict($"%{{{Item.Name}}}") = ActiveMaterial
+            End If
         Next
 
         For Each FormulaID In PropDict.Keys
@@ -2958,7 +2811,7 @@ Public Class Props
         Pattern = "%{[^}]*}"  ' Any number of substrings that start with "%{" and end with the first encountered "}".
         Matches = Regex.Matches(OutString, Pattern)
         If Not Matches.Count = 0 Then
-            Form_Main.FileLogger.AddMessage($"Some properties could not be resolved in '{OutString}'")
+            If Form_Main.FileLogger IsNot Nothing Then Form_Main.FileLogger.AddMessage($"Some properties could not be resolved in '{OutString}'")
             Return Nothing
         End If
 
