@@ -10,7 +10,7 @@ Public Class Form_Main
     Private Property Version As String = "2025.4"
 
     'Private Property PreviewVersion As String = ""  ' Empty string if not a preview
-    Private Property PreviewVersion As String = "Preview 05"
+    Private Property PreviewVersion As String = "Preview 06"
 
 
     Private _SelectedNodeFullPath As String
@@ -293,6 +293,9 @@ Public Class Form_Main
 
         LoadXml(Splash)
 
+        If Me.MaterialsList Is Nothing Then
+            Me.MaterialsList = New List(Of String)
+        End If
         If Me.PropertiesToSearchList Is Nothing Then
             Me.PropertiesToSearchList = New List(Of String)
         End If
