@@ -14,6 +14,10 @@ Feel free to report bugs and/or ideas for improvement on the [<ins>**Solid Edge 
 
 ## V2025.4
 
+We'll get right to the updates, but first a quick announcement -- we have a new **Contributor!**  Our very own **@TeeVar** built and donated a massive ISO-native dataset, compatible back to SE2019.  He also had a lot of great suggestions to enhance the capabilities of the program and make it easier to use.  Can't wait for you to see it all!
+
+On to those updates...
+
 ### Fastener Stacks
 
 Added the ability to create fastener stacks -- a grouping that consists of a fastener and related components, such as washers and nuts.  
@@ -36,9 +40,13 @@ See the [<ins>**Fastener Stack**</ins>](https://github.com/rmcanany/SolidEdgeSto
 
 Contributed by **@TeeVar.**  Thank you!
 
-Added new templates created with SE2019 for users who don't use SE2024 or later.
+Added new templates created with SE2019 for users who don't use SE2024 or later.  Included are ISO screws, nuts, washers, etc., EN structural steel, and more.  
 
-Included are ISO screws, nuts, washers, etc., EN structural steel, and more.  Even if you have a newer version of SE, you may still want to use them.  **@TeeVar** is an ISO native speaker.  His contribution should be more familiar and useful to those who work with that standard.
+<p align="center">
+  <img src="media/tree_search_SE2019.png">
+</p>
+
+Even if you have a newer version of SE, you may still want to use this data set.  **@TeeVar** is an ISO native speaker.  His contribution should be more familiar and useful to those who work with that standard.
 
 See the [<ins>**Tree Search Options**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#tree-search-options) section of the Readme for details.
 
@@ -62,7 +70,7 @@ Added the option to have multiple materials available in a single category.  Thi
   <img src="media/select_material.png">
 </p>
 
-To set the material, simply click on an item in the tree.  If multiple materials are available, it will prompt you to select one.  The setting persists until you reset it.  To do so, click the active material name on the toolbar.
+Select the material from the drop down list.  If an item only has one material defined, it is selected automatically.  If you go to a different item in the tree and its material list contains the currently active material, the selection is retained.  If you attempt to process an item and no material has been selected, the program reports an error.
 
 See the [<ins>**Creating New Templates**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#tree-search) section of the Readme for details.
 
@@ -72,12 +80,13 @@ Added an option to store property values of files in the library.  Set it on the
 
 ### Other
 
-- Added the ability to set standard parts name and location interactively (Thank you **@TeeVar!**).  On the toolbar, set the `Save in` option to `Other` to enable it.  Previously that option was set in the spreadsheet.
+- Added the ability to set standard parts name and location interactively (Thank you **@TeeVar!**).  On the toolbar, set the `Save in` option to `Assy Dir` or `Other` to enable it.  Previously that option was set in the spreadsheet.
 
 - Added the ability to use subdirectories in file names (Thank you again **@TeeVar!**).  The file names are specified in the spreadsheet.  To include subdirectories, simply preceed the file name with the directory names, eg. `Fasteners\BHCS\bhcs_%{Name}_%{Length}.par`.
 
 - Added an option to keep the Storekeeper window always on top (Thank you one more time **@TeeVar!**).
 
+- Temporarily disabled the `Pre-Populate` feature from the previous version (Sorry **@Seva!**).  It is not currently compatible with multiple materials per category.  In particular it had trouble when a material is valid for one selected item, but not another.  You can still use the previous version when that feature is needed.
 
 ## V2025.3
 

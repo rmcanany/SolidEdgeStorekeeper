@@ -10,7 +10,7 @@ Public Class Form_Main
     Private Property Version As String = "2025.4"
 
     'Private Property PreviewVersion As String = ""  ' Empty string if not a preview
-    Private Property PreviewVersion As String = "Preview 04"
+    Private Property PreviewVersion As String = "Preview 05"
 
 
     Private _SelectedNodeFullPath As String
@@ -55,7 +55,7 @@ Public Class Form_Main
                             Me.ActiveMaterial = Me.MaterialsList(0)
                         Else
                             ' Prompt
-                            MsgBox("Select a material", vbOKOnly, "Select a Material")
+                            'MsgBox("Select a material", vbOKOnly, "Select a Material")
 
                         End If
                     End If
@@ -141,6 +141,8 @@ Public Class Form_Main
             End If
         End Set
     End Property
+
+    Public Property AssemblyDirectory As String
 
     'Private _PrePopulate As Boolean
     'Public Property PrePopulate As Boolean
@@ -270,9 +272,18 @@ Public Class Form_Main
         If Not IO.Directory.Exists(tmpPreferencesDirectory) Then
             ' First run.  Set defaults.
             Me.AlwaysReadExcel = True
+            Me.AutoPattern = True
+            Me.AddProp = False
+            Me.DisableFineThreadWarning = False
             Me.CheckNewVersion = True
+            Me.AlwaysOnTop = False
             Me.SaveInLibrary = True
             Me.ProcessTemplateInBackground = False
+            Me.FailedConstraintSuppress = False
+            Me.FailedConstraintAllow = True
+            Me.SuspendMRU = False
+            Me.CacheProperties = False
+            Me.IncludeDrawing = False
             Me.ActiveMaterial = ""
         End If
 
@@ -322,7 +333,7 @@ Public Class Form_Main
         Splash.UpdateStatus("Initializing timer")
 
         AlwaysOnTopTimer = New Timer
-        AlwaysOnTopTimer.Interval = 1000
+        AlwaysOnTopTimer.Interval = 3000
         AddHandler AlwaysOnTopTimer.Tick, AddressOf HandleAlwaysOnTopTimerTick
         'AlwaysOnTopTimer.Start()
 
@@ -929,7 +940,7 @@ Public Class Form_Main
             If SEPropertyNames.Contains(SEPropertyNameProp) Then
                 Dim PropertySetName As String = UC.PropSetFromFormula(SEPropertyNameProp.Value) ' Custom
                 Dim PropertyName As String = UC.PropNameFromFormula(SEPropertyNameProp.Value) ' Description
-                Dim Value = Props.SubstitutePropFormulas(StringFormula.Value, Me.ActiveMaterial) ' shcs_%{Name}_%{Length}.par -> shcs_0.250-20_0.500.par
+                Dim Value = Props.SubstitutePropFormulas(StringFormula.Value, Me.ActiveMaterial, ErrorLogger) ' shcs_%{Name}_%{Length}.par -> shcs_0.250-20_0.500.par
                 If Value Is Nothing Then
                     Success = False
                     ErrorLogger.AddMessage($"Unable to process formula {StringFormula.Value}")
@@ -1006,11 +1017,11 @@ Public Class Form_Main
         End If
 
         FilenameFormula = tmpProps(0).Value.Trim
-        Filename = Props.SubstitutePropFormulas(FilenameFormula, Me.ActiveMaterial)
+        Filename = Props.SubstitutePropFormulas(FilenameFormula, Me.ActiveMaterial, ErrorLogger)
 
         If Not Me.SaveInLibrary Then
             If Me.AddToLibraryOnly Then
-                ErrorLogger.AddMessage("Cannot process prompted filename in batch mode")
+                ErrorLogger.AddMessage("Part can only be saved in the library directory")
                 Return Nothing
             Else
                 If Filename Is Nothing Then Filename = ""
@@ -1021,6 +1032,11 @@ Public Class Form_Main
                 tmpFileDialog.DefaultFileName = Filename
                 tmpFileDialog.EnsureFileExists = False
                 tmpFileDialog.Filters.Add(New CommonFileDialogFilter("Solid Edge Files", $"*{DefaultExtension}"))
+                If Me.SaveInAssemblyDirectory Then
+                    If IO.Directory.Exists(Me.AssemblyDirectory) Then
+                        tmpFileDialog.InitialDirectory = Me.AssemblyDirectory
+                    End If
+                End If
 
                 If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
                 Me.TopMost = False
@@ -1028,6 +1044,9 @@ Public Class Form_Main
                 If tmpFileDialog.ShowDialog() = DialogResult.OK Then
                     If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
                     Filename = tmpFileDialog.FileName
+                    If Me.SaveInAssemblyDirectory Then
+                        Me.AssemblyDirectory = IO.Path.GetDirectoryName(Filename)
+                    End If
                 Else
                     If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
                     Return Nothing
@@ -1058,6 +1077,8 @@ Public Class Form_Main
                     Return Nothing
                 End If
             End If
+        Else
+            ' No need to prompt.  Just use the existing file automatically.
         End If
 
         Return Filename
@@ -1450,7 +1471,7 @@ Public Class Form_Main
 
 
 
-    ' ###### PROPERTY TAB ######
+    ' ###### DATA INSPECTOR TAB ######
 
     Private Sub UpdatePropertyTab()
 
@@ -2740,6 +2761,24 @@ Public Class Form_Main
     Private Sub ComboBoxMaterials_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBoxMaterials.SelectedIndexChanged
         Me.ActiveMaterial = ComboBoxMaterials.Text
     End Sub
+
+    Private Sub ComboBoxSaveIn_GotFocus(sender As Object, e As EventArgs) Handles ComboBoxSaveIn.GotFocus
+        If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
+    End Sub
+
+    Private Sub ComboBoxSaveIn_LostFocus(sender As Object, e As EventArgs) Handles ComboBoxSaveIn.LostFocus
+        If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Start()
+    End Sub
+
+    Private Sub ComboBoxMaterials_GotFocus(sender As Object, e As EventArgs) Handles ComboBoxMaterials.GotFocus
+        If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
+    End Sub
+
+    Private Sub ComboBoxMaterials_LostFocus(sender As Object, e As EventArgs) Handles ComboBoxMaterials.LostFocus
+        If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Start()
+    End Sub
+
+
 End Class
 
 Public Class Props
@@ -2786,7 +2825,12 @@ Public Class Props
         Return FoundProp
     End Function
 
-    Public Function SubstitutePropFormulas(InString As String, ActiveMaterial As String) As String
+    Public Function SubstitutePropFormulas(
+        InString As String,
+        ActiveMaterial As String,
+        ErrorLogger As Logger
+        ) As String
+
         Dim OutString As String = InString
 
         Dim PropDict As New Dictionary(Of String, String)
@@ -2811,7 +2855,7 @@ Public Class Props
         Pattern = "%{[^}]*}"  ' Any number of substrings that start with "%{" and end with the first encountered "}".
         Matches = Regex.Matches(OutString, Pattern)
         If Not Matches.Count = 0 Then
-            If Form_Main.FileLogger IsNot Nothing Then Form_Main.FileLogger.AddMessage($"Some properties could not be resolved in '{OutString}'")
+            If ErrorLogger IsNot Nothing Then ErrorLogger.AddMessage($"Some properties could not be resolved in '{OutString}'")
             Return Nothing
         End If
 

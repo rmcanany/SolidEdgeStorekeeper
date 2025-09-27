@@ -58,10 +58,10 @@ Partial Class FormStackConfiguration
         ' TableLayoutPanel1
         ' 
         TableLayoutPanel1.ColumnCount = 4
-        TableLayoutPanel1.ColumnStyles.Add(New ColumnStyle())
-        TableLayoutPanel1.ColumnStyles.Add(New ColumnStyle())
-        TableLayoutPanel1.ColumnStyles.Add(New ColumnStyle())
-        TableLayoutPanel1.ColumnStyles.Add(New ColumnStyle())
+        TableLayoutPanel1.ColumnStyles.Add(New ColumnStyle(SizeType.Percent, 25F))
+        TableLayoutPanel1.ColumnStyles.Add(New ColumnStyle(SizeType.Percent, 25F))
+        TableLayoutPanel1.ColumnStyles.Add(New ColumnStyle(SizeType.Percent, 25F))
+        TableLayoutPanel1.ColumnStyles.Add(New ColumnStyle(SizeType.Percent, 25F))
         TableLayoutPanel1.Controls.Add(Button_F_LW_FW_CO_TB, 3, 3)
         TableLayoutPanel1.Controls.Add(Button_F_LW_CO_TB, 2, 3)
         TableLayoutPanel1.Controls.Add(Button_F_FW_CO_TB, 1, 3)
@@ -86,14 +86,13 @@ Partial Class FormStackConfiguration
         TableLayoutPanel1.RowStyles.Add(New RowStyle())
         TableLayoutPanel1.RowStyles.Add(New RowStyle())
         TableLayoutPanel1.RowStyles.Add(New RowStyle())
-        TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 20F))
-        TableLayoutPanel1.Size = New Size(256, 376)
+        TableLayoutPanel1.Size = New Size(284, 376)
         TableLayoutPanel1.TabIndex = 1
         ' 
         ' Button_F_LW_FW_CO_TB
         ' 
         Button_F_LW_FW_CO_TB.Image = My.Resources.Resources.Small_F_LW_FW_CO_TB
-        Button_F_LW_FW_CO_TB.Location = New Point(195, 285)
+        Button_F_LW_FW_CO_TB.Location = New Point(216, 285)
         Button_F_LW_FW_CO_TB.Name = "Button_F_LW_FW_CO_TB"
         Button_F_LW_FW_CO_TB.Size = New Size(58, 88)
         Button_F_LW_FW_CO_TB.TabIndex = 16
@@ -103,7 +102,7 @@ Partial Class FormStackConfiguration
         ' Button_F_LW_CO_TB
         ' 
         Button_F_LW_CO_TB.Image = My.Resources.Resources.Small_F_LW_CO_TB
-        Button_F_LW_CO_TB.Location = New Point(131, 285)
+        Button_F_LW_CO_TB.Location = New Point(145, 285)
         Button_F_LW_CO_TB.Name = "Button_F_LW_CO_TB"
         Button_F_LW_CO_TB.Size = New Size(58, 88)
         Button_F_LW_CO_TB.TabIndex = 15
@@ -113,7 +112,7 @@ Partial Class FormStackConfiguration
         ' Button_F_FW_CO_TB
         ' 
         Button_F_FW_CO_TB.Image = My.Resources.Resources.Small_F_FW_CO_TB
-        Button_F_FW_CO_TB.Location = New Point(67, 285)
+        Button_F_FW_CO_TB.Location = New Point(74, 285)
         Button_F_FW_CO_TB.Name = "Button_F_FW_CO_TB"
         Button_F_FW_CO_TB.Size = New Size(58, 88)
         Button_F_FW_CO_TB.TabIndex = 14
@@ -133,7 +132,7 @@ Partial Class FormStackConfiguration
         ' Button_F_LW_FW_CO_TT
         ' 
         Button_F_LW_FW_CO_TT.Image = My.Resources.Resources.Small_F_LW_FW_CO_TT
-        Button_F_LW_FW_CO_TT.Location = New Point(195, 191)
+        Button_F_LW_FW_CO_TT.Location = New Point(216, 191)
         Button_F_LW_FW_CO_TT.Name = "Button_F_LW_FW_CO_TT"
         Button_F_LW_FW_CO_TT.Size = New Size(58, 88)
         Button_F_LW_FW_CO_TT.TabIndex = 12
@@ -143,7 +142,7 @@ Partial Class FormStackConfiguration
         ' Button_F_LW_CO_TT
         ' 
         Button_F_LW_CO_TT.Image = My.Resources.Resources.Small_F_LW_CO_TT
-        Button_F_LW_CO_TT.Location = New Point(131, 191)
+        Button_F_LW_CO_TT.Location = New Point(145, 191)
         Button_F_LW_CO_TT.Name = "Button_F_LW_CO_TT"
         Button_F_LW_CO_TT.Size = New Size(58, 88)
         Button_F_LW_CO_TT.TabIndex = 11
@@ -153,7 +152,7 @@ Partial Class FormStackConfiguration
         ' Button_F_FW_CO_TT
         ' 
         Button_F_FW_CO_TT.Image = My.Resources.Resources.Small_F_FW_CO_TT
-        Button_F_FW_CO_TT.Location = New Point(67, 191)
+        Button_F_FW_CO_TT.Location = New Point(74, 191)
         Button_F_FW_CO_TT.Name = "Button_F_FW_CO_TT"
         Button_F_FW_CO_TT.Size = New Size(58, 88)
         Button_F_FW_CO_TT.TabIndex = 10
@@ -173,7 +172,7 @@ Partial Class FormStackConfiguration
         ' Button_F_FW_CO_FW_LW_N
         ' 
         Button_F_FW_CO_FW_LW_N.Image = My.Resources.Resources.Small_F_FW_CO_FW_LW_N
-        Button_F_FW_CO_FW_LW_N.Location = New Point(195, 97)
+        Button_F_FW_CO_FW_LW_N.Location = New Point(216, 97)
         Button_F_FW_CO_FW_LW_N.Name = "Button_F_FW_CO_FW_LW_N"
         Button_F_FW_CO_FW_LW_N.Size = New Size(58, 88)
         Button_F_FW_CO_FW_LW_N.TabIndex = 8
@@ -183,7 +182,7 @@ Partial Class FormStackConfiguration
         ' Button_F_FW_CO_LW_N
         ' 
         Button_F_FW_CO_LW_N.Image = My.Resources.Resources.Small_F_FW_CO_LW_N
-        Button_F_FW_CO_LW_N.Location = New Point(131, 97)
+        Button_F_FW_CO_LW_N.Location = New Point(145, 97)
         Button_F_FW_CO_LW_N.Name = "Button_F_FW_CO_LW_N"
         Button_F_FW_CO_LW_N.Size = New Size(58, 88)
         Button_F_FW_CO_LW_N.TabIndex = 7
@@ -193,7 +192,7 @@ Partial Class FormStackConfiguration
         ' Button_F_FW_CO_FW_N
         ' 
         Button_F_FW_CO_FW_N.Image = My.Resources.Resources.Small_F_FW_CO_FW_N
-        Button_F_FW_CO_FW_N.Location = New Point(67, 97)
+        Button_F_FW_CO_FW_N.Location = New Point(74, 97)
         Button_F_FW_CO_FW_N.Name = "Button_F_FW_CO_FW_N"
         Button_F_FW_CO_FW_N.Size = New Size(58, 88)
         Button_F_FW_CO_FW_N.TabIndex = 6
@@ -213,7 +212,7 @@ Partial Class FormStackConfiguration
         ' Button_F_CO_FW_LW_N
         ' 
         Button_F_CO_FW_LW_N.Image = My.Resources.Resources.Small_F_CO_FW_LW_N
-        Button_F_CO_FW_LW_N.Location = New Point(195, 3)
+        Button_F_CO_FW_LW_N.Location = New Point(216, 3)
         Button_F_CO_FW_LW_N.Name = "Button_F_CO_FW_LW_N"
         Button_F_CO_FW_LW_N.Size = New Size(58, 88)
         Button_F_CO_FW_LW_N.TabIndex = 4
@@ -223,7 +222,7 @@ Partial Class FormStackConfiguration
         ' Button_F_CO_LW_N
         ' 
         Button_F_CO_LW_N.Image = My.Resources.Resources.Small_F_CO_LW_N
-        Button_F_CO_LW_N.Location = New Point(131, 3)
+        Button_F_CO_LW_N.Location = New Point(145, 3)
         Button_F_CO_LW_N.Name = "Button_F_CO_LW_N"
         Button_F_CO_LW_N.Size = New Size(58, 88)
         Button_F_CO_LW_N.TabIndex = 3
@@ -233,7 +232,7 @@ Partial Class FormStackConfiguration
         ' Button_F_CO_FW_N
         ' 
         Button_F_CO_FW_N.Image = My.Resources.Resources.Small_F_CO_FW_N
-        Button_F_CO_FW_N.Location = New Point(67, 3)
+        Button_F_CO_FW_N.Location = New Point(74, 3)
         Button_F_CO_FW_N.Name = "Button_F_CO_FW_N"
         Button_F_CO_FW_N.Size = New Size(58, 88)
         Button_F_CO_FW_N.TabIndex = 2
@@ -244,12 +243,12 @@ Partial Class FormStackConfiguration
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(256, 376)
+        ClientSize = New Size(284, 376)
         Controls.Add(TableLayoutPanel1)
         Icon = CType(resources.GetObject("$this.Icon"), Icon)
         MaximizeBox = False
-        MaximumSize = New Size(272, 415)
-        MinimumSize = New Size(272, 415)
+        MaximumSize = New Size(300, 415)
+        MinimumSize = New Size(300, 415)
         Name = "FormStackConfiguration"
         StartPosition = FormStartPosition.CenterParent
         Text = "Stack Configuration"

@@ -42,14 +42,12 @@ The program handles two types of standard parts.  One consists of items like fas
   <img src="media/tree_search.png">
 </p>
 
-For items like fasteners, use **Tree Search**.  Navigate to the desired item, right-click and choose an action. If the part is not already in the library, the program creates and saves it.  (Unless the toolbar `Save in` option is set to `Other`, in which case it prompts for a name and location.)  The possible actions are:
+For items like fasteners, use **Tree Search**.  Navigate to the desired item, select a material, then right-click and choose an action. If the part is not already in the library, the program creates and saves it.  (Unless the toolbar `Save in` option is set to `Other`, in which case it prompts for a name and location.)  The possible actions are:
 
 - `Add to assembly`  Adds the part to the assembly and activates the `Place part` command.
 - `Replace selected`  Replaces a selected part in the assembly.
 - `Replace all`  Replaces all occurrences of a selected part in the assembly.
 - `Fastener stack`  Opens the fastener stack dialog.  See the separate section below for details.
-
-Note, depending how the data is set up, you may be prompted to select a material after choosing an action.  Once chosen, the setting persists.  To reset it, click the material name on the toolbar.
 
 ### Property Search
 
@@ -65,7 +63,7 @@ You can set the file names according to your preference.  You can specify the ma
 
 ![Filename Formula](media/filename_formula.png)
 
-Structural shapes are not quite the same as fasteners.  While the cross section is standard, the length and the possibility of additional features is not.  Usually the part doesn't even belong in the library.  For these, you can change the `Save in` option from `Library` to `Other`.  Rather than assuming a name and location, with this setting the program prompts for both.
+Structural shapes are not quite the same as fasteners.  While the cross section is standard, the length and the possibility of additional features is not.  Usually the part doesn't even belong in the library.  For these, you can change the `Save in` option from `Library` to `Assy Dir` or `Other`.  Rather than assuming a name and location, with this setting the program prompts for both.
 
 Unlike Family of Parts, files are only created as needed.  Also, each part is stand-alone, not tied back to a master file.
 
@@ -245,6 +243,8 @@ After the components are placed, they are converted to an `Assembly group`.  Fin
 
 ## PRE-POPULATING THE LIBRARY
 
+This feature does not yet support multiple materials per category.  It is temporarily disabled.
+
 You can add items to the library ahead of time.  Enable the `Pre-populate` checkbox to get started.  
 
 Note, for items with multiple materials available, the material must be selected before starting this process.  Click on an applicable item and select the desired material when prompted.
@@ -347,6 +347,16 @@ The name of the spreadsheet variable has rules.  `XyzProperty` looks for `XyzFor
 So, for example to update the part number in the file, the program will use the information in `PartNumberFormula` to update the property defined in `PartNumberProperty`.  In this example that tells the program to make this assignment.
 
 `%{System.Document Number} = "NA"`
+
+##### Material Formula
+
+The `MaterialFormula` spreadsheet variable is slightly different than the others.  Its value can be a comma-delimited list.  For example,
+
+`STEEL`,`STAINLESS`,`STAINLESS\, PASSIVATED`,`BRASS`
+
+If the material name itself contains a comma, preceed it with a backslash as shown.  A comma-delimited list requires special handling.  This is currently the only variable that supports it.  
+
+One last thing about the `MaterialFormula`.  It can occur in multiple places in the tree.  The bottom-most definition is the one that is used.  That allows you to set a default definition, say for all fasteners, then redefine it lower in the tree for any item with different options.
 
 #### One More Level Down
 
