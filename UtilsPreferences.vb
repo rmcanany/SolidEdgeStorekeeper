@@ -119,6 +119,8 @@ Public Class UtilsPreferences
         Dim tmpJSONDict As New Dictionary(Of String, String)
         Dim JSONString As String
 
+        Dim UC As New UtilsCommon
+
         Dim Infile = GetFormMainSettingsFilename(CheckExisting:=True)
 
         Dim FormType As Type = FMain.GetType()
@@ -138,7 +140,7 @@ Public Class UtilsPreferences
                         Case "string"
                             PropInfo.SetValue(FMain, CStr(tmpJSONDict(PropInfo.Name)))
                         Case "double"
-                            PropInfo.SetValue(FMain, CDbl(tmpJSONDict(PropInfo.Name)))
+                            PropInfo.SetValue(FMain, CDbl(UC.FixLocaleDecimal(tmpJSONDict(PropInfo.Name))))
                         Case "int32"
                             PropInfo.SetValue(FMain, CInt(tmpJSONDict(PropInfo.Name)))
                         Case "boolean"
@@ -487,6 +489,8 @@ Public Class UtilsPreferences
         Dim tmpJSONDict As New Dictionary(Of String, String)
         Dim JSONString As String
 
+        Dim UC As New UtilsCommon
+
         Dim Infile = GetFormFastenerStackSettingsFilename(CheckExisting:=True)
 
         Dim FormType As Type = FFS.GetType()
@@ -511,7 +515,7 @@ Public Class UtilsPreferences
                         Case "string"
                             PropInfo.SetValue(FFS, CStr(tmpJSONDict(PropInfo.Name)))
                         Case "double"
-                            PropInfo.SetValue(FFS, CDbl(tmpJSONDict(PropInfo.Name)))
+                            PropInfo.SetValue(FFS, CDbl(UC.FixLocaleDecimal(tmpJSONDict(PropInfo.Name))))
                         Case "int32"
                             PropInfo.SetValue(FFS, CInt(tmpJSONDict(PropInfo.Name)))
                         Case "boolean"
@@ -580,12 +584,12 @@ Public Class UtilsPreferences
 
                 Select Case BareFilename
                     Case "FlatWasherSE2019"
-                        SearchPathList.Add("..\..\..\..\..\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series")
+                        SearchPathList.Add("..\..\..\..\..\ISO_DIN_WASHERS\ISO_7089_-_Plain_washers_-_Normal_series")
                     Case "LockWasherSE2019"
                         SearchPathList.Add("..\..\..\..\..\OTHER_-_Steel\ISO_2982-2_-_Lockwashers")
                     Case "NutSE2019"
-                        SearchPathList.Add("..\..\..\..\..\ISO_NUTS_-_Steel\ISO_4032_-_Hexagon_regular_nuts")
-                        SearchPathList.Add("..\..\..\..\..\ISO_NUTS_-_Steel\ISO_8673_-_Hexagon_regular_nuts_-_fine_pitch")
+                        SearchPathList.Add("..\..\..\..\..\ISO_DIN_NUTS\Hexagonal\ISO_4032_-_Hexagon_regular_nuts")
+                        SearchPathList.Add("..\..\..\..\..\ISO_DIN_NUTS\Hexagonal\ISO_8673_-_Hexagon_regular_nuts_-_fine_pitch")
                     Case "FlatWasherSE2024"
                         SearchPathList.Add("..\..\..\Washer_Flat")
                     Case "LockWasherSE2024"
@@ -597,11 +601,11 @@ Public Class UtilsPreferences
 
                 Filename = $"{GetPreferencesDirectory()}\{BareFilename}.json"
 
-                If SearchPathList.Count > 0 Then
-                    Dim JSONString = JsonConvert.SerializeObject(SearchPathList)
-
-                    IO.File.WriteAllText(Filename, JSONString)
-
+                If Not IO.File.Exists(Filename) Then
+                    If SearchPathList.Count > 0 Then
+                        Dim JSONString = JsonConvert.SerializeObject(SearchPathList)
+                        IO.File.WriteAllText(Filename, JSONString)
+                    End If
                 End If
             Next
         Next

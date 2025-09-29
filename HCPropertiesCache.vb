@@ -411,6 +411,8 @@ Public Class PropCache
 
     Public Sub FromJSON(JSONString As String)
 
+        Dim UC As New UtilsCommon
+
         Dim tmpDict As Dictionary(Of String, String)
 
         tmpDict = JsonConvert.DeserializeObject(Of Dictionary(Of String, String))(JSONString)
@@ -433,7 +435,7 @@ Public Class PropCache
                     Case "int32"
                         Me.Value = CInt(tmpDict("Value"))
                     Case "double"
-                        Me.Value = CDbl(tmpDict("Value"))
+                        Me.Value = CDbl(UC.FixLocaleDecimal(tmpDict("Value")))
                     Case "boolean"
                         Me.Value = CBool(tmpDict("Value"))
                     Case "datetime"

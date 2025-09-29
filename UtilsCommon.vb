@@ -343,6 +343,22 @@ Public Class UtilsCommon
     End Function
 
 
+    '###### MISC ######
+
+
+    Public Function FixLocaleDecimal(Instring As String) As String
+        Dim OutString As String = ""
+
+        'https://stackoverflow.com/questions/14513468/detect-decimal-separator
+        Dim a As Char = CChar(Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
+        If a = CChar(".") Then
+            OutString = Instring.Replace(",", ".")
+        Else
+            OutString = Instring.Replace(".", ",")
+        End If
+
+        Return OutString
+    End Function
     'Public Function GetSheets(
     '    Doc As SolidEdgeDraft.DraftDocument,
     '    SectionType As String

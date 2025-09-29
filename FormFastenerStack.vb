@@ -387,6 +387,8 @@ Public Class FormFastenerStack
 
     Private Function CheckStartConditions() As Boolean
 
+        Dim UC As New UtilsCommon
+
         Dim Success As Boolean = True
 
         'If Not IO.File.Exists(Me.FastenerFilename) Then
@@ -400,7 +402,7 @@ Public Class FormFastenerStack
         End If
 
         Try
-            Dim V = CDbl(Me.ClampedThickness)
+            Dim V = CDbl(UC.FixLocaleDecimal(Me.ClampedThickness))
         Catch ex As Exception
             Success = False
             Me.FileLogger.AddMessage($"Could not resolve clamped thickness: '{Me.ClampedThickness}'")
@@ -431,7 +433,7 @@ Public Class FormFastenerStack
 
         If ConfigString.Contains("_N") Or ConfigString.Contains("_TT") Then
             Try
-                Dim V = CDbl(Me.ExtensionMin)
+                Dim V = CDbl(UC.FixLocaleDecimal(Me.ExtensionMin))
             Catch ex As Exception
                 Success = False
                 Me.FileLogger.AddMessage($"Could not resolve minimum extension: '{Me.ExtensionMin}'")
@@ -440,13 +442,13 @@ Public Class FormFastenerStack
 
         If ConfigString.Contains("_TB") Then
             Try
-                Dim V = CDbl(Me.ThreadEngagementMin)
+                Dim V = CDbl(UC.FixLocaleDecimal(Me.ThreadEngagementMin))
             Catch ex As Exception
                 Success = False
                 Me.FileLogger.AddMessage($"Could not resolve minimum thread engagement: '{Me.ThreadEngagementMin}'")
             End Try
             Try
-                Dim V = CDbl(Me.ThreadDepth)
+                Dim V = CDbl(UC.FixLocaleDecimal(Me.ThreadDepth))
             Catch ex As Exception
                 Success = False
                 Me.FileLogger.AddMessage($"Could not resolve thread depth: '{Me.ThreadDepth}'")
@@ -1323,10 +1325,19 @@ Public Class FormFastenerStack
     Private Function GetThickness(ParentNode As XmlNode) As Double
         Dim Value As Double = -1
 
+        Dim UC As New UtilsCommon
+
         If ParentNode.HasChildNodes Then
             For Each ChildNode As XmlNode In ParentNode.ChildNodes
                 If ChildNode.Name = "Thickness" Then
-                    Value = CDbl(ChildNode.InnerText)
+                    ''https://stackoverflow.com/questions/14513468/detect-decimal-separator
+                    'Dim a As Char = CChar(Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
+                    'If a = CChar(".") Then
+                    '    Value = CDbl(ChildNode.InnerText.Replace(",", "."))
+                    'Else
+                    '    Value = CDbl(ChildNode.InnerText.Replace(".", ","))
+                    'End If
+                    Value = CDbl(UC.FixLocaleDecimal(ChildNode.InnerText))
                     Exit For
                 End If
             Next
@@ -1343,6 +1354,8 @@ Public Class FormFastenerStack
 
         Dim NewFastenerFullPath As String = Nothing
 
+        Dim UC As New UtilsCommon
+
         Dim SizeNode As XmlNode = FMain.XmlNodeFromPath(FMain.SpaceToUnderscore(CurrentFastenerFullPath))
         SizeNode = SizeNode.ParentNode
 
@@ -1352,7 +1365,7 @@ Public Class FormFastenerStack
         If SizeNode.HasChildNodes Then
             For Each LengthNode As XmlNode In SizeNode
                 If LengthNode.Name.Contains("Length_") Then
-                    tmpLength = CDbl(LengthNode.InnerText)
+                    tmpLength = CDbl(UC.FixLocaleDecimal(LengthNode.InnerText))
                     If tmpLength >= LengthMin And tmpLength <= LengthMax Then
                         Node = LengthNode
                         Exit For
@@ -1380,12 +1393,14 @@ Public Class FormFastenerStack
         Dim tmpNominalDiameter As Double = -1
         Dim tmpThreadDescription As String = ""
 
+        Dim UC As New UtilsCommon
+
         If CategoryNode.HasChildNodes Then
             For Each SizeNode As XmlNode In CategoryNode.ChildNodes
                 If SizeNode.HasChildNodes Then
                     For Each ChildNode As XmlNode In SizeNode.ChildNodes
                         If ChildNode.Name = "NominalDiameter" Then
-                            tmpNominalDiameter = CDbl(ChildNode.InnerText)
+                            tmpNominalDiameter = CDbl(UC.FixLocaleDecimal(ChildNode.InnerText))
                         End If
                         If ChildNode.Name = "ThreadDescription" Then
                             tmpThreadDescription = ChildNode.InnerText
@@ -1414,10 +1429,12 @@ Public Class FormFastenerStack
     Private Function GetNominalDiameter(ParentNode As XmlNode) As Double
         Dim Value As Double = -1
 
+        Dim UC As New UtilsCommon
+
         If ParentNode.HasChildNodes Then
             For Each ChildNode As XmlNode In ParentNode.ChildNodes
                 If ChildNode.Name = "NominalDiameter" Then
-                    Value = CDbl(ChildNode.InnerText)
+                    Value = CDbl(UC.FixLocaleDecimal(ChildNode.InnerText))
                     Exit For
                 End If
             Next
@@ -1443,66 +1460,73 @@ Public Class FormFastenerStack
 
     Private Sub SetFastenerMinMaxLength()
 
+        Dim UC As New UtilsCommon
+
         For Each V As String In {Me.ClampedThickness, Me.ThreadEngagementMin, Me.ThreadDepth, Me.ExtensionMin}
             Try
-                Dim tmpV = CDbl(V)
+                Dim tmpV = CDbl(UC.FixLocaleDecimal(V))
             Catch ex As Exception
                 Exit Sub
             End Try
         Next
 
+        Dim tmpClampedThickness As Double = CDbl(UC.FixLocaleDecimal(Me.ClampedThickness))
+        Dim tmpThreadEngagementMin As Double = CDbl(UC.FixLocaleDecimal(Me.ThreadEngagementMin))
+        Dim tmpThreadDepth As Double = CDbl(UC.FixLocaleDecimal(Me.ThreadDepth))
+        Dim tmpExtensionMin As Double = CDbl(UC.FixLocaleDecimal(Me.ExtensionMin))
+
         Select Case Me.StackConfiguration
             Case StackConfigurationConstants.F_CO_N
-                Me.FastenerMinLength = CDbl(Me.ClampedThickness) + Me.NutThickness + CDbl(Me.ExtensionMin)
+                Me.FastenerMinLength = tmpClampedThickness + Me.NutThickness + tmpExtensionMin
                 Me.FastenerMaxLength = 10000
             Case StackConfigurationConstants.F_CO_FW_N
-                Me.FastenerMinLength = CDbl(Me.ClampedThickness) + Me.FlatWasherThickness + Me.NutThickness + CDbl(Me.ExtensionMin)
+                Me.FastenerMinLength = tmpClampedThickness + Me.FlatWasherThickness + Me.NutThickness + tmpExtensionMin
                 Me.FastenerMaxLength = 10000
             Case StackConfigurationConstants.F_CO_LW_N
-                Me.FastenerMinLength = CDbl(Me.ClampedThickness) + Me.LockWasherThickness + Me.NutThickness + CDbl(Me.ExtensionMin)
+                Me.FastenerMinLength = tmpClampedThickness + Me.LockWasherThickness + Me.NutThickness + tmpExtensionMin
                 Me.FastenerMaxLength = 10000
             Case StackConfigurationConstants.F_CO_FW_LW_N
-                Me.FastenerMinLength = CDbl(Me.ClampedThickness) + Me.FlatWasherThickness + Me.LockWasherThickness + Me.NutThickness + CDbl(Me.ExtensionMin)
+                Me.FastenerMinLength = tmpClampedThickness + Me.FlatWasherThickness + Me.LockWasherThickness + Me.NutThickness + tmpExtensionMin
                 Me.FastenerMaxLength = 10000
 
             Case StackConfigurationConstants.F_FW_CO_N
-                Me.FastenerMinLength = CDbl(Me.ClampedThickness) + Me.FlatWasherThickness + Me.NutThickness + CDbl(Me.ExtensionMin)
+                Me.FastenerMinLength = tmpClampedThickness + Me.FlatWasherThickness + Me.NutThickness + tmpExtensionMin
                 Me.FastenerMaxLength = 10000
             Case StackConfigurationConstants.F_FW_CO_FW_N
-                Me.FastenerMinLength = CDbl(Me.ClampedThickness) + 2 * Me.FlatWasherThickness + Me.NutThickness + CDbl(Me.ExtensionMin)
+                Me.FastenerMinLength = tmpClampedThickness + 2 * Me.FlatWasherThickness + Me.NutThickness + tmpExtensionMin
                 Me.FastenerMaxLength = 10000
             Case StackConfigurationConstants.F_FW_CO_LW_N
-                Me.FastenerMinLength = CDbl(Me.ClampedThickness) + Me.FlatWasherThickness + Me.LockWasherThickness + Me.NutThickness + CDbl(Me.ExtensionMin)
+                Me.FastenerMinLength = tmpClampedThickness + Me.FlatWasherThickness + Me.LockWasherThickness + Me.NutThickness + tmpExtensionMin
                 Me.FastenerMaxLength = 10000
             Case StackConfigurationConstants.F_FW_CO_FW_LW_N
-                Me.FastenerMinLength = CDbl(Me.ClampedThickness) + 2 * Me.FlatWasherThickness + Me.LockWasherThickness + Me.NutThickness + CDbl(Me.ExtensionMin)
+                Me.FastenerMinLength = tmpClampedThickness + 2 * Me.FlatWasherThickness + Me.LockWasherThickness + Me.NutThickness + tmpExtensionMin
                 Me.FastenerMaxLength = 10000
 
             Case StackConfigurationConstants.F_CO_TT
-                Me.FastenerMinLength = CDbl(Me.ClampedThickness) + CDbl(Me.ExtensionMin)
+                Me.FastenerMinLength = tmpClampedThickness + tmpExtensionMin
                 Me.FastenerMaxLength = 10000
             Case StackConfigurationConstants.F_FW_CO_TT
-                Me.FastenerMinLength = CDbl(Me.ClampedThickness) + Me.FlatWasherThickness + CDbl(Me.ExtensionMin)
+                Me.FastenerMinLength = tmpClampedThickness + Me.FlatWasherThickness + tmpExtensionMin
                 Me.FastenerMaxLength = 10000
             Case StackConfigurationConstants.F_LW_CO_TT
-                Me.FastenerMinLength = CDbl(Me.ClampedThickness) + Me.LockWasherThickness + CDbl(Me.ExtensionMin)
+                Me.FastenerMinLength = tmpClampedThickness + Me.LockWasherThickness + tmpExtensionMin
                 Me.FastenerMaxLength = 10000
             Case StackConfigurationConstants.F_LW_FW_CO_TT
-                Me.FastenerMinLength = CDbl(Me.ClampedThickness) + Me.FlatWasherThickness + Me.LockWasherThickness + CDbl(Me.ExtensionMin)
+                Me.FastenerMinLength = tmpClampedThickness + Me.FlatWasherThickness + Me.LockWasherThickness + tmpExtensionMin
                 Me.FastenerMaxLength = 10000
 
             Case StackConfigurationConstants.F_CO_TB
-                Me.FastenerMinLength = CDbl(Me.ClampedThickness) + CDbl(Me.ThreadEngagementMin)
-                Me.FastenerMaxLength = CDbl(Me.ClampedThickness) + CDbl(Me.ThreadDepth)
+                Me.FastenerMinLength = tmpClampedThickness + tmpThreadEngagementMin
+                Me.FastenerMaxLength = tmpClampedThickness + tmpThreadDepth
             Case StackConfigurationConstants.F_FW_CO_TB
-                Me.FastenerMinLength = CDbl(Me.ClampedThickness) + Me.FlatWasherThickness + CDbl(Me.ThreadEngagementMin)
-                Me.FastenerMaxLength = CDbl(Me.ClampedThickness) + Me.FlatWasherThickness + CDbl(Me.ThreadDepth)
+                Me.FastenerMinLength = tmpClampedThickness + Me.FlatWasherThickness + tmpThreadEngagementMin
+                Me.FastenerMaxLength = tmpClampedThickness + Me.FlatWasherThickness + tmpThreadDepth
             Case StackConfigurationConstants.F_LW_CO_TB
-                Me.FastenerMinLength = CDbl(Me.ClampedThickness) + Me.LockWasherThickness + CDbl(Me.ThreadEngagementMin)
-                Me.FastenerMaxLength = CDbl(Me.ClampedThickness) + Me.LockWasherThickness + CDbl(Me.ThreadDepth)
+                Me.FastenerMinLength = tmpClampedThickness + Me.LockWasherThickness + tmpThreadEngagementMin
+                Me.FastenerMaxLength = tmpClampedThickness + Me.LockWasherThickness + tmpThreadDepth
             Case StackConfigurationConstants.F_LW_FW_CO_TB
-                Me.FastenerMinLength = CDbl(Me.ClampedThickness) + Me.LockWasherThickness + Me.FlatWasherThickness + CDbl(Me.ThreadEngagementMin)
-                Me.FastenerMaxLength = CDbl(Me.ClampedThickness) + Me.LockWasherThickness + Me.FlatWasherThickness + CDbl(Me.ThreadDepth)
+                Me.FastenerMinLength = tmpClampedThickness + Me.LockWasherThickness + Me.FlatWasherThickness + tmpThreadEngagementMin
+                Me.FastenerMaxLength = tmpClampedThickness + Me.LockWasherThickness + Me.FlatWasherThickness + tmpThreadDepth
         End Select
     End Sub
 

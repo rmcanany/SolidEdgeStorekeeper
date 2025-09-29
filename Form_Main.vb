@@ -3,14 +3,14 @@
 Imports System.Text.RegularExpressions
 Imports System.Xml
 Imports Microsoft.WindowsAPICodePack.Dialogs
-'Imports SolidEdgeConstants
+
 
 Public Class Form_Main
 
     Private Property Version As String = "2025.4"
 
     'Private Property PreviewVersion As String = ""  ' Empty string if not a preview
-    Private Property PreviewVersion As String = "Preview 06"
+    Private Property PreviewVersion As String = "Preview 08"
 
 
     Private _SelectedNodeFullPath As String
@@ -83,7 +83,7 @@ Public Class Form_Main
     Public Property AssemblyTemplate As String
     Public Property PartTemplate As String
     Public Property SheetmetalTemplate As String
-    Private Property AlwaysOnTopTimer As Timer
+    'Private Property AlwaysOnTopTimer As Timer
 
     Private _AlwaysOnTop As Boolean
     Public Property AlwaysOnTop As Boolean
@@ -94,11 +94,11 @@ Public Class Form_Main
             _AlwaysOnTop = value
             If Me.TabControl1 IsNot Nothing Then
 
-                If AlwaysOnTop Then
-                    If AlwaysOnTopTimer IsNot Nothing Then AlwaysOnTopTimer.Start()
-                Else
-                    If AlwaysOnTopTimer IsNot Nothing Then AlwaysOnTopTimer.Stop()
-                End If
+                'If AlwaysOnTop Then
+                '    If AlwaysOnTopTimer IsNot Nothing Then AlwaysOnTopTimer.Start()
+                'Else
+                '    If AlwaysOnTopTimer IsNot Nothing Then AlwaysOnTopTimer.Stop()
+                'End If
             End If
         End Set
     End Property
@@ -142,7 +142,7 @@ Public Class Form_Main
         End Set
     End Property
 
-    Public Property AssemblyDirectory As String
+    'Public Property AssemblyDirectory As String
 
     'Private _PrePopulate As Boolean
     'Public Property PrePopulate As Boolean
@@ -253,20 +253,36 @@ Public Class Form_Main
         Dim UP As New UtilsPreferences
 
         Dim tmpStartupDirectory As String = UP.GetStartupDirectory
-        Dim s As String = ""
+
+
+        ' ###### CANNOT START WITH THESE ERRORS ######
+
+        Try
+            SEApp = CType(MarshalHelper.GetActiveObject("SolidEdge.Application", throwOnError:=True), SolidEdgeFramework.Application)
+        Catch ex As Exception
+            MsgBox("Solid Edge must be running for this command to start.", vbOKOnly, "Solid Edge Not Found")
+            End
+        End Try
+
+        Dim ErrorMessage As String = ""
         Dim Suffix As String = "SE2024"
+
         Dim tmpDirList As New List(Of String) From {UP.GetDefaultDataDirectory(Suffix), UP.GetDefaultTemplatesDirectory(Suffix)}
         For Each d As String In tmpDirList
-            If Not IO.Directory.Exists(d) Then s = $"{s}  {d}{vbCrLf}"
+            If Not IO.Directory.Exists(d) Then ErrorMessage = $"{ErrorMessage}  {d}{vbCrLf}"
         Next
-        If Not s = "" Then
-            s = $"Cannot continue without the following directories{vbCrLf}{s}{vbCrLf}{vbCrLf}"
-            s = $"{s}If you cloned the program from the repo, "
-            s = $"{s}please see the Installation section of the Readme "
-            s = $"{s}to learn how to get the missing files. "
-            MsgBox(s, vbOKOnly, "File not found")
+
+        If Not ErrorMessage = "" Then
+            ErrorMessage = $"Cannot continue without the following directories{vbCrLf}{ErrorMessage}{vbCrLf}{vbCrLf}"
+            ErrorMessage = $"{ErrorMessage}If you cloned the program from the repo, "
+            ErrorMessage = $"{ErrorMessage}please see the Installation section of the Readme "
+            ErrorMessage = $"{ErrorMessage}to learn how to get the missing files. "
+            MsgBox(ErrorMessage, vbOKOnly, "Startup Not Successful")
             End
         End If
+
+
+        ' ###### SETUP ######
 
         Dim tmpPreferencesDirectory As String = UP.GetPreferencesDirectory
         If Not IO.Directory.Exists(tmpPreferencesDirectory) Then
@@ -335,10 +351,11 @@ Public Class Form_Main
 
         Splash.UpdateStatus("Initializing timer")
 
-        AlwaysOnTopTimer = New Timer
-        AlwaysOnTopTimer.Interval = 3000
-        AddHandler AlwaysOnTopTimer.Tick, AddressOf HandleAlwaysOnTopTimerTick
+        'AlwaysOnTopTimer = New Timer
+        'AlwaysOnTopTimer.Interval = 3000
+        'AddHandler AlwaysOnTopTimer.Tick, AddressOf HandleAlwaysOnTopTimerTick
         'AlwaysOnTopTimer.Start()
+
 
         Splash.Close()
 
@@ -401,12 +418,12 @@ Public Class Form_Main
             End If
         End If
 
-        Try
-            SEApp = CType(MarshalHelper.GetActiveObject("SolidEdge.Application", throwOnError:=True), SolidEdgeFramework.Application)
-        Catch ex As Exception
-            Success = False
-            ErrorLogger.AddMessage("Solid Edge not detected.  This command requires a running instance of Solid Edge with an assembly file active")
-        End Try
+        'Try
+        '    SEApp = CType(MarshalHelper.GetActiveObject("SolidEdge.Application", throwOnError:=True), SolidEdgeFramework.Application)
+        'Catch ex As Exception
+        '    Success = False
+        '    ErrorLogger.AddMessage("Solid Edge not detected.  This command requires a running instance of Solid Edge with an assembly file active")
+        'End Try
 
         'If SEApp IsNot Nothing And Not Me.PrePopulate Then
         '    Try
@@ -700,9 +717,11 @@ Public Class Form_Main
 
             End If
 
-            Me.TopMost = True
-            System.Windows.Forms.Application.DoEvents()
-            Me.TopMost = False
+            If Me.AlwaysOnTop Then
+                Me.TopMost = True
+                System.Windows.Forms.Application.DoEvents()
+                Me.TopMost = False
+            End If
 
 
         End If
@@ -782,6 +801,7 @@ Public Class Form_Main
 
         Return Success
     End Function
+
     Private Function ProcessVariables(
         SEApp As SolidEdgeFramework.Application,
         SEDoc As SolidEdgeFramework.SolidEdgeDocument,
@@ -1029,6 +1049,9 @@ Public Class Form_Main
             Else
                 If Filename Is Nothing Then Filename = ""
 
+                Dim tmpAsmDoc As SolidEdgeAssembly.AssemblyDocument = Nothing
+                Dim tmpAsmDir As String = ""
+
                 Dim tmpFileDialog As New CommonSaveFileDialog
 
                 tmpFileDialog.Title = "Enter the file name for the new part"
@@ -1036,22 +1059,29 @@ Public Class Form_Main
                 tmpFileDialog.EnsureFileExists = False
                 tmpFileDialog.Filters.Add(New CommonFileDialogFilter("Solid Edge Files", $"*{DefaultExtension}"))
                 If Me.SaveInAssemblyDirectory Then
-                    If IO.Directory.Exists(Me.AssemblyDirectory) Then
-                        tmpFileDialog.InitialDirectory = Me.AssemblyDirectory
-                    End If
+                    Try
+                        tmpAsmDoc = CType(SEApp.ActiveDocument, SolidEdgeAssembly.AssemblyDocument)
+                        tmpAsmDir = IO.Path.GetDirectoryName(tmpAsmDoc.FullName)
+                        If Not tmpAsmDir = "" Then
+                            tmpFileDialog.InitialDirectory = tmpAsmDir
+                        Else
+                            ErrorLogger.AddMessage("Assembly file must be saved first")
+                            Return Nothing
+                        End If
+                    Catch ex As Exception
+                        ErrorLogger.AddMessage("Assembly file not active in Solid Edge")
+                        Return Nothing
+                    End Try
                 End If
 
-                If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
+                'If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
                 Me.TopMost = False
 
                 If tmpFileDialog.ShowDialog() = DialogResult.OK Then
-                    If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
+                    'If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
                     Filename = tmpFileDialog.FileName
-                    If Me.SaveInAssemblyDirectory Then
-                        Me.AssemblyDirectory = IO.Path.GetDirectoryName(Filename)
-                    End If
                 Else
-                    If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
+                    'If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
                     Return Nothing
                 End If
 
@@ -1814,43 +1844,37 @@ Public Class Form_Main
 
     Public Function SanitizeXMLTags(XmlList As List(Of String)) As List(Of String)
 
+        '<?xml version=""1.0" encoding=""utf-8""?>
+        '<Solid_Edge_Storekeeper Type=""Node"">
+        '<PartNumberProperty Type=""SEPropertyName"">%{System.Document Number}</PartNumberProperty>
+        '<MaterialProperty Type=""SEPropertyName"">%{System.Material}</MaterialProperty>
+        '<DescriptionProperty Type=""SEPropertyName"">%{System.Title}</DescriptionProperty>
+        '<HardwareProperty Type=""SEPropertyName"">%{System.Hardware}</HardwareProperty>
+        '    <ISO_DIN_SCREWS Type=""Node"">
+        '    <PartNumberFormula Type=""SEPropertyFormulaString"">NA</PartNumberFormula>
+        '    <HardwareFormula Type=""SEPropertyFormulaBoolean"">TRUE</HardwareFormula>
+        '        <Hexagon_head_bolts_and_screws Type=""Node"">
+        '            <ISO_4014_-_Hexagon_head_bolts_-_normal_pitch Type=""Node"">
+        '            <TemplateFormula Type=""TemplateFormula"">ISO4014.par</TemplateFormula>
+        '            <FilenameFormula Type=""FilenameFormula"">ISO_4014\ISO_4014_%{Name}x%{Length}_%{MaterialFormula}.par</FilenameFormula>
+        '            <DescriptionFormula Type=""SEPropertyFormulaString"">ISO 4014 %{Description} x %{Length} - %{MaterialFormula}</DescriptionFormula>
+        '            <MaterialFormula Type=""SEPropertyFormulaMaterial"">ST, SS, A2, A2-50, A2-70, A4, A4-50, A4-70, A4-80</MaterialFormula>
+        '                <Size_M1.6 Type=""Node"">
+        '                    <Include Type=""Boolean"">True</Include>
+        '                    <Name Type=""String"">Screw_M1.6</Name>
+        '                    <Description Type=""String"">Screw M1.6</Description>
+        '                    <ThreadDescription Type=""ParameterString"">M1.6</ThreadDescription>
+        '                    <NominalDiameter Type=""Variable"">1.6</NominalDiameter>
+        '                    <d Type=""Variable"">1.6</d>
+        '                    <p Type=""Variable"">0,35</p>
+        '                    <c Type=""Variable"">0,25</c>
+        ' ...
+
         Dim XmlOutList As New List(Of String)
         Dim InTag As Boolean = False
         Dim InQuotes As Boolean = False
 
         For Each Line As String In XmlList
-
-            'If Not Me.AllowCommaDelimiters Then
-            '    XmlOutList.Add(Line.Replace(",", "."))
-
-            'Else
-            '    ' Deal with repeated doublequotes
-            '    Line = Line.Replace("""", Chr(182))
-
-            '    Dim OutLine As String = ""
-
-            '    For Each Character As String In Line
-            '        If Character = Chr(182) Then InQuotes = Not InQuotes
-            '        If Character = "<" And Not InQuotes Then InTag = True
-            '        If Character = ">" And Not InQuotes Then InTag = False
-
-            '        If InQuotes Then
-            '            OutLine = $"{OutLine}{Character}"  ' Must be checked first to capture '<' or '>'
-            '        ElseIf InTag Then
-            '            If Character = "," Then
-            '                OutLine = $"{OutLine}{Me.XmlCommaIndicator}"
-            '            Else
-            '                OutLine = $"{OutLine}{Character}"
-            '            End If
-            '        Else
-            '            OutLine = $"{OutLine}{Character}"
-            '        End If
-            '    Next
-
-            '    OutLine = OutLine.Replace(Chr(182), """")
-            '    XmlOutList.Add(OutLine)
-
-            'End If
 
             ' Deal with repeated doublequotes
             Line = Line.Replace("""", Chr(182))
@@ -1882,6 +1906,83 @@ Public Class Form_Main
 
         Return XmlOutList
     End Function
+
+    Public Function StringToXml(InString As String) As String
+        Dim OutString As String = ""
+
+
+        Return OutString
+    End Function
+
+    Public Function StringFromXml(InString As String) As String
+        Dim OutString As String = ""
+
+
+        Return OutString
+    End Function
+
+    Public Function StringToXmlDict(Reverse As Boolean) As Dictionary(Of String, String)
+
+        'https://stackoverflow.com/questions/65534945/allowed-symbols-in-xml-element-name
+
+        Dim OutDict As New Dictionary(Of String, String)
+
+        OutDict(" ") = "_"
+
+        OutDict("!") = ".XmlExclamationMark."
+
+        'tmpDict(""")=".XmlDouble quotes (or speech marks)."
+
+        OutDict("#") = ".XmlNumberSign."
+        OutDict("$") = ".XmlDollarSign."
+        OutDict("%") = ".XmlPercentSign."
+        OutDict("&") = ".XmlAmpersand."
+        OutDict("'") = ".XmlSingleQuote."
+        OutDict("(") = ".XmlOpenParenthesis."
+        OutDict(")") = ".XmlCloseParenthesis."
+        OutDict("*") = ".XmlAsterisk."
+        OutDict("+") = ".XmlPlus."
+        OutDict(",") = ".XmlComma."
+
+        'OutDict("-") = ".XmlMinus."
+        'OutDict(".") = ".XmlPeriod."
+
+        OutDict("/") = ".XmlForwardSlash."
+        OutDict(":") = ".XmlColon."
+        OutDict(";") = ".XmlSemicolon."
+
+        'tmpDict("<")=".XmlLess than (or open angled bracket)."
+        'tmpDict("=")=".XmlEquals."
+        'tmpDict(">")=".XmlGreater than (or close angled bracket)."
+
+        OutDict("?") = ".XmlQuestionMark."  ' <?xml version=""1.0" encoding=""utf-8""?>
+
+        OutDict("@") = ".XmlAtSign."
+        OutDict("[") = ".XmlOpeningBracket."
+        OutDict("\") = ".XmlBackslash."
+        OutDict("]") = ".XmlClosingBracket."
+        OutDict("^") = ".XmlCaret."
+
+        'OutDict("_") = ".XmlUnderscore."
+
+        OutDict("`") = ".XmlGraveAccent."
+        OutDict("{") = ".XmlOpeningBrace."
+        OutDict("|") = ".XmlVerticalBar."
+        OutDict("}") = ".XmlClosingBrace."
+        OutDict("~") = ".XmlTilde."
+
+        If Reverse Then
+            Dim tmpOutDict As New Dictionary(Of String, String)
+            For Each Key In OutDict.Keys
+                Dim Value As String = OutDict(Key)
+                tmpOutDict(Value) = Key
+            Next
+            OutDict = tmpOutDict
+        End If
+
+        Return OutDict
+    End Function
+
     Public Function ReadExcel(FileName As String) As List(Of List(Of String))
         System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance) ' Needed by ExcelReader
 
@@ -2323,7 +2424,7 @@ Public Class Form_Main
 
     Private Sub ButtonOptions_Click(sender As Object, e As EventArgs) Handles ButtonOptions.Click
 
-        If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
+        'If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
         Me.TopMost = False
 
         Dim FO As New FormTreeSearchOptions(Me)
@@ -2333,7 +2434,7 @@ Public Class Form_Main
             ' Nothing to do here.  The options dialog updates parameters in Form_Main.
         End If
 
-        If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
+        'If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
 
     End Sub
 
@@ -2354,7 +2455,7 @@ Public Class Form_Main
 
     Private Sub ButtonPropertySearchOptions_Click(sender As Object, e As EventArgs) Handles ButtonPropertySearchOptions.Click
 
-        If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
+        'If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
         Me.TopMost = False
 
         Dim FPSO As New FormPropertySearchOptions(Me)
@@ -2377,7 +2478,7 @@ Public Class Form_Main
             Next
         End If
 
-        If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
+        'If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
 
     End Sub
 
@@ -2707,7 +2808,7 @@ Public Class Form_Main
 
     Private Sub FastenerStackToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles FastenerStackToolStripMenuItem.Click
 
-        If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
+        'If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
         Me.TopMost = False
 
         Dim Node = TreeView1.SelectedNode
@@ -2723,7 +2824,7 @@ Public Class Form_Main
             FFS.ShowDialog()
         End If
 
-        If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
+        'If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
 
     End Sub
 
@@ -2766,19 +2867,19 @@ Public Class Form_Main
     End Sub
 
     Private Sub ComboBoxSaveIn_GotFocus(sender As Object, e As EventArgs) Handles ComboBoxSaveIn.GotFocus
-        If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
+        'If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
     End Sub
 
     Private Sub ComboBoxSaveIn_LostFocus(sender As Object, e As EventArgs) Handles ComboBoxSaveIn.LostFocus
-        If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Start()
+        'If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Start()
     End Sub
 
     Private Sub ComboBoxMaterials_GotFocus(sender As Object, e As EventArgs) Handles ComboBoxMaterials.GotFocus
-        If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
+        'If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
     End Sub
 
     Private Sub ComboBoxMaterials_LostFocus(sender As Object, e As EventArgs) Handles ComboBoxMaterials.LostFocus
-        If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Start()
+        'If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Start()
     End Sub
 
 
