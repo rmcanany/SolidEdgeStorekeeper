@@ -63,7 +63,7 @@ You can set the file names according to your preference.  You can specify the ma
 
 ![Filename Formula](media/filename_formula.png)
 
-Structural shapes are not quite the same as fasteners.  While the cross section is standard, the length and the possibility of additional features is not.  Usually the part doesn't even belong in the library.  For these, you can change the `Save in` option from `Library` to `Assy Dir` or `Other`.  Rather than assuming a name and location, with this setting the program prompts for both.
+Structural shapes are not quite the same as fasteners.  While the cross section is standard, the length and the possibility of additional features is not.  Usually the part doesn't even belong in the library.  For these, you can change the `Save in` option from `Library` to `Assy Dir` or `Other`.  Rather than assuming a name and location, with these settings the program prompts for both.
 
 Unlike Family of Parts, files are only created as needed.  Also, each part is stand-alone, not tied back to a master file.
 
@@ -73,7 +73,9 @@ The program will never have every standard part in the world, but it can be impr
 
 Uh-oh.  The Marketing guy just showed up.  He wants to *"Synergize our stake holders and leverage this cross-promotion opportunity"*.  I bet he does.  Anyway, here he is.
 
->  *Hello there!! I'm Big Mike!  Do you want to do things better and faster with less work?!  Of course you do!  That's why you need [<ins>**Solid Edge Housekeeper**</ins>](https://github.com/rmcanany/SolidEdgeHousekeeper#readme)!  Is it free and open source?!  Yes!  Is it a batch utility?!  YES!!  Does it find annoying little errors in your project?!  YES YES YES!!!!  You're going to LOVE it!!*
+>  *Hello there!! I'm Big Mike!  Do you want to do things better and faster with less work?!  Of course you do!  That's why you need [<ins>**Solid Edge Housekeeper**</ins>](https://github.com/rmcanany/SolidEdgeHousekeeper#readme)!*
+
+>  *Is it free and open source?!  Yes!  Is it a batch utility?!  YES!!  Does it find annoying little errors in your project?!  YES YES YES!!!!  You are going to LOVE IT!!*
 
 Sorry about that.  Let's move on.
 
