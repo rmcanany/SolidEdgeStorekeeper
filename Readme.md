@@ -137,7 +137,7 @@ The spreadsheet contains the variables required for each size of each type of pa
   Change the data directory to `Preferences\DataSE2019` if you want to use the alternative templates.  You will have to restart the program for the change to take effect.
 
 - **MATERIAL TABLE**  
-The material table is usually your normal SE material table.  However, for a quick test of the program, an alternative is to use `Storekeeper.mtl` from `Preferences\Templates`.  Copy it to your Solid Edge Materials directory to make it available.  On my machine, that location is `C:\Program Files\Siemens\Solid Edge 2024\Preferences\Materials`.  
+The material table is usually your normal SE material table.  However, for a quick test of the program, an alternative is to use `StorekeeperSE2019.mtl` or `StorekeeperSE2024.mtl` from `Preferences\TemplatesSE2019` or `Preferences\TemplatesSE2024` .  Copy it (or both) to your Solid Edge Materials directory to make it available.  On my machine, that location is `C:\Program Files\Siemens\Solid Edge 2024\Preferences\Materials`.  
 
   If you decide to continue using the program, you would eventually want to utilize your own material table, updating material names in the spreadsheet and templates as needed. 
 
@@ -161,24 +161,22 @@ The material table is usually your normal SE material table.  However, for a qui
   - `Process templates in background`  
 	A new part must be opened in Solid Edge to update its parameters.  This setting tells the program to not display it in the user interface.
 
-	Note, processing in background does not support `Fit View`.  If you need usable thumbnail images, this option is probably not for you.
-
-	Also note, there is an issue when creating a part whose units do not match the default units of your Solid Edge installation.  Processing in background appears to ignore the file's unit setting.
+	Note, processing in background does not support `Fit View`.  If you need usable thumbnail images, this option is probably not for you.  Also, there is an issue when creating a part whose units do not match the default units of your Solid Edge installation.  Processing in background appears to ignore the file's unit setting.
 	
   - `Replace part: Suppress failed constraint`  
 	When replacing a part, some constraints may fail to get resolved.  If this occurs, this option tells the program to suppress the constraint.
 	
   - `Replace part: Allow failed constraint`  
-	With the same situation as above, this option tells the program to leave the constraint in the failed state.
+	With the same situation as above, this option tells the program to leave the constraint in the failed state.  This is my preferred setting.  The pathfinder shows a red lightning bolt, alerting me that I need to fix something.
 	
   - `Do not add files in the Recently Used list`  
-	Enable this option to keep the program from adding newly-generated standard parts to the Most Recently Used list.  Note this function was added to Solid Edge in version 2020.  If you are running an earlier version, this option must be disabled.
+	Enable this option to keep the program from adding newly-generated standard parts to the Most Recently Used list.  Note this function was added to Solid Edge in version 2020.  If you are running an earlier version, this option will have no effect.
 	
   - `Storekeeper always on top`  
 	Keeps the program window on top of other windows.
 
   - `Include drawing of part if present`  
-	If a file in the templates directory has an associated drawing, the program can copy it to the library along with the part.  Enable this option to do so.
+	If a file in the templates directory has a drawing with the same name, the program can copy it to the library along with the part.  Enable this option to do so.
 
   - `Check for new version at startup`  
 	If you don't need a reminder about new versions, disable the check here.
@@ -339,6 +337,7 @@ The name of the spreadsheet variable has rules.  `XyzProperty` looks for `XyzFor
 - MaterialFormula
 - Node
 - Nodes
+- ToolTipFormula
 
 So, for example to update the part number in the file, the program will use the information in `PartNumberFormula` to update the property defined in `PartNumberProperty`.  In this example that tells the program to make this assignment.
 
