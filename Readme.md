@@ -63,7 +63,7 @@ You can set the file names according to your preference.  You can specify the ma
 
 ![Filename Formula](media/filename_formula.png)
 
-Structural shapes are not quite the same as fasteners.  While the cross section is standard, the length and the possibility of additional features is not.  Usually the part doesn't even belong in the library.  For these, you can change the `Save in` option from `Library` to `Assy Dir` or `Other`.  Rather than assuming a name and location, with these settings the program prompts for both.
+Structural shapes are not quite the same as fasteners.  While the cross section is standard, the length and likelihood of additional features is not.  Usually the part doesn't even belong in the library.  For these, you can change the `Save in` option from `Library` to `Assy Dir` or `Other`.  Rather than assuming a name and location, with these settings the program prompts for both.
 
 Unlike Family of Parts, files are only created as needed.  Also, each part is stand-alone, not tied back to a master file.
 
