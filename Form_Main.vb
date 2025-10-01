@@ -10,7 +10,7 @@ Public Class Form_Main
     Private Property Version As String = "2025.4"
 
     'Private Property PreviewVersion As String = ""  ' Empty string if not a preview
-    Private Property PreviewVersion As String = "Preview 08"
+    Private Property PreviewVersion As String = "Preview 09"
 
 
     Private _SelectedNodeFullPath As String
@@ -229,6 +229,8 @@ Public Class Form_Main
     Public Property AssemblyPasteComplete As Boolean
     Private Property NodeCount As Integer
     Private Property ErrorLogger As HCErrorLogger
+    Private Property StringToXmlDict As Dictionary(Of String, String)
+    Private Property StringFromXmlDict As Dictionary(Of String, String)
 
 
     ' https://community.sw.siemens.com/s/question/0D5Vb00000Krsy5KAB/handling-events-how-to-use-help-example
@@ -240,6 +242,8 @@ Public Class Form_Main
         Dim Splash As New FormSplash()
         Splash.Show()
         Splash.UpdateStatus("Initializing")
+
+        PopulateStringToXmlDicts()
 
         OleMessageFilter.Register()
 
@@ -356,6 +360,8 @@ Public Class Form_Main
         'AddHandler AlwaysOnTopTimer.Tick, AddressOf HandleAlwaysOnTopTimerTick
         'AlwaysOnTopTimer.Start()
 
+        ' Trigger an update
+        Me.SelectedNodeFullPath = Me.SelectedNodeFullPath
 
         Splash.Close()
 
@@ -1512,7 +1518,9 @@ Public Class Form_Main
 
         Dim FullPathList = SelectedNodeFullPath.Split(CChar("\")).ToList
         For i = 0 To FullPathList.Count - 1
-            FullPathList(i) = SpaceToUnderscore(FullPathList(i))
+            'FullPathList(i) = SpaceToUnderscore(FullPathList(i))
+            FullPathList(i) = StringToXml(FullPathList(i))
+            Dim j = 0
         Next
 
         Dim CurrentNode = XmlDoc.ChildNodes(1) ' Root node
@@ -1526,7 +1534,11 @@ Public Class Form_Main
             Dim ChildNodes = CurrentNode.ChildNodes
             For Each tmpNode As Xml.XmlNode In ChildNodes
 
-                If tmpNode.Name = NextNodeName.Replace(",", Me.XmlCommaIndicator) Then
+                'If tmpNode.Name = NextNodeName.Replace(",", Me.XmlCommaIndicator) Then
+                '    CurrentNode = tmpNode
+                '    Continue For
+                'End If
+                If tmpNode.Name = NextNodeName Then
                     CurrentNode = tmpNode
                     Continue For
                 End If
@@ -1614,7 +1626,8 @@ Public Class Form_Main
         TreeView1.Nodes.Clear()
 
         'TreeView1.Nodes.Add(New TreeNode(XmlDoc.DocumentElement.Name))
-        TreeView1.Nodes.Add(New TreeNode(XmlDoc.DocumentElement.Name.Replace(Me.XmlCommaIndicator, ",")))
+        'TreeView1.Nodes.Add(New TreeNode(XmlDoc.DocumentElement.Name.Replace(Me.XmlCommaIndicator, ",")))
+        TreeView1.Nodes.Add(New TreeNode(StringFromXml(XmlDoc.DocumentElement.Name)))
 
         Dim tNode As TreeNode = TreeView1.Nodes(0)
         AddNode(xmlnode, tNode, Splash, 1)
@@ -1652,7 +1665,8 @@ Public Class Form_Main
                     Splash.UpdateStatus(StatusMessage)
 
                     'Dim n As Integer = inTreeNode.Nodes.Add(New TreeNode(UnderscoreToSpace(xNode.Name)))
-                    Dim tmpName As String = UnderscoreToSpace(xNode.Name.Replace(Me.XmlCommaIndicator, ","))
+                    'Dim tmpName As String = UnderscoreToSpace(xNode.Name.Replace(Me.XmlCommaIndicator, ","))
+                    Dim tmpName As String = StringFromXml(xNode.Name)
                     Dim tmpTreeNode As TreeNode = New TreeNode(tmpName)
                     Dim Tooltip As String = ExtractTooltip(xNode.InnerXml)
                     If Not Tooltip = "" Then tmpTreeNode.ToolTipText = Tooltip
@@ -1663,7 +1677,8 @@ Public Class Form_Main
                 End If
             Next
 
-            inTreeNode.Text = UnderscoreToSpace(inXmlNode.Name.Replace(Me.XmlCommaIndicator, ","))
+            'inTreeNode.Text = UnderscoreToSpace(inXmlNode.Name.Replace(Me.XmlCommaIndicator, ","))
+            inTreeNode.Text = StringFromXml(inXmlNode.Name)
 
             ' Add the xml node type as a tag to the tree node
             For Each Attribute As Xml.XmlAttribute In inXmlNode.Attributes
@@ -1692,13 +1707,13 @@ Public Class Form_Main
         Return Tooltip
     End Function
 
-    Public Function SpaceToUnderscore(InString As String) As String
-        Return InString.Replace(" ", "_")
-    End Function
+    'Public Function SpaceToUnderscore(InString As String) As String
+    '    Return InString.Replace(" ", "_")
+    'End Function
 
-    Public Function UnderscoreToSpace(InString As String) As String
-        Return InString.Replace("_", " ")
-    End Function
+    'Public Function UnderscoreToSpace(InString As String) As String
+    '    Return InString.Replace("_", " ")
+    'End Function
 
     Private Sub ExpandTreeview(FullPath As String)
 
@@ -1874,32 +1889,54 @@ Public Class Form_Main
         Dim InTag As Boolean = False
         Dim InQuotes As Boolean = False
 
-        For Each Line As String In XmlList
+        For i = 0 To XmlList.Count - 1
 
-            ' Deal with repeated doublequotes
-            Line = Line.Replace("""", Chr(182))
+            Dim Line As String = XmlList(i)
 
             Dim OutLine As String = ""
 
-            For Each Character As String In Line
-                If Character = Chr(182) Then InQuotes = Not InQuotes
-                If Character = "<" And Not InQuotes Then InTag = True
-                If Character = ">" And Not InQuotes Then InTag = False
+            If i = 0 Then
+                ' The first line is always added by the program: <?xml version=""1.0" encoding=""utf-8""?>
+                ' Avoid complications with '?' by taking it whole.
+                OutLine = Line
+            Else
+                ' Deal with repeated doublequotes
+                Line = Line.Replace("""", Chr(182))
 
-                If InQuotes Then
-                    OutLine = $"{OutLine}{Character}"  ' Must be checked first to capture '<' or '>'
-                ElseIf InTag Then
-                    If Character = "," Then
-                        OutLine = $"{OutLine}{Me.XmlCommaIndicator}"
+                For Each Character As String In Line
+                    If Character = Chr(182) Then InQuotes = Not InQuotes
+                    If Character = "<" And Not InQuotes Then InTag = True
+                    If Character = ">" And Not InQuotes Then InTag = False
+
+                    If InQuotes Then  ' Must be checked first to capture '<' or '>' in quoted text
+                        OutLine = $"{OutLine}{Character}"
+                    ElseIf InTag Then
+                        'If Character = "," Then
+                        '    OutLine = $"{OutLine}{Me.XmlCommaIndicator}"
+                        'Else
+                        '    OutLine = $"{OutLine}{Character}"
+                        'End If
+
+                        If StringToXmlDict.Keys.Contains(Character) Then
+                            OutLine = $"{OutLine}{StringToXmlDict(Character)}"
+                        Else
+                            OutLine = $"{OutLine}{Character}"
+                        End If
                     Else
                         OutLine = $"{OutLine}{Character}"
                     End If
-                Else
-                    OutLine = $"{OutLine}{Character}"
-                End If
-            Next
+                Next
 
-            OutLine = OutLine.Replace(Chr(182), """")
+                ' Replace repeated double quotes
+                OutLine = OutLine.Replace(Chr(182), """")
+
+                ' Fix closing forward slash in tag:  <p Type=""Variable"">0,35<.XmlForwardSlash.p> --> <p Type=""Variable"">0,35</p>
+                OutLine = OutLine.Replace($"<{StringToXmlDict("/")}", "</")
+
+                ' Fix the erroneous addition of '_' between the Name and the Type declaration in a tag.
+                OutLine = OutLine.Replace("_Type=", " Type=")
+            End If
+
             XmlOutList.Add(OutLine)
 
         Next
@@ -1908,80 +1945,113 @@ Public Class Form_Main
     End Function
 
     Public Function StringToXml(InString As String) As String
-        Dim OutString As String = ""
 
+        ' ',' --> '.XmlComma.'
+        ' '1/4-20 x 3/4' --> '1.XmlForwardSlash.4-20_x_3.XmlForwardSlash.4'
+
+        Dim OutString As String = InString
+
+        ' Deal with repeated doublequotes
+        OutString = OutString.Replace("""", Chr(182))
+
+        For Each Character As String In StringToXmlDict.Keys
+            Dim Value As String = ""
+            Value = StringToXmlDict(Character)
+            'If Character = " " Then
+            '    Value = "_"
+            'Else
+            '    Value = StringFromXmlDict(Character)
+            'End If
+            OutString = OutString.Replace(Character, Value)
+        Next
+
+        ' Replace repeated double quotes
+        OutString = OutString.Replace(Chr(182), """")
+
+        ' Fix closing forward slash in tag:  <p Type=""Variable"">0,35<.XmlForwardSlash.p> --> <p Type=""Variable"">0,35</p>
+        OutString = OutString.Replace($"<{StringToXmlDict("/")}", "</")
 
         Return OutString
     End Function
 
     Public Function StringFromXml(InString As String) As String
-        Dim OutString As String = ""
 
+        ' '.XmlComma.' --> ','
+        ' '1.XmlForwardSlash.4-20' --> '1/4-20'
+
+        Dim OutString As String = InString
+
+        ' Deal with repeated doublequotes
+        OutString = OutString.Replace("""", Chr(182))
+
+        For Each XmlReplacementString As String In StringFromXmlDict.Keys
+            Dim Value = StringFromXmlDict(XmlReplacementString)
+            OutString = OutString.Replace(XmlReplacementString, Value)
+        Next
+
+        ' Replace repeated double quotes
+        OutString = OutString.Replace(Chr(182), """")
 
         Return OutString
     End Function
 
-    Public Function StringToXmlDict(Reverse As Boolean) As Dictionary(Of String, String)
+    Public Sub PopulateStringToXmlDicts()
 
         'https://stackoverflow.com/questions/65534945/allowed-symbols-in-xml-element-name
 
-        Dim OutDict As New Dictionary(Of String, String)
+        Me.StringToXmlDict = New Dictionary(Of String, String)
+        Me.StringFromXmlDict = New Dictionary(Of String, String)
 
-        OutDict(" ") = "_"
+        Me.StringToXmlDict(" ") = "_"
 
-        OutDict("!") = ".XmlExclamationMark."
+        Me.StringToXmlDict("!") = ".XmlExclamationMark."
 
-        'tmpDict(""")=".XmlDouble quotes (or speech marks)."
+        'Me.StringToXmlDict(""")=".XmlDouble quotes (or speech marks)."
 
-        OutDict("#") = ".XmlNumberSign."
-        OutDict("$") = ".XmlDollarSign."
-        OutDict("%") = ".XmlPercentSign."
-        OutDict("&") = ".XmlAmpersand."
-        OutDict("'") = ".XmlSingleQuote."
-        OutDict("(") = ".XmlOpenParenthesis."
-        OutDict(")") = ".XmlCloseParenthesis."
-        OutDict("*") = ".XmlAsterisk."
-        OutDict("+") = ".XmlPlus."
-        OutDict(",") = ".XmlComma."
+        Me.StringToXmlDict("#") = ".XmlNumberSign."
+        Me.StringToXmlDict("$") = ".XmlDollarSign."
+        Me.StringToXmlDict("%") = ".XmlPercentSign."
+        Me.StringToXmlDict("&") = ".XmlAmpersand."
+        Me.StringToXmlDict("'") = ".XmlSingleQuote."
+        Me.StringToXmlDict("(") = ".XmlOpenParenthesis."
+        Me.StringToXmlDict(")") = ".XmlCloseParenthesis."
+        Me.StringToXmlDict("*") = ".XmlAsterisk."
+        Me.StringToXmlDict("+") = ".XmlPlus."
+        Me.StringToXmlDict(",") = ".XmlComma."
 
-        'OutDict("-") = ".XmlMinus."
-        'OutDict(".") = ".XmlPeriod."
+        'Me.StringToXmlDict("-") = ".XmlMinus."
+        'Me.StringToXmlDict(".") = ".XmlPeriod."
 
-        OutDict("/") = ".XmlForwardSlash."
-        OutDict(":") = ".XmlColon."
-        OutDict(";") = ".XmlSemicolon."
+        Me.StringToXmlDict("/") = ".XmlForwardSlash."
+        Me.StringToXmlDict(":") = ".XmlColon."
+        Me.StringToXmlDict(";") = ".XmlSemicolon."
 
-        'tmpDict("<")=".XmlLess than (or open angled bracket)."
-        'tmpDict("=")=".XmlEquals."
-        'tmpDict(">")=".XmlGreater than (or close angled bracket)."
+        'Me.StringToXmlDict("<")=".XmlLess than (or open angled bracket)."
+        'Me.StringToXmlDict("=")=".XmlEquals."
+        'Me.StringToXmlDict(">")=".XmlGreater than (or close angled bracket)."
 
-        OutDict("?") = ".XmlQuestionMark."  ' <?xml version=""1.0" encoding=""utf-8""?>
+        Me.StringToXmlDict("?") = ".XmlQuestionMark."  ' <?xml version=""1.0" encoding=""utf-8""?>
 
-        OutDict("@") = ".XmlAtSign."
-        OutDict("[") = ".XmlOpeningBracket."
-        OutDict("\") = ".XmlBackslash."
-        OutDict("]") = ".XmlClosingBracket."
-        OutDict("^") = ".XmlCaret."
+        Me.StringToXmlDict("@") = ".XmlAtSign."
+        Me.StringToXmlDict("[") = ".XmlOpeningBracket."
+        Me.StringToXmlDict("\") = ".XmlBackslash."
+        Me.StringToXmlDict("]") = ".XmlClosingBracket."
+        Me.StringToXmlDict("^") = ".XmlCaret."
 
-        'OutDict("_") = ".XmlUnderscore."
+        'Me.StringToXmlDict("_") = ".XmlUnderscore."
 
-        OutDict("`") = ".XmlGraveAccent."
-        OutDict("{") = ".XmlOpeningBrace."
-        OutDict("|") = ".XmlVerticalBar."
-        OutDict("}") = ".XmlClosingBrace."
-        OutDict("~") = ".XmlTilde."
+        Me.StringToXmlDict("`") = ".XmlGraveAccent."
+        Me.StringToXmlDict("{") = ".XmlOpeningBrace."
+        Me.StringToXmlDict("|") = ".XmlVerticalBar."
+        Me.StringToXmlDict("}") = ".XmlClosingBrace."
+        Me.StringToXmlDict("~") = ".XmlTilde."
 
-        If Reverse Then
-            Dim tmpOutDict As New Dictionary(Of String, String)
-            For Each Key In OutDict.Keys
-                Dim Value As String = OutDict(Key)
-                tmpOutDict(Value) = Key
-            Next
-            OutDict = tmpOutDict
-        End If
+        For Each Key In Me.StringToXmlDict.Keys
+            Dim Value As String = Me.StringToXmlDict(Key)
+            Me.StringFromXmlDict(Value) = Key
+        Next
 
-        Return OutDict
-    End Function
+    End Sub
 
     Public Function ReadExcel(FileName As String) As List(Of List(Of String))
         System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance) ' Needed by ExcelReader
@@ -2291,7 +2361,6 @@ Public Class Form_Main
     End Function
 
     Public Function XmlNodeFromPath(FullPath As String) As XmlNode
-        'Dim tmpProps As New Props
 
         Dim Node As XmlNode = Nothing
         Dim FullPathList As List(Of String) = FullPath.Split("\").ToList
@@ -2310,9 +2379,14 @@ Public Class Form_Main
             Dim ChildNodes = CurrentNode.ChildNodes
             For Each tmpNode As Xml.XmlNode In ChildNodes
 
-                If tmpNode.Name = NextNodeName.Replace(",", Me.XmlCommaIndicator) Then
+                'If tmpNode.Name = NextNodeName.Replace(",", Me.XmlCommaIndicator) Then
+                '    CurrentNode = tmpNode
+                '    Continue For
+                'End If
+                If tmpNode.Name = StringToXml(NextNodeName) Then
                     CurrentNode = tmpNode
-                    Continue For
+                    'Continue For
+                    Exit For
                 End If
 
             Next

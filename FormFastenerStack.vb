@@ -1078,8 +1078,11 @@ Public Class FormFastenerStack
         Dim SelectedNodeFullPath As String = FMain.SelectedNodeFullPath  ' Saving to reset back
 
         Me.TreeviewFastenerFullPath = SelectedNodeFullPath
-        Dim tmpSelectedNodeFullPath As String = FMain.SpaceToUnderscore(SelectedNodeFullPath)
-        Dim FastenerNodeNameList = tmpSelectedNodeFullPath.Split("\")
+        'Dim tmpSelectedNodeFullPath As String = FMain.SpaceToUnderscore(SelectedNodeFullPath)
+        Dim FastenerNodeNameList = SelectedNodeFullPath.Split("\")
+        For i = 0 To FastenerNodeNameList.Count - 1
+            FastenerNodeNameList(i) = FMain.StringToXml(FastenerNodeNameList(i))
+        Next
 
         Dim XmlDoc As System.Xml.XmlDocument = FMain.XmlDoc
         Dim ParentNode As XmlNode
@@ -1356,7 +1359,18 @@ Public Class FormFastenerStack
 
         Dim UC As New UtilsCommon
 
-        Dim SizeNode As XmlNode = FMain.XmlNodeFromPath(FMain.SpaceToUnderscore(CurrentFastenerFullPath))
+        Dim tmpNodeNameList As List(Of String) = CurrentFastenerFullPath.Split(CChar("\")).ToList
+        Dim tmpXmlNodePath As String = ""
+        For i = 0 To tmpNodeNameList.Count - 1
+            If i = 0 Then
+                tmpXmlNodePath = FMain.StringToXml(tmpNodeNameList(i))
+            Else
+                tmpXmlNodePath = $"{tmpXmlNodePath}\{FMain.StringToXml(tmpNodeNameList(i))}"
+            End If
+        Next
+
+        Dim SizeNode As XmlNode = FMain.XmlNodeFromPath(tmpXmlNodePath)
+
         SizeNode = SizeNode.ParentNode
 
         Dim Node As XmlNode = Nothing
