@@ -14,7 +14,7 @@ Feel free to report bugs and/or ideas for improvement on the [<ins>**Solid Edge 
 
 ## V2025.4
 
-We'll get right to the updates, but first a quick announcement -- we have a new **Contributor!**  Our very own **@TeeVar** built and donated a massive ISO-native dataset, compatible back to SE2019.  He also had a lot of great suggestions to enhance the capabilities of the program and make it easier to use.  Can't wait for you to see it all!
+We'll get right to the updates, but first some exciting news -- we have a new **Contributor!**  Our very own **@TeeVar** built and donated a massive ISO-native dataset, compatible back to SE2019.  He also provided a ton of great suggestions to enhance the capabilities of the program and make it easier to use.  Can't wait for you to see his handiwork!
 
 On to those updates...
 
@@ -85,6 +85,8 @@ Added an option to store property values of files in the library.  Set it on the
 - Added the ability to use subdirectories in file names (Thank you again **@TeeVar!**).  The file names are specified in the spreadsheet.  To include subdirectories, simply preceed the file name with the directory names, eg. `Fasteners\BHCS\bhcs_%{Name}_%{Length}.par`.
 
 - Added an option to keep the Storekeeper window always on top (Thank you one more time **@TeeVar!**).
+
+- Added the ability to use special characters (`/`, `*`, `@`, etc.) in Xml tag definitions  (Thank you **@Seva!**).  Normally these are not allowed.  To get around it, special characters are replaced with compatible stand-ins where necessary.  If you look in `Storekeeper.xml`, you may see text like `.XmlComma.`  That's an example of one of those stand-ins.
 
 - Temporarily disabled the `Pre-Populate` feature from the previous version (Sorry **@Seva!**).  It is not currently compatible with multiple materials per category.  In particular it had trouble when a material is valid for one selected item, but not another.  You can still use the previous version when that feature is needed.
 

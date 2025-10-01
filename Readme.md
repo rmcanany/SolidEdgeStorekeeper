@@ -71,9 +71,9 @@ Unlike web-based offerings, the program is integrated with your parts library an
 
 The program will never have every standard part in the world, but it can be improved.  That's where **YOU** come in!  Contributions are welcome.  Please message me on the [<ins>**Solid Edge Forum**</ins>](https://community.sw.siemens.com/s/topic/0TO4O000000MihiWAC/solid-edge), or raise an [<ins>**Issue on GitHub**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/issues), for ideas on how to get started.
 
-Uh-oh.  The Marketing guy just showed up.  He wants to *"Synergize our stake holders and leverage this cross-promotion opportunity"*.  Who talks like that?  Anyway, here he is.
+Uh-oh.  The Marketing guy just showed up.  He wants to *"Synergize our stake holders and leverage this cross-promotion opportunity"*.  Sure he does.  Anyway, here he is.
 
->  *Hello there!! I'm Big Mike!  Do you want to do things better and faster with less work?!  Of course you do!  That's why you need [<ins>**Solid Edge Housekeeper**</ins>](https://github.com/rmcanany/SolidEdgeHousekeeper#readme)!  It is a batch utility for finding annoying little errors in your project!  You're going to love it!!*
+>  *Hello there!! I'm Big Mike!  Do you want to do things better and faster with less work?!  Of course you do!  That's why you need [<ins>**Solid Edge Housekeeper**</ins>](https://github.com/rmcanany/SolidEdgeHousekeeper#readme)!  Is it free and open source?!  Yes!  Is it a batch utility?!  YES!!  Does it find annoying little errors in your project?!  YES YES YES!!!!  You're going to LOVE it!!*
 
 Sorry about that.  Let's move on.
 
@@ -174,11 +174,8 @@ The material table is usually your normal SE material table.  However, for a qui
   - `Do not add files in the Recently Used list`  
 	Enable this option to keep the program from adding newly-generated standard parts to the Most Recently Used list.  Note this function was added to Solid Edge in version 2020.  If you are running an earlier version, this option must be disabled.
 	
-  - `Allow comma delimiters (experimental)`  
-	Allows the use of a comma as the decimal delimiter.  This is somewhat experimental because commas are not allowed `*.xml` headers.  There is a workaround in place, but has not been thouroughly tested.  Disabling this option causes causes commas to be replaced with periods in the `*.xml` file.
-	
   - `Storekeeper always on top`  
-	Keeps the storekeeper dialog on top of other windows.
+	Keeps the program window on top of other windows.
 
   - `Include drawing of part if present`  
 	If a file in the templates directory has an associated drawing, the program can copy it to the library along with the part.  Enable this option to do so.
@@ -199,7 +196,6 @@ Additional settings for **Property Search** are accessed from that tab's toolbar
 This is where you enter the names of the properties that hold the values you want to match.  You must also specify if the property is System or Custom.  System properties are in every Solid Edge file.  Custom properties are ones you define, probably in a template.
 
 #### Solid Edge Template Files
-
 
 These are your normal template files, not the ones used by the program to create standard parts.  They are needed to populate the available properties, and to determine what language is in use.
 

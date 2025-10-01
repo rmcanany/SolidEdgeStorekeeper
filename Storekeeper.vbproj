@@ -10,12 +10,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="FormJunkTest.Designer.vb" />
+    <Compile Remove="FormJunkTest.vb" />
     <Compile Remove="FormPropertiesToSearch.Designer.vb" />
     <Compile Remove="FormPropertiesToSearch.vb" />
+    <Compile Remove="FormSelectMaterial.Designer.vb" />
+    <Compile Remove="FormSelectMaterial.vb" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Remove="FormJunkTest.resx" />
     <EmbeddedResource Remove="FormPropertiesToSearch.resx" />
+    <EmbeddedResource Remove="FormSelectMaterial.resx" />
   </ItemGroup>
 
   <ItemGroup>
