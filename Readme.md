@@ -337,7 +337,7 @@ The name of the spreadsheet variable has rules.  `XyzProperty` looks for `XyzFor
 - MaterialFormula
 - Node
 - Nodes
-- ToolTipFormula
+- TooltipFormula
 
 So, for example to update the part number in the file, the program will use the information in `PartNumberFormula` to update the property defined in `PartNumberProperty`.  In this example that tells the program to make this assignment.
 
@@ -361,7 +361,7 @@ One last thing about the `MaterialFormula`.  It can occur in multiple places in 
 
 Here we are setting up the processing of button head capscrews.  You can see we need to specify what template to use and how to name the file.  We must also provide the companion spreadsheet name and the tab in that file where the information is stored.  
 
-As mentioned previously, formulas can contain entries such as `%{Name}` and `%{MaterialFormula}`.  Variables are *populating* the part file, not *reading from it*.  That means you cannot reference a file property like `%{Custom.Engineer}` in a formula.  Variables can only come from the `Storekeeper.xls` or a companion spreadsheet.
+As mentioned previously, formulas can contain entries such as `%{Name}` and `%{MaterialFormula}`.  Variables are *populating* the part file, not *reading from it*.  That means you cannot reference a file property like `%{Custom.Engineer}` in a formula.  Variables can only come from `Storekeeper.xls` or a companion spreadsheet.
 
 In this example, we are also updating the description property.  That isn't necessary for the program to function.  It just illustrates how to update Solid Edge file properties.  Any property in the file can be updated in this way.  
 

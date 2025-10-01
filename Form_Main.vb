@@ -1765,7 +1765,7 @@ Public Class Form_Main
         tmpList.RemoveAt(1)
         tmpList.RemoveAt(0)
 
-        Dim tmpText As String = String.Format("{0}\", tmpList(tmpList.Count - 1))
+        Dim tmpText As String = String.Format("{0}", tmpList(tmpList.Count - 1))
         tmpList.RemoveAt(tmpList.Count - 1)
 
         For i = tmpList.Count - 1 To 0 Step -1
