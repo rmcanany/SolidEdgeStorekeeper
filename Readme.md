@@ -42,7 +42,7 @@ The program handles two types of standard parts.  One consists of items like fas
   <img src="media/tree_search.png">
 </p>
 
-For items like fasteners, use **Tree Search**.  Navigate to the desired item, select a material, then right-click and choose an action. If the part is not already in the library, the program creates and saves it.  (Unless the toolbar `Save in` option is set to `Other`, in which case it prompts for a name and location.)  The possible actions are:
+For items like fasteners, use **Tree Search**.  Navigate to the desired item, select a material, then right-click and choose an action. If the part is not already in the library, the program creates and saves it.  (Unless the toolbar `Save in` option is set to `Assy Dir` or `Other`, in which case it prompts for a name and location.)  The possible actions are:
 
 - `Add to assembly`  Adds the part to the assembly and activates the `Place part` command.
 - `Replace selected`  Replaces a selected part in the assembly.
@@ -71,7 +71,7 @@ Unlike web-based offerings, the program is integrated with your parts library an
 
 The program will never have every standard part in the world, but it can be improved.  That's where **YOU** come in!  Contributions are welcome.  Please message me on the [<ins>**Solid Edge Forum**</ins>](https://community.sw.siemens.com/s/topic/0TO4O000000MihiWAC/solid-edge), or raise an [<ins>**Issue on GitHub**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/issues), for ideas on how to get started.
 
-Uh-oh.  The Marketing guy just showed up.  He wants to *"Synergize our stake holders and leverage this cross-promotion opportunity"*.  Sure he does.  Anyway, here he is.
+Uh-oh.  The Marketing guy just showed up.  He wants to *"Synergize our stake holders and leverage this cross-promotion opportunity"*.  I bet he does.  Anyway, here he is.
 
 >  *Hello there!! I'm Big Mike!  Do you want to do things better and faster with less work?!  Of course you do!  That's why you need [<ins>**Solid Edge Housekeeper**</ins>](https://github.com/rmcanany/SolidEdgeHousekeeper#readme)!  Is it free and open source?!  Yes!  Is it a batch utility?!  YES!!  Does it find annoying little errors in your project?!  YES YES YES!!!!  You're going to LOVE it!!*
 

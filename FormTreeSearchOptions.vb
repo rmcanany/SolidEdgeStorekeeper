@@ -14,7 +14,7 @@ Public Class FormTreeSearchOptions
         Set(value As String)
             _LibraryDirectory = value
             If Me.TableLayoutPanel1 IsNot Nothing Then
-                LabelLibraryDirectory.Text = value
+                LabelLibraryDirectory.Text = FMain.TruncateDirectoryName(value, Me.Width)
             End If
         End Set
     End Property
@@ -27,7 +27,7 @@ Public Class FormTreeSearchOptions
         Set(value As String)
             _TemplateDirectory = value
             If Me.TableLayoutPanel1 IsNot Nothing Then
-                LabelTemplateDirectory.Text = value
+                LabelTemplateDirectory.Text = FMain.TruncateDirectoryName(value, Me.Width)
             End If
         End Set
     End Property
@@ -40,7 +40,7 @@ Public Class FormTreeSearchOptions
         Set(value As String)
             _DataDirectory = value
             If Me.TableLayoutPanel1 IsNot Nothing Then
-                LabelDataDirectory.Text = value
+                LabelDataDirectory.Text = FMain.TruncateDirectoryName(value, Me.Width)
             End If
         End Set
     End Property
@@ -53,7 +53,7 @@ Public Class FormTreeSearchOptions
         Set(value As String)
             _MaterialTable = value
             If Me.TableLayoutPanel1 IsNot Nothing Then
-                LabelMaterialLibrary.Text = value
+                LabelMaterialLibrary.Text = FMain.TruncateDirectoryName(value, Me.Width)
             End If
         End Set
     End Property

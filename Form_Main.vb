@@ -1745,7 +1745,7 @@ Public Class Form_Main
         Next
     End Sub
 
-    Private Function TruncateDirectoryName(DirectoryName As String) As String
+    Public Function TruncateDirectoryName(DirectoryName As String, FormWidth As Integer) As String
         ' C:\data\CAD\scripts\SolidEdgeStorekeeper\bin\Debug\net8.0-windows
         ' -> C:\data\...\SolidEdgeStorekeeper\bin\Debug\net8.0-windows
 
@@ -1753,12 +1753,12 @@ Public Class Form_Main
 
         If DirectoryName Is Nothing Then Return OutText
 
-        Dim MaxWidth As Integer = MyBase.Width - 75
+        Dim MaxWidth As Integer = FormWidth - 125
         Dim PixelsPerCharacter As Integer = 7
         Dim MaxCharacters As Integer = CInt(CDbl(MaxWidth) / CDbl(PixelsPerCharacter))
 
         Dim tmpList As List(Of String) = DirectoryName.Split(CChar("\")).ToList
-        tmpList.RemoveAt(tmpList.Count - 1)
+        'tmpList.RemoveAt(tmpList.Count - 1)
         If tmpList.Count < 4 Then Return DirectoryName
 
         OutText = String.Format("{0}\{1}", tmpList(0), tmpList(1))

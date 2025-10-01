@@ -12,7 +12,7 @@
         Set(value As String)
             _AssemblyTemplate = value
             If TableLayoutPanel1 IsNot Nothing Then
-                TextBoxAssemblyTemplate.Text = value
+                LabelAssemblyTemplate.Text = FMain.TruncateDirectoryName(value, Me.Width + 40)
             End If
         End Set
     End Property
@@ -25,7 +25,7 @@
         Set(value As String)
             _PartTemplate = value
             If TableLayoutPanel1 IsNot Nothing Then
-                TextBoxPartTemplate.Text = value
+                LabelPartTemplate.Text = FMain.TruncateDirectoryName(value, Me.Width + 40)
             End If
         End Set
     End Property
@@ -38,7 +38,7 @@
         Set(value As String)
             _SheetmetalTemplate = value
             If TableLayoutPanel1 IsNot Nothing Then
-                TextBoxSheetmetalTemplate.Text = value
+                LabelSheetmetalTemplate.Text = FMain.TruncateDirectoryName(value, Me.Width + 40)
             End If
         End Set
     End Property
