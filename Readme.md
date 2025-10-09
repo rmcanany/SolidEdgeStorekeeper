@@ -42,7 +42,7 @@ The program handles two types of standard parts.  One consists of items like fas
   <img src="media/tree_search.png">
 </p>
 
-For items like fasteners, use **Tree Search**.  Navigate to the desired item, select a material, then right-click and choose an action. If the part is not already in the library, the program creates it.  (Unless the toolbar `Save in` option is set to `Assy Dir` or `Other`, in which case it prompts for a name and location.)  The possible actions are:
+For items like fasteners, use **Tree Search**.  Navigate to the desired item, select a material, then right-click and choose an action. If the part is not already in the library, the program creates it.  The possible actions are:
 
 - `Add to assembly`  Adds the part to the assembly and activates the `Place part` command.
 - `Replace selected`  Replaces a selected part in the assembly.
@@ -57,9 +57,7 @@ For items like fasteners, use **Tree Search**.  Navigate to the desired item, se
 
 For vendor-type parts, use **Property Search**.  Enter the search terms, then click ![Search Button](media/icons8-search-16.png).  Locate the desired item on the list, then right-click and select an action.  The possible actions are: 
 
-- `Add to assembly`  Same as above.
-- `Replace selected`  Same as above.
-- `Replace all`  Same as above.
+- `Add to assembly`, `Replace selected`, `Replace all`  Same as above.
 - `Open`  Opens the selected file in Solid Edge.
 - `Open folder`  Opens the file's directory in Windows File Explorer.
 
@@ -71,15 +69,17 @@ You can set the file names according to your preference.  You can specify the ma
 
 ![Filename Formula](media/filename_formula.png)
 
-Structural shapes are not quite the same as fasteners.  While the cross section is standard, the length and likelihood of additional features is not.  Usually the part doesn't even belong in the library.  For these, you can change the `Save in` option from `Library` to `Assy Dir` or `Other`.  Rather than assuming a name and location, with these settings the program prompts for both.
+Structural shapes are not quite the same as fasteners.  While the cross section is standard, the length and likelihood of additional features is not.  Usually the part doesn't even belong in the library.  For these, you can change the `Save in` option from `Library` to `Assy Dir` or `Other`.  The program prompts for a filename, and for `Other`, a location.
 
-Unlike Family of Parts, files are only created as needed.  Also, each part is stand-alone, not tied back to a master file.
+So, who needs this program?  Me, for one.  What makes it different?  First, it's free and open source.  Any part it creates belongs to you, and is stored on your premises.  It's customizable, has no database, and doesn't care if you upgrade Solid Edge.
+
+Also, unlike Family of Parts, files are only created as needed.  Each part is stand-alone, not tied back to a master file.
 
 Unlike web-based offerings, the program is integrated with your parts library and works directly with Solid Edge.  It updates the properties you specify, using the naming conventions you define.  If you want adjustable parts (see the provided springs example), or any other SE-specific functionality, the program handles it like the native file that it is.
 
-The program will never have every standard part in the world, but it can be improved.  That's where **YOU** come in!  Contributions are welcome.  Please message me on the [<ins>**Solid Edge Forum**</ins>](https://community.sw.siemens.com/s/topic/0TO4O000000MihiWAC/solid-edge), or raise an [<ins>**Issue on GitHub**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/issues), for ideas on how to get started.
+Finally, it has a secret weapon -- all of us.  Contributions are welcome!  Please message me on the [<ins>**Solid Edge Forum**</ins>](https://community.sw.siemens.com/s/topic/0TO4O000000MihiWAC/solid-edge), or raise an [<ins>**Issue on GitHub**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/issues), for ideas on how to get started.
 
-Uh-oh.  The Marketing guy just showed up.  He wants to *"Synergize our stake holders and leverage this cross-promotion opportunity"*.  I bet he does.  Anyway, here he is.
+Uh-oh.  The Marketing guy just showed up.  He wants to *"Synergize our stake holders and leverage this cross-promotion opportunity"*.  I bet he does.  Anyway, here goes.
 
 >  *Hello there!! I'm Big Mike!  Do you want to do things better and faster with less work?!  Of course you do!  That's why you need [<ins>**Solid Edge Housekeeper**</ins>](https://github.com/rmcanany/SolidEdgeHousekeeper#readme)!*
 
@@ -128,8 +128,8 @@ Most options are set on the **Tree Search Options** page (see next), but those m
 - `Collapse`  Click ![Collapse](media/collapse.png) to close all open nodes on the tree.
 - `Save in`  Select where the file will be saved after it is created.
   - `Library`  The standard location for library parts.
-  - `Assy Dir`  The same location as the assembly file open in Solid Edge.
-  - `Other`  Any directory of your choosing.
+  - `Assy Dir`  The same location as the assembly file currently open in Solid Edge.
+  - `Other`  Anyplace else.
 - `Always on top`  Determines if the Storekeeper window remains on top of other windows.  Click ![Always on top](media/always_on_top_enabled.png) to toggle.
 - `Auto pattern`  Determines if the automatic patterning of newly placed parts will be performed.  Click ![Auto pattern](media/auto_pattern_enabled.png) to toggle.  
 
@@ -149,7 +149,7 @@ The program needs to know where to store the standard parts, and for fastener-li
 - **LIBRARY DIRECTORY**  
 The library is where the standard parts you create are stored.  The default is in `Preferences\Library` under the `Storekeeper` main directory.  
 
-  Note it is created the first time you run the program; it won't be there before that.  As noted above, if you want to access your vendor-type standard parts, they must be in the library.  You can place them in one or more subdirectories if desired.
+  Note the directory is created the first time you run the program; it won't be there before that.  As noted above, if you want to access your vendor-type standard parts, they must be in the library.  You can place them in one or more subdirectories if desired.
 
 - **DATA DIRECTORY**  
 The spreadsheet contains the variables required for each size of each type of part.  By default, it is stored in the `Preferences\DataSE2024` directory. 
@@ -165,10 +165,10 @@ The templates are SE part files that have variable-table-driven geometry to crea
 
   Note, the templates and the spreadsheet that drives them go together.  If you change one, you have to change the other.
 
-  You don't have to stick with your first choice, by the way.  You can switch between the original and alternative templates as needed.
+  You don't have to stick with your first choice, by the way.  You can switch between the original and alternative templates at any time.
 
 - **MATERIAL TABLE**  
-The material table is usually your normal SE material table.  However, for a quick test of the program, an alternative is to use `StorekeeperSE2019.mtl` or `StorekeeperSE2024.mtl` from `Preferences\TemplatesSE2019` or `Preferences\TemplatesSE2024` .  Copy it (or both) to your Solid Edge Materials directory to make it available.  On my machine, that location is `C:\Program Files\Siemens\Solid Edge 2024\Preferences\Materials`.  
+The material table is usually your normal SE material table.  However, for a quick test of the program, an alternative is to use `StorekeeperSE2019.mtl` or `StorekeeperSE2024.mtl` found in their respective `Templates` directory.  Copy one or both to your Solid Edge Materials directory to make it available.  On my machine, that location is `C:\Program Files\Siemens\Solid Edge 2024\Preferences\Materials`.  
 
   If you decide to continue using the program, you would eventually want to utilize your own material table, updating material names in the spreadsheet and templates as needed. 
 
@@ -182,7 +182,7 @@ The material table is usually your normal SE material table.  However, for a qui
   - `Disable fine thread warning`  
 	The program is currently unable to properly set the thread size for ANSI UNF external threads.  The program logs a warning if this occurs.  Enabling this option suppresses that warning.
 	
-	The condition can cause issues with interference checking.  Fixing it is optional.  To do so, open the file and edit the Thread definition.  On the Parameters Step, you'll note the size designation is followed by an asterix (*).  Click the drop down and select the one without it.
+	The condition can cause issues with interference checking.  Fixing it is optional.  To do so, open the file and edit the Thread definition.  On the Parameters Step, you'll note the size designation is followed by an asterisk (*).  Click the drop down and select the one without it.
 	
 	![Thread Fix](media/fine_thread_fix.png)
 	
@@ -192,7 +192,7 @@ The material table is usually your normal SE material table.  However, for a qui
 	Note, processing in background does not support `Fit View`.  If you need usable thumbnail images, this option is probably not for you.  Also, there is an issue when creating a part whose units do not match the default units of your Solid Edge installation.  Processing in background appears to ignore the file's unit setting.
 	
   - `Replace part: Suppress failed constraint`  
-	When replacing a part, some constraints may fail to get resolved.  If this occurs, this option tells the program to suppress the constraint.
+	When using the `Replace` command, some constraints may fail to get resolved.  If this occurs, this option tells the program to suppress the constraint.
 	
   - `Replace part: Allow failed constraint`  
 	With the same situation as above, this option tells the program to leave the constraint in the failed state.  This is my preferred setting.  The pathfinder shows a red lightning bolt, alerting me that I need to fix something.
@@ -265,7 +265,7 @@ After the components are placed, they are converted to an `Assembly group`.  Fin
 
 ## PRE-POPULATING THE LIBRARY
 
-This feature does not yet support multiple materials per category.  It is temporarily disabled.
+**Note, this feature is temporarily disabled.  It does not yet support multiple materials per category.**
 
 You can add items to the library ahead of time.  Enable the `Pre-populate` checkbox to get started.  
 
