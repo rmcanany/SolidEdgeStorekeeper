@@ -586,7 +586,7 @@ Public Class UtilsPreferences
                     Case "FlatWasherSE2019"
                         SearchPathList.Add("..\..\..\..\..\ISO_DIN_WASHERS\ISO_7089_-_Plain_washers_-_Normal_series")
                     Case "LockWasherSE2019"
-                        SearchPathList.Add("..\..\..\..\..\OTHER_-_Steel\ISO_2982-2_-_Lockwashers")
+                        SearchPathList.Add("..\..\..\..\..\ISO_DIN_WASHERS\DIN_127_-_Spring_washers")
                     Case "NutSE2019"
                         SearchPathList.Add("..\..\..\..\..\ISO_DIN_NUTS\Hexagonal\ISO_4032_-_Hexagon_regular_nuts")
                         SearchPathList.Add("..\..\..\..\..\ISO_DIN_NUTS\Hexagonal\ISO_8673_-_Hexagon_regular_nuts_-_fine_pitch")

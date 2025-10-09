@@ -71,18 +71,18 @@ Public Class FormTreeSearchOptions
         End Set
     End Property
 
-    Private _AutoPattern As Boolean
-    Public Property AutoPattern As Boolean
-        Get
-            Return _AutoPattern
-        End Get
-        Set(value As Boolean)
-            _AutoPattern = value
-            If Me.TableLayoutPanel1 IsNot Nothing Then
-                CheckBoxAutoPattern.Checked = value
-            End If
-        End Set
-    End Property
+    'Private _AutoPattern As Boolean
+    'Public Property AutoPattern As Boolean
+    '    Get
+    '        Return _AutoPattern
+    '    End Get
+    '    Set(value As Boolean)
+    '        _AutoPattern = value
+    '        If Me.TableLayoutPanel1 IsNot Nothing Then
+    '            CheckBoxAutoPattern.Checked = value
+    '        End If
+    '    End Set
+    'End Property
 
     Private _AddProp As Boolean
     Public Property AddProp As Boolean
@@ -175,18 +175,18 @@ Public Class FormTreeSearchOptions
     '    End Set
     'End Property
 
-    Private _AlwaysOnTop As Boolean
-    Public Property AlwaysOnTop As Boolean
-        Get
-            Return _AlwaysOnTop
-        End Get
-        Set(value As Boolean)
-            _AlwaysOnTop = value
-            If Me.TableLayoutPanel1 IsNot Nothing Then
-                CheckBoxAlwaysOnTop.Checked = value
-            End If
-        End Set
-    End Property
+    'Private _AlwaysOnTop As Boolean
+    'Public Property AlwaysOnTop As Boolean
+    '    Get
+    '        Return _AlwaysOnTop
+    '    End Get
+    '    Set(value As Boolean)
+    '        _AlwaysOnTop = value
+    '        If Me.TableLayoutPanel1 IsNot Nothing Then
+    '            CheckBoxAlwaysOnTop.Checked = value
+    '        End If
+    '    End Set
+    'End Property
 
     Private _IncludeDrawing As Boolean
     Public Property IncludeDrawing As Boolean
@@ -197,6 +197,21 @@ Public Class FormTreeSearchOptions
             _IncludeDrawing = value
             If Me.TableLayoutPanel1 IsNot Nothing Then
                 CheckBoxIncludeDrawing.Checked = value
+            End If
+        End Set
+    End Property
+
+    Private _AlwaysOnTopRefreshTime As String
+    Public Property AlwaysOnTopRefreshTime As String
+        Get
+            Return _AlwaysOnTopRefreshTime
+        End Get
+        Set(value As String)
+            _AlwaysOnTopRefreshTime = value
+            If Me.TextBoxAlwaysOnTopRefreshTime IsNot Nothing Then
+                If Not TextBoxAlwaysOnTopRefreshTime.Text = _AlwaysOnTopRefreshTime Then
+                    TextBoxAlwaysOnTopRefreshTime.Text = _AlwaysOnTopRefreshTime
+                End If
             End If
         End Set
     End Property
@@ -253,7 +268,7 @@ Public Class FormTreeSearchOptions
 
 
         Me.AlwaysReadExcel = FMain.AlwaysReadExcel
-        Me.AutoPattern = FMain.AutoPattern
+        'Me.AutoPattern = FMain.AutoPattern
         Me.AddProp = FMain.AddProp
         Me.DisableFineThreadWarning = FMain.DisableFineThreadWarning
         Me.ProcessTemplateInBackground = FMain.ProcessTemplateInBackground
@@ -261,9 +276,11 @@ Public Class FormTreeSearchOptions
         Me.FailedConstraintAllow = FMain.FailedConstraintAllow
         Me.SuspendMRU = FMain.SuspendMRU
         'Me.AllowCommaDelimiters = FMain.AllowCommaDelimiters
-        Me.AlwaysOnTop = FMain.AlwaysOnTop
+        'Me.AlwaysOnTop = FMain.AlwaysOnTop
         Me.IncludeDrawing = FMain.IncludeDrawing
+        Me.AlwaysOnTopRefreshTime = FMain.AlwaysOnTopRefreshTime
         Me.CheckNewVersion = FMain.CheckNewVersion
+
     End Sub
     Private Sub ButtonLibraryDirectory_Click(sender As Object, e As EventArgs) Handles ButtonLibraryDirectory.Click
         Dim tmpFolderDialog As New CommonOpenFileDialog
@@ -319,7 +336,7 @@ Public Class FormTreeSearchOptions
         FMain.MaterialTable = Me.MaterialTable
 
         FMain.AlwaysReadExcel = Me.AlwaysReadExcel
-        FMain.AutoPattern = Me.AutoPattern
+        'FMain.AutoPattern = Me.AutoPattern
         FMain.AddProp = Me.AddProp
         FMain.DisableFineThreadWarning = Me.DisableFineThreadWarning
         FMain.ProcessTemplateInBackground = Me.ProcessTemplateInBackground
@@ -327,8 +344,9 @@ Public Class FormTreeSearchOptions
         FMain.FailedConstraintAllow = Me.FailedConstraintAllow
         FMain.SuspendMRU = Me.SuspendMRU
         'FMain.AllowCommaDelimiters = Me.AllowCommaDelimiters
-        FMain.AlwaysOnTop = Me.AlwaysOnTop
+        'FMain.AlwaysOnTop = Me.AlwaysOnTop
         FMain.IncludeDrawing = Me.IncludeDrawing
+        FMain.AlwaysOnTopRefreshTime = Me.AlwaysOnTopRefreshTime
         FMain.CheckNewVersion = Me.CheckNewVersion
 
         Me.DialogResult = DialogResult.OK
@@ -354,8 +372,8 @@ Public Class FormTreeSearchOptions
         Me.AlwaysReadExcel = CheckBoxAlwaysReadExcel.Checked
     End Sub
 
-    Private Sub CheckBoxAutoPattern_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBoxAutoPattern.CheckedChanged
-        Me.AutoPattern = CheckBoxAutoPattern.Checked
+    Private Sub CheckBoxAutoPattern_CheckedChanged(sender As Object, e As EventArgs)
+        'Me.AutoPattern = CheckBoxAutoPattern.Checked
     End Sub
 
     Private Sub ButtonHelp_Click(sender As Object, e As EventArgs) Handles ButtonHelp.Click
@@ -388,11 +406,15 @@ Public Class FormTreeSearchOptions
     '    AllowCommaDelimiters = CheckBoxAllowCommaDelimiters.Checked
     'End Sub
 
-    Private Sub CheckBoxAlwaysOnTop_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBoxAlwaysOnTop.CheckedChanged
-        Me.AlwaysOnTop = CheckBoxAlwaysOnTop.Checked
+    Private Sub CheckBoxAlwaysOnTop_CheckedChanged(sender As Object, e As EventArgs)
+        'Me.AlwaysOnTop = CheckBoxAlwaysOnTop.Checked
     End Sub
 
     Private Sub CheckBoxIncludeDrawing_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBoxIncludeDrawing.CheckedChanged
         Me.IncludeDrawing = CheckBoxIncludeDrawing.Checked
+    End Sub
+
+    Private Sub TextBoxAlwaysOnTopRefreshTime_TextChanged(sender As Object, e As EventArgs) Handles TextBoxAlwaysOnTopRefreshTime.TextChanged
+        Me.AlwaysOnTopRefreshTime = TextBoxAlwaysOnTopRefreshTime.Text
     End Sub
 End Class

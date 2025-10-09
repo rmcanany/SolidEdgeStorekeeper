@@ -73,7 +73,23 @@ Public Class Form_Main
     Public Property DataDirectory As String
     Public Property MaterialTable As String
     Public Property AlwaysReadExcel As Boolean
+    Private _AutoPattern As Boolean
     Public Property AutoPattern As Boolean
+        Get
+            Return _AutoPattern
+        End Get
+        Set(value As Boolean)
+            _AutoPattern = value
+            If Me.TabControl1 IsNot Nothing Then
+                If AutoPattern Then
+                    ButtonAutoPattern.Image = My.Resources.auto_pattern_enabled
+                Else
+                    ButtonAutoPattern.Image = My.Resources.auto_pattern_disabled
+                End If
+            End If
+        End Set
+    End Property
+
     Public Property AddProp As Boolean
     Public Property DisableFineThreadWarning As Boolean
     Public Property CheckNewVersion As Boolean
@@ -83,7 +99,8 @@ Public Class Form_Main
     Public Property AssemblyTemplate As String
     Public Property PartTemplate As String
     Public Property SheetmetalTemplate As String
-    'Private Property AlwaysOnTopTimer As Timer
+    Private Property AlwaysOnTopTimer As Timer
+    Public Property AlwaysOnTopRefreshTime As String
 
     Private _AlwaysOnTop As Boolean
     Public Property AlwaysOnTop As Boolean
@@ -93,12 +110,13 @@ Public Class Form_Main
         Set(value As Boolean)
             _AlwaysOnTop = value
             If Me.TabControl1 IsNot Nothing Then
-
-                'If AlwaysOnTop Then
-                '    If AlwaysOnTopTimer IsNot Nothing Then AlwaysOnTopTimer.Start()
-                'Else
-                '    If AlwaysOnTopTimer IsNot Nothing Then AlwaysOnTopTimer.Stop()
-                'End If
+                If AlwaysOnTop Then
+                    If AlwaysOnTopTimer IsNot Nothing Then AlwaysOnTopTimer.Start()
+                    ButtonAlwaysOnTop.Image = My.Resources.always_on_top_enabled
+                Else
+                    If AlwaysOnTopTimer IsNot Nothing Then AlwaysOnTopTimer.Stop()
+                    ButtonAlwaysOnTop.Image = My.Resources.always_on_top_disabled
+                End If
             End If
         End Set
     End Property
@@ -180,7 +198,7 @@ Public Class Form_Main
     Public Property FailedConstraintAllow As Boolean = True
     Public Property SuspendMRU As Boolean = False
     'Public Property AllowCommaDelimiters As Boolean = False
-    Public Property XmlCommaIndicator As String = "...."
+    'Public Property XmlCommaIndicator As String = "...."
     Public Property CacheProperties As Boolean
     Public Property XmlDoc As System.Xml.XmlDocument
     Public Property AddToLibraryOnly As Boolean
@@ -355,12 +373,22 @@ Public Class Form_Main
 
         Splash.UpdateStatus("Initializing timer")
 
-        'AlwaysOnTopTimer = New Timer
-        'AlwaysOnTopTimer.Interval = 3000
-        'AddHandler AlwaysOnTopTimer.Tick, AddressOf HandleAlwaysOnTopTimerTick
-        'AlwaysOnTopTimer.Start()
+        If Me.AlwaysOnTopRefreshTime Is Nothing OrElse Me.AlwaysOnTopRefreshTime = "" Then
+            Me.AlwaysOnTopRefreshTime = "3"
+        End If
+        Dim tmpInterval As Integer = 3000
+        Try
+            tmpInterval = CInt(1000 * CDbl(Me.AlwaysOnTopRefreshTime))
+        Catch ex As Exception
+            Me.AlwaysOnTopRefreshTime = "3"
+        End Try
+        AlwaysOnTopTimer = New Timer
+        AlwaysOnTopTimer.Interval = tmpInterval
+        AddHandler AlwaysOnTopTimer.Tick, AddressOf HandleAlwaysOnTopTimerTick
+        If Me.AlwaysOnTop Then AlwaysOnTopTimer.Start()
 
         ' Trigger an update
+        If Me.SelectedNodeFullPath Is Nothing Then Me.SelectedNodeFullPath = ""
         Me.SelectedNodeFullPath = Me.SelectedNodeFullPath
 
         Splash.Close()
@@ -1080,14 +1108,14 @@ Public Class Form_Main
                     End Try
                 End If
 
-                'If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
+                If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
                 Me.TopMost = False
 
                 If tmpFileDialog.ShowDialog() = DialogResult.OK Then
-                    'If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
+                    If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
                     Filename = tmpFileDialog.FileName
                 Else
-                    'If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
+                    If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
                     Return Nothing
                 End If
 
@@ -2498,7 +2526,7 @@ Public Class Form_Main
 
     Private Sub ButtonOptions_Click(sender As Object, e As EventArgs) Handles ButtonOptions.Click
 
-        'If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
+        If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
         Me.TopMost = False
 
         Dim FO As New FormTreeSearchOptions(Me)
@@ -2508,7 +2536,7 @@ Public Class Form_Main
             ' Nothing to do here.  The options dialog updates parameters in Form_Main.
         End If
 
-        'If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
+        If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
 
     End Sub
 
@@ -2529,7 +2557,7 @@ Public Class Form_Main
 
     Private Sub ButtonPropertySearchOptions_Click(sender As Object, e As EventArgs) Handles ButtonPropertySearchOptions.Click
 
-        'If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
+        If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
         Me.TopMost = False
 
         Dim FPSO As New FormPropertySearchOptions(Me)
@@ -2552,7 +2580,7 @@ Public Class Form_Main
             Next
         End If
 
-        'If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
+        If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
 
     End Sub
 
@@ -2748,6 +2776,50 @@ Public Class Form_Main
         ReportErrors(Me.ErrorLogger)
     End Sub
 
+    Private Sub ReplaceSelectedToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles ReplaceSelectedToolStripMenuItem1.Click
+        Dim RowIdx As Integer = DataGridViewVendorParts.CurrentCell.RowIndex
+        Dim PropertySearchFilename As String = CStr(DataGridViewVendorParts.Rows(RowIdx).Cells(1).Value)
+
+        Me.ErrorLogger = New HCErrorLogger
+        Me.FileLogger = Me.ErrorLogger.AddFile(PropertySearchFilename)
+        Process(PropertySearchFilename:=PropertySearchFilename, Replace:=True)
+        ReportErrors(Me.ErrorLogger)
+    End Sub
+
+    Private Sub ReplaceAllToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles ReplaceAllToolStripMenuItem1.Click
+        Dim RowIdx As Integer = DataGridViewVendorParts.CurrentCell.RowIndex
+        Dim PropertySearchFilename As String = CStr(DataGridViewVendorParts.Rows(RowIdx).Cells(1).Value)
+
+        Me.ErrorLogger = New HCErrorLogger
+        Me.FileLogger = Me.ErrorLogger.AddFile(PropertySearchFilename)
+        Process(PropertySearchFilename:=PropertySearchFilename, ReplaceAll:=True)
+        ReportErrors(Me.ErrorLogger)
+    End Sub
+
+    Private Sub OpenToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles OpenToolStripMenuItem.Click
+        Dim RowIdx As Integer = DataGridViewVendorParts.CurrentCell.RowIndex
+        Dim PropertySearchFilename As String = CStr(DataGridViewVendorParts.Rows(RowIdx).Cells(1).Value)
+
+        Dim Info = New ProcessStartInfo()
+        Info.FileName = PropertySearchFilename
+        Info.UseShellExecute = True
+        System.Diagnostics.Process.Start(Info)
+
+    End Sub
+
+    Private Sub OpenFolderToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles OpenFolderToolStripMenuItem.Click
+        Dim RowIdx As Integer = DataGridViewVendorParts.CurrentCell.RowIndex
+        Dim PropertySearchFilename As String = CStr(DataGridViewVendorParts.Rows(RowIdx).Cells(1).Value)
+
+        Dim Info = New ProcessStartInfo()
+        Info.FileName = IO.Path.GetDirectoryName(PropertySearchFilename)
+        Info.UseShellExecute = True
+        System.Diagnostics.Process.Start(Info)
+
+        'System.Diagnostics.Process.Start(IO.Path.GetDirectoryName(PropertySearchFilename))
+
+    End Sub
+
     Private Sub ButtonHelp_Click(sender As Object, e As EventArgs) Handles ButtonHelp.Click
         Dim Info = New ProcessStartInfo()
         Info.FileName = "https://github.com/rmcanany/SolidEdgeStorekeeper#readme"
@@ -2882,7 +2954,7 @@ Public Class Form_Main
 
     Private Sub FastenerStackToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles FastenerStackToolStripMenuItem.Click
 
-        'If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
+        If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
         Me.TopMost = False
 
         Dim Node = TreeView1.SelectedNode
@@ -2898,7 +2970,7 @@ Public Class Form_Main
             FFS.ShowDialog()
         End If
 
-        'If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
+        If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
 
     End Sub
 
@@ -2914,6 +2986,8 @@ Public Class Form_Main
     Private Sub HandleAlwaysOnTopTimerTick(sender As Object, e As EventArgs)
 
         Me.TopMost = True
+        System.Windows.Forms.Application.DoEvents()
+        Me.TopMost = False
 
     End Sub
 
@@ -2941,21 +3015,28 @@ Public Class Form_Main
     End Sub
 
     Private Sub ComboBoxSaveIn_GotFocus(sender As Object, e As EventArgs) Handles ComboBoxSaveIn.GotFocus
-        'If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
+        If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
     End Sub
 
     Private Sub ComboBoxSaveIn_LostFocus(sender As Object, e As EventArgs) Handles ComboBoxSaveIn.LostFocus
-        'If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Start()
+        If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
     End Sub
 
     Private Sub ComboBoxMaterials_GotFocus(sender As Object, e As EventArgs) Handles ComboBoxMaterials.GotFocus
-        'If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
+        If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
     End Sub
 
     Private Sub ComboBoxMaterials_LostFocus(sender As Object, e As EventArgs) Handles ComboBoxMaterials.LostFocus
-        'If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Start()
+        If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
     End Sub
 
+    Private Sub ButtonAlwaysOnTop_Click(sender As Object, e As EventArgs) Handles ButtonAlwaysOnTop.Click
+        Me.AlwaysOnTop = Not Me.AlwaysOnTop
+    End Sub
+
+    Private Sub ButtonAutoPattern_Click(sender As Object, e As EventArgs) Handles ButtonAutoPattern.Click
+        Me.AutoPattern = Not Me.AutoPattern
+    End Sub
 
 End Class
 

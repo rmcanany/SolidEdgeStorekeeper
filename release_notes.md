@@ -16,7 +16,7 @@ Feel free to report bugs and/or ideas for improvement on the [<ins>**Solid Edge 
 
 We'll get right to the updates, but first some exciting news -- we have a new **Contributor!**  Our very own **@TeeVar** built and donated a massive ISO-native dataset, compatible back to SE2019.  He also provided a ton of great suggestions to enhance the capabilities of the program and make it easier to use.  Can't wait for you to see his handiwork!
 
-On to those updates...
+Now, about those updates...
 
 ### Fastener Stacks
 
@@ -56,7 +56,7 @@ Added support for parts with associated drawings.  (Thank you **@Seva!**)
 
 This can be helpful in cases where users work with simple parts, like a pipe with side holes, but still need a basic drawing to send to the shop.
 
-If a file in the templates directory includes a drawing, the drawing is optionally copied when a new part is created.  It is renamed to match the new part and the links are updated accordingly.  Set the option on the **Tree Search Options** page.
+If a file in the templates directory includes a drawing with the same name, the drawing is optionally copied when a new part is created.  It is renamed to match the new part and the links are updated accordingly.  Set the option on the **Tree Search Options** page.
 
 See the [<ins>**Creating New Templates**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#creating-new-templates) section of the Readme for details.
 
@@ -86,9 +86,11 @@ Added an option to store property values of files in the library.  Set it on the
 
 - Added an option to keep the Storekeeper window always on top (Thank you one more time **@TeeVar!**).
 
-- Added the ability to use special characters (`/`, `*`, `@`, etc.) in Xml tag definitions  (Thank you **@Seva!**).  Normally these are not allowed.  To get around it, special characters are replaced with compatible stand-ins where necessary.  If you look in `Storekeeper.xml`, you may see text like `.XmlComma.`  That's an example of one of those stand-ins.
+- Added the ability to use special characters (`/`, `*`, `@`, etc.) in Xml tag definitions  (Thank you **@Seva!**).  Normally these are not allowed.  To get around it, special characters are replaced with compatible stand-ins where necessary.  If you look in `Storekeeper.xml`, you may see text like `.XmlComma.`  That's one of those stand-ins.
 
 - Temporarily disabled the `Pre-Populate` feature from the previous version (Sorry **@Seva!**).  It is not currently compatible with multiple materials per category.  In particular it had trouble when a material is valid for one selected item, but not another.  You can still use the previous version when that feature is needed.
+
+- Moved the options `Always on top` and `Auto pattern` to the main toolbar.  Previously they were on the Tree Search Options page.  The idea was to reduce distraction and save a couple of clicks for these frequently toggled settings.
 
 ## V2025.3
 

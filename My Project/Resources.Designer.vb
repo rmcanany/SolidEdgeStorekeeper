@@ -63,6 +63,56 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized resource of type System.Drawing.Bitmap.
         '''</summary>
+        Friend ReadOnly Property always_on_top_disabled() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("always_on_top_disabled", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property always_on_top_enabled() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("always_on_top_enabled", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property auto_pattern() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("auto_pattern", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property auto_pattern_disabled() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("auto_pattern_disabled", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property auto_pattern_enabled() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("auto_pattern_enabled", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
         Friend ReadOnly Property collapse() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("collapse", resourceCulture)
@@ -236,6 +286,16 @@ Namespace My.Resources
         Friend ReadOnly Property icons8_add_list_16() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("icons8-add-list-16", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property icons8_bring_to_front_16() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("icons8-bring-to-front-16", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
             End Get
         End Property

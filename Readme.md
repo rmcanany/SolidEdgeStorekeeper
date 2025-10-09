@@ -42,7 +42,7 @@ The program handles two types of standard parts.  One consists of items like fas
   <img src="media/tree_search.png">
 </p>
 
-For items like fasteners, use **Tree Search**.  Navigate to the desired item, select a material, then right-click and choose an action. If the part is not already in the library, the program creates and saves it.  (Unless the toolbar `Save in` option is set to `Assy Dir` or `Other`, in which case it prompts for a name and location.)  The possible actions are:
+For items like fasteners, use **Tree Search**.  Navigate to the desired item, select a material, then right-click and choose an action. If the part is not already in the library, the program creates it.  (Unless the toolbar `Save in` option is set to `Assy Dir` or `Other`, in which case it prompts for a name and location.)  The possible actions are:
 
 - `Add to assembly`  Adds the part to the assembly and activates the `Place part` command.
 - `Replace selected`  Replaces a selected part in the assembly.
@@ -55,7 +55,15 @@ For items like fasteners, use **Tree Search**.  Navigate to the desired item, se
   <img src="media/property_search.png">
 </p>
 
-For vendor-type parts, use **Property Search**.  Enter the search terms, then click ![Search Button](media/icons8-search-16.png).  Locate the desired item on the list, then right-click and select `Add to assembly`.  Note, the program does not come with any of these; you're on you own for that.  Simply add what you need (and probably already have) to the library, in a subdirectory if you prefer.  
+For vendor-type parts, use **Property Search**.  Enter the search terms, then click ![Search Button](media/icons8-search-16.png).  Locate the desired item on the list, then right-click and select an action.  The possible actions are: 
+
+- `Add to assembly`  Same as above.
+- `Replace selected`  Same as above.
+- `Replace all`  Same as above.
+- `Open`  Opens the selected file in Solid Edge.
+- `Open folder`  Opens the file's directory in Windows File Explorer.
+
+Note, the program does not come with any vendor-type parts; you're on you own for that.  Simply add what you need (and probably already have) to the library, in a subdirectory if you prefer.  
 
 That's pretty much all there is to know about vendor type parts.  For the others, a bit more information follows.
 
@@ -109,9 +117,30 @@ On my machine, the executable resides in two places: `bin\Debug\net8.0-windows\`
 
 As noted earlier, some setup is required before using the program.  If you run Solid Edge in a localized language please be sure to see the information at the end of this section.
 
+### Tree Search Toolbar
+
+Most options are set on the **Tree Search Options** page (see next), but those most frequently-used are set on the toolbar itself.
+
+<p align="center">
+  <img src="media/tree_search_toolbar.png">
+</p>
+
+- `Collapse`  Click ![Collapse](media/collapse.png) to close all open nodes on the tree.
+- `Save in`  Select where the file will be saved after it is created.
+  - `Library`  The standard location for library parts.
+  - `Assy Dir`  The same location as the assembly file open in Solid Edge.
+  - `Other`  Any directory of your choosing.
+- `Always on top`  Determines if the Storekeeper window remains on top of other windows.  Click ![Always on top](media/always_on_top_enabled.png) to toggle.
+- `Auto pattern`  Determines if the automatic patterning of newly placed parts will be performed.  Click ![Auto pattern](media/auto_pattern_enabled.png) to toggle.  
+
+	Automatic patterning works with `Smart Patterns` and `User-Defined Patterns` (that's a hole with multiple hole circles in the profile).  It does not currently work with (the default) `Fast Patterns` unfortunately, unless you get lucky and pick the hole that was used to create the pattern.
+
+- `Tree search options`  Click ![Options](media/Support_16.png) to open (see next).
+
+
 ### Tree Search Options
 
-The program needs to know where to store the standard parts, and for fastener-like items, where to find the files defining their shape and spreadsheet containing their dimensions.  The settings are accessed on the **Tree Search Options** page.  Click ![Options](media/Support_16.png) on the toolbar to open it.
+The program needs to know where to store the standard parts, and for fastener-like items, where to find the files defining their shape and spreadsheet containing their dimensions.
 
 <p align="center">
   <img src="media/tree_search_options.png">
@@ -121,6 +150,11 @@ The program needs to know where to store the standard parts, and for fastener-li
 The library is where the standard parts you create are stored.  The default is in `Preferences\Library` under the `Storekeeper` main directory.  
 
   Note it is created the first time you run the program; it won't be there before that.  As noted above, if you want to access your vendor-type standard parts, they must be in the library.  You can place them in one or more subdirectories if desired.
+
+- **DATA DIRECTORY**  
+The spreadsheet contains the variables required for each size of each type of part.  By default, it is stored in the `Preferences\DataSE2024` directory. 
+
+  Change the data directory to `Preferences\DataSE2019` if you want to use the alternative templates.  You will have to restart the program for the change to take effect.
 
 - **TEMPLATE DIRECTORY**  
 The templates are SE part files that have variable-table-driven geometry to create new parts of a given type.  By default they are stored in the `Preferences\TemplatesSE2024` folder.
@@ -133,11 +167,6 @@ The templates are SE part files that have variable-table-driven geometry to crea
 
   You don't have to stick with your first choice, by the way.  You can switch between the original and alternative templates as needed.
 
-- **DATA DIRECTORY**  
-The spreadsheet contains the variables required for each size of each type of part.  By default, it is stored in the `Preferences\DataSE2024` directory. 
-
-  Change the data directory to `Preferences\DataSE2019` if you want to use the alternative templates.  You will have to restart the program for the change to take effect.
-
 - **MATERIAL TABLE**  
 The material table is usually your normal SE material table.  However, for a quick test of the program, an alternative is to use `StorekeeperSE2019.mtl` or `StorekeeperSE2024.mtl` from `Preferences\TemplatesSE2019` or `Preferences\TemplatesSE2024` .  Copy it (or both) to your Solid Edge Materials directory to make it available.  On my machine, that location is `C:\Program Files\Siemens\Solid Edge 2024\Preferences\Materials`.  
 
@@ -146,10 +175,7 @@ The material table is usually your normal SE material table.  However, for a qui
 - **OPTIONS**
   - `Read the Excel file each time the program is launched`  
 	Internally, the Excel file is parsed and saved in `*.xml` format.  If you haven't changed the Excel file, this is an unnecessary step.  Clearing this option tells the program to use the `*.xml` file it created previously.
-  - `Automatically pattern a part assembled to a patterned feature`  
-	Standard parts, especially fasteners, are often patterned after placement.  The program can detect if a face used to assemble the item is part of a pattern.  
 	 
-	This works with `Smart Patterns` and `User-Defined Patterns` (that's a hole with multiple hole circles in the profile).  It does not currently work with (the default) `Fast Patterns` unfortunately, unless you get lucky and pick the hole that was used to create the pattern.
   - `Add any property not already in file`  
 	As mentioned above, besides creating geometry, the program can also update file properties.  Enabling this option tells the program to add any (custom) property not already in the file.
 	
@@ -174,11 +200,11 @@ The material table is usually your normal SE material table.  However, for a qui
   - `Do not add files in the Recently Used list`  
 	Enable this option to keep the program from adding newly-generated standard parts to the Most Recently Used list.  Note this function was added to Solid Edge in version 2020.  If you are running an earlier version, this option will have no effect.
 	
-  - `Storekeeper always on top`  
-	Keeps the program window on top of other windows.
-
   - `Include drawing of part if present`  
 	If a file in the templates directory has a drawing with the same name, the program can copy it to the library along with the part.  Enable this option to do so.
+
+  - `On top refresh time (s)`  
+	If the `Always on top` option is enabled, this setting controls the maximum time between checks.
 
   - `Check for new version at startup`  
 	If you don't need a reminder about new versions, disable the check here.
@@ -202,7 +228,7 @@ These are your normal template files, not the ones used by the program to create
 #### Options
 
 - `Cache library file properties for faster search`  
-  Reads all file properties and saves them in a separate file.  This can speed up property searches for large libraries.  It takes some time to load the file initially; the status bar informs you of the progress.
+  Reads all file properties and saves them in a separate file.  This can speed up searches for large libraries.  It takes some time to load the file initially; the status bar informs you of the progress.
 
 ### Localized SE Installations
 
@@ -276,7 +302,7 @@ Another thing to think about is the effect of replacing one standard part with a
 
 Variable names are something else to consider.  To minimize confusion in creating and maintaining the companion spreadsheets, see if you can reuse names that have been previously established.  You can check the supplied templates or spreadsheets to see what may apply to your parts.
 
-I don't know where to mention this, so I'll do it here.  Some standard parts require a drawing.  That is supported as an option.  Simply create a drawing with the same name as the template.  If the program finds such a drawing, and the option is enabled, it copies it to the library, renames it and updates the links.  Enable the option `Include drawing of part if present` on the **Tree Search Options** page.
+As mentioned above, drawings of standard parts is a supported option.  If you need that, simply create a drawing with the same name as the template.  If the program finds such a drawing, and the option is enabled, it copies it to the library, renames it and updates the links.  Enable the option `Include drawing of part if present` on the **Tree Search Options** page.
 
 ## CUSTOMIZATION
 
