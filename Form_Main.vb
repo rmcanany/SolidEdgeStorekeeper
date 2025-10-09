@@ -10,7 +10,7 @@ Public Class Form_Main
     Private Property Version As String = "2025.4"
 
     'Private Property PreviewVersion As String = ""  ' Empty string if not a preview
-    Private Property PreviewVersion As String = "Preview 09"
+    Private Property PreviewVersion As String = "Preview 10"
 
 
     Private _SelectedNodeFullPath As String
@@ -1183,7 +1183,7 @@ Public Class Form_Main
     Public Function MaybePatternOccurrence(
         Occurrence As SolidEdgeAssembly.Occurrence,
         PiggybackOccurrences As List(Of SolidEdgeAssembly.Occurrence),
-        Optional NameSuffix As String = ""
+        Optional Name As String = ""
         ) As Boolean
 
         Dim Success As Boolean = True
@@ -1222,9 +1222,9 @@ Public Class Form_Main
         Next
 
         If Occurrence2 IsNot Nothing And Face2 IsNot Nothing Then
-            Success = ProcessPatterns(Occurrence, Occurrence2, Face2ID, PiggybackOccurrences, NameSuffix, Element2)
+            Success = ProcessPatterns(Occurrence, Occurrence2, Face2ID, PiggybackOccurrences, Name, Element2)
 
-            If Not Success Then Success = ProcessUserDefinedPatterns(Occurrence, Occurrence2, Face2ID, PiggybackOccurrences, NameSuffix, Element2)
+            If Not Success Then Success = ProcessUserDefinedPatterns(Occurrence, Occurrence2, Face2ID, PiggybackOccurrences, Name, Element2)
         Else
             Success = False
         End If
@@ -1237,7 +1237,7 @@ Public Class Form_Main
         Occurrence2 As SolidEdgeAssembly.Occurrence,
         Face2ID As Integer,
         PiggybackOccurrences As List(Of SolidEdgeAssembly.Occurrence),
-        NameSuffix As String,
+        Name As String,
         Element2 As SolidEdgeAssembly.TopologyReference
         ) As Boolean
 
@@ -1363,10 +1363,11 @@ Public Class Form_Main
             End If
 
             Dim AsmPattern As SolidEdgeAssembly.AssemblyPattern
-            If NameSuffix = "" Then
+            If Name = "" Then
                 AsmPattern = AsmDoc.AssemblyPatterns.CreateEx($"{Prefix}{CStr(Suffix)}", SourceOccurrences.ToArray, RefPattern, RefHole)
             Else
-                AsmPattern = AsmDoc.AssemblyPatterns.CreateEx($"{Prefix}{CStr(Suffix)}_{NameSuffix}", SourceOccurrences.ToArray, RefPattern, RefHole)
+                'AsmPattern = AsmDoc.AssemblyPatterns.CreateEx($"{Prefix}{CStr(Suffix)}_{Name}", SourceOccurrences.ToArray, RefPattern, RefHole)
+                AsmPattern = AsmDoc.AssemblyPatterns.CreateEx($"{Prefix}{Name}", SourceOccurrences.ToArray, RefPattern, RefHole)
             End If
 
         Else
@@ -1382,7 +1383,7 @@ Public Class Form_Main
         Occurrence2 As SolidEdgeAssembly.Occurrence,
         Face2ID As Integer,
         PiggybackOccurrences As List(Of SolidEdgeAssembly.Occurrence),
-        NameSuffix As String,
+        Name As String,
         Element2 As SolidEdgeAssembly.TopologyReference
         ) As Boolean
 
@@ -1456,7 +1457,7 @@ Public Class Form_Main
                 ExistingNames.Add(AssemblyPattern.Name)
             Next
 
-            Dim Prefix As String = "Pattern_"
+            Dim Prefix As String = "Pattern "
             Dim Suffix As Integer = 1
             While ExistingNames.Contains($"{Prefix}{CStr(Suffix)}")
                 Suffix += 1
@@ -1479,10 +1480,11 @@ Public Class Form_Main
             End If
 
             Dim AsmPattern As SolidEdgeAssembly.AssemblyPattern
-            If NameSuffix = "" Then
+            If Name = "" Then
                 AsmPattern = AsmDoc.AssemblyPatterns.CreateEx($"{Prefix}{CStr(Suffix)}", SourceOccurrences.ToArray, RefPattern, RefHole)
             Else
-                AsmPattern = AsmDoc.AssemblyPatterns.CreateEx($"{Prefix}{CStr(Suffix)}_{NameSuffix}", SourceOccurrences.ToArray, RefPattern, RefHole)
+                'AsmPattern = AsmDoc.AssemblyPatterns.CreateEx($"{Prefix}{CStr(Suffix)}_{Name}", SourceOccurrences.ToArray, RefPattern, RefHole)
+                AsmPattern = AsmDoc.AssemblyPatterns.CreateEx($"{Prefix}{Name}", SourceOccurrences.ToArray, RefPattern, RefHole)
             End If
 
         Else

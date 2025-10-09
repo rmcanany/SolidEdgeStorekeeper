@@ -262,6 +262,7 @@ The program waits for the `Place part` command to finish before proceeding.  Con
 
 After the components are placed, they are converted to an `Assembly group`.  Finally, the group is patterned if applicable, assuming that option is enabled.
 
+Currently there is a limitation to the patterning of a fastener stack.  Only one part file of the stack can be used for positioning.  In other words, if your stack has a flat washer and you select that to create the mate, you must also use it to create the align.
 
 ## PRE-POPULATING THE LIBRARY
 
