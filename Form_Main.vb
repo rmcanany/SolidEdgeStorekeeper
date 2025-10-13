@@ -1257,7 +1257,7 @@ Public Class Form_Main
                                 Exit For
                             End If
                         Catch ex2 As Exception
-                            _ErrorLogger.AddMessage($"Exception: {ex2.Message}")
+                            _ErrorLogger.AddMessage($"Face2 = TryCast(Element2.Object, SolidEdgeGeometry.Face): {ex2.Message}")
                         End Try
                     End If
                 End If
