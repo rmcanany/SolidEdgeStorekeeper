@@ -329,12 +329,12 @@ Public Class FormFastenerStack
         '    Me.FileLogger.AddMessage("Assembly file not active")
         'End If
 
-        If Proceed AndAlso Not CheckStartConditions() Then
+        If Proceed AndAlso Not CheckStartConditions(Me.FileLogger.AddLogger("Check start conditions")) Then
             Proceed = False
             'Me.FileLogger.AddMessage("Some start conditions not met")
         End If
 
-        If Proceed AndAlso Not GenerateNeededFiles() Then
+        If Proceed AndAlso Not GenerateNeededFiles(Me.FileLogger.AddLogger("Generate needed files")) Then
             Proceed = False
             'Me.FileLogger.AddMessage("Could not generate all needed files")
         End If
@@ -345,16 +345,21 @@ Public Class FormFastenerStack
             Dim StackAssyFilenames As List(Of String) = Nothing
             Dim NumAddedItems As Dictionary(Of String, Integer) = Nothing
 
-            StackAssyFilenames = PrepStackAssemblies()
-            If StackAssyFilenames.Count = 1 Then
-                Me.TopFilename = StackAssyFilenames(0)
-                Me.BottomFilename = ""
-            ElseIf StackAssyFilenames.Count = 2 Then
-                Me.TopFilename = StackAssyFilenames(0)
-                Me.BottomFilename = StackAssyFilenames(1)
+            StackAssyFilenames = PrepStackAssemblies(Me.FileLogger.AddLogger("Prep temporary stack subassemblies"))
+            If StackAssyFilenames IsNot Nothing Then
+                If StackAssyFilenames.Count = 1 Then
+                    Me.TopFilename = StackAssyFilenames(0)
+                    Me.BottomFilename = ""
+                ElseIf StackAssyFilenames.Count = 2 Then
+                    Me.TopFilename = StackAssyFilenames(0)
+                    Me.BottomFilename = StackAssyFilenames(1)
+                Else
+                    Proceed = False
+                    'Me.FileLogger.AddMessage("Problem preparing temporary assembly files")
+                End If
             Else
                 Proceed = False
-                Me.FileLogger.AddMessage("Problem getting temporary assembly filenames")
+                'Me.FileLogger.AddMessage("Problem preparing temporary assembly files")
             End If
         End If
 
@@ -365,18 +370,18 @@ Public Class FormFastenerStack
         End If
 
         If Proceed Then
-            Proceed = AddStackElementAndDisperse(Me.TopFilename)
-            If Not Proceed Then Me.FileLogger.AddMessage("Problem adding or dispersing top fastener stack")
+            Proceed = AddStackElementAndDisperse(Me.TopFilename, Me.FileLogger.AddLogger("Add and disperse top fastener stack"))
+            'If Not Proceed Then Me.FileLogger.AddMessage("Problem adding or dispersing top fastener stack")
         End If
 
         If Proceed And Not Me.BottomFilename = "" Then
-            Proceed = AddStackElementAndDisperse(Me.BottomFilename)
-            If Not Proceed Then Me.FileLogger.AddMessage("Problem adding or dispersing bottom fastener stack")
+            Proceed = AddStackElementAndDisperse(Me.BottomFilename, Me.FileLogger.AddLogger("Add and disperse top fastener stack"))
+            'If Not Proceed Then Me.FileLogger.AddMessage("Problem adding or dispersing bottom fastener stack")
         End If
 
         If Proceed Then
-            Proceed = CreateFastenerStackGroup(InitialNumOccurrences)
-            If Not Proceed Then Me.FileLogger.AddMessage("Problem creating assembly group")
+            Proceed = CreateFastenerStackGroup(InitialNumOccurrences, Me.FileLogger.AddLogger("Create fastener stack group"))
+            'If Not Proceed Then Me.FileLogger.AddMessage("Problem creating assembly group")
         End If
 
         If FMain.SEApp IsNot Nothing Then FMain.SEApp.DisplayAlerts = True
@@ -385,7 +390,7 @@ Public Class FormFastenerStack
 
     End Sub
 
-    Private Function CheckStartConditions() As Boolean
+    Private Function CheckStartConditions(_ErrorLogger As Logger) As Boolean
 
         Dim UC As New UtilsCommon
 
@@ -398,14 +403,14 @@ Public Class FormFastenerStack
 
         If Not (Me.Units = "in" Or Me.Units = "mm") Then
             Success = False
-            Me.FileLogger.AddMessage("Units not set to 'in' or 'mm'")
+            _ErrorLogger.AddMessage("Units not set to 'in' or 'mm'")
         End If
 
         Try
             Dim V = CDbl(UC.FixLocaleDecimal(Me.ClampedThickness))
         Catch ex As Exception
             Success = False
-            Me.FileLogger.AddMessage($"Could not resolve clamped thickness: '{Me.ClampedThickness}'")
+            _ErrorLogger.AddMessage($"Could not resolve clamped thickness: '{Me.ClampedThickness}'")
         End Try
 
         Dim ConfigString As String = Me.StackConfiguration.ToString
@@ -413,21 +418,21 @@ Public Class FormFastenerStack
         If ConfigString.Contains("_N") Then
             If Me.NutFilename.ToLower.Contains("not found") Then
                 Success = False
-                Me.FileLogger.AddMessage(Me.NutFilename)
+                _ErrorLogger.AddMessage(Me.NutFilename)
             End If
         End If
 
         If ConfigString.Contains("_FW_") Then
             If Me.FlatWasherFilename.ToLower.Contains("not found") Then
                 Success = False
-                Me.FileLogger.AddMessage(Me.FlatWasherFilename)
+                _ErrorLogger.AddMessage(Me.FlatWasherFilename)
             End If
         End If
 
         If ConfigString.Contains("_LW_") Then
             If Me.LockwasherFilename.ToLower.Contains("not found") Then
                 Success = False
-                Me.FileLogger.AddMessage(Me.LockwasherFilename)
+                _ErrorLogger.AddMessage(Me.LockwasherFilename)
             End If
         End If
 
@@ -436,7 +441,7 @@ Public Class FormFastenerStack
                 Dim V = CDbl(UC.FixLocaleDecimal(Me.ExtensionMin))
             Catch ex As Exception
                 Success = False
-                Me.FileLogger.AddMessage($"Could not resolve minimum extension: '{Me.ExtensionMin}'")
+                _ErrorLogger.AddMessage($"Could not resolve minimum extension: '{Me.ExtensionMin}'")
             End Try
         End If
 
@@ -445,13 +450,13 @@ Public Class FormFastenerStack
                 Dim V = CDbl(UC.FixLocaleDecimal(Me.ThreadEngagementMin))
             Catch ex As Exception
                 Success = False
-                Me.FileLogger.AddMessage($"Could not resolve minimum thread engagement: '{Me.ThreadEngagementMin}'")
+                _ErrorLogger.AddMessage($"Could not resolve minimum thread engagement: '{Me.ThreadEngagementMin}'")
             End Try
             Try
                 Dim V = CDbl(UC.FixLocaleDecimal(Me.ThreadDepth))
             Catch ex As Exception
                 Success = False
-                Me.FileLogger.AddMessage($"Could not resolve thread depth: '{Me.ThreadDepth}'")
+                _ErrorLogger.AddMessage($"Could not resolve thread depth: '{Me.ThreadDepth}'")
             End Try
         End If
 
@@ -459,7 +464,7 @@ Public Class FormFastenerStack
 
     End Function
 
-    Private Function GenerateNeededFiles() As Boolean
+    Private Function GenerateNeededFiles(_ErrorLogger As Logger) As Boolean
 
         Dim Proceed As Boolean = True
 
@@ -473,7 +478,7 @@ Public Class FormFastenerStack
         If tmpTreeviewFastenerFullPath IsNot Nothing Then
             Me.TreeviewFastenerFullPath = tmpTreeviewFastenerFullPath
         Else
-            Me.FileLogger.AddMessage("No fastener length satisfies given parameters")
+            _ErrorLogger.AddMessage("No fastener length satisfies given parameters")
             LabelStatus.Text = ""
             Return False
         End If
@@ -487,29 +492,29 @@ Public Class FormFastenerStack
         ' Generate the fastener if needed
         LabelStatus.Text = "Generating fastener"
         FMain.SelectedNodeFullPath = Me.TreeviewFastenerFullPath
-        Dim DefaultExtension As String = IO.Path.GetExtension(FMain.GetTemplateNameFormula(ErrorLogger:=Me.FileLogger))
-        Me.FastenerFilename = FMain.GetFilenameFormula(DefaultExtension:=DefaultExtension, Me.FileLogger)
-        Proceed = FMain.Process(ErrorLogger:=Me.FileLogger)
+        Dim DefaultExtension As String = IO.Path.GetExtension(FMain.GetTemplateNameFormula(ErrorLogger:=_ErrorLogger))
+        Me.FastenerFilename = FMain.GetFilenameFormula(DefaultExtension:=DefaultExtension, _ErrorLogger)
+        Proceed = FMain.Process(ErrorLogger:=_ErrorLogger)
 
         ' Generate the flat washer if needed
         If Proceed And ConfigString.Contains("_FW_") Then
             LabelStatus.Text = "Generating flat washer"
             FMain.SelectedNodeFullPath = Me.TreeviewFlatWasherFullPath
-            Proceed = FMain.Process(ErrorLogger:=Me.FileLogger)
+            Proceed = FMain.Process(ErrorLogger:=_ErrorLogger)
         End If
 
         ' Generate the lock washer if needed
         If Proceed And ConfigString.Contains("_LW_") Then
             LabelStatus.Text = "Generating lock washer"
             FMain.SelectedNodeFullPath = Me.TreeviewLockwasherFullPath
-            Proceed = FMain.Process(ErrorLogger:=Me.FileLogger)
+            Proceed = FMain.Process(ErrorLogger:=_ErrorLogger)
         End If
 
         ' Generate the nut if needed
         If Proceed And ConfigString.Contains("_N") Then
             LabelStatus.Text = "Generating nut"
             FMain.SelectedNodeFullPath = Me.TreeviewNutFullPath
-            Proceed = FMain.Process(ErrorLogger:=Me.FileLogger)
+            Proceed = FMain.Process(ErrorLogger:=_ErrorLogger)
         End If
 
         ' Reset to original conditions
@@ -522,12 +527,12 @@ Public Class FormFastenerStack
 
     End Function
 
-    Private Function PrepStackAssemblies() As List(Of String)
+    Private Function PrepStackAssemblies(_ErrorLogger As Logger) As List(Of String)
 
         Dim Outlist As New List(Of String)
 
         If FMain.SEApp Is Nothing Or FMain.AsmDoc Is Nothing Then
-            MsgBox("Unable to connect to Solid Edge, or an assembly file is not open")
+            _ErrorLogger.AddMessage("Unable to connect to Solid Edge, or an assembly file is not open")
             LabelStatus.Text = ""
             Return Nothing
         End If
@@ -537,6 +542,13 @@ Public Class FormFastenerStack
         For Each TemplateName In {GetTopAssyTemplateName(), GetBottomAssyTemplateName()}
 
             If TemplateName = "" Then Continue For  ' Some configurations do not have a bottom stack assembly
+
+            ' A blank TemplateName is valid.  Check that before this.
+            If Not IO.File.Exists(TemplateName) Then
+                _ErrorLogger.AddMessage($"Template file not found `{TemplateName}`")
+                Return Nothing
+            End If
+
 
             Dim tmpAssyFilename As String
             tmpAssyFilename = $"{IO.Path.GetDirectoryName(TemplateName)}"  '                                 c:\...\FastenerStackTemplates
@@ -572,7 +584,7 @@ Public Class FormFastenerStack
                     Case "N.par"
                         ReplacementFilename = Me.NutFilename
                     Case Else
-                        MsgBox($"FastenerStack.PrepStackAssemblies unrecognized filename: '{IO.Path.GetFileName(OccurrenceFilename)}'")
+                        _ErrorLogger.AddMessage($"FastenerStack.PrepStackAssemblies unrecognized filename: '{IO.Path.GetFileName(OccurrenceFilename)}'")
                         LabelStatus.Text = ""
                         Return Nothing
                 End Select
@@ -584,7 +596,7 @@ Public Class FormFastenerStack
                 ElseIf FMain.FailedConstraintAllow Then
                     tmpAsm.ReplaceComponents({Occurrence}, ReplacementFilename, SolidEdgeAssembly.ConstraintReplacementConstants.seConstraintReplacementNone)
                 Else
-                    MsgBox("Option not set for treatment of for failed constraints.  Set it on the Tree Search Options dialog.")
+                    _ErrorLogger.AddMessage("Option not set for treatment of for failed constraints.  Set it on the Tree Search Options dialog.")
                     LabelStatus.Text = ""
                     Return Nothing
                 End If
@@ -603,7 +615,7 @@ Public Class FormFastenerStack
         Return Outlist
     End Function
 
-    Private Function AddStackElementAndDisperse(Filename As String) As Boolean
+    Private Function AddStackElementAndDisperse(Filename As String, _ErrorLogger As Logger) As Boolean
         Dim Success As Boolean = True
 
         AddHandler FMain.SEAppEvents.AfterCommandRun, AddressOf DISEApplicationEvents_AfterCommandRun
@@ -635,7 +647,8 @@ Public Class FormFastenerStack
             Threading.Thread.Sleep(100)
             TickCount += 1
             If TickCount >= TickCountMax Then
-                LabelStatus.Text = "Paste timeout"
+                'LabelStatus.Text = "Paste timeout"
+                _ErrorLogger.AddMessage("Add occurrence command timed out")
                 Return False
             End If
         End While
@@ -700,7 +713,7 @@ Public Class FormFastenerStack
         Return Success
     End Function
 
-    Private Function CreateFastenerStackGroup(InitialNumOccurrences As Integer) As Boolean
+    Private Function CreateFastenerStackGroup(InitialNumOccurrences As Integer, _ErrorLogger As Logger) As Boolean
         Dim Success As Boolean = True
         Dim Occurrences As SolidEdgeAssembly.Occurrences = FMain.AsmDoc.Occurrences
 
@@ -716,17 +729,24 @@ Public Class FormFastenerStack
             NewGroup.Name = $"FastenerStack {FMain.AsmDoc.AssemblyGroups.Count}"
 
             If FMain.AutoPattern Then
-                Dim tmpSuccess As Boolean = MaybePatternOccurrences(InitialNumOccurrences, NewGroup.Name)
+                ' This returns False if no pattern is found.  That is not an error.
+                Dim tmpSuccess As Boolean = MaybePatternOccurrences(InitialNumOccurrences, NewGroup.Name, _ErrorLogger)
             End If
 
         Else
             Success = False
+            _ErrorLogger.AddMessage("No new occurrences detected.  Unable to create a fastener stack assembly group.")
         End If
 
         Return Success
     End Function
 
-    Private Function MaybePatternOccurrences(InitialNumOccurrences As Integer, FastenerStackName As String) As Boolean
+    Private Function MaybePatternOccurrences(
+        InitialNumOccurrences As Integer,
+        FastenerStackName As String,
+        _ErrorLogger As Logger
+        ) As Boolean
+
         Dim Success As Boolean = True
 
         Dim Occurrences As SolidEdgeAssembly.Occurrences = FMain.AsmDoc.Occurrences
@@ -742,7 +762,7 @@ Public Class FormFastenerStack
                 PiggyBackOccurrences.Add(CType(Occurrences(i), SolidEdgeAssembly.Occurrence))
             Next
 
-            Success = FMain.MaybePatternOccurrence(PrimaryOccurrence, PiggyBackOccurrences, FastenerStackName)
+            Success = FMain.MaybePatternOccurrence(PrimaryOccurrence, PiggyBackOccurrences, _ErrorLogger, FastenerStackName)
         Else
             Success = False
         End If
@@ -1904,12 +1924,13 @@ Public Class FormFastenerStack
     End Sub
 
     Private Sub ButtonAddToAssy_Click(sender As Object, e As EventArgs) Handles ButtonAddToAssy.Click
-        Me.ErrorLogger = New HCErrorLogger
+        Me.ErrorLogger = New HCErrorLogger("Storekeeper")
         Dim Config As String = Me.StackConfiguration.ToString
-        Dim Filename As String = IO.Path.GetFileName(Me.FastenerFilename)
+        Dim Filename As String = IO.Path.GetFileName("Add to assembly")
         Me.FileLogger = ErrorLogger.AddFile($"Fastener: {Filename}, Config: {Config}")
         Process()
-        FMain.ReportErrors(Me.ErrorLogger)
+        'FMain.ReportErrors(Me.ErrorLogger)
+        Me.ErrorLogger.ReportErrors(UseMessageBox:=True)
     End Sub
 
     Public Sub DISEApplicationEvents_AfterCommandRun(ByVal theCommandID As Integer)

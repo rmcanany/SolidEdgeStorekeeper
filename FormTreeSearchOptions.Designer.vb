@@ -324,9 +324,9 @@ Partial Class FormTreeSearchOptions
         LabelAlwaysOnTopRefreshTime.Location = New Point(109, 397)
         LabelAlwaysOnTopRefreshTime.Name = "LabelAlwaysOnTopRefreshTime"
         LabelAlwaysOnTopRefreshTime.Padding = New Padding(5, 0, 0, 0)
-        LabelAlwaysOnTopRefreshTime.Size = New Size(131, 15)
+        LabelAlwaysOnTopRefreshTime.Size = New Size(192, 15)
         LabelAlwaysOnTopRefreshTime.TabIndex = 28
-        LabelAlwaysOnTopRefreshTime.Text = "On top refresh time (s)"
+        LabelAlwaysOnTopRefreshTime.Text = "On top refresh time (milliseconds)"
         ' 
         ' TextBoxAlwaysOnTopRefreshTime
         ' 
@@ -335,7 +335,7 @@ Partial Class FormTreeSearchOptions
         TextBoxAlwaysOnTopRefreshTime.Name = "TextBoxAlwaysOnTopRefreshTime"
         TextBoxAlwaysOnTopRefreshTime.Size = New Size(100, 23)
         TextBoxAlwaysOnTopRefreshTime.TabIndex = 27
-        TextBoxAlwaysOnTopRefreshTime.Text = "3"
+        TextBoxAlwaysOnTopRefreshTime.Text = "3000"
         TextBoxAlwaysOnTopRefreshTime.TextAlign = HorizontalAlignment.Right
         ' 
         ' CheckBoxCheckNewVersion

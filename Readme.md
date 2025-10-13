@@ -34,7 +34,7 @@ Solid Edge Storekeeper is a utility to create, organize, and share standard part
 
 Fasteners, retainers, structural shapes, and more in ANSI and ISO format are included.  There are over 30k items available.  There is no database; everything is done in Excel.  It is fully customizable.  If you upgrade Solid Edge, no change to the program or its data is required.
 
-The program handles two types of standard parts.  One consists of items like fasteners.  These are defined in dimension tables and created as needed.  The other consists of vendor-type items like pneumatic fittings.  Each of these has its own model file.  Both types are eligible for the handy automatic patterning option.
+The program handles two types of standard parts.  One consists of items like fasteners.  These are defined in dimension tables and created as needed.  The other consists of vendor-type items like pneumatic fittings.  Each of these has its own model file.  Both types are eligible for the handy automatic patterning option (see separate section below for details).
 
 ### Tree Search
 
@@ -131,9 +131,7 @@ Most options are set on the **Tree Search Options** page (see next), but those m
   - `Assy Dir`  The same location as the assembly file currently open in Solid Edge.
   - `Other`  Anyplace else.
 - `Always on top`  Determines if the Storekeeper window remains on top of other windows.  Click ![Always on top](media/always_on_top_enabled.png) to toggle.
-- `Auto pattern`  Determines if the automatic patterning of newly placed parts will be performed.  Click ![Auto pattern](media/auto_pattern_enabled.png) to toggle.  
-
-	Automatic patterning works with `Smart Patterns` and `User-Defined Patterns` (that's a hole with multiple hole circles in the profile).  It does not currently work with (the default) `Fast Patterns` unfortunately, unless you get lucky and pick the hole that was used to create the pattern.
+- `Auto pattern`  Determines if the automatic patterning of newly placed parts will be performed.  Click ![Auto pattern](media/auto_pattern_enabled.png) to toggle.  See separate section below for details.
 
 - `Tree search options`  Click ![Options](media/Support_16.png) to open (see next).
 
@@ -236,6 +234,16 @@ You may have more work to do if you're not using English in Solid Edge.  In the 
 
 Open the file (located in the `Preferences\Data` directory) and look for entries like `%{System.Title}` and update as required.
 
+## AUTOMATIC PATTERNING
+
+Standard parts, especially fasteners, are frequently patterned after placement.  If this option is enabled and the feature to which a part has been assembled is a member of a pattern, the program attempts to pattern the part.  There are currently a couple of limitations.  
+
+- It works with `Smart Patterns` and `User-Defined Patterns` (that's a hole with multiple hole circles in the profile).  It does not work with (the default) `Fast Patterns` unfortunately, unless you get lucky and pick the hole that was used to create the pattern.
+
+- With fastener stacks, the last-applied align constraint is the one examined to detect a pattern.  That part must be constrained to a part in the assembly that is not a member of the current fastener stack.  There is a fix envisioned, but it's not presently available.
+
+- Also with fastener stacks, and related to the above, only a single part file of the stack can be used for positioning.  In other words, if your stack has a flat washer and you select that to create the align constraint, you must also use it to create the mate.
+
 ## FASTENER STACK
 
 A fastener stack is a grouping that consists of a fastener and related components, such as washers and nuts.  To create one, on the `Tree Search` dialog, right-click a fastener and select the `Fastener stack` command.  The following form is shown.
@@ -262,7 +270,6 @@ The program waits for the `Place part` command to finish before proceeding.  Con
 
 After the components are placed, they are converted to an `Assembly group`.  Finally, the group is patterned if applicable, assuming that option is enabled.
 
-Currently there is a limitation to the patterning of a fastener stack.  Only one part file of the stack can be used for positioning.  In other words, if your stack has a flat washer and you select that to create the mate, you must also use it to create the align.
 
 ## PRE-POPULATING THE LIBRARY
 

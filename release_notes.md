@@ -86,7 +86,9 @@ Added an option to store property values of files in the library.  Set it on the
 
 - Added an option to keep the Storekeeper window always on top (Thank you one more time **@TeeVar!**).
 
-- Added the ability to use special characters (`/`, `*`, `@`, etc.) in Xml tag definitions  (Thank you **@Seva!**).  Normally these are not allowed.  To get around it, special characters are replaced with compatible stand-ins where necessary.  If you look in `Storekeeper.xml`, you may see text like `.XmlComma.`  That's one of those stand-ins.
+- Added a shortcut menu for **Property Search** items  (Thank you yet again **@TeeVar!**).  It includes `Replace selected`, `Open in Solid Edge`, and a couple of others.
+
+- Added the ability to use special characters (`/`, `*`, `@`, etc.) in Xml tag definitions  (Thank you **@Seva!**).  Normally these are not allowed.  To get around it, special characters are replaced with compatible stand-ins where necessary.  If you look in `Storekeeper.xml`, you may see text like `.XmlComma.` or `.XmlOpeningBrace.`  Those are some of those stand-ins.
 
 - Temporarily disabled the `Pre-Populate` feature from the previous version (Sorry **@Seva!**).  It is not currently compatible with multiple materials per category.  In particular it had trouble when a material is valid for one selected item, but not another.  You can still use the previous version when that feature is needed.
 

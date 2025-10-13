@@ -374,13 +374,15 @@ Public Class Form_Main
         Splash.UpdateStatus("Initializing timer")
 
         If Me.AlwaysOnTopRefreshTime Is Nothing OrElse Me.AlwaysOnTopRefreshTime = "" Then
-            Me.AlwaysOnTopRefreshTime = "3"
+            Me.AlwaysOnTopRefreshTime = "3000"
         End If
         Dim tmpInterval As Integer = 3000
         Try
-            tmpInterval = CInt(1000 * CDbl(Me.AlwaysOnTopRefreshTime))
+            tmpInterval = CInt(Me.AlwaysOnTopRefreshTime)
+            If tmpInterval < 1000 Then tmpInterval = 1000
+            Me.AlwaysOnTopRefreshTime = "1000"
         Catch ex As Exception
-            Me.AlwaysOnTopRefreshTime = "3"
+            Me.AlwaysOnTopRefreshTime = "3000"
         End Try
         AlwaysOnTopTimer = New Timer
         AlwaysOnTopTimer.Interval = tmpInterval
@@ -686,7 +688,7 @@ Public Class Form_Main
 
                 If Proceed And Me.AutoPattern And Occurrences.Count > PreviousOccurrencesCount Then
                     Occurrence = CType(Occurrences(Occurrences.Count - 1), SolidEdgeAssembly.Occurrence)
-                    MaybePatternOccurrence(Occurrence, PiggybackOccurrences:=Nothing)
+                    MaybePatternOccurrence(Occurrence, PiggybackOccurrences:=Nothing, ErrorLogger)
                 End If
 
             Else
@@ -741,10 +743,12 @@ Public Class Form_Main
 
                 Else
 
-                    Clipboard.Clear()
-                    Clipboard.SetText(Filename)
-                    SEApp.StartCommand(CType(SolidEdgeConstants.AssemblyCommandConstants.AssemblyEditPaste, SolidEdgeFramework.SolidEdgeCommandConstants))
+                    'Clipboard.Clear()
+                    'Clipboard.SetText(Filename)
+                    'SEApp.StartCommand(CType(SolidEdgeConstants.AssemblyCommandConstants.AssemblyEditPaste, SolidEdgeFramework.SolidEdgeCommandConstants))
 
+                    Proceed = False
+                    ErrorLogger.AddMessage("No parts selected")
                 End If
 
                 RemoveHandler SEAppEvents.AfterCommandRun, AddressOf DISEApplicationEvents_AfterCommandRun  'just because it is early initialized
@@ -1183,6 +1187,7 @@ Public Class Form_Main
     Public Function MaybePatternOccurrence(
         Occurrence As SolidEdgeAssembly.Occurrence,
         PiggybackOccurrences As List(Of SolidEdgeAssembly.Occurrence),
+        _ErrorLogger As Logger,
         Optional Name As String = ""
         ) As Boolean
 
@@ -1199,35 +1204,62 @@ Public Class Form_Main
         Dim Relations3d As SolidEdgeAssembly.Relations3d = CType(Occurrence.Relations3d, SolidEdgeAssembly.Relations3d)
         Dim Element2 As SolidEdgeAssembly.TopologyReference = Nothing
 
-        ' Start at the end of Relations3d collection.  After the stack assy dispersal, the last axial relation should be the one we want.
-        For i = Relations3d.Count - 1 To 0 Step -1
-            Dim AxialRelation3d As SolidEdgeAssembly.AxialRelation3d = TryCast(Relations3d(i), SolidEdgeAssembly.AxialRelation3d)
-            If AxialRelation3d IsNot Nothing Then
+        'Dim StackOccurrenceNames As New List(Of String)
+        'StackOccurrenceNames.Add(Occurrence.Name)
+        'For Each PiggybackOccurrence As SolidEdgeAssembly.Occurrence In PiggybackOccurrences
+        '    StackOccurrenceNames.Add(PiggybackOccurrence.Name)
+        'Next
 
-                Occurrence2 = AxialRelation3d.Occurrence2
+        ' Can cause an exception at SolidEdgeAssembly.TopologyReference.get_Object()
+        Try
+            ' Start at the end of Relations3d collection.  After the stack assy dispersal, the last axial relation should be the one we want.
+            For i = Relations3d.Count - 1 To 0 Step -1
+                Dim AxialRelation3d As SolidEdgeAssembly.AxialRelation3d = TryCast(Relations3d(i), SolidEdgeAssembly.AxialRelation3d)
+                If AxialRelation3d IsNot Nothing Then
 
-                Element2 = TryCast(AxialRelation3d.GetElement2(IsTopologyReference), SolidEdgeAssembly.TopologyReference)
+                    Occurrence2 = AxialRelation3d.Occurrence2
 
-                'Dim ComType = HCComObject.GetCOMObjectType(Element2)
-                If Element2 IsNot Nothing Then
-                    ' https://community.sw.siemens.com/s/question/0D5Vb00000lBzhzKAC/unique-identifier-for-any-occurences-within-an-assembly
-                    ' https://community.sw.siemens.com/s/question/0D54O000061xps4SAA/creating-relations-between-suboccurrences
-                    Face2 = TryCast(Element2.Object, SolidEdgeGeometry.Face)
-                    If Face2 IsNot Nothing Then
-                        Face2ID = Face2.ID
-                        Exit For
+                    'Dim s = Occurrence2.Name
+                    'If StackOccurrenceNames.Contains(Occurrence2.Name) Then Continue For
+
+                    Element2 = TryCast(AxialRelation3d.GetElement2(IsTopologyReference), SolidEdgeAssembly.TopologyReference)
+
+                    If Element2 IsNot Nothing Then
+                        ' https://community.sw.siemens.com/s/question/0D5Vb00000lBzhzKAC/unique-identifier-for-any-occurences-within-an-assembly
+                        ' https://community.sw.siemens.com/s/question/0D54O000061xps4SAA/creating-relations-between-suboccurrences
+
+                        Try
+                            Dim ComType = HCComObject.GetCOMObjectType(Element2)
+                            If Not IsTopologyReference Then
+                                _ErrorLogger.AddMessage($"Element2 Type not TopologyReference: '{ComType.FullName}'")
+                                Exit For
+                            End If
+                        Catch ex2 As Exception
+                            _ErrorLogger.AddMessage($"Exception: {ex2.Message}")
+                            Exit For
+                        End Try
+
+                        Face2 = TryCast(Element2.Object, SolidEdgeGeometry.Face)
+                        If Face2 IsNot Nothing Then
+                            Face2ID = Face2.ID
+                            Exit For
+                        End If
                     End If
                 End If
+            Next
+
+            If Occurrence2 IsNot Nothing And Face2 IsNot Nothing Then
+                Success = ProcessPatterns(Occurrence, Occurrence2, Face2ID, PiggybackOccurrences, Name, Element2)
+
+                If Not Success Then Success = ProcessUserDefinedPatterns(Occurrence, Occurrence2, Face2ID, PiggybackOccurrences, Name, Element2)
+            Else
+                Success = False
             End If
-        Next
 
-        If Occurrence2 IsNot Nothing And Face2 IsNot Nothing Then
-            Success = ProcessPatterns(Occurrence, Occurrence2, Face2ID, PiggybackOccurrences, Name, Element2)
-
-            If Not Success Then Success = ProcessUserDefinedPatterns(Occurrence, Occurrence2, Face2ID, PiggybackOccurrences, Name, Element2)
-        Else
+        Catch ex As Exception
             Success = False
-        End If
+            _ErrorLogger.AddMessage($"Exception: {ex.Message}")
+        End Try
 
         Return Success
     End Function
@@ -2448,19 +2480,19 @@ Public Class Form_Main
 
     ' ###### ERROR REPORTING ######
 
-    Public Sub ReportErrors(tmpErrorLogger As HCErrorLogger)
-        If tmpErrorLogger.HasErrors Then
-            tmpErrorLogger.Save()
-            Try
-                ' Try to use the default application to open the file.
-                Diagnostics.Process.Start(tmpErrorLogger.LogfileName)
-            Catch ex As Exception
-                ' If none, open with notepad.exe
-                Diagnostics.Process.Start("notepad.exe", tmpErrorLogger.LogfileName)
-            End Try
-        End If
+    'Public Sub ReportErrors(tmpErrorLogger As HCErrorLogger)
+    '    If tmpErrorLogger.HasErrors Then
+    '        tmpErrorLogger.Save()
+    '        Try
+    '            ' Try to use the default application to open the file.
+    '            Diagnostics.Process.Start(tmpErrorLogger.LogfileName)
+    '        Catch ex As Exception
+    '            ' If none, open with notepad.exe
+    '            Diagnostics.Process.Start("notepad.exe", tmpErrorLogger.LogfileName)
+    '        End Try
+    '    End If
 
-    End Sub
+    'End Sub
 
 
     ' ###### EVENT HANDLERS ######
@@ -2517,10 +2549,11 @@ Public Class Form_Main
     Private Sub ToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem1.Click
         Dim Node = TreeView1.SelectedNode
         If Node.Nodes.Count = 0 Then
-            Me.ErrorLogger = New HCErrorLogger
-            Me.FileLogger = Me.ErrorLogger.AddFile(Node.FullPath)
+            Me.ErrorLogger = New HCErrorLogger("Storekeeper")
+            Me.FileLogger = Me.ErrorLogger.AddFile("Add to assembly")
             Process()
-            ReportErrors(Me.ErrorLogger)
+            'ReportErrors(Me.ErrorLogger)
+            Me.ErrorLogger.ReportErrors(UseMessageBox:=True)
         Else
             MsgBox("This is a category header, not an individual part.  It cannot be added to an assembly", vbOKOnly, "Category header")
         End If
@@ -2772,30 +2805,33 @@ Public Class Form_Main
         Dim RowIdx As Integer = DataGridViewVendorParts.CurrentCell.RowIndex
         Dim PropertySearchFilename As String = CStr(DataGridViewVendorParts.Rows(RowIdx).Cells(1).Value)
 
-        Me.ErrorLogger = New HCErrorLogger
-        Me.FileLogger = Me.ErrorLogger.AddFile(PropertySearchFilename)
+        Me.ErrorLogger = New HCErrorLogger("Storekeeper")
+        Me.FileLogger = Me.ErrorLogger.AddFile("Add to assembly")
         Process(PropertySearchFilename:=PropertySearchFilename)
-        ReportErrors(Me.ErrorLogger)
+        'ReportErrors(Me.ErrorLogger)
+        Me.ErrorLogger.ReportErrors(UseMessageBox:=True)
     End Sub
 
     Private Sub ReplaceSelectedToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles ReplaceSelectedToolStripMenuItem1.Click
         Dim RowIdx As Integer = DataGridViewVendorParts.CurrentCell.RowIndex
         Dim PropertySearchFilename As String = CStr(DataGridViewVendorParts.Rows(RowIdx).Cells(1).Value)
 
-        Me.ErrorLogger = New HCErrorLogger
-        Me.FileLogger = Me.ErrorLogger.AddFile(PropertySearchFilename)
+        Me.ErrorLogger = New HCErrorLogger("Storekeeper")
+        Me.FileLogger = Me.ErrorLogger.AddFile("Replace selected")
         Process(PropertySearchFilename:=PropertySearchFilename, Replace:=True)
-        ReportErrors(Me.ErrorLogger)
+        'ReportErrors(Me.ErrorLogger)
+        Me.ErrorLogger.ReportErrors(UseMessageBox:=True)
     End Sub
 
     Private Sub ReplaceAllToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles ReplaceAllToolStripMenuItem1.Click
         Dim RowIdx As Integer = DataGridViewVendorParts.CurrentCell.RowIndex
         Dim PropertySearchFilename As String = CStr(DataGridViewVendorParts.Rows(RowIdx).Cells(1).Value)
 
-        Me.ErrorLogger = New HCErrorLogger
-        Me.FileLogger = Me.ErrorLogger.AddFile(PropertySearchFilename)
+        Me.ErrorLogger = New HCErrorLogger("Storekeeper")
+        Me.FileLogger = Me.ErrorLogger.AddFile("Replace all")
         Process(PropertySearchFilename:=PropertySearchFilename, ReplaceAll:=True)
-        ReportErrors(Me.ErrorLogger)
+        'ReportErrors(Me.ErrorLogger)
+        Me.ErrorLogger.ReportErrors(UseMessageBox:=True)
     End Sub
 
     Private Sub OpenToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles OpenToolStripMenuItem.Click
@@ -2879,7 +2915,7 @@ Public Class Form_Main
 
         If Result = MsgBoxResult.Yes Then
 
-            ErrorLogger = New HCErrorLogger
+            ErrorLogger = New HCErrorLogger("Storekeeper")
 
             AddToLibraryOnly = True
             ButtonClose.Text = "Stop"
@@ -2891,13 +2927,14 @@ Public Class Form_Main
                 Application.DoEvents()
                 If ErrorLogger.Abort Then Exit For
                 TreeView1.SelectedNode = Node
-                FileLogger = ErrorLogger.AddFile(Node.FullPath)
+                FileLogger = ErrorLogger.AddFile("Add to library")
                 Node.EnsureVisible()
                 Process()
                 AddedCount += 1
             Next
 
-            ReportErrors(ErrorLogger)
+            'ReportErrors(ErrorLogger)
+            Me.ErrorLogger.ReportErrors(UseMessageBox:=True)
 
             ButtonClose.Text = "Close"
             ButtonClose.BackColor = Color.White
@@ -2926,10 +2963,11 @@ Public Class Form_Main
                 MsgBox("Set how to handle failed constraints on the Tree Search Options dialog", vbOKOnly, "Handling Failed Constraints")
                 Exit Sub
             End If
-            Me.ErrorLogger = New HCErrorLogger
-            Me.FileLogger = Me.ErrorLogger.AddFile(Node.FullPath)
+            Me.ErrorLogger = New HCErrorLogger("Storekeeper")
+            Me.FileLogger = Me.ErrorLogger.AddFile("Replace selected")
             Process(Replace:=True)
-            ReportErrors(Me.ErrorLogger)
+            'ReportErrors(Me.ErrorLogger)
+            Me.ErrorLogger.ReportErrors(UseMessageBox:=True)
         Else
             MsgBox("This is a category header, not an individual part.  It cannot be added to an assembly", vbOKOnly, "Category header")
         End If
@@ -2944,10 +2982,11 @@ Public Class Form_Main
                 MsgBox("Set how to handle failed constraints on the Tree Search Options dialog", vbOKOnly, "Handle Failed Constraints")
                 Exit Sub
             End If
-            Me.ErrorLogger = New HCErrorLogger
-            Me.FileLogger = Me.ErrorLogger.AddFile(Node.FullPath)
+            Me.ErrorLogger = New HCErrorLogger("Storekeeper")
+            Me.FileLogger = Me.ErrorLogger.AddFile("Replace all")
             Process(Replace:=True, ReplaceAll:=True)
-            ReportErrors(Me.ErrorLogger)
+            'ReportErrors(Me.ErrorLogger)
+            Me.ErrorLogger.ReportErrors(UseMessageBox:=True)
         Else
             MsgBox("This is a category header, not an individual part.  It cannot be added to an assembly", vbOKOnly, "Category header")
         End If
@@ -2961,12 +3000,13 @@ Public Class Form_Main
 
         Dim Node = TreeView1.SelectedNode
 
-        Dim tmpErrorLogger As New HCErrorLogger
-        Dim FastenerStackLogger = tmpErrorLogger.AddFile("Fastener Stack")
+        Dim tmpErrorLogger As New HCErrorLogger("Storekeeper")
+        Dim FastenerStackLogger = tmpErrorLogger.AddFile("Fastener stack")
         Dim Proceed As Boolean = CheckStartConditions(Nothing, FastenerStackLogger) ' Handles multiple material choices
 
         If tmpErrorLogger.HasErrors Then
-            ReportErrors(tmpErrorLogger)
+            'ReportErrors(tmpErrorLogger)
+            tmpErrorLogger.ReportErrors(UseMessageBox:=True)
         Else
             Dim FFS As New FormFastenerStack(Me)
             FFS.ShowDialog()
