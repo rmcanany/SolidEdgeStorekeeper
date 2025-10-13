@@ -240,9 +240,7 @@ Standard parts, especially fasteners, are frequently patterned after placement. 
 
 - It works with `Smart Patterns` and `User-Defined Patterns` (that's a hole with multiple hole circles in the profile).  It does not work with (the default) `Fast Patterns` unfortunately, unless you get lucky and pick the hole that was used to create the pattern.
 
-- With fastener stacks, the last-applied align constraint is the one examined to detect a pattern.  That part must be constrained to a part in the assembly that is not a member of the current fastener stack.  There is a fix envisioned, but it's not presently available.
-
-- Also with fastener stacks, and related to the above, only a single part file of the stack can be used for positioning.  In other words, if your stack has a flat washer and you select that to create the align constraint, you must also use it to create the mate.
+- It is sometimes unable to create a pattern when placing a fastener to a part located in a subasembly.  It sometimes helps to save the top-level assembly and try again.
 
 ## FASTENER STACK
 
