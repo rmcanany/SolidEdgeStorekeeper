@@ -10,7 +10,7 @@ Public Class Form_Main
     Private Property Version As String = "2025.4"
 
     'Private Property PreviewVersion As String = ""  ' Empty string if not a preview
-    Private Property PreviewVersion As String = "Preview 10"
+    Private Property PreviewVersion As String = "Preview 11"
 
 
     Private _SelectedNodeFullPath As String
