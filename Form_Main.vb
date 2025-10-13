@@ -648,18 +648,23 @@ Public Class Form_Main
 
                 Dim Occurrences As SolidEdgeAssembly.Occurrences = AsmDoc.Occurrences
                 Dim PreviousOccurrencesCount As Integer = Occurrences.Count
+                Dim Occurrence As SolidEdgeAssembly.Occurrence
 
-                Dim Occurrence = AsmDoc.Occurrences.AddByFilename(Filename)
-                Dim SelectSet = AsmDoc.SelectSet
-                SelectSet.RemoveAll()
+                'Dim Occurrence = AsmDoc.Occurrences.AddByFilename(Filename)
+                'Dim SelectSet = AsmDoc.SelectSet
+                'SelectSet.RemoveAll()
 
-                SelectSet.Add(Occurrence)
-                Dim Cut = SolidEdgeConstants.AssemblyCommandConstants.AssemblyEditCut
-                SEApp.StartCommand(CType(Cut, SolidEdgeFramework.SolidEdgeCommandConstants))
-                Dim Paste = SolidEdgeConstants.AssemblyCommandConstants.AssemblyEditPaste
+                'SelectSet.Add(Occurrence)
+                'Dim Cut = SolidEdgeConstants.AssemblyCommandConstants.AssemblyEditCut
+                'SEApp.StartCommand(CType(Cut, SolidEdgeFramework.SolidEdgeCommandConstants))
+                'Dim Paste = SolidEdgeConstants.AssemblyCommandConstants.AssemblyEditPaste
 
                 Try
-                    SEApp.StartCommand(CType(Paste, SolidEdgeFramework.SolidEdgeCommandConstants))
+                    'SEApp.StartCommand(CType(Paste, SolidEdgeFramework.SolidEdgeCommandConstants))
+
+                    Clipboard.Clear()
+                    Clipboard.SetText(Filename)
+                    SEApp.StartCommand(CType(SolidEdgeConstants.AssemblyCommandConstants.AssemblyEditPaste, SolidEdgeFramework.SolidEdgeCommandConstants))
 
                     ' Wait for Paste command to complete
 
@@ -669,7 +674,9 @@ Public Class Form_Main
                     End While
                 Catch ex As Exception
                     Try
-                        SEApp.StartCommand(CType(Paste, SolidEdgeFramework.SolidEdgeCommandConstants))
+                        'SEApp.StartCommand(CType(Paste, SolidEdgeFramework.SolidEdgeCommandConstants))
+
+                        SEApp.StartCommand(CType(SolidEdgeConstants.AssemblyCommandConstants.AssemblyEditPaste, SolidEdgeFramework.SolidEdgeCommandConstants))
 
                         ' Wait for Paste command to complete
 
@@ -1195,32 +1202,36 @@ Public Class Form_Main
 
         Dim Occurrence2 As SolidEdgeAssembly.Occurrence = Nothing
         Dim Face2 As SolidEdgeGeometry.Face = Nothing
-        Dim Face2ID As Integer
+        Dim Face2ID As Integer = -1
         Dim IsTopologyReference As Boolean
         Dim TargetPattern As SolidEdgePart.Pattern = Nothing
         Dim TargetHole As SolidEdgePart.Hole = Nothing
         Dim TargetUserDefinedPattern As SolidEdgePart.UserDefinedPattern = Nothing
 
-        Dim Relations3d As SolidEdgeAssembly.Relations3d = CType(Occurrence.Relations3d, SolidEdgeAssembly.Relations3d)
+        Dim Relations3d As SolidEdgeAssembly.Relations3d
         Dim Element2 As SolidEdgeAssembly.TopologyReference = Nothing
 
-        'Dim StackOccurrenceNames As New List(Of String)
-        'StackOccurrenceNames.Add(Occurrence.Name)
-        'For Each PiggybackOccurrence As SolidEdgeAssembly.Occurrence In PiggybackOccurrences
-        '    StackOccurrenceNames.Add(PiggybackOccurrence.Name)
-        'Next
+        Dim StackOccurrences As New List(Of SolidEdgeAssembly.Occurrence)
+        StackOccurrences.Add(Occurrence)
+        If PiggybackOccurrences IsNot Nothing Then
+            For Each PiggybackOccurrence As SolidEdgeAssembly.Occurrence In PiggybackOccurrences
+                StackOccurrences.Add(PiggybackOccurrence)
+            Next
 
-        ' Can cause an exception at SolidEdgeAssembly.TopologyReference.get_Object()
-        Try
+        End If
+
+        For Each StackOccurrence As SolidEdgeAssembly.Occurrence In StackOccurrences
+            Relations3d = CType(StackOccurrence.Relations3d, SolidEdgeAssembly.Relations3d)
+
             ' Start at the end of Relations3d collection.  After the stack assy dispersal, the last axial relation should be the one we want.
             For i = Relations3d.Count - 1 To 0 Step -1
+
                 Dim AxialRelation3d As SolidEdgeAssembly.AxialRelation3d = TryCast(Relations3d(i), SolidEdgeAssembly.AxialRelation3d)
                 If AxialRelation3d IsNot Nothing Then
 
                     Occurrence2 = AxialRelation3d.Occurrence2
 
-                    'Dim s = Occurrence2.Name
-                    'If StackOccurrenceNames.Contains(Occurrence2.Name) Then Continue For
+                    If StackOccurrences.Contains(Occurrence2) Then Continue For
 
                     Element2 = TryCast(AxialRelation3d.GetElement2(IsTopologyReference), SolidEdgeAssembly.TopologyReference)
 
@@ -1232,34 +1243,40 @@ Public Class Form_Main
                             Dim ComType = HCComObject.GetCOMObjectType(Element2)
                             If Not IsTopologyReference Then
                                 _ErrorLogger.AddMessage($"Element2 Type not TopologyReference: '{ComType.FullName}'")
+                                'Exit For
+                            End If
+                        Catch ex2 As Exception
+                            _ErrorLogger.AddMessage($"Exception: {ex2.Message}")
+                            'Exit For
+                        End Try
+
+                        Try
+                            Face2 = TryCast(Element2.Object, SolidEdgeGeometry.Face)
+                            If Face2 IsNot Nothing Then
+                                Face2ID = Face2.ID
                                 Exit For
                             End If
                         Catch ex2 As Exception
                             _ErrorLogger.AddMessage($"Exception: {ex2.Message}")
-                            Exit For
                         End Try
-
-                        Face2 = TryCast(Element2.Object, SolidEdgeGeometry.Face)
-                        If Face2 IsNot Nothing Then
-                            Face2ID = Face2.ID
-                            Exit For
-                        End If
                     End If
                 End If
             Next
+            If Not Face2ID = -1 Then Exit For
+        Next
 
-            If Occurrence2 IsNot Nothing And Face2 IsNot Nothing Then
-                Success = ProcessPatterns(Occurrence, Occurrence2, Face2ID, PiggybackOccurrences, Name, Element2)
+        If Occurrence2 IsNot Nothing And Face2 IsNot Nothing Then
+            Success = ProcessPatterns(Occurrence, Occurrence2, Face2ID, PiggybackOccurrences, Name, Element2)
 
-                If Not Success Then Success = ProcessUserDefinedPatterns(Occurrence, Occurrence2, Face2ID, PiggybackOccurrences, Name, Element2)
-            Else
-                Success = False
-            End If
-
-        Catch ex As Exception
+            If Not Success Then Success = ProcessUserDefinedPatterns(Occurrence, Occurrence2, Face2ID, PiggybackOccurrences, Name, Element2)
+        Else
             Success = False
-            _ErrorLogger.AddMessage($"Exception: {ex.Message}")
-        End Try
+        End If
+
+        'Catch ex As Exception
+        '    Success = False
+        '    _ErrorLogger.AddMessage($"Exception: {ex.Message}")
+        'End Try
 
         Return Success
     End Function
@@ -1390,18 +1407,25 @@ Public Class Form_Main
                 RefPattern = AsmDoc.CreateReference(Occurrence2, TargetPattern)
                 RefHole = AsmDoc.CreateReference(Occurrence2, TargetHole)
             Else
-                RefPattern = createTopASMRef(Occurrence2Original, TargetPattern)
-                RefHole = createTopASMRef(Occurrence2Original, TargetHole)
+                Try
+                    RefPattern = createTopASMRef(Occurrence2Original, TargetPattern)
+                    RefHole = createTopASMRef(Occurrence2Original, TargetHole)
+                Catch ex As Exception
+                    Success = False
+                End Try
             End If
 
-            Dim AsmPattern As SolidEdgeAssembly.AssemblyPattern
-            If Name = "" Then
-                AsmPattern = AsmDoc.AssemblyPatterns.CreateEx($"{Prefix}{CStr(Suffix)}", SourceOccurrences.ToArray, RefPattern, RefHole)
-            Else
-                'AsmPattern = AsmDoc.AssemblyPatterns.CreateEx($"{Prefix}{CStr(Suffix)}_{Name}", SourceOccurrences.ToArray, RefPattern, RefHole)
-                AsmPattern = AsmDoc.AssemblyPatterns.CreateEx($"{Prefix}{Name}", SourceOccurrences.ToArray, RefPattern, RefHole)
+            If Success Then
+                Dim AsmPattern As SolidEdgeAssembly.AssemblyPattern
+                If Name = "" Then
+                    AsmPattern = AsmDoc.AssemblyPatterns.CreateEx($"{Prefix}{CStr(Suffix)}", SourceOccurrences.ToArray, RefPattern, RefHole)
+                Else
+                    AsmPattern = AsmDoc.AssemblyPatterns.CreateEx($"{Prefix}{Name}", SourceOccurrences.ToArray, RefPattern, RefHole)
+                End If
             End If
 
+            If RefPattern IsNot Nothing Then RefPattern = Nothing
+            If RefHole IsNot Nothing Then RefHole = Nothing
         Else
             Success = False
         End If
@@ -1507,18 +1531,25 @@ Public Class Form_Main
                 RefPattern = AsmDoc.CreateReference(Occurrence2, TargetPattern)
                 RefHole = AsmDoc.CreateReference(Occurrence2, TargetHole)
             Else
-                RefPattern = createTopASMRef(Occurrence2Original, TargetPattern)
-                RefHole = createTopASMRef(Occurrence2Original, TargetHole)
+                Try
+                    RefPattern = createTopASMRef(Occurrence2Original, TargetPattern)
+                    RefHole = createTopASMRef(Occurrence2Original, TargetHole)
+                Catch ex As Exception
+                    Success = False
+                End Try
             End If
 
-            Dim AsmPattern As SolidEdgeAssembly.AssemblyPattern
-            If Name = "" Then
-                AsmPattern = AsmDoc.AssemblyPatterns.CreateEx($"{Prefix}{CStr(Suffix)}", SourceOccurrences.ToArray, RefPattern, RefHole)
-            Else
-                'AsmPattern = AsmDoc.AssemblyPatterns.CreateEx($"{Prefix}{CStr(Suffix)}_{Name}", SourceOccurrences.ToArray, RefPattern, RefHole)
-                AsmPattern = AsmDoc.AssemblyPatterns.CreateEx($"{Prefix}{Name}", SourceOccurrences.ToArray, RefPattern, RefHole)
+            If Success Then
+                Dim AsmPattern As SolidEdgeAssembly.AssemblyPattern
+                If Name = "" Then
+                    AsmPattern = AsmDoc.AssemblyPatterns.CreateEx($"{Prefix}{CStr(Suffix)}", SourceOccurrences.ToArray, RefPattern, RefHole)
+                Else
+                    AsmPattern = AsmDoc.AssemblyPatterns.CreateEx($"{Prefix}{Name}", SourceOccurrences.ToArray, RefPattern, RefHole)
+                End If
             End If
 
+            If RefPattern IsNot Nothing Then RefPattern = Nothing
+            If RefHole IsNot Nothing Then RefHole = Nothing
         Else
             Success = False
         End If

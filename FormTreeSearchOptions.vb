@@ -286,6 +286,9 @@ Public Class FormTreeSearchOptions
         Dim tmpFolderDialog As New CommonOpenFileDialog
         tmpFolderDialog.IsFolderPicker = True
 
+        Dim UP As New UtilsPreferences
+        tmpFolderDialog.InitialDirectory = UP.GetPreferencesDirectory
+
         If tmpFolderDialog.ShowDialog() = DialogResult.OK Then
             Me.LibraryDirectory = tmpFolderDialog.FileName
         End If
@@ -295,6 +298,12 @@ Public Class FormTreeSearchOptions
     Private Sub ButtonTemplateDirectory_Click(sender As Object, e As EventArgs) Handles ButtonTemplateDirectory.Click
         Dim tmpFolderDialog As New CommonOpenFileDialog
         tmpFolderDialog.IsFolderPicker = True
+
+        Dim UP As New UtilsPreferences
+        Dim PreferencesDirectory = UP.GetPreferencesDirectory
+        If IO.Directory.Exists(PreferencesDirectory) Then
+            tmpFolderDialog.InitialDirectory = PreferencesDirectory
+        End If
 
         If tmpFolderDialog.ShowDialog() = DialogResult.OK Then
             Me.TemplateDirectory = tmpFolderDialog.FileName
@@ -306,6 +315,12 @@ Public Class FormTreeSearchOptions
         Dim tmpFolderDialog As New CommonOpenFileDialog
         tmpFolderDialog.IsFolderPicker = True
 
+        Dim UP As New UtilsPreferences
+        Dim PreferencesDirectory = UP.GetPreferencesDirectory
+        If IO.Directory.Exists(PreferencesDirectory) Then
+            tmpFolderDialog.InitialDirectory = PreferencesDirectory
+        End If
+
         If tmpFolderDialog.ShowDialog() = DialogResult.OK Then
             Me.DataDirectory = tmpFolderDialog.FileName
         End If
@@ -316,6 +331,11 @@ Public Class FormTreeSearchOptions
         Dim tmpFileDialog As New OpenFileDialog
         tmpFileDialog.Title = "Select a material library"
         tmpFileDialog.Filter = "Material Library files|*.mtl"
+
+        Dim MaterialTableDirectory As String = IO.Path.GetDirectoryName(Me.MaterialTable)
+        If IO.Directory.Exists(MaterialTableDirectory) Then
+            tmpFileDialog.InitialDirectory = MaterialTableDirectory
+        End If
 
         If tmpFileDialog.ShowDialog() = DialogResult.OK Then
             Me.MaterialTable = tmpFileDialog.FileName

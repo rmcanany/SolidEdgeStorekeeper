@@ -1,4 +1,5 @@
 ﻿Option Strict On
+Imports System.IO
 
 Public Class HCErrorLogger
 
@@ -78,9 +79,9 @@ Public Class HCErrorLogger
                     Outstring = $"{Outstring}{s}{vbCrLf}"
                 Next
 
-                Outstring = $"{Outstring}{vbCrLf}This message has been saved to a log file{vbCrLf}"
-                Outstring = $"{Outstring}{IO.Path.GetFileName(Me.LogfileName)}{vbCrLf}in {IO.Path.GetDirectoryName(Me.LogfileName)}{vbCrLf}"
-                MsgBox(Outstring, vbOKOnly)
+                Outstring = $"{Outstring}{vbCrLf}This message saved to {IO.Path.GetFileName(Me.LogfileName)}{vbCrLf}"
+                Outstring = $"{Outstring}in {IO.Path.GetDirectoryName(Me.LogfileName)}"
+                MsgBox(Outstring, vbOKOnly, IO.Path.GetFileName(Me.LogfileName))
 
             End If
 
