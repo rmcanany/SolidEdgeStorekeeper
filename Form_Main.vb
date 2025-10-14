@@ -2582,8 +2582,12 @@ Public Class Form_Main
         If Node.Nodes.Count = 0 Then
             Me.ErrorLogger = New HCErrorLogger("Storekeeper")
             Me.FileLogger = Me.ErrorLogger.AddFile("Add to assembly")
-            Process()
-            'ReportErrors(Me.ErrorLogger)
+            Try
+                Process()
+            Catch ex As Exception
+                Me.FileLogger.AddMessage("Error processing file")
+                Me.FileLogger.AddMessage(ex.ToString)
+            End Try
             Me.ErrorLogger.ReportErrors(UseMessageBox:=True)
         Else
             MsgBox("This is a category header, not an individual part.  It cannot be added to an assembly", vbOKOnly, "Category header")
@@ -2838,8 +2842,12 @@ Public Class Form_Main
 
         Me.ErrorLogger = New HCErrorLogger("Storekeeper")
         Me.FileLogger = Me.ErrorLogger.AddFile("Add to assembly")
-        Process(PropertySearchFilename:=PropertySearchFilename)
-        'ReportErrors(Me.ErrorLogger)
+        Try
+            Process(PropertySearchFilename:=PropertySearchFilename)
+        Catch ex As Exception
+            Me.FileLogger.AddMessage("Error processing file")
+            Me.FileLogger.AddMessage(ex.ToString)
+        End Try
         Me.ErrorLogger.ReportErrors(UseMessageBox:=True)
     End Sub
 
@@ -2849,8 +2857,12 @@ Public Class Form_Main
 
         Me.ErrorLogger = New HCErrorLogger("Storekeeper")
         Me.FileLogger = Me.ErrorLogger.AddFile("Replace selected")
-        Process(PropertySearchFilename:=PropertySearchFilename, Replace:=True)
-        'ReportErrors(Me.ErrorLogger)
+        Try
+            Process(PropertySearchFilename:=PropertySearchFilename)
+        Catch ex As Exception
+            Me.FileLogger.AddMessage("Error processing file")
+            Me.FileLogger.AddMessage(ex.ToString)
+        End Try
         Me.ErrorLogger.ReportErrors(UseMessageBox:=True)
     End Sub
 
@@ -2860,8 +2872,12 @@ Public Class Form_Main
 
         Me.ErrorLogger = New HCErrorLogger("Storekeeper")
         Me.FileLogger = Me.ErrorLogger.AddFile("Replace all")
-        Process(PropertySearchFilename:=PropertySearchFilename, ReplaceAll:=True)
-        'ReportErrors(Me.ErrorLogger)
+        Try
+            Process(PropertySearchFilename:=PropertySearchFilename)
+        Catch ex As Exception
+            Me.FileLogger.AddMessage("Error processing file")
+            Me.FileLogger.AddMessage(ex.ToString)
+        End Try
         Me.ErrorLogger.ReportErrors(UseMessageBox:=True)
     End Sub
 
@@ -2960,7 +2976,14 @@ Public Class Form_Main
                 TreeView1.SelectedNode = Node
                 FileLogger = ErrorLogger.AddFile("Add to library")
                 Node.EnsureVisible()
-                Process()
+
+                Try
+                    Process()
+                Catch ex As Exception
+                    FileLogger.AddMessage("Error processing file")
+                    FileLogger.AddMessage(ex.ToString)
+                End Try
+
                 AddedCount += 1
             Next
 
@@ -2996,8 +3019,15 @@ Public Class Form_Main
             End If
             Me.ErrorLogger = New HCErrorLogger("Storekeeper")
             Me.FileLogger = Me.ErrorLogger.AddFile("Replace selected")
-            Process(Replace:=True)
+
             'ReportErrors(Me.ErrorLogger)
+            Try
+                Process(Replace:=True)
+            Catch ex As Exception
+                Me.FileLogger.AddMessage("Error processing file")
+                Me.FileLogger.AddMessage(ex.ToString)
+            End Try
+
             Me.ErrorLogger.ReportErrors(UseMessageBox:=True)
         Else
             MsgBox("This is a category header, not an individual part.  It cannot be added to an assembly", vbOKOnly, "Category header")
@@ -3015,8 +3045,14 @@ Public Class Form_Main
             End If
             Me.ErrorLogger = New HCErrorLogger("Storekeeper")
             Me.FileLogger = Me.ErrorLogger.AddFile("Replace all")
-            Process(Replace:=True, ReplaceAll:=True)
-            'ReportErrors(Me.ErrorLogger)
+
+            Try
+                Process(Replace:=True, ReplaceAll:=True)
+            Catch ex As Exception
+                Me.FileLogger.AddMessage("Error processing file")
+                Me.FileLogger.AddMessage(ex.ToString)
+            End Try
+
             Me.ErrorLogger.ReportErrors(UseMessageBox:=True)
         Else
             MsgBox("This is a category header, not an individual part.  It cannot be added to an assembly", vbOKOnly, "Category header")

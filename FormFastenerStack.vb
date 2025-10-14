@@ -276,13 +276,12 @@ Public Class FormFastenerStack
     End Sub
 
     Private Sub Startup()
-        'Me.ErrorLogger = New HCErrorLogger
 
         Dim UP As New UtilsPreferences
 
-        'Dim tmpFastenerFilename As String = Me.FastenerFilename
         UP.GetFormFastenerStackSettings(Me)
-        'Me.FastenerFilename = tmpFastenerFilename
+
+        If Me.TableLayoutPanel1 IsNot Nothing Then UpdateForm()
 
         If Not (Me.Units = "in" Or Me.Units = "mm") Then
             Me.Units = "in"
@@ -494,27 +493,48 @@ Public Class FormFastenerStack
         FMain.SelectedNodeFullPath = Me.TreeviewFastenerFullPath
         Dim DefaultExtension As String = IO.Path.GetExtension(FMain.GetTemplateNameFormula(ErrorLogger:=_ErrorLogger))
         Me.FastenerFilename = FMain.GetFilenameFormula(DefaultExtension:=DefaultExtension, _ErrorLogger)
-        Proceed = FMain.Process(ErrorLogger:=_ErrorLogger)
+
+        Try
+            Proceed = FMain.Process(ErrorLogger:=_ErrorLogger)
+        Catch ex As Exception
+            _ErrorLogger.AddMessage("Error processing file")
+            _ErrorLogger.AddMessage(ex.ToString)
+        End Try
 
         ' Generate the flat washer if needed
         If Proceed And ConfigString.Contains("_FW_") Then
             LabelStatus.Text = "Generating flat washer"
             FMain.SelectedNodeFullPath = Me.TreeviewFlatWasherFullPath
-            Proceed = FMain.Process(ErrorLogger:=_ErrorLogger)
+            Try
+                Proceed = FMain.Process(ErrorLogger:=_ErrorLogger)
+            Catch ex As Exception
+                _ErrorLogger.AddMessage("Error processing file")
+                _ErrorLogger.AddMessage(ex.ToString)
+            End Try
         End If
 
         ' Generate the lock washer if needed
         If Proceed And ConfigString.Contains("_LW_") Then
             LabelStatus.Text = "Generating lock washer"
             FMain.SelectedNodeFullPath = Me.TreeviewLockwasherFullPath
-            Proceed = FMain.Process(ErrorLogger:=_ErrorLogger)
+            Try
+                Proceed = FMain.Process(ErrorLogger:=_ErrorLogger)
+            Catch ex As Exception
+                _ErrorLogger.AddMessage("Error processing file")
+                _ErrorLogger.AddMessage(ex.ToString)
+            End Try
         End If
 
         ' Generate the nut if needed
         If Proceed And ConfigString.Contains("_N") Then
             LabelStatus.Text = "Generating nut"
             FMain.SelectedNodeFullPath = Me.TreeviewNutFullPath
-            Proceed = FMain.Process(ErrorLogger:=_ErrorLogger)
+            Try
+                Proceed = FMain.Process(ErrorLogger:=_ErrorLogger)
+            Catch ex As Exception
+                _ErrorLogger.AddMessage("Error processing file")
+                _ErrorLogger.AddMessage(ex.ToString)
+            End Try
         End If
 
         ' Reset to original conditions
