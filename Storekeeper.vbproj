@@ -36,7 +36,7 @@
       <Guid>3e2b3bd4-f0b9-11d1-bdfd-080036b4d502</Guid>
       <Lcid>0</Lcid>
       <Isolated>false</Isolated>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
     <COMReference Include="SolidEdgeConstants">
       <WrapperTool>tlbimp</WrapperTool>
@@ -45,7 +45,7 @@
       <Guid>c467a6f5-27ed-11d2-be30-080036b4d502</Guid>
       <Lcid>0</Lcid>
       <Isolated>false</Isolated>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
     <COMReference Include="SolidEdgeFramework">
       <WrapperTool>tlbimp</WrapperTool>
@@ -54,7 +54,7 @@
       <Guid>8a7efa3a-f000-11d1-bdfc-080036b4d502</Guid>
       <Lcid>0</Lcid>
       <Isolated>false</Isolated>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
     <COMReference Include="SolidEdgeFrameworkSupport">
       <WrapperTool>tlbimp</WrapperTool>
@@ -63,7 +63,7 @@
       <Guid>943ac5c6-f4db-11d1-be00-080036b4d502</Guid>
       <Lcid>0</Lcid>
       <Isolated>false</Isolated>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
     <COMReference Include="SolidEdgeGeometry">
       <WrapperTool>tlbimp</WrapperTool>
@@ -72,7 +72,7 @@
       <Guid>3e2b3be1-f0b9-11d1-bdfd-080036b4d502</Guid>
       <Lcid>0</Lcid>
       <Isolated>false</Isolated>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
     <COMReference Include="SolidEdgePart">
       <WrapperTool>tlbimp</WrapperTool>
@@ -81,7 +81,7 @@
       <Guid>8a7efa42-f000-11d1-bdfc-080036b4d502</Guid>
       <Lcid>0</Lcid>
       <Isolated>false</Isolated>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
     <COMReference Include="SeThumbnailLib">
       <VersionMinor>0</VersionMinor>
@@ -90,7 +90,7 @@
       <Lcid>0</Lcid>
       <WrapperTool>tlbimp</WrapperTool>
       <Isolated>false</Isolated>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
     <COMReference Include="RevisionManager">
       <WrapperTool>tlbimp</WrapperTool>
@@ -99,7 +99,7 @@
       <Guid>df778d1a-0aa4-11d1-bc6e-0800360e1e02</Guid>
       <Lcid>0</Lcid>
       <Isolated>false</Isolated>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
     <COMReference Include="SolidEdgeDraft">
       <WrapperTool>tlbimp</WrapperTool>
@@ -108,7 +108,7 @@
       <Guid>3e2b3bdc-f0b9-11d1-bdfd-080036b4d502</Guid>
       <Lcid>0</Lcid>
       <Isolated>false</Isolated>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
     <COMReference Include="SolidEdgeFileProperties">
       <WrapperTool>tlbimp</WrapperTool>

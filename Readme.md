@@ -47,6 +47,7 @@ For items like fasteners, use **Tree Search**.  Navigate to the desired item, se
 - `Add to assembly`  Adds the part to the assembly and activates the `Place part` command.
 - `Replace selected`  Replaces a selected part in the assembly.
 - `Replace all`  Replaces all occurrences of a selected part in the assembly.
+- `Scroll to selected`  Scrolls the tree to the selected part in the assembly.
 - `Fastener stack`  Opens the fastener stack dialog.  See the separate section below for details.
 
 ### Property Search
@@ -196,12 +197,12 @@ The material table is usually your normal SE material table.  However, for a qui
 	With the same situation as above, this option tells the program to leave the constraint in the failed state.  This is my preferred setting.  The pathfinder shows a red lightning bolt, alerting me that I need to fix something.
 	
   - `Do not add files in the Recently Used list`  
-	Enable this option to keep the program from adding newly-generated standard parts to the Most Recently Used list.  Note this function was added to Solid Edge in version 2020.  If you are running an earlier version, this option will have no effect.
+	Enable this option to keep the program from adding newly-generated standard parts to the Most Recently Used list.  Note this ability was added to Solid Edge in version 2020.  If you are running an earlier version, this option has no effect.
 	
   - `Include drawing of part if present`  
 	If a file in the templates directory has a drawing with the same name, the program can copy it to the library along with the part.  Enable this option to do so.
 
-  - `On top refresh time (s)`  
+  - `On top refresh time (milliseconds)`  
 	If the `Always on top` option is enabled, this setting controls the maximum time between checks.
 
   - `Check for new version at startup`  
@@ -240,7 +241,7 @@ Standard parts, especially fasteners, are frequently patterned after placement. 
 
 - It works with `Smart Patterns` and `User-Defined Patterns` (that's a hole with multiple hole circles in the profile).  It does not work with (the default) `Fast Patterns` unfortunately, unless you get lucky and pick the hole that was used to create the pattern.
 
-- It is sometimes unable to create a pattern when placing a fastener to a part located in a subasembly.  It sometimes helps to save the top-level assembly and try again.
+- It is sometimes unable to create a pattern when placing a fastener to a part located in a subasembly.  In some cases, it helps to save the top-level assembly and try again.
 
 ## FASTENER STACK
 

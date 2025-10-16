@@ -39,6 +39,10 @@ Public Class HCComObject
     End Function
 
     Public Shared Function GetCOMObjectType(ByVal comObject As Object) As Type
+
+        ' This function, and probably the others, need the Solid Edge Interop Assemblies to be embedded.
+        ' Solution Explorer > Dependencies > COM > each interop > Properties > Embed Interop Types > Yes
+
         If Marshal.IsComObject(comObject) = False Then Throw New InvalidComObjectException()
         Dim type As Type = Nothing
         Dim dispatch = TryCast(comObject, IDispatch)

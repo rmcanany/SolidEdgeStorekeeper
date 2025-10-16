@@ -309,7 +309,7 @@ Public Class FormFastenerStack
 
             Dim TemplateFilename As String = FMain.GetTemplateNameFormula(ErrorLogger:=New Logger("Form Load", Nothing))
             Dim Extension As String = IO.Path.GetExtension(TemplateFilename)
-            Me.FastenerFilename = FMain.GetFilenameFormula(DefaultExtension:=Extension, New Logger("Form Load", Nothing))
+            Me.FastenerFilename = FMain.GetFilenameFromPropsFormula(DefaultExtension:=Extension, New Logger("Form Load", Nothing))
             Dim i = 0
             'Me.FileLogger = Me.ErrorLogger.AddFile(Me.FastenerFilename)
         End If
@@ -492,7 +492,7 @@ Public Class FormFastenerStack
         LabelStatus.Text = "Generating fastener"
         FMain.SelectedNodeFullPath = Me.TreeviewFastenerFullPath
         Dim DefaultExtension As String = IO.Path.GetExtension(FMain.GetTemplateNameFormula(ErrorLogger:=_ErrorLogger))
-        Me.FastenerFilename = FMain.GetFilenameFormula(DefaultExtension:=DefaultExtension, _ErrorLogger)
+        Me.FastenerFilename = FMain.GetFilenameFromPropsFormula(DefaultExtension:=DefaultExtension, _ErrorLogger)
 
         Try
             Proceed = FMain.Process(ErrorLogger:=_ErrorLogger)
@@ -1212,7 +1212,7 @@ Public Class FormFastenerStack
                 Me.TreeviewFlatWasherFullPath = FlatWasherFullPath
                 FMain.SelectedNodeFullPath = FlatWasherFullPath
                 Dim DefaultExtension As String = IO.Path.GetExtension(FMain.GetTemplateNameFormula(ErrorLogger:=Me.FileLogger))
-                Me.FlatWasherFilename = FMain.GetFilenameFormula(DefaultExtension:=DefaultExtension, Me.FileLogger)
+                Me.FlatWasherFilename = FMain.GetFilenameFromPropsFormula(DefaultExtension:=DefaultExtension, Me.FileLogger)
                 Exit For
             End If
 
@@ -1281,7 +1281,7 @@ Public Class FormFastenerStack
                 Me.TreeviewLockwasherFullPath = LockWasherFullPath
                 FMain.SelectedNodeFullPath = LockWasherFullPath
                 Dim DefaultExtension As String = IO.Path.GetExtension(FMain.GetTemplateNameFormula(ErrorLogger:=Me.FileLogger))
-                LockwasherFilename = FMain.GetFilenameFormula(DefaultExtension:=DefaultExtension, Me.FileLogger)
+                LockwasherFilename = FMain.GetFilenameFromPropsFormula(DefaultExtension:=DefaultExtension, Me.FileLogger)
                 Exit For
             End If
 
@@ -1341,7 +1341,7 @@ Public Class FormFastenerStack
                 Me.TreeviewNutFullPath = NutFullPath
                 FMain.SelectedNodeFullPath = NutFullPath
                 Dim DefaultExtension As String = IO.Path.GetExtension(FMain.GetTemplateNameFormula(ErrorLogger:=Me.FileLogger))
-                NutFilename = FMain.GetFilenameFormula(DefaultExtension:=DefaultExtension, Me.FileLogger)
+                NutFilename = FMain.GetFilenameFromPropsFormula(DefaultExtension:=DefaultExtension, Me.FileLogger)
                 Exit For
             End If
 

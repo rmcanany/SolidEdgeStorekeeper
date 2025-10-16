@@ -44,9 +44,12 @@ Partial Class Form_Main
         LabelMaterials = New ToolStripLabel()
         TreeView1 = New TreeView()
         ContextMenuStrip1 = New ContextMenuStrip(components)
-        ToolStripMenuItem1 = New ToolStripMenuItem()
+        AddToAssemblyMenuItem = New ToolStripMenuItem()
+        ToolStripSeparator4 = New ToolStripSeparator()
         ReplaceSelectedToolStripMenuItem = New ToolStripMenuItem()
         ReplaceAllToolStripMenuItem = New ToolStripMenuItem()
+        ScrollToSelectedMenuItem = New ToolStripMenuItem()
+        ToolStripSeparator5 = New ToolStripSeparator()
         FastenerStackToolStripMenuItem = New ToolStripMenuItem()
         DataGridViewDataInspector = New DataGridView()
         Column1 = New DataGridViewTextBoxColumn()
@@ -70,14 +73,16 @@ Partial Class Form_Main
         AddToAssemblyToolStripMenuItem = New ToolStripMenuItem()
         ReplaceSelectedToolStripMenuItem1 = New ToolStripMenuItem()
         ReplaceAllToolStripMenuItem1 = New ToolStripMenuItem()
+        OpenToolStripMenuItem = New ToolStripMenuItem()
+        OpenFolderToolStripMenuItem = New ToolStripMenuItem()
         TabPageInspectData = New TabPage()
         ImageList1 = New ImageList(components)
         TableLayoutPanel1 = New TableLayoutPanel()
         TableLayoutPanel3 = New TableLayoutPanel()
         ButtonHelp = New Button()
         TextBoxStatus = New TextBox()
-        OpenToolStripMenuItem = New ToolStripMenuItem()
-        OpenFolderToolStripMenuItem = New ToolStripMenuItem()
+        ToolStripSeparator6 = New ToolStripSeparator()
+        ToolStripSeparator7 = New ToolStripSeparator()
         ToolStrip1.SuspendLayout()
         ContextMenuStrip1.SuspendLayout()
         CType(DataGridViewDataInspector, ComponentModel.ISupportInitialize).BeginInit()
@@ -213,32 +218,48 @@ Partial Class Form_Main
         ' 
         ' ContextMenuStrip1
         ' 
-        ContextMenuStrip1.Items.AddRange(New ToolStripItem() {ToolStripMenuItem1, ReplaceSelectedToolStripMenuItem, ReplaceAllToolStripMenuItem, FastenerStackToolStripMenuItem})
+        ContextMenuStrip1.Items.AddRange(New ToolStripItem() {AddToAssemblyMenuItem, ToolStripSeparator4, ReplaceSelectedToolStripMenuItem, ReplaceAllToolStripMenuItem, ScrollToSelectedMenuItem, ToolStripSeparator5, FastenerStackToolStripMenuItem})
         ContextMenuStrip1.Name = "ContextMenuStrip1"
-        ContextMenuStrip1.Size = New Size(163, 92)
+        ContextMenuStrip1.Size = New Size(164, 126)
         ' 
-        ' ToolStripMenuItem1
+        ' AddToAssemblyMenuItem
         ' 
-        ToolStripMenuItem1.Name = "ToolStripMenuItem1"
-        ToolStripMenuItem1.Size = New Size(162, 22)
-        ToolStripMenuItem1.Text = "Add to assembly"
+        AddToAssemblyMenuItem.Name = "AddToAssemblyMenuItem"
+        AddToAssemblyMenuItem.Size = New Size(163, 22)
+        AddToAssemblyMenuItem.Text = "Add to assembly"
+        ' 
+        ' ToolStripSeparator4
+        ' 
+        ToolStripSeparator4.Name = "ToolStripSeparator4"
+        ToolStripSeparator4.Size = New Size(160, 6)
         ' 
         ' ReplaceSelectedToolStripMenuItem
         ' 
         ReplaceSelectedToolStripMenuItem.Name = "ReplaceSelectedToolStripMenuItem"
-        ReplaceSelectedToolStripMenuItem.Size = New Size(162, 22)
+        ReplaceSelectedToolStripMenuItem.Size = New Size(163, 22)
         ReplaceSelectedToolStripMenuItem.Text = "Replace selected"
         ' 
         ' ReplaceAllToolStripMenuItem
         ' 
         ReplaceAllToolStripMenuItem.Name = "ReplaceAllToolStripMenuItem"
-        ReplaceAllToolStripMenuItem.Size = New Size(162, 22)
+        ReplaceAllToolStripMenuItem.Size = New Size(163, 22)
         ReplaceAllToolStripMenuItem.Text = "Replace all"
+        ' 
+        ' ScrollToSelectedMenuItem
+        ' 
+        ScrollToSelectedMenuItem.Name = "ScrollToSelectedMenuItem"
+        ScrollToSelectedMenuItem.Size = New Size(163, 22)
+        ScrollToSelectedMenuItem.Text = "Scroll to selected"
+        ' 
+        ' ToolStripSeparator5
+        ' 
+        ToolStripSeparator5.Name = "ToolStripSeparator5"
+        ToolStripSeparator5.Size = New Size(160, 6)
         ' 
         ' FastenerStackToolStripMenuItem
         ' 
         FastenerStackToolStripMenuItem.Name = "FastenerStackToolStripMenuItem"
-        FastenerStackToolStripMenuItem.Size = New Size(162, 22)
+        FastenerStackToolStripMenuItem.Size = New Size(163, 22)
         FastenerStackToolStripMenuItem.Text = "Fastener stack"
         ' 
         ' DataGridViewDataInspector
@@ -436,27 +457,39 @@ Partial Class Form_Main
         ' 
         ' ContextMenuStrip2
         ' 
-        ContextMenuStrip2.Items.AddRange(New ToolStripItem() {AddToAssemblyToolStripMenuItem, ReplaceSelectedToolStripMenuItem1, ReplaceAllToolStripMenuItem1, OpenToolStripMenuItem, OpenFolderToolStripMenuItem})
+        ContextMenuStrip2.Items.AddRange(New ToolStripItem() {AddToAssemblyToolStripMenuItem, ToolStripSeparator6, ReplaceSelectedToolStripMenuItem1, ReplaceAllToolStripMenuItem1, ToolStripSeparator7, OpenToolStripMenuItem, OpenFolderToolStripMenuItem})
         ContextMenuStrip2.Name = "ContextMenuStrip2"
-        ContextMenuStrip2.Size = New Size(181, 136)
+        ContextMenuStrip2.Size = New Size(163, 126)
         ' 
         ' AddToAssemblyToolStripMenuItem
         ' 
         AddToAssemblyToolStripMenuItem.Name = "AddToAssemblyToolStripMenuItem"
-        AddToAssemblyToolStripMenuItem.Size = New Size(180, 22)
+        AddToAssemblyToolStripMenuItem.Size = New Size(162, 22)
         AddToAssemblyToolStripMenuItem.Text = "Add to assembly"
         ' 
         ' ReplaceSelectedToolStripMenuItem1
         ' 
         ReplaceSelectedToolStripMenuItem1.Name = "ReplaceSelectedToolStripMenuItem1"
-        ReplaceSelectedToolStripMenuItem1.Size = New Size(180, 22)
+        ReplaceSelectedToolStripMenuItem1.Size = New Size(162, 22)
         ReplaceSelectedToolStripMenuItem1.Text = "Replace selected"
         ' 
         ' ReplaceAllToolStripMenuItem1
         ' 
         ReplaceAllToolStripMenuItem1.Name = "ReplaceAllToolStripMenuItem1"
-        ReplaceAllToolStripMenuItem1.Size = New Size(180, 22)
+        ReplaceAllToolStripMenuItem1.Size = New Size(162, 22)
         ReplaceAllToolStripMenuItem1.Text = "Replace all"
+        ' 
+        ' OpenToolStripMenuItem
+        ' 
+        OpenToolStripMenuItem.Name = "OpenToolStripMenuItem"
+        OpenToolStripMenuItem.Size = New Size(162, 22)
+        OpenToolStripMenuItem.Text = "Open"
+        ' 
+        ' OpenFolderToolStripMenuItem
+        ' 
+        OpenFolderToolStripMenuItem.Name = "OpenFolderToolStripMenuItem"
+        OpenFolderToolStripMenuItem.Size = New Size(162, 22)
+        OpenFolderToolStripMenuItem.Text = "Open folder"
         ' 
         ' TabPageInspectData
         ' 
@@ -535,17 +568,15 @@ Partial Class Form_Main
         TextBoxStatus.TabIndex = 3
         TextBoxStatus.Text = "Status"
         ' 
-        ' OpenToolStripMenuItem
+        ' ToolStripSeparator6
         ' 
-        OpenToolStripMenuItem.Name = "OpenToolStripMenuItem"
-        OpenToolStripMenuItem.Size = New Size(180, 22)
-        OpenToolStripMenuItem.Text = "Open"
+        ToolStripSeparator6.Name = "ToolStripSeparator6"
+        ToolStripSeparator6.Size = New Size(159, 6)
         ' 
-        ' OpenFolderToolStripMenuItem
+        ' ToolStripSeparator7
         ' 
-        OpenFolderToolStripMenuItem.Name = "OpenFolderToolStripMenuItem"
-        OpenFolderToolStripMenuItem.Size = New Size(180, 22)
-        OpenFolderToolStripMenuItem.Text = "Open folder"
+        ToolStripSeparator7.Name = "ToolStripSeparator7"
+        ToolStripSeparator7.Size = New Size(159, 6)
         ' 
         ' Form_Main
         ' 
@@ -593,7 +624,7 @@ Partial Class Form_Main
     Friend WithEvents TableLayoutPanel4 As TableLayoutPanel
     Friend WithEvents ButtonHelp As Button
     Friend WithEvents ContextMenuStrip1 As ContextMenuStrip
-    Friend WithEvents ToolStripMenuItem1 As ToolStripMenuItem
+    Friend WithEvents AddToAssemblyMenuItem As ToolStripMenuItem
     Friend WithEvents Column1 As DataGridViewTextBoxColumn
     Friend WithEvents Column2 As DataGridViewTextBoxColumn
     Friend WithEvents Column3 As DataGridViewTextBoxColumn
@@ -626,5 +657,10 @@ Partial Class Form_Main
     Friend WithEvents ToolStripSeparator3 As ToolStripSeparator
     Friend WithEvents OpenToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents OpenFolderToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator4 As ToolStripSeparator
+    Friend WithEvents ScrollToSelectedMenuItem As ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator5 As ToolStripSeparator
+    Friend WithEvents ToolStripSeparator6 As ToolStripSeparator
+    Friend WithEvents ToolStripSeparator7 As ToolStripSeparator
 
 End Class

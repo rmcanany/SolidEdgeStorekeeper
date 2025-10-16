@@ -10,8 +10,9 @@ Public Class Form_Main
     Private Property Version As String = "2025.4"
 
     'Private Property PreviewVersion As String = ""  ' Empty string if not a preview
-    Private Property PreviewVersion As String = "Preview 11"
+    Private Property PreviewVersion As String = "Preview 12"
 
+    Private Property SearchingTVFilename As Boolean = False
 
     Private _SelectedNodeFullPath As String
     Public Property SelectedNodeFullPath As String
@@ -214,15 +215,17 @@ Public Class Form_Main
         Set(value As List(Of String))
             _MaterialsList = value
             If Me.ComboBoxMaterials IsNot Nothing Then
-                ComboBoxMaterials.Items.Clear()
-                ComboBoxMaterials.Items.Add("")
-                For Each s As String In _MaterialsList
-                    ComboBoxMaterials.Items.Add(s)
-                Next
-                If _MaterialsList.Contains(Me.ActiveMaterial) Then
-                    ComboBoxMaterials.Text = Me.ActiveMaterial
-                Else
-                    Me.ActiveMaterial = ""  ' Should take care of the combobox automatically
+                If Not Me.SearchingTVFilename Then
+                    ComboBoxMaterials.Items.Clear()
+                    ComboBoxMaterials.Items.Add("")
+                    For Each s As String In _MaterialsList
+                        ComboBoxMaterials.Items.Add(s)
+                    Next
+                    If _MaterialsList.Contains(Me.ActiveMaterial) Then
+                        ComboBoxMaterials.Text = Me.ActiveMaterial
+                    Else
+                        Me.ActiveMaterial = ""  ' Should take care of the combobox automatically
+                    End If
                 End If
             End If
         End Set
@@ -236,7 +239,9 @@ Public Class Form_Main
         Set(value As String)
             _ActiveMaterial = value
             If Me.ComboBoxMaterials IsNot Nothing Then
-                If Not ComboBoxMaterials.Text = _ActiveMaterial Then ComboBoxMaterials.Text = _ActiveMaterial
+                If Not SearchingTVFilename Then
+                    If Not ComboBoxMaterials.Text = _ActiveMaterial Then ComboBoxMaterials.Text = _ActiveMaterial
+                End If
             End If
         End Set
     End Property
@@ -539,7 +544,7 @@ Public Class Form_Main
         If PropertySearchFilename Is Nothing Then
             TextBoxStatus.Text = "Getting filename"
             Dim SubLogger As Logger = ErrorLogger.AddLogger("Get filename")
-            Filename = GetFilenameFormula(DefaultExtension:=IO.Path.GetExtension(GetTemplateNameFormula()), SubLogger)
+            Filename = GetFilenameFromPropsFormula(DefaultExtension:=IO.Path.GetExtension(GetTemplateNameFormula()), SubLogger)
             If Filename Is Nothing Then
                 TextBoxStatus.Text = ""
                 Proceed = False
@@ -1060,7 +1065,7 @@ Public Class Form_Main
     End Function
 
 
-    Public Function GetFilenameFormula(
+    Public Function GetFilenameFromPropsFormula(
          DefaultExtension As String,
          ErrorLogger As Logger
          ) As String
@@ -1644,7 +1649,7 @@ Public Class Form_Main
                             Dim tmpValue As String = tmpNode.InnerText
                             Dim Prop As New Prop(tmpName, tmpType, tmpValue)
                             Props.Items.Add(Prop)
-                            If tmpType = "TemplateFormula" Then
+                            If tmpType = "TemplateFormula" And Not SearchingTVFilename Then
                                 UpdateThumbnail(tmpValue)
                                 TemplateFound = True
                             End If
@@ -1654,17 +1659,20 @@ Public Class Form_Main
             Next
         Next
 
-        If Not TemplateFound Then UpdateThumbnail("")
+        If Not TemplateFound And Not SearchingTVFilename Then UpdateThumbnail("")
 
-        DataGridViewDataInspector.Rows.Clear()
+        If Not SearchingTVFilename Then
+            DataGridViewDataInspector.Rows.Clear()
 
-        For i = 0 To Props.Items.Count - 1
-            Dim Prop = Props.Items(i)
-            DataGridViewDataInspector.Rows.Add(New DataGridViewRow)
-            DataGridViewDataInspector.Rows(i).Cells(0).Value = Prop.Name
-            DataGridViewDataInspector.Rows(i).Cells(1).Value = Prop.Type
-            DataGridViewDataInspector.Rows(i).Cells(2).Value = Prop.Value
-        Next
+            For i = 0 To Props.Items.Count - 1
+                Dim Prop = Props.Items(i)
+                DataGridViewDataInspector.Rows.Add(New DataGridViewRow)
+                DataGridViewDataInspector.Rows(i).Cells(0).Value = Prop.Name
+                DataGridViewDataInspector.Rows(i).Cells(1).Value = Prop.Type
+                DataGridViewDataInspector.Rows(i).Cells(2).Value = Prop.Value
+            Next
+
+        End If
 
     End Sub
 
@@ -1714,12 +1722,10 @@ Public Class Form_Main
 
         NodeCount = 0
 
-        'Dim xmlnode As Xml.XmlNode = XmlDoc.ChildNodes(0)
-        Dim xmlnode As Xml.XmlNode = XmlDoc.ChildNodes(1)
+        'Dim xmlnode As Xml.XmlNode = XmlDoc.ChildNodes(0) ' Not sure what this is.
+        Dim xmlnode As Xml.XmlNode = XmlDoc.ChildNodes(1)  ' This is the root of the xml tree.
         TreeView1.Nodes.Clear()
 
-        'TreeView1.Nodes.Add(New TreeNode(XmlDoc.DocumentElement.Name))
-        'TreeView1.Nodes.Add(New TreeNode(XmlDoc.DocumentElement.Name.Replace(Me.XmlCommaIndicator, ",")))
         TreeView1.Nodes.Add(New TreeNode(StringFromXml(XmlDoc.DocumentElement.Name)))
 
         Dim tNode As TreeNode = TreeView1.Nodes(0)
@@ -1799,14 +1805,6 @@ Public Class Form_Main
 
         Return Tooltip
     End Function
-
-    'Public Function SpaceToUnderscore(InString As String) As String
-    '    Return InString.Replace(" ", "_")
-    'End Function
-
-    'Public Function UnderscoreToSpace(InString As String) As String
-    '    Return InString.Replace("_", " ")
-    'End Function
 
     Private Sub ExpandTreeview(FullPath As String)
 
@@ -2472,16 +2470,11 @@ Public Class Form_Main
             Dim ChildNodes = CurrentNode.ChildNodes
             For Each tmpNode As Xml.XmlNode In ChildNodes
 
-                'If tmpNode.Name = NextNodeName.Replace(",", Me.XmlCommaIndicator) Then
-                '    CurrentNode = tmpNode
-                '    Continue For
-                'End If
                 If tmpNode.Name = StringToXml(NextNodeName) Then
                     CurrentNode = tmpNode
                     'Continue For
                     Exit For
                 End If
-
             Next
         Next
 
@@ -2509,21 +2502,57 @@ Public Class Form_Main
         Return FullPath
     End Function
 
-    ' ###### ERROR REPORTING ######
+    Public Function SearchTVFilename(Filename As String, _ErrorLogger As Logger) As TreeNode
+        Dim TVOutNode As TreeNode = Nothing
 
-    'Public Sub ReportErrors(tmpErrorLogger As HCErrorLogger)
-    '    If tmpErrorLogger.HasErrors Then
-    '        tmpErrorLogger.Save()
-    '        Try
-    '            ' Try to use the default application to open the file.
-    '            Diagnostics.Process.Start(tmpErrorLogger.LogfileName)
-    '        Catch ex As Exception
-    '            ' If none, open with notepad.exe
-    '            Diagnostics.Process.Start("notepad.exe", tmpErrorLogger.LogfileName)
-    '        End Try
-    '    End If
+        Dim TVCurrentNode As TreeNode = TreeView1.Nodes(0)
 
-    'End Sub
+        TreeView1.BeginUpdate()
+        DataGridViewDataInspector.Visible = False
+        'ComboBoxMaterials.Visible = False
+        Me.SearchingTVFilename = True
+
+        DoSearchTVFilename(TVCurrentNode, Filename, TVOutNode, _ErrorLogger)
+
+        TreeView1.EndUpdate()
+        DataGridViewDataInspector.Visible = True
+        'ComboBoxMaterials.Visible = True
+        Me.SearchingTVFilename = False
+
+        Return TVOutNode
+    End Function
+
+    Private Sub DoSearchTVFilename(TVInNode As TreeNode, Filename As String, ByRef TVOutNode As TreeNode, _ErrorLogger As Logger)
+
+        If TVInNode.Nodes.Count > 0 Then
+            For Each ChildNode As TreeNode In TVInNode.Nodes
+                If TVOutNode IsNot Nothing Then
+                    Exit For
+                End If
+                DoSearchTVFilename(ChildNode, Filename, TVOutNode, _ErrorLogger)
+            Next
+        Else
+            Me.SelectedNodeFullPath = TVInNode.FullPath
+            Dim tmpFilename = GetFilenameFromPropsFormula(IO.Path.GetExtension(Filename), _ErrorLogger)
+            tmpFilename = IO.Path.GetFileName(tmpFilename)
+            TextBoxStatus.Text = tmpFilename
+            System.Windows.Forms.Application.DoEvents()
+
+            If tmpFilename IsNot Nothing Then
+                If Me.MaterialsList IsNot Nothing Then
+                    For Each Material As String In Me.MaterialsList
+                        Filename = Filename.Replace(Material, "")
+                        tmpFilename = tmpFilename.Replace(Material, "")
+                    Next
+                End If
+                If tmpFilename = Filename Then
+                    TVOutNode = TVInNode
+                End If
+
+            End If
+        End If
+    End Sub
+
 
 
     ' ###### EVENT HANDLERS ######
@@ -2539,10 +2568,14 @@ Public Class Form_Main
 
         TreeView1.SelectedNode = e.Node
 
-        If e.Node.Nodes.Count = 0 Then
-            If e.Button = MouseButtons.Right Then
-                ContextMenuStrip1.Show(TreeView1.PointToScreen(e.Location))
-            End If
+        'If e.Node.Nodes.Count = 0 Then
+        '    If e.Button = MouseButtons.Right Then
+        '        ContextMenuStrip1.Show(TreeView1.PointToScreen(e.Location))
+        '    End If
+        'End If
+
+        If e.Button = MouseButtons.Right Then
+            ContextMenuStrip1.Show(TreeView1.PointToScreen(e.Location))
         End If
 
     End Sub
@@ -2577,7 +2610,7 @@ Public Class Form_Main
         End
     End Sub
 
-    Private Sub ToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem1.Click
+    Private Sub AddToAssemblyMenuItem_Click(sender As Object, e As EventArgs) Handles AddToAssemblyMenuItem.Click
         Dim Node = TreeView1.SelectedNode
         If Node.Nodes.Count = 0 Then
             Me.ErrorLogger = New HCErrorLogger("Storekeeper")
@@ -3030,7 +3063,7 @@ Public Class Form_Main
 
             Me.ErrorLogger.ReportErrors(UseMessageBox:=True)
         Else
-            MsgBox("This is a category header, not an individual part.  It cannot be added to an assembly", vbOKOnly, "Category header")
+            MsgBox("This is a category header, not an individual part.  It cannot replace a part.", vbOKOnly, "Category header")
         End If
 
     End Sub
@@ -3055,31 +3088,114 @@ Public Class Form_Main
 
             Me.ErrorLogger.ReportErrors(UseMessageBox:=True)
         Else
-            MsgBox("This is a category header, not an individual part.  It cannot be added to an assembly", vbOKOnly, "Category header")
+            MsgBox("This is a category header, not an individual part.  It cannot replace a part", vbOKOnly, "Category header")
         End If
+
+    End Sub
+
+    Private Sub ScrollToSelectedMenuItem_Click(sender As Object, e As EventArgs) Handles ScrollToSelectedMenuItem.Click
+
+        Dim PreviousSelectedNodeFullPath As String = Me.SelectedNodeFullPath
+        Dim Proceed As Boolean = True
+
+        Me.ErrorLogger = New HCErrorLogger("Storekeeper")
+        Me.FileLogger = Me.ErrorLogger.AddFile("Scroll to selected")
+
+        If SEApp.ActiveSelectSet.Count = 0 Then
+            Me.FileLogger.AddMessage("No parts selected in Solid Edge")
+        Else
+            Dim Occurrence As SolidEdgeAssembly.Occurrence = Nothing
+            Dim Filename As String = ""
+
+            Dim Item As Object = SEApp.ActiveSelectSet.Item(1)
+            Dim ComType As Type = HCComObject.GetCOMObjectType(Item)
+
+            Try
+                If ComType IsNot Nothing Then
+                    Select Case ComType.FullName.ToLower
+                        Case "solidedgeassembly.occurrence"
+                            Occurrence = CType(Item, SolidEdgeAssembly.Occurrence)
+                        Case "solidedgeframework.reference"
+                            Dim tmpReference As SolidEdgeFramework.Reference = CType(Item, SolidEdgeFramework.Reference)
+                            Occurrence = CType(tmpReference.Object, SolidEdgeAssembly.Occurrence)
+                        Case Else
+                            Proceed = False
+                            FileLogger.AddMessage($"Unable to process selected item of type '{ComType.FullName}'")
+                    End Select
+                Else
+                    Proceed = False
+                    FileLogger.AddMessage($"Unable to process selected item")
+                End If
+            Catch ex As Exception
+                Proceed = False
+                FileLogger.AddMessage($"Unable to process selected item")
+            End Try
+
+            If Proceed Then
+                Filename = Occurrence.Name.Split(":")(0)  ' Part1.par:1 -> Part1.par
+
+                Dim Node As TreeNode
+                Node = SearchTVFilename(Filename, FileLogger)
+                If Node IsNot Nothing Then
+                    Me.SelectedNodeFullPath = Node.FullPath
+                    Node.EnsureVisible()
+
+                    Dim PreviousBackColor = Node.BackColor
+                    TextBoxStatus.Text = Filename
+
+                    For i = 0 To 5
+                        If Node.BackColor = PreviousBackColor Then
+                            Node.BackColor = Color.LightBlue
+                        Else
+                            Node.BackColor = PreviousBackColor
+                        End If
+                        System.Windows.Forms.Application.DoEvents()
+                        System.Threading.Thread.Sleep(200)
+                    Next
+                    Node.BackColor = PreviousBackColor
+                    System.Windows.Forms.Application.DoEvents()
+
+                Else
+                    Me.SelectedNodeFullPath = PreviousSelectedNodeFullPath
+                    FileLogger.AddMessage($"Filename not found '{Filename}'")
+                    TextBoxStatus.Text = ""
+                End If
+            End If
+
+
+
+        End If
+
+        Me.ErrorLogger.ReportErrors(UseMessageBox:=True)
 
     End Sub
 
     Private Sub FastenerStackToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles FastenerStackToolStripMenuItem.Click
 
-        If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
-        Me.TopMost = False
-
         Dim Node = TreeView1.SelectedNode
+        If Node.Nodes.Count = 0 Then
+            If Me.AlwaysOnTopTimer IsNot Nothing Then Me.AlwaysOnTopTimer.Stop()
+            Me.TopMost = False
 
-        Dim tmpErrorLogger As New HCErrorLogger("Storekeeper")
-        Dim FastenerStackLogger = tmpErrorLogger.AddFile("Fastener stack")
-        Dim Proceed As Boolean = CheckStartConditions(Nothing, FastenerStackLogger) ' Handles multiple material choices
+            'Dim Node = TreeView1.SelectedNode
 
-        If tmpErrorLogger.HasErrors Then
-            'ReportErrors(tmpErrorLogger)
-            tmpErrorLogger.ReportErrors(UseMessageBox:=True)
+            Dim tmpErrorLogger As New HCErrorLogger("Storekeeper")
+            Dim FastenerStackLogger = tmpErrorLogger.AddFile("Fastener stack")
+            Dim Proceed As Boolean = CheckStartConditions(Nothing, FastenerStackLogger) ' Handles multiple material choices
+
+            If tmpErrorLogger.HasErrors Then
+                'ReportErrors(tmpErrorLogger)
+                tmpErrorLogger.ReportErrors(UseMessageBox:=True)
+            Else
+                Dim FFS As New FormFastenerStack(Me)
+                FFS.ShowDialog()
+            End If
+
+            If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
         Else
-            Dim FFS As New FormFastenerStack(Me)
-            FFS.ShowDialog()
-        End If
+            MsgBox("This is a category header, not an individual part.  It cannot be used in a fastener stack", vbOKOnly, "Category header")
 
-        If Me.AlwaysOnTopTimer IsNot Nothing And Me.AlwaysOnTop Then Me.AlwaysOnTopTimer.Start()
+        End If
 
     End Sub
 
