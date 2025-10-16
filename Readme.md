@@ -251,6 +251,8 @@ A fastener stack is a grouping that consists of a fastener and related component
   <img src="media/fastener_stack.png">
 </p>
 
+### Configuration and Use
+
 To select the stack style, click the `Configuration` button.  There are eight versions that employ nuts, and four each for thru and blind tapped holes.  Note, you only choose the fastener.  The related components are automatically selected based on the fastener diameter and thread.
 
 <p align="center">
@@ -261,14 +263,37 @@ Once the desired configuration is selected, choose the units and enter the appro
 
 The program first searches the library for a fastener length that meets the criteria.  If none is found, an error is diplayed.
 
-If a fastener is found, the program then opens separate temporary subassemblies for the top and bottom parts of the stack, and populates them with the components you chose.
+If a fastener is found, the program then opens separate temporary subassemblies for the top and bottom parts of the stack, and populates them with the components required for the chosen stack style.
 
 Next, it adds each updated subassembly, in turn, to the main assembly.  The subassembly is dispersed into the main assembly and the `Place part` command is activated.
 
-The program waits for the `Place part` command to finish before proceeding.  Confusingly, the command does not automatically finish when the parts have been fully constrained.  You have to either right-click the mouse or press the `Escape` key.  If you notice nothing happening for a while, the program could be waiting for your input.
+The program waits for the `Place part` command to finish before proceeding.  Confusingly, the command does not automatically finish when the parts have been fully constrained.  You have to right-click the mouse to finish.  If you notice nothing happening for a while, the program could be waiting for your input.
 
 After the components are placed, they are converted to an `Assembly group`.  Finally, the group is patterned if applicable, assuming that option is enabled.
 
+### Getting Parameters
+
+The parameters `Minimum thread engagement` and `Minimum extension` are design decisions and left up to you.  `Clamped thickness` and `Thread depth` are parameters of the model.  Adding an easy way to get those is on the roadmap, but not currently implemented.
+
+Today, for `Clamped thickness`, the quickest way may be to use the Solid Edge `Measure` command.  It is on the Inspect Tab > 3D Measure Group.
+
+<p align="center">
+  <img src="media/measure_clamped_thickness.png">
+</p>
+
+To get `Thread depth` on blind holes, one way is to change selection priority from `Part` to `Face` with `CTRL+SpaceBar`, then select the threaded hole.  On the shortcut menu, select `Edit Definition` and check the setting on the Options page of the Hole dialog that appears.
+
+<p align="center">
+  <img src="media/measure_thread_depth.png">
+</p>
+
+### Changing the Related Components
+
+In Storekeeper's `Preferences` directory, there are three files for each of the supplied datasets, `FlatWasher.json`,`LockWasher.json`, and `Nut.json`.  You can edit those in Notepad to point to the desired node in the `*.xml` tree.
+
+Doing it like that is not user friendly in the least.  And wait until you see the traversal syntax.  It might be easier to go with the defaults, then use `Replace selected` to fix things up after the fact.  
+
+Some care was taken in the creation of the templates to avoid breaking constraints when replacing parts.  Hopefully it won't create extra work if you decide to give it a try.
 
 ## PRE-POPULATING THE LIBRARY
 
