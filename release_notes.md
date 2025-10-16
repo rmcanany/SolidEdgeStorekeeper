@@ -72,7 +72,7 @@ Added the option to have multiple materials available in a single category.  Thi
 
 Select the material from the drop down list.  If an item only has one material defined, it is selected automatically.  If you go to a different item in the tree and its material list contains the currently active material, the selection is retained.  If you attempt to process an item and no material has been selected, the program reports an error.
 
-See the [<ins>**Creating New Templates**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#tree-search) section of the Readme for details.
+See the [<ins>**Tree Search Toolbar**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#tree-search-toolbar) section of the Readme for details.
 
 ### Property Cache
 

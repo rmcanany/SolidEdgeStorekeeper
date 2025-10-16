@@ -127,12 +127,17 @@ Most options are set on the **Tree Search Options** page (see next), but those m
 </p>
 
 - `Collapse`  Click ![Collapse](media/collapse.png) to close all open nodes on the tree.
+
 - `Save in`  Select where the file will be saved after it is created.
   - `Library`  The standard location for library parts.
   - `Assy Dir`  The same location as the assembly file currently open in Solid Edge.
   - `Other`  Anyplace else.
+
 - `Always on top`  Determines if the Storekeeper window remains on top of other windows.  Click ![Always on top](media/always_on_top_enabled.png) to toggle.
+
 - `Auto pattern`  Determines if the automatic patterning of newly placed parts will be performed.  Click ![Auto pattern](media/auto_pattern_enabled.png) to toggle.  See separate section below for details.
+
+- `Matl`  The drop down contains all materials available for a chosen part.  If an item only has one material defined, it is selected automatically.  If you go to a different item in the tree and its material list contains the currently active material, the selection is retained.  
 
 - `Tree search options`  Click ![Options](media/Support_16.png) to open (see next).
 
