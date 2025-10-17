@@ -78,6 +78,8 @@ See the [<ins>**Tree Search Toolbar**</ins>](https://github.com/rmcanany/SolidEd
 
 Added an option to store property values of files in the library.  Set it on the `Property Search` options dialog.  It is meant to speed up property searches for large libraries.  Previously all files were searched every time.
 
+See the [<ins>**Property Search Options**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#property-search-options) section of the Readme for details.
+
 ### Other
 
 - Added the ability to set standard parts name and location interactively (Thank you **@TeeVar!**).  On the toolbar, set the `Save in` option to `Assy Dir` or `Other` to enable it.  Previously that option was set in the spreadsheet.
