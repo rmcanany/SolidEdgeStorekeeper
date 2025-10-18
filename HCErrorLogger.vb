@@ -62,6 +62,10 @@ Public Class HCErrorLogger
     Public Sub ReportErrors(UseMessageBox As Boolean)
         If Me.HasErrors Then
             Save()
+            Dim Outlist As List(Of String) = FormatReport()
+
+            If Outlist.Count > 25 Then UseMessageBox = False
+
             If Not UseMessageBox Then
                 Try
                     ' Try to use the default application to open the file.
@@ -71,17 +75,15 @@ Public Class HCErrorLogger
                     Process.Start("notepad.exe", Me.LogfileName)
                 End Try
             Else
-                Dim Outlist As List(Of String) = FormatReport()
-
                 Dim Outstring As String = ""
                 For Each s As String In Outlist
                     'Outstring = String.Format("{0}{1}{2}", Outstring, s, vbCrLf)
                     Outstring = $"{Outstring}{s}{vbCrLf}"
                 Next
 
-                Outstring = $"{Outstring}{vbCrLf}This message saved to {IO.Path.GetFileName(Me.LogfileName)}{vbCrLf}"
-                Outstring = $"{Outstring}in {IO.Path.GetDirectoryName(Me.LogfileName)}"
-                MsgBox(Outstring, vbOKOnly, IO.Path.GetFileName(Me.LogfileName))
+                'Outstring = $"{Outstring}{vbCrLf}This message saved to {IO.Path.GetFileName(Me.LogfileName)}{vbCrLf}"
+                'Outstring = $"{Outstring}in {IO.Path.GetDirectoryName(Me.LogfileName)}"
+                MsgBox(Outstring, vbOKOnly, "Error Logger")
 
             End If
 

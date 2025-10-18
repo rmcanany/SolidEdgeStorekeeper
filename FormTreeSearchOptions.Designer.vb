@@ -44,11 +44,13 @@ Partial Class FormTreeSearchOptions
         CheckBoxIncludeDrawing = New CheckBox()
         LabelAlwaysOnTopRefreshTime = New Label()
         TextBoxAlwaysOnTopRefreshTime = New TextBox()
-        CheckBoxCheckNewVersion = New CheckBox()
         ButtonDataDirectory = New Button()
         LabelDataDirectory = New Label()
         ButtonTemplateDirectory = New Button()
         LabelTemplateDirectory = New Label()
+        CheckBoxCheckNewVersion = New CheckBox()
+        TextBoxPartPlacementTimeout = New TextBox()
+        LabelPartPlacementTimeout = New Label()
         ToolTip1 = New ToolTip(components)
         TableLayoutPanel1.SuspendLayout()
         TableLayoutPanel2.SuspendLayout()
@@ -76,11 +78,13 @@ Partial Class FormTreeSearchOptions
         TableLayoutPanel1.Controls.Add(CheckBoxIncludeDrawing, 0, 12)
         TableLayoutPanel1.Controls.Add(LabelAlwaysOnTopRefreshTime, 1, 13)
         TableLayoutPanel1.Controls.Add(TextBoxAlwaysOnTopRefreshTime, 0, 13)
-        TableLayoutPanel1.Controls.Add(CheckBoxCheckNewVersion, 0, 14)
         TableLayoutPanel1.Controls.Add(ButtonDataDirectory, 0, 1)
         TableLayoutPanel1.Controls.Add(LabelDataDirectory, 1, 1)
         TableLayoutPanel1.Controls.Add(ButtonTemplateDirectory, 0, 2)
         TableLayoutPanel1.Controls.Add(LabelTemplateDirectory, 1, 2)
+        TableLayoutPanel1.Controls.Add(CheckBoxCheckNewVersion, 0, 15)
+        TableLayoutPanel1.Controls.Add(TextBoxPartPlacementTimeout, 0, 14)
+        TableLayoutPanel1.Controls.Add(LabelPartPlacementTimeout, 1, 14)
         TableLayoutPanel1.Dock = DockStyle.Fill
         TableLayoutPanel1.Location = New Point(0, 0)
         TableLayoutPanel1.Name = "TableLayoutPanel1"
@@ -100,13 +104,13 @@ Partial Class FormTreeSearchOptions
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
-        TableLayoutPanel1.RowStyles.Add(New RowStyle())
+        TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle())
         TableLayoutPanel1.RowStyles.Add(New RowStyle())
         TableLayoutPanel1.RowStyles.Add(New RowStyle())
         TableLayoutPanel1.RowStyles.Add(New RowStyle())
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Percent, 100F))
-        TableLayoutPanel1.Size = New Size(472, 510)
+        TableLayoutPanel1.Size = New Size(472, 560)
         TableLayoutPanel1.TabIndex = 0
         ' 
         ' CheckBoxAlwaysReadExcel
@@ -186,17 +190,17 @@ Partial Class FormTreeSearchOptions
         TableLayoutPanel2.Controls.Add(ButtonCancel, 1, 0)
         TableLayoutPanel2.Controls.Add(ButtonHelp, 2, 0)
         TableLayoutPanel2.Dock = DockStyle.Fill
-        TableLayoutPanel2.Location = New Point(109, 453)
+        TableLayoutPanel2.Location = New Point(109, 483)
         TableLayoutPanel2.Name = "TableLayoutPanel2"
         TableLayoutPanel2.RowCount = 1
         TableLayoutPanel2.RowStyles.Add(New RowStyle(SizeType.Percent, 100F))
-        TableLayoutPanel2.Size = New Size(360, 54)
+        TableLayoutPanel2.Size = New Size(360, 74)
         TableLayoutPanel2.TabIndex = 5
         ' 
         ' ButtonOK
         ' 
         ButtonOK.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        ButtonOK.Location = New Point(120, 28)
+        ButtonOK.Location = New Point(120, 48)
         ButtonOK.Name = "ButtonOK"
         ButtonOK.Size = New Size(75, 23)
         ButtonOK.TabIndex = 1
@@ -206,7 +210,7 @@ Partial Class FormTreeSearchOptions
         ' ButtonCancel
         ' 
         ButtonCancel.Anchor = AnchorStyles.Bottom
-        ButtonCancel.Location = New Point(201, 28)
+        ButtonCancel.Location = New Point(201, 48)
         ButtonCancel.Name = "ButtonCancel"
         ButtonCancel.Size = New Size(75, 23)
         ButtonCancel.TabIndex = 0
@@ -216,7 +220,7 @@ Partial Class FormTreeSearchOptions
         ' ButtonHelp
         ' 
         ButtonHelp.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        ButtonHelp.Location = New Point(282, 28)
+        ButtonHelp.Location = New Point(282, 48)
         ButtonHelp.Name = "ButtonHelp"
         ButtonHelp.Size = New Size(75, 23)
         ButtonHelp.TabIndex = 2
@@ -338,21 +342,6 @@ Partial Class FormTreeSearchOptions
         TextBoxAlwaysOnTopRefreshTime.Text = "3000"
         TextBoxAlwaysOnTopRefreshTime.TextAlign = HorizontalAlignment.Right
         ' 
-        ' CheckBoxCheckNewVersion
-        ' 
-        CheckBoxCheckNewVersion.Anchor = AnchorStyles.Left
-        CheckBoxCheckNewVersion.AutoSize = True
-        CheckBoxCheckNewVersion.Checked = True
-        CheckBoxCheckNewVersion.CheckState = CheckState.Checked
-        TableLayoutPanel1.SetColumnSpan(CheckBoxCheckNewVersion, 2)
-        CheckBoxCheckNewVersion.Location = New Point(3, 425)
-        CheckBoxCheckNewVersion.Name = "CheckBoxCheckNewVersion"
-        CheckBoxCheckNewVersion.Padding = New Padding(5, 0, 0, 0)
-        CheckBoxCheckNewVersion.Size = New Size(197, 19)
-        CheckBoxCheckNewVersion.TabIndex = 11
-        CheckBoxCheckNewVersion.Text = "Check for new version at statup"
-        CheckBoxCheckNewVersion.UseVisualStyleBackColor = True
-        ' 
         ' ButtonDataDirectory
         ' 
         ButtonDataDirectory.Anchor = AnchorStyles.Left
@@ -398,11 +387,46 @@ Partial Class FormTreeSearchOptions
         LabelTemplateDirectory.TabIndex = 2
         LabelTemplateDirectory.Text = "Select a template directory"
         ' 
+        ' CheckBoxCheckNewVersion
+        ' 
+        CheckBoxCheckNewVersion.Anchor = AnchorStyles.Left
+        CheckBoxCheckNewVersion.AutoSize = True
+        CheckBoxCheckNewVersion.Checked = True
+        CheckBoxCheckNewVersion.CheckState = CheckState.Checked
+        TableLayoutPanel1.SetColumnSpan(CheckBoxCheckNewVersion, 2)
+        CheckBoxCheckNewVersion.Location = New Point(3, 455)
+        CheckBoxCheckNewVersion.Name = "CheckBoxCheckNewVersion"
+        CheckBoxCheckNewVersion.Padding = New Padding(5, 0, 0, 0)
+        CheckBoxCheckNewVersion.Size = New Size(197, 19)
+        CheckBoxCheckNewVersion.TabIndex = 11
+        CheckBoxCheckNewVersion.Text = "Check for new version at statup"
+        CheckBoxCheckNewVersion.UseVisualStyleBackColor = True
+        ' 
+        ' TextBoxPartPlacementTimeout
+        ' 
+        TextBoxPartPlacementTimeout.Dock = DockStyle.Fill
+        TextBoxPartPlacementTimeout.Location = New Point(3, 423)
+        TextBoxPartPlacementTimeout.Name = "TextBoxPartPlacementTimeout"
+        TextBoxPartPlacementTimeout.Size = New Size(100, 23)
+        TextBoxPartPlacementTimeout.TabIndex = 29
+        TextBoxPartPlacementTimeout.TextAlign = HorizontalAlignment.Right
+        ' 
+        ' LabelPartPlacementTimeout
+        ' 
+        LabelPartPlacementTimeout.Anchor = AnchorStyles.Left
+        LabelPartPlacementTimeout.AutoSize = True
+        LabelPartPlacementTimeout.Location = New Point(109, 427)
+        LabelPartPlacementTimeout.Name = "LabelPartPlacementTimeout"
+        LabelPartPlacementTimeout.Padding = New Padding(5, 0, 0, 0)
+        LabelPartPlacementTimeout.Size = New Size(238, 15)
+        LabelPartPlacementTimeout.TabIndex = 30
+        LabelPartPlacementTimeout.Text = "Time out for part placement (milliseconds)"
+        ' 
         ' FormTreeSearchOptions
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(472, 510)
+        ClientSize = New Size(472, 560)
         Controls.Add(TableLayoutPanel1)
         Icon = CType(resources.GetObject("$this.Icon"), Icon)
         Name = "FormTreeSearchOptions"
@@ -440,4 +464,6 @@ Partial Class FormTreeSearchOptions
     Friend WithEvents CheckBoxIncludeDrawing As CheckBox
     Friend WithEvents TextBoxAlwaysOnTopRefreshTime As TextBox
     Friend WithEvents LabelAlwaysOnTopRefreshTime As Label
+    Friend WithEvents TextBoxPartPlacementTimeout As TextBox
+    Friend WithEvents LabelPartPlacementTimeout As Label
 End Class

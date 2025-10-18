@@ -379,7 +379,7 @@ Public Class FormFastenerStack
         End If
 
         If Proceed Then
-            Proceed = CreateFastenerStackGroup(InitialNumOccurrences, Me.FileLogger.AddLogger("Create fastener stack group"))
+            Proceed = CreateFastenerStackGroup(InitialNumOccurrences, Me.FileLogger.AddLogger("Create fastener stack group and maybe pattern"))
             'If Not Proceed Then Me.FileLogger.AddMessage("Problem creating assembly group")
         End If
 

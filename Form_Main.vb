@@ -246,6 +246,7 @@ Public Class Form_Main
         End Set
     End Property
 
+    Public Property PartPlacementTimeout As String
 
     Private Property Props As Props
     Private Property TemplateDoc As SolidEdgeFramework.SolidEdgeDocument
@@ -287,7 +288,7 @@ Public Class Form_Main
         Try
             SEApp = CType(MarshalHelper.GetActiveObject("SolidEdge.Application", throwOnError:=True), SolidEdgeFramework.Application)
         Catch ex As Exception
-            MsgBox("Solid Edge must be running for this command to start.", vbOKOnly, "Solid Edge Not Found")
+            MsgBox("Solid Edge must be running for the program to start.", vbOKOnly, "Solid Edge Not Found")
             End
         End Try
 
@@ -328,6 +329,8 @@ Public Class Form_Main
             Me.CacheProperties = False
             Me.IncludeDrawing = False
             Me.ActiveMaterial = ""
+            Me.AlwaysOnTopRefreshTime = "1000"
+            Me.PartPlacementTimeout = "20000"
         End If
 
         UP.CreatePreferencesDirectory(Me)
@@ -379,15 +382,15 @@ Public Class Form_Main
         Splash.UpdateStatus("Initializing timer")
 
         If Me.AlwaysOnTopRefreshTime Is Nothing OrElse Me.AlwaysOnTopRefreshTime = "" Then
-            Me.AlwaysOnTopRefreshTime = "3000"
+            Me.AlwaysOnTopRefreshTime = "1000"
         End If
-        Dim tmpInterval As Integer = 3000
+        Dim tmpInterval As Integer = 1000
         Try
             tmpInterval = CInt(Me.AlwaysOnTopRefreshTime)
-            If tmpInterval < 1000 Then tmpInterval = 1000
-            Me.AlwaysOnTopRefreshTime = "1000"
+            If tmpInterval < 100 Then tmpInterval = 100
+            Me.AlwaysOnTopRefreshTime = CStr(tmpInterval)
         Catch ex As Exception
-            Me.AlwaysOnTopRefreshTime = "3000"
+            Me.AlwaysOnTopRefreshTime = CStr(tmpInterval)
         End Try
         AlwaysOnTopTimer = New Timer
         AlwaysOnTopTimer.Interval = tmpInterval
@@ -459,6 +462,11 @@ Public Class Form_Main
             End If
         End If
 
+        If SEApp Is Nothing Then
+            Success = False
+            ErrorLogger.AddMessage("Unable to connect to Solid Edge")
+        End If
+
         'Try
         '    SEApp = CType(MarshalHelper.GetActiveObject("SolidEdge.Application", throwOnError:=True), SolidEdgeFramework.Application)
         'Catch ex As Exception
@@ -503,15 +511,16 @@ Public Class Form_Main
             Dim MTFConstant As SolidEdgeFramework.ApplicationGlobalConstants
             MTFConstant = SolidEdgeFramework.ApplicationGlobalConstants.seApplicationGlobalMatTableFolder
 
-            SEApp.GetGlobalParameter(MTFConstant, MaterialTableFolderObject)
             Try
+                SEApp.GetGlobalParameter(MTFConstant, MaterialTableFolderObject)
                 MaterialTableFolder = CStr(MaterialTableFolderObject)
                 If Not Me.MaterialTable.Contains(MaterialTableFolder) Then
                     Success = False
                     ErrorLogger.AddMessage($"Material table not in required folder: '{MaterialTableFolder}'")
                 End If
             Catch ex As Exception
-
+                Success = False
+                ErrorLogger.AddMessage("Unable to connect to Solid Edge")
             End Try
         End If
 
@@ -672,28 +681,22 @@ Public Class Form_Main
                     SEApp.StartCommand(CType(SolidEdgeConstants.AssemblyCommandConstants.AssemblyEditPaste, SolidEdgeFramework.SolidEdgeCommandConstants))
 
                     ' Wait for Paste command to complete
-
+                    Dim ElapsedMilliseconds As Integer = 0
+                    Dim SleepMilliseconds As Integer = 500
                     While Not AssemblyPasteComplete
-                        Threading.Thread.Sleep(500)
+                        Threading.Thread.Sleep(SleepMilliseconds)
+                        ElapsedMilliseconds += SleepMilliseconds
+                        If ElapsedMilliseconds >= CInt(Me.PartPlacementTimeout) Then
+                            AssemblyPasteComplete = True
+                            Proceed = False
+                            ErrorLogger.AddMessage("Place part command timed out.")
+                            SEApp.StartCommand(CType(SolidEdgeConstants.AssemblyCommandConstants.AssemblyAssemblyToolsSelect, SolidEdgeFramework.SolidEdgeCommandConstants))
+                        End If
                         'SEApp.DoIdle()
                     End While
                 Catch ex As Exception
-                    Try
-                        'SEApp.StartCommand(CType(Paste, SolidEdgeFramework.SolidEdgeCommandConstants))
-
-                        SEApp.StartCommand(CType(SolidEdgeConstants.AssemblyCommandConstants.AssemblyEditPaste, SolidEdgeFramework.SolidEdgeCommandConstants))
-
-                        ' Wait for Paste command to complete
-
-                        While Not AssemblyPasteComplete
-                            Threading.Thread.Sleep(500)
-                            'SEApp.DoIdle()
-                        End While
-                    Catch ex2 As Exception
-                        Proceed = False
-                        ErrorLogger.AddMessage("Could not add part.  Please try again.")
-                    End Try
-
+                    Proceed = False
+                    ErrorLogger.AddMessage("Could not add part.  Please try again.")
                 End Try
 
                 RemoveHandler SEAppEvents.AfterCommandRun, AddressOf DISEApplicationEvents_AfterCommandRun
@@ -1262,7 +1265,13 @@ Public Class Form_Main
                                 Exit For
                             End If
                         Catch ex2 As Exception
-                            _ErrorLogger.AddMessage($"Face2 = TryCast(Element2.Object, SolidEdgeGeometry.Face): {ex2.Message}")
+                            _ErrorLogger.AddMessage($"Could not obtain pattern geometry.  Error was '{ex2.Message}'")
+                            'Try
+                            '    Dim ComType = HCComObject.GetCOMObjectType(Element2.Object)
+                            '    _ErrorLogger.AddMessage($"HCComObject.GetCOMObjectType(Element2.Object): {ComType.FullName}")
+                            'Catch ex3 As Exception
+                            '    _ErrorLogger.AddMessage($"HCComObject.GetCOMObjectType(Element2.Object): {ex3.Message}")
+                            'End Try
                         End Try
                     End If
                 End If

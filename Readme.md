@@ -210,6 +210,9 @@ The material table is usually your normal SE material table.  However, for a qui
   - `On top refresh time (milliseconds)`  
 	If the `Always on top` option is enabled, this setting controls the maximum time between checks.
 
+  - `Time out for part placement (milliseconds)`  
+	If more time than this setting has passed for the `Place Part` command to complete, it is interrupted.  This is needed to avoid an infinite loop in the program.  Set it so you have ample time to constrain the part in the assembly.
+	
   - `Check for new version at startup`  
 	If you don't need a reminder about new versions, disable the check here.
 

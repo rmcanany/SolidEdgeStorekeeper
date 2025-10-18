@@ -216,6 +216,23 @@ Public Class FormTreeSearchOptions
         End Set
     End Property
 
+    Private _PartPlacementTimeout As String
+    Public Property PartPlacementTimeout As String
+        Get
+            Return _PartPlacementTimeout
+        End Get
+        Set(value As String)
+            _PartPlacementTimeout = value
+            If Me.TextBoxPartPlacementTimeout IsNot Nothing Then
+                If Not TextBoxPartPlacementTimeout.Text = _PartPlacementTimeout Then
+                    TextBoxPartPlacementTimeout.Text = _PartPlacementTimeout
+                End If
+            End If
+        End Set
+    End Property
+
+
+
     Private _CheckNewVersion As Boolean
     Public Property CheckNewVersion As Boolean
         Get
@@ -279,9 +296,11 @@ Public Class FormTreeSearchOptions
         'Me.AlwaysOnTop = FMain.AlwaysOnTop
         Me.IncludeDrawing = FMain.IncludeDrawing
         Me.AlwaysOnTopRefreshTime = FMain.AlwaysOnTopRefreshTime
+        Me.PartPlacementTimeout = FMain.PartPlacementTimeout
         Me.CheckNewVersion = FMain.CheckNewVersion
 
     End Sub
+
     Private Sub ButtonLibraryDirectory_Click(sender As Object, e As EventArgs) Handles ButtonLibraryDirectory.Click
         Dim tmpFolderDialog As New CommonOpenFileDialog
         tmpFolderDialog.IsFolderPicker = True
@@ -366,7 +385,27 @@ Public Class FormTreeSearchOptions
         'FMain.AllowCommaDelimiters = Me.AllowCommaDelimiters
         'FMain.AlwaysOnTop = Me.AlwaysOnTop
         FMain.IncludeDrawing = Me.IncludeDrawing
+
+        Dim tmpRefreshTime As Integer = 0
+        Try
+            tmpRefreshTime = CInt(Me.AlwaysOnTopRefreshTime)
+            If tmpRefreshTime < 100 Then tmpRefreshTime = 100
+            Me.AlwaysOnTopRefreshTime = CStr(tmpRefreshTime)
+        Catch ex As Exception
+            Me.AlwaysOnTopRefreshTime = "1000"
+        End Try
         FMain.AlwaysOnTopRefreshTime = Me.AlwaysOnTopRefreshTime
+
+        Dim tmpPartPlacementTimeoutTime As Integer = 0
+        Try
+            tmpPartPlacementTimeoutTime = CInt(Me.PartPlacementTimeout)
+            If tmpPartPlacementTimeoutTime < 3000 Then tmpPartPlacementTimeoutTime = 3000
+            Me.PartPlacementTimeout = CStr(tmpPartPlacementTimeoutTime)
+        Catch ex As Exception
+            Me.PartPlacementTimeout = "10000"
+        End Try
+        FMain.PartPlacementTimeout = Me.PartPlacementTimeout
+
         FMain.CheckNewVersion = Me.CheckNewVersion
 
         Me.DialogResult = DialogResult.OK
@@ -436,5 +475,9 @@ Public Class FormTreeSearchOptions
 
     Private Sub TextBoxAlwaysOnTopRefreshTime_TextChanged(sender As Object, e As EventArgs) Handles TextBoxAlwaysOnTopRefreshTime.TextChanged
         Me.AlwaysOnTopRefreshTime = TextBoxAlwaysOnTopRefreshTime.Text
+    End Sub
+
+    Private Sub TextBoxPartPlacementTimeout_TextChanged(sender As Object, e As EventArgs) Handles TextBoxPartPlacementTimeout.TextChanged
+        Me.PartPlacementTimeout = TextBoxPartPlacementTimeout.Text
     End Sub
 End Class

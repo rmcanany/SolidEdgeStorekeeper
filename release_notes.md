@@ -98,6 +98,8 @@ See the [<ins>**Property Search Options**</ins>](https://github.com/rmcanany/Sol
 
 - Moved the options `Always on top` and `Auto pattern` to the main toolbar.  Previously they were on the Tree Search Options page.  The idea was to reduce distraction and save a couple of clicks for these frequently toggled settings.
 
+- Added a timeout for the `Place Part` command.  It was needed to avoid an infinite loop in the program.  Set it, on the **Tree Search Options** page, to give you ample time to constrain the part in the assembly.
+
 ## V2025.3
 
 ### Replace Part
