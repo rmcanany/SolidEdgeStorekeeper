@@ -10,7 +10,7 @@ Public Class Form_Main
     Private Property Version As String = "2025.4"
 
     'Private Property PreviewVersion As String = ""  ' Empty string if not a preview
-    Private Property PreviewVersion As String = "Preview 12"
+    Private Property PreviewVersion As String = "Preview 14"
 
     Private Property SearchingTVFilename As Boolean = False
 
@@ -2404,11 +2404,13 @@ Public Class Form_Main
             Return Nothing
         End If
 
+        ' Read the headers, then remove them from ExcelSheet.
         Dim NameList As List(Of String) = ExcelSheet(0) ' Include, Size, Name,   Description, OD,       Wall
         Dim TypeList As List(Of String) = ExcelSheet(1) ' Boolean, Node, String, String,      Variable, LeafNodeVariable
         ExcelSheet.RemoveAt(1)
         ExcelSheet.RemoveAt(0)
 
+        ' Find the Node and Favorite columns.
         Dim NodeIdx As Integer = -1
         Dim NodeCount As Integer = 0
         Dim IncludeIdx As Integer = -1
@@ -2417,20 +2419,28 @@ Public Class Form_Main
                 NodeIdx = Idx
                 NodeCount += 1
             End If
-            If NameList(Idx) = "Include" And IncludeIdx = -1 Then
+            If (NameList(Idx) = "Include" Or NameList(Idx) = "Favorite") And IncludeIdx = -1 Then
                 IncludeIdx = Idx
             End If
         Next
         If Not NodeCount = 1 Then Return Nothing
 
-        For Each Row As List(Of String) In ExcelSheet  ' Headers have been removed.  Only data remains.
+        ' Process each row.  Headers have been removed.  Only data remains.
+        For Each Row As List(Of String) In ExcelSheet
 
+            ' Check if this row should be ignored.
             If Me.FavoritesOnly Then
-                ' If the Include field is not 'true' or 't' then skip this row
                 tf = Not IncludeIdx = -1
                 tf = tf AndAlso Not Row(IncludeIdx).ToLower = "true"
                 tf = tf AndAlso Not Row(IncludeIdx).ToLower = "t"
-                If tf Then Continue For
+                If tf Then
+                    Continue For
+                End If
+            End If
+            tf = Not IncludeIdx = -1
+            tf = tf AndAlso Row(IncludeIdx).ToLower = "comment"
+            If tf Then
+                Continue For
             End If
 
             ' Create the opening tag of the top node of this row
@@ -2440,6 +2450,8 @@ Public Class Form_Main
             ' Process individual cells of the spreadsheet in this row
             For ColIdx As Integer = 0 To Row.Count - 1
 
+                ' Skip the Node column and any blank cells.
+                ' Keep the Favorite column.  It might be useful in the future.
                 If ColIdx = NodeIdx Then Continue For ' Don't need the Node entry
                 If Row(ColIdx).Trim = "" Then Continue For ' Don't need any blank entries
 

@@ -38,6 +38,7 @@ Partial Class Form_Main
         ToolStripSeparator2 = New ToolStripSeparator()
         ButtonAlwaysOnTop = New ToolStripButton()
         ButtonAutoPattern = New ToolStripButton()
+        ButtonFavoritesOnly = New ToolStripButton()
         ToolStripSeparator3 = New ToolStripSeparator()
         ButtonOptions = New ToolStripButton()
         ComboBoxMaterials = New ToolStripComboBox()
@@ -83,7 +84,6 @@ Partial Class Form_Main
         TableLayoutPanel3 = New TableLayoutPanel()
         ButtonHelp = New Button()
         TextBoxStatus = New TextBox()
-        ButtonFavoritesOnly = New ToolStripButton()
         ToolStrip1.SuspendLayout()
         ContextMenuStrip1.SuspendLayout()
         CType(DataGridViewDataInspector, ComponentModel.ISupportInitialize).BeginInit()
@@ -165,6 +165,15 @@ Partial Class Form_Main
         ButtonAutoPattern.Size = New Size(23, 22)
         ButtonAutoPattern.Text = "ToolStripButton2"
         ButtonAutoPattern.ToolTipText = "Auto pattern"
+        ' 
+        ' ButtonFavoritesOnly
+        ' 
+        ButtonFavoritesOnly.DisplayStyle = ToolStripItemDisplayStyle.Image
+        ButtonFavoritesOnly.Image = My.Resources.Resources.favorites_enabled
+        ButtonFavoritesOnly.ImageTransparentColor = Color.Magenta
+        ButtonFavoritesOnly.Name = "ButtonFavoritesOnly"
+        ButtonFavoritesOnly.Size = New Size(23, 22)
+        ButtonFavoritesOnly.Text = "Show favorites only"
         ' 
         ' ToolStripSeparator3
         ' 
@@ -578,15 +587,6 @@ Partial Class Form_Main
         TextBoxStatus.Size = New Size(492, 23)
         TextBoxStatus.TabIndex = 3
         TextBoxStatus.Text = "Status"
-        ' 
-        ' ButtonFavoritesOnly
-        ' 
-        ButtonFavoritesOnly.DisplayStyle = ToolStripItemDisplayStyle.Image
-        ButtonFavoritesOnly.Image = My.Resources.Resources.favorites_enabled
-        ButtonFavoritesOnly.ImageTransparentColor = Color.Magenta
-        ButtonFavoritesOnly.Name = "ButtonFavoritesOnly"
-        ButtonFavoritesOnly.Size = New Size(23, 22)
-        ButtonFavoritesOnly.Text = "ToolStripButton1"
         ' 
         ' Form_Main
         ' 
