@@ -71,8 +71,10 @@ Partial Class Form_Main
         Path = New DataGridViewTextBoxColumn()
         ContextMenuStrip2 = New ContextMenuStrip(components)
         AddToAssemblyToolStripMenuItem = New ToolStripMenuItem()
+        ToolStripSeparator6 = New ToolStripSeparator()
         ReplaceSelectedToolStripMenuItem1 = New ToolStripMenuItem()
         ReplaceAllToolStripMenuItem1 = New ToolStripMenuItem()
+        ToolStripSeparator7 = New ToolStripSeparator()
         OpenToolStripMenuItem = New ToolStripMenuItem()
         OpenFolderToolStripMenuItem = New ToolStripMenuItem()
         TabPageInspectData = New TabPage()
@@ -81,8 +83,7 @@ Partial Class Form_Main
         TableLayoutPanel3 = New TableLayoutPanel()
         ButtonHelp = New Button()
         TextBoxStatus = New TextBox()
-        ToolStripSeparator6 = New ToolStripSeparator()
-        ToolStripSeparator7 = New ToolStripSeparator()
+        ButtonFavoritesOnly = New ToolStripButton()
         ToolStrip1.SuspendLayout()
         ContextMenuStrip1.SuspendLayout()
         CType(DataGridViewDataInspector, ComponentModel.ISupportInitialize).BeginInit()
@@ -102,7 +103,7 @@ Partial Class Form_Main
         ' 
         ' ToolStrip1
         ' 
-        ToolStrip1.Items.AddRange(New ToolStripItem() {ButtonCollapse, ToolStripSeparator1, LabelSaveIn, ComboBoxSaveIn, ToolStripSeparator2, ButtonAlwaysOnTop, ButtonAutoPattern, ToolStripSeparator3, ButtonOptions, ComboBoxMaterials, LabelMaterials})
+        ToolStrip1.Items.AddRange(New ToolStripItem() {ButtonCollapse, ToolStripSeparator1, LabelSaveIn, ComboBoxSaveIn, ToolStripSeparator2, ButtonAlwaysOnTop, ButtonAutoPattern, ButtonFavoritesOnly, ToolStripSeparator3, ButtonOptions, ComboBoxMaterials, LabelMaterials})
         ToolStrip1.Location = New Point(0, 0)
         ToolStrip1.Name = "ToolStrip1"
         ToolStrip1.RenderMode = ToolStripRenderMode.System
@@ -467,6 +468,11 @@ Partial Class Form_Main
         AddToAssemblyToolStripMenuItem.Size = New Size(162, 22)
         AddToAssemblyToolStripMenuItem.Text = "Add to assembly"
         ' 
+        ' ToolStripSeparator6
+        ' 
+        ToolStripSeparator6.Name = "ToolStripSeparator6"
+        ToolStripSeparator6.Size = New Size(159, 6)
+        ' 
         ' ReplaceSelectedToolStripMenuItem1
         ' 
         ReplaceSelectedToolStripMenuItem1.Name = "ReplaceSelectedToolStripMenuItem1"
@@ -478,6 +484,11 @@ Partial Class Form_Main
         ReplaceAllToolStripMenuItem1.Name = "ReplaceAllToolStripMenuItem1"
         ReplaceAllToolStripMenuItem1.Size = New Size(162, 22)
         ReplaceAllToolStripMenuItem1.Text = "Replace all"
+        ' 
+        ' ToolStripSeparator7
+        ' 
+        ToolStripSeparator7.Name = "ToolStripSeparator7"
+        ToolStripSeparator7.Size = New Size(159, 6)
         ' 
         ' OpenToolStripMenuItem
         ' 
@@ -568,15 +579,14 @@ Partial Class Form_Main
         TextBoxStatus.TabIndex = 3
         TextBoxStatus.Text = "Status"
         ' 
-        ' ToolStripSeparator6
+        ' ButtonFavoritesOnly
         ' 
-        ToolStripSeparator6.Name = "ToolStripSeparator6"
-        ToolStripSeparator6.Size = New Size(159, 6)
-        ' 
-        ' ToolStripSeparator7
-        ' 
-        ToolStripSeparator7.Name = "ToolStripSeparator7"
-        ToolStripSeparator7.Size = New Size(159, 6)
+        ButtonFavoritesOnly.DisplayStyle = ToolStripItemDisplayStyle.Image
+        ButtonFavoritesOnly.Image = My.Resources.Resources.favorites_enabled
+        ButtonFavoritesOnly.ImageTransparentColor = Color.Magenta
+        ButtonFavoritesOnly.Name = "ButtonFavoritesOnly"
+        ButtonFavoritesOnly.Size = New Size(23, 22)
+        ButtonFavoritesOnly.Text = "ToolStripButton1"
         ' 
         ' Form_Main
         ' 
@@ -662,5 +672,6 @@ Partial Class Form_Main
     Friend WithEvents ToolStripSeparator5 As ToolStripSeparator
     Friend WithEvents ToolStripSeparator6 As ToolStripSeparator
     Friend WithEvents ToolStripSeparator7 As ToolStripSeparator
+    Friend WithEvents ButtonFavoritesOnly As ToolStripButton
 
 End Class

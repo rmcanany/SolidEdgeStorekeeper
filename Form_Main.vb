@@ -248,6 +248,25 @@ Public Class Form_Main
 
     Public Property PartPlacementTimeout As String
 
+    Private _FavoritesOnly As Boolean
+    Public Property FavoritesOnly As Boolean
+        Get
+            Return _FavoritesOnly
+        End Get
+        Set(value As Boolean)
+            _FavoritesOnly = value
+            If Me.ButtonFavoritesOnly IsNot Nothing Then
+                If _FavoritesOnly Then
+                    ButtonFavoritesOnly.Image = My.Resources.favorites_enabled
+                Else
+                    ButtonFavoritesOnly.Image = My.Resources.favorites_disabled
+                End If
+            End If
+        End Set
+    End Property
+
+
+
     Private Property Props As Props
     Private Property TemplateDoc As SolidEdgeFramework.SolidEdgeDocument
     Public Property AssemblyPasteComplete As Boolean
@@ -331,6 +350,7 @@ Public Class Form_Main
             Me.ActiveMaterial = ""
             Me.AlwaysOnTopRefreshTime = "1000"
             Me.PartPlacementTimeout = "20000"
+            Me.FavoritesOnly = False
         End If
 
         UP.CreatePreferencesDirectory(Me)
@@ -359,8 +379,6 @@ Public Class Form_Main
         Next
 
         Me.PropertiesData = New HCPropertiesData  ' Automatically loads saved settings if any.
-
-        'Me.PropertiesCache = New HCPropertiesCache(Me)   ' Automatically loads saved settings if any.
 
         Splash.UpdateStatus("Checking version")
 
@@ -2311,7 +2329,7 @@ Public Class Form_Main
                 Dim tmpDataSource = Value.Split(":")(0)  ' Sheet:AnsiFastenersBHCS -> Sheet, AnsiFasteners.xls:BHCS -> AnsiFasteners.xls
                 Dim tmpSheetname = Value.Split(":")(1)  ' Sheet:AnsiFastenersBHCS -> AnsiFastenersBHCS, , AnsiFasteners.xls:BHCS -> BHCS
                 Dim SubLevelList As List(Of String)
-                If tmpDataSource = "Sheet" Then
+                If tmpDataSource = "Sheet" Then ' It's a tab in the main spreadsheet
                     SubLevelList = ExcelDetailSheetToXml(ExcelAll, tmpSheetname, tmpStartLevel, Indents)
                 Else  ' It's an excel filename
                     tmpDataSource = $"{Me.DataDirectory}\{tmpDataSource}"
@@ -2369,6 +2387,8 @@ Public Class Form_Main
 
         Dim tf As Boolean
 
+        ' The first entry of each row in ExcelAll is the sheet name.
+        ' Extract only those rows that match Sheetname.
         Dim ExcelSheet As New List(Of List(Of String))
         For Each RowList As List(Of String) In ExcelAll
             If RowList(0) = Sheetname Then
@@ -2403,24 +2423,28 @@ Public Class Form_Main
         Next
         If Not NodeCount = 1 Then Return Nothing
 
-        For Each Row As List(Of String) In ExcelSheet
+        For Each Row As List(Of String) In ExcelSheet  ' Headers have been removed.  Only data remains.
 
-            tf = Not IncludeIdx = -1
-            tf = tf AndAlso Not Row(IncludeIdx).ToLower = "true"
-            tf = tf AndAlso Not Row(IncludeIdx).ToLower = "t"
-            If tf Then Continue For
+            If Me.FavoritesOnly Then
+                ' If the Include field is not 'true' or 't' then skip this row
+                tf = Not IncludeIdx = -1
+                tf = tf AndAlso Not Row(IncludeIdx).ToLower = "true"
+                tf = tf AndAlso Not Row(IncludeIdx).ToLower = "t"
+                If tf Then Continue For
+            End If
 
-            ' ###### Moved comma handling to SanitizeXMLTags ######
+            ' Create the opening tag of the top node of this row
+            '             <Size_0-80 Type="Node">
+            XmlList.Add(String.Format("{0}<{1}_{2} Type=""Node"">", Indents(StartLevel), NameList(NodeIdx), Row(NodeIdx)))
 
-            'XmlList.Add(String.Format("{0}<{1}_{2} Type=""Node"">", Indents(StartLevel), NameList(NodeIdx), Row(NodeIdx).Replace(",", ".")))  ' #### No exposed commas
-            XmlList.Add(String.Format("{0}<{1}_{2} Type=""Node"">", Indents(StartLevel), NameList(NodeIdx), Row(NodeIdx)))  ' #### No exposed commas
-
+            ' Process individual cells of the spreadsheet in this row
             For ColIdx As Integer = 0 To Row.Count - 1
 
-                If ColIdx = NodeIdx Then Continue For
-                If Row(ColIdx).Trim = "" Then Continue For
+                If ColIdx = NodeIdx Then Continue For ' Don't need the Node entry
+                If Row(ColIdx).Trim = "" Then Continue For ' Don't need any blank entries
 
                 If Not TypeList(ColIdx).Contains("LeafNode") Then
+                    ' For non-LeafNodes, open and close the tag on the same line
                     ' </NominalDiameter Type="Variable">0.164</NominalDiameter>
                     Dim tmpName As String = NameList(ColIdx)
                     Dim tmpType As String = TypeList(ColIdx)
@@ -2428,13 +2452,12 @@ Public Class Form_Main
 
                     XmlList.Add(String.Format("{0}<{1} Type=""{2}"">{3}</{1}>", Indents(StartLevel + 1), tmpName, tmpType, tmpValue))
                 Else
+                    ' For LeafNodes, open and close on different lines, housing the data within
                     ' <Length_0.500 Type="LeafNode">
                     '     <Length Type="Double">0.500</Length>
                     ' </Length_0.500>
 
-                    ' ###### Moved comma handling to SanitizeXMLTags ######
-
-                    'Dim tmpValue As String = Row(ColIdx).Replace(",", ".") ' 0.500, 0,500 -> 0.500
+                    ' Get the data in the cell
                     Dim tmpValue As String = Row(ColIdx) ' 0.500, 0,500 -> 0.500
 
                     Dim tmpOuterName As String = String.Format("{0}_{1}", NameList(ColIdx), tmpValue) ' Length_0.500
@@ -2449,12 +2472,9 @@ Public Class Form_Main
                 End If
             Next
 
-            ' ###### Moved comma handling to SanitizeXMLTags ######
-
-            'XmlList.Add(String.Format("{0}</{1}_{2}>", Indents(StartLevel), NameList(NodeIdx), Row(NodeIdx).Replace(",", ".")))
+            ' Close the outer tag for this row
             XmlList.Add(String.Format("{0}</{1}_{2}>", Indents(StartLevel), NameList(NodeIdx), Row(NodeIdx)))
 
-            'XmlList.Add(String.Format("{0}</{1}_{2}>", Indents(StartLevel), NameList(NodeIdx), Row(NodeIdx)))
         Next
 
         Return XmlList
@@ -3272,6 +3292,9 @@ Public Class Form_Main
         Me.AutoPattern = Not Me.AutoPattern
     End Sub
 
+    Private Sub ButtonFavoritesOnly_Click(sender As Object, e As EventArgs) Handles ButtonFavoritesOnly.Click
+        Me.FavoritesOnly = Not Me.FavoritesOnly
+    End Sub
 End Class
 
 Public Class Props
