@@ -74,6 +74,14 @@ Select the material from the drop down list.  If an item only has one material d
 
 See the [<ins>**Tree Search Toolbar**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#tree-search-toolbar) section of the Readme for details.
 
+### Favorites
+
+Added the ability to identify commonly used items/sizes, making the tree easier to navigate for routine use.  Added a button on the main toolbar to toggle between `Favorites` and `All Available`.
+
+Make your selections by editing the `Favorite` column in the companion spreadsheets.
+
+See the [<ins>**Tree Search Toolbar**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#tree-search-toolbar) section of the Readme for details.
+
 ### Property Cache
 
 Added an option to store property values of files in the library.  Set it on the `Property Search` options dialog.  It is meant to speed up property searches for large libraries.  Previously all files were searched every time.
@@ -97,8 +105,6 @@ See the [<ins>**Property Search Options**</ins>](https://github.com/rmcanany/Sol
 - Temporarily disabled the `Pre-Populate` feature from the previous version (Sorry **@Seva!**).  It is not currently compatible with multiple materials per category.  In particular it had trouble when a material is valid for one selected item, but not another.  You can still use the previous version when that feature is needed.
 
 - Moved the options `Always on top` and `Auto pattern` to the main toolbar.  Previously they were on the Tree Search Options page.  The idea was to reduce distraction and save a couple of clicks for these frequently toggled settings.  
-
-- Added a `Favorites only` button to the main toolbar.  See the [<ins>**Tree Search Toolbar**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#tree-search-toolbar) section of the Readme for details.
 
 - Added a timeout for the `Place Part` command.  It was needed to avoid an infinite loop in the program.  Set it, on the **Tree Search Options** page, to give you ample time to constrain the part in the assembly.
 

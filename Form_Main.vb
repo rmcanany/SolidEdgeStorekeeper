@@ -226,6 +226,33 @@ Public Class Form_Main
                     Else
                         Me.ActiveMaterial = ""  ' Should take care of the combobox automatically
                     End If
+
+                    ' Set combobox width
+                    ' https://stackoverflow.com/questions/4842160/auto-width-of-comboboxs-content
+                    'int maxWidth = 0, temp = 0;
+                    '    foreach (var obj in myCombo.Items)
+                    '    {
+                    '        temp = TextRenderer.MeasureText(obj.ToString(), myCombo.Font).Width;
+                    '        if (temp > maxWidth)
+                    '        {
+                    '            maxWidth = temp;
+                    '        }
+                    '    }
+                    Dim ComboboxAbsoluteMaxWidth = 150
+                    Dim PreviousWidth = ComboBoxMaterials.Width
+                    Dim MaxWidth = 0
+                    For Each s As String In _MaterialsList
+                        Dim tmpWidth = TextRenderer.MeasureText(s, ComboBoxMaterials.Font).Width
+                        If tmpWidth > MaxWidth Then MaxWidth = tmpWidth
+                    Next
+                    MaxWidth += 20
+                    ComboBoxMaterials.DropDownWidth = MaxWidth
+                    If MaxWidth > PreviousWidth Then
+                        If MaxWidth <= ComboboxAbsoluteMaxWidth Then
+                            ComboBoxMaterials.Size = New Drawing.Size(MaxWidth, 25)
+                        End If
+                    End If
+
                 End If
             End If
         End Set
@@ -2249,13 +2276,33 @@ Public Class Form_Main
 
         Dim OutData As New List(Of List(Of String))
 
+        ' Remove header row
+        ExcelData.RemoveAt(0)
+
         For Each Row As List(Of String) In ExcelData
+            ' Check tab name
             If Not Row(0) = Sheetname Then Continue For
 
+            ' Check Comment
+            If Row(1).ToLower = "comment" Then Continue For
+
+            ' Check Favorite
+            If Me.FavoritesOnly And Not Row(1).ToLower = "true" Then Continue For
+
+            Row.RemoveAt(1)
+            Row.RemoveAt(0)
+
             Dim OutList As New List(Of String)
-            Dim IndentCount As Integer = 0
+            'Dim IndentCount As Integer = 0
+            Dim IndentCount As Integer = 1
             For Each Col As String In Row
-                If Col IsNot Nothing AndAlso Not Col.Trim = "" AndAlso Not Col.Trim = Sheetname Then
+                'If Col IsNot Nothing AndAlso Not Col.Trim = "" AndAlso Not Col.Trim = Sheetname Then
+                '    If Col = "Node" Then
+                '        Col = String.Format("{0}_{1}", Col, CStr(IndentCount - 1))  ' Node -> Node_1
+                '    End If
+                '    OutList.Add(Col)
+                'End If
+                If Col IsNot Nothing AndAlso Not Col.Trim = "" Then
                     If Col = "Node" Then
                         Col = String.Format("{0}_{1}", Col, CStr(IndentCount - 1))  ' Node -> Node_1
                     End If
@@ -2339,9 +2386,11 @@ Public Class Form_Main
                     End If
                     SubLevelList = ExcelDetailSheetToXml(ExcelDataReaderCache(tmpDataSource), tmpSheetname, tmpStartLevel, Indents)
                 End If
-                For Each s As String In SubLevelList
-                    XmlList.Add(s)
-                Next
+                If SubLevelList IsNot Nothing Then
+                    For Each s As String In SubLevelList
+                        XmlList.Add(s)
+                    Next
+                End If
             Else
                 Dim PropertyOnly As String = Row(0).Split(" ")(0)
                 XmlList.Add(String.Format("{0}<{1}>{2}</{3}>", Indents(Level), Row(0), Row(1), PropertyOnly))
@@ -2485,7 +2534,12 @@ Public Class Form_Main
             Next
 
             ' Close the outer tag for this row
-            XmlList.Add(String.Format("{0}</{1}_{2}>", Indents(StartLevel), NameList(NodeIdx), Row(NodeIdx)))
+            ' Check if any items have been added for this row
+            If XmlList(XmlList.Count - 1) = String.Format("{0}<{1}_{2} Type=""Node"">", Indents(StartLevel), NameList(NodeIdx), Row(NodeIdx)) Then
+                Return Nothing
+            Else
+                XmlList.Add(String.Format("{0}</{1}_{2}>", Indents(StartLevel), NameList(NodeIdx), Row(NodeIdx)))
+            End If
 
         Next
 

@@ -30,7 +30,7 @@
 
 ## DESCRIPTION
 
-Solid Edge Storekeeper is a utility to create, organize, and share standard parts.  It is free and open source and you can find it [<ins>**Here**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#readme).  Please note the standard part templates were created with SE2024.  You will need that version or newer to use them.  (**Update:** A user, **@TeeVar**, generously contributed a set of templates created with SE2019.)
+Solid Edge Storekeeper is a utility to create, organize, and share standard parts.  It is free and open source and you can find it [<ins>**Here**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#readme).  Please note the standard part templates were created with SE2024.  You will need that version or newer to use them.  (**Update:** **@TeeVar**, generously contributed a set of templates created with SE2019.)
 
 Fasteners, retainers, structural shapes, and more in ANSI and ISO format are included.  There are over 30k items available.  There is no database; everything is done in Excel.  It is fully customizable.  If you upgrade Solid Edge, no change to the program or its data is required.
 
@@ -68,11 +68,15 @@ That's pretty much all there is to know about vendor type parts.  For the others
 
 You can set the file names according to your preference.  You can specify the material or any other SE file property.  File names and properties can accept formulas as input.  So you can do stuff like:
 
-![Filename Formula](media/filename_formula.png)
+<p align="center">
+  <img src="media/filename_formula.png">
+</p>
 
 Structural shapes are not quite the same as fasteners.  While the cross section is standard, the length and likelihood of additional features is not.  Usually the part doesn't even belong in the library.  For these, you can change the `Save in` option from `Library` to `Assy Dir` or `Other`.  The program prompts for a filename, and for `Other`, a location.
 
-So, who needs this program?  Me, for one.  What makes it different?  First, it's free and open source.  Any part it creates belongs to you, and is stored on your premises.  It's customizable, has no database, and doesn't care if you upgrade Solid Edge.
+### Who Needs This Program?
+
+Me, for one.  What makes it different?  First, it's free and open source, and is actively maintained.  It beats the pants off of scrolling through massive directories in Windows File Explorer.  You're in control -- any part it creates belongs to you, and is stored where you want.  It's customizable, has no database, and doesn't care if you upgrade Solid Edge.
 
 Also, unlike Family of Parts, files are only created as needed.  Each part is stand-alone, not tied back to a master file.
 
@@ -80,7 +84,7 @@ Unlike web-based offerings, the program is integrated with your parts library an
 
 Finally, it has a secret weapon -- all of us.  Contributions are welcome!  Please message me on the [<ins>**Solid Edge Forum**</ins>](https://community.sw.siemens.com/s/topic/0TO4O000000MihiWAC/solid-edge), or raise an [<ins>**Issue on GitHub**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/issues), for ideas on how to get started.
 
-Uh-oh.  The Marketing guy just showed up.  He wants to *"Synergize our stake holders and leverage this cross-promotion opportunity"*.  I bet he does.  Anyway, here goes.
+Uh-oh.  The Marketing guy just showed up.  He wants to *"Synergize our stake holders and leverage this cross-promotion opportunity"*.  I bet he does.
 
 >  *Hello there!! I'm Big Mike!  Do you want to do things better and faster with less work?!  Of course you do!  That's why you need [<ins>**Solid Edge Housekeeper**</ins>](https://github.com/rmcanany/SolidEdgeHousekeeper#readme)!*
 
@@ -110,7 +114,7 @@ Double-click `Storekeeper.exe` to run.  The first time you do, you may get a `Wi
 
 ### Cloning
 
-The data and templates are not in the GitHub repo.  You need to download a Release to get them.  To make them available in your development environment, copy the directories `DefaultDataSE2019`, `DefaultTemplatesSE2019`, `DefaultDataSE2024`, `DefaultTemplatesSE2024` to the locations where your compiled `Storekeeper.exe` is located.
+The data and templates are not in the GitHub repo.  You need to download a Release to get them.  To make them available in your development environment, copy the directories `DefaultData*` and `DefaultTemplates*` to the locations where your compiled `Storekeeper.exe` is located.
 
 On my machine, the executable resides in two places: `bin\Debug\net8.0-windows\` and `bin\Release\net8.0-windows\`.  I have copies of those directories in both places.
 
@@ -126,22 +130,28 @@ Most options are set on the **Tree Search Options** page (see next), but those m
   <img src="media/tree_search_toolbar.png">
 </p>
 
-- `Collapse`  [![Collapse](media/collapse.png)] closes all open nodes in the tree.
+- ![Collapse](media/collapse.png) `Collapse`  
+Closes all open nodes in the tree.
 
-- `Save in`  Select where the file will be saved after it is created.
+- ![Collapse](media/icons8_Folder_16.png) `Save in`  
+
   - `Library`  The standard location for library parts.
   - `Assy Dir`  The same location as the assembly file currently open in Solid Edge.
   - `Other`  Anyplace else.
 
-- `Always on top`  [![Always on top](media/always_on_top_enabled.png)] determines if the Storekeeper window remains on top of other windows.  Click to toggle.
+- ![Always on top](media/always_on_top_enabled.png) `Always on top`  
+Keeps Storekeeper on top of other windows.  Click to toggle.
 
-- `Auto pattern`  [![Auto pattern](media/auto_pattern_enabled.png)] determines if the automatic patterning of newly placed parts will be performed.  Click to toggle.  See separate section below for details.
+- ![Auto pattern](media/auto_pattern_enabled.png) `Auto pattern`  
+Enables automatic patterning.  Click to toggle.  See separate section below for details.
 
-- `Favorites only`  [![Favorites only](media/favorites_enabled.png)] determines if the tree shows all available items, or just your favorites.  Click  to toggle.  Edit the `Favorite` column in the spreadsheets (`AnsiFasteners.xls`, `ISO_Fasteners_1.xls`, etc.) to set your preferences.  Currently, the program must be restarted for the change to take effect.
+- ![Favorites only](media/favorites_enabled.png) `Favorites only`  
+Shows only your favorites in the tree.  Click  to toggle.  Edit the `Favorite` column in the spreadsheets (`AnsiFasteners.xls`, `ISO_Fasteners_1.xls`, etc.) to set your preferences.  Currently, the program must be restarted for the change to take effect.
 
-- `Matl`  The drop down contains all materials available for a chosen part.  If an item only has one material defined, it is selected automatically.  If you go to a different item in the tree and its material list contains the currently active material, the selection is retained.  
+- ![Matl](media/MaterialLibrary.png) `Matl`  
+Available materials for the selected part.  If an item only has one material defined, it is selected automatically.  If you go to a different item in the tree and its material list contains the currently active material, the selection is retained.  
 
-- `Tree search options`  [![Options](media/Support_16.png)] (see next).
+- ![Options](media/Support_16.png) `Tree search options`  (see next).
 
 
 ### Tree Search Options
@@ -190,8 +200,10 @@ The material table is usually your normal SE material table.  However, for a qui
 	
 	The condition can cause issues with interference checking.  Fixing it is optional.  To do so, open the file and edit the Thread definition.  On the Parameters Step, you'll note the size designation is followed by an asterisk (*).  Click the drop down and select the one without it.
 	
-	![Thread Fix](media/fine_thread_fix.png)
-	
+<p align="center">
+  <img src="media/fine_thread_fix.png">
+</p>
+
   - `Process templates in background`  
 	A new part must be opened in Solid Edge to update its parameters.  This setting tells the program to not display it in the user interface.
 
@@ -203,7 +215,7 @@ The material table is usually your normal SE material table.  However, for a qui
   - `Replace part: Allow failed constraint`  
 	With the same situation as above, this option tells the program to leave the constraint in the failed state.  This is my preferred setting.  The pathfinder shows a red lightning bolt, alerting me that I need to fix something.
 	
-  - `Do not add files in the Recently Used list`  
+  - `Do not add files to the Recently Used list`  
 	Enable this option to keep the program from adding newly-generated standard parts to the Most Recently Used list.  Note this ability was added to Solid Edge in version 2020.  If you are running an earlier version, this option has no effect.
 	
   - `Include drawing of part if present`  

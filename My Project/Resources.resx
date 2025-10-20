@@ -124,9 +124,6 @@
   <data name="icons8_Folder_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\media\icons8_Folder_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="icons8-add-list-16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\media\icons8-add-list-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\media\logo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -139,14 +136,8 @@
   <data name="icons8_Checkbox_Checked" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\media\icons8_Checkbox_Checked.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="icons8_csv_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\media\icons8_csv_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="icons8-search-16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\media\icons8-search-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="icons8-paste-16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\media\icons8-paste-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="collapse" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\media\collapse.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -159,12 +150,6 @@
   </data>
   <data name="icons8-choose-16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\media\icons8-choose-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="locked" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\media\locked.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="unlocked" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\media\unlocked.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="FastenerStack_F-CO-N" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\media\FastenerStack\images_large\FastenerStack_F-CO-N.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -261,12 +246,6 @@
   </data>
   <data name="Small_F-FW-CO-FW-LW-N" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\media\FastenerStack\images_small\Small_F-FW-CO-FW-LW-N.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="auto_pattern" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\media\auto_pattern.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="icons8-bring-to-front-16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\media\icons8-bring-to-front-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="always_on_top_disabled" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\media\always_on_top_disabled.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

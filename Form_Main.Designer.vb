@@ -128,8 +128,10 @@ Partial Class Form_Main
         ' 
         ' LabelSaveIn
         ' 
+        LabelSaveIn.DisplayStyle = ToolStripItemDisplayStyle.Image
+        LabelSaveIn.Image = My.Resources.Resources.icons8_Folder_16
         LabelSaveIn.Name = "LabelSaveIn"
-        LabelSaveIn.Size = New Size(44, 22)
+        LabelSaveIn.Size = New Size(16, 22)
         LabelSaveIn.Text = "Save in"
         LabelSaveIn.ToolTipText = "Collapse the tree"
         ' 
@@ -196,14 +198,15 @@ Partial Class Form_Main
         ComboBoxMaterials.Alignment = ToolStripItemAlignment.Right
         ComboBoxMaterials.DropDownStyle = ComboBoxStyle.DropDownList
         ComboBoxMaterials.Name = "ComboBoxMaterials"
-        ComboBoxMaterials.Size = New Size(150, 25)
+        ComboBoxMaterials.Size = New Size(75, 25)
         ComboBoxMaterials.ToolTipText = "Materials"
         ' 
         ' LabelMaterials
         ' 
         LabelMaterials.Alignment = ToolStripItemAlignment.Right
+        LabelMaterials.Image = My.Resources.Resources.MaterialLibrary
         LabelMaterials.Name = "LabelMaterials"
-        LabelMaterials.Size = New Size(31, 22)
+        LabelMaterials.Size = New Size(47, 22)
         LabelMaterials.Text = "Matl"
         ' 
         ' TreeView1
