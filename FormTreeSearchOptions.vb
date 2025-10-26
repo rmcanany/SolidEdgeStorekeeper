@@ -265,16 +265,16 @@ Public Class FormTreeSearchOptions
             Me.LibraryDirectory = "Select a directory to store your standard parts"
         End If
 
-        If Not FMain.TemplateDirectory = "" Then
-            Me.TemplateDirectory = Me.FMain.TemplateDirectory
-        Else
-            Me.TemplateDirectory = "Select a directory with your standard part templates"
-        End If
-
         If Not FMain.DataDirectory = "" Then
             Me.DataDirectory = Me.FMain.DataDirectory
         Else
             Me.DataDirectory = "Select a directory with your data files"
+        End If
+
+        If Not FMain.TemplateDirectory = "" Then
+            Me.TemplateDirectory = Me.FMain.TemplateDirectory
+        Else
+            Me.TemplateDirectory = "Select a directory with your standard part templates"
         End If
 
         If Not FMain.MaterialTable = "" Then
@@ -285,15 +285,12 @@ Public Class FormTreeSearchOptions
 
 
         Me.AlwaysReadExcel = FMain.AlwaysReadExcel
-        'Me.AutoPattern = FMain.AutoPattern
         Me.AddProp = FMain.AddProp
         Me.DisableFineThreadWarning = FMain.DisableFineThreadWarning
         Me.ProcessTemplateInBackground = FMain.ProcessTemplateInBackground
         Me.FailedConstraintSuppress = FMain.FailedConstraintSuppress
         Me.FailedConstraintAllow = FMain.FailedConstraintAllow
         Me.SuspendMRU = FMain.SuspendMRU
-        'Me.AllowCommaDelimiters = FMain.AllowCommaDelimiters
-        'Me.AlwaysOnTop = FMain.AlwaysOnTop
         Me.IncludeDrawing = FMain.IncludeDrawing
         Me.AlwaysOnTopRefreshTime = FMain.AlwaysOnTopRefreshTime
         Me.PartPlacementTimeout = FMain.PartPlacementTimeout
@@ -365,25 +362,26 @@ Public Class FormTreeSearchOptions
 
 
     Private Sub ButtonOK_Click(sender As Object, e As EventArgs) Handles ButtonOK.Click
+
         If Me.TemplateDirectory(Me.TemplateDirectory.Count - 1) = "\" Then
             Me.TemplateDirectory = Me.TemplateDirectory.Substring(0, Me.TemplateDirectory.Count - 1)
         End If
 
+        Dim PreviousDataDirectory As String = FMain.DataDirectory
+        Dim PreviousTemplateDirectory As String = FMain.TemplateDirectory
+
         Me.FMain.LibraryDirectory = Me.LibraryDirectory
-        Me.FMain.TemplateDirectory = Me.TemplateDirectory
         Me.FMain.DataDirectory = Me.DataDirectory
+        Me.FMain.TemplateDirectory = Me.TemplateDirectory
         FMain.MaterialTable = Me.MaterialTable
 
         FMain.AlwaysReadExcel = Me.AlwaysReadExcel
-        'FMain.AutoPattern = Me.AutoPattern
         FMain.AddProp = Me.AddProp
         FMain.DisableFineThreadWarning = Me.DisableFineThreadWarning
         FMain.ProcessTemplateInBackground = Me.ProcessTemplateInBackground
         FMain.FailedConstraintSuppress = Me.FailedConstraintSuppress
         FMain.FailedConstraintAllow = Me.FailedConstraintAllow
         FMain.SuspendMRU = Me.SuspendMRU
-        'FMain.AllowCommaDelimiters = Me.AllowCommaDelimiters
-        'FMain.AlwaysOnTop = Me.AlwaysOnTop
         FMain.IncludeDrawing = Me.IncludeDrawing
 
         Dim tmpRefreshTime As Integer = 0
@@ -402,11 +400,15 @@ Public Class FormTreeSearchOptions
             If tmpPartPlacementTimeoutTime < 3000 Then tmpPartPlacementTimeoutTime = 3000
             Me.PartPlacementTimeout = CStr(tmpPartPlacementTimeoutTime)
         Catch ex As Exception
-            Me.PartPlacementTimeout = "10000"
+            Me.PartPlacementTimeout = "30000"
         End Try
         FMain.PartPlacementTimeout = Me.PartPlacementTimeout
 
         FMain.CheckNewVersion = Me.CheckNewVersion
+
+        If Not PreviousDataDirectory = Me.DataDirectory Then
+            FMain.ReloadXml()
+        End If
 
         Me.DialogResult = DialogResult.OK
     End Sub

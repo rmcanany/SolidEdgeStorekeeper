@@ -10,7 +10,7 @@ Public Class Form_Main
     Private Property Version As String = "2025.4"
 
     'Private Property PreviewVersion As String = ""  ' Empty string if not a preview
-    Private Property PreviewVersion As String = "Preview 14"
+    Private Property PreviewVersion As String = "16"
 
     Private Property SearchingTVFilename As Boolean = False
 
@@ -376,7 +376,7 @@ Public Class Form_Main
             Me.IncludeDrawing = False
             Me.ActiveMaterial = ""
             Me.AlwaysOnTopRefreshTime = "1000"
-            Me.PartPlacementTimeout = "20000"
+            Me.PartPlacementTimeout = "30000"
             Me.FavoritesOnly = False
         End If
 
@@ -412,11 +412,8 @@ Public Class Form_Main
         UP.CheckVersionFormat(Me.Version)
 
         ' Form title
-        If Me.PreviewVersion = "" Then
-            Me.Text = $"Solid Edge Storekeeper {Me.Version}"
-        Else
-            Me.Text = $"Solid Edge Storekeeper {Me.Version} {Me.PreviewVersion}"
-        End If
+        Me.Text = String.Format("Solid Edge Storekeeper {0}", Me.Version)
+        If Not Me.PreviewVersion = "" Then Me.Text = $"{Me.Text} Preview {Me.PreviewVersion}"
 
         If Me.CheckNewVersion Then
             UP.CheckForNewerVersion(Me.Version)
@@ -2648,6 +2645,18 @@ Public Class Form_Main
         End If
     End Sub
 
+    Public Sub ReloadXml()
+        Dim PreviousAlwaysReadExcel As Boolean = Me.AlwaysReadExcel
+
+        Me.TreeView1.Nodes.Clear()
+        Dim Splash As New FormSplash
+        Splash.Show()
+        LoadXml(Splash)
+        Splash.Dispose()
+
+        Me.AlwaysReadExcel = PreviousAlwaysReadExcel
+    End Sub
+
 
 
     ' ###### EVENT HANDLERS ######
@@ -3360,7 +3369,10 @@ Public Class Form_Main
 
     Private Sub ButtonFavoritesOnly_Click(sender As Object, e As EventArgs) Handles ButtonFavoritesOnly.Click
         Me.FavoritesOnly = Not Me.FavoritesOnly
+
+        ReloadXml()
     End Sub
+
 End Class
 
 Public Class Props
