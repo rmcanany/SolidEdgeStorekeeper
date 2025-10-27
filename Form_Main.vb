@@ -10,7 +10,7 @@ Public Class Form_Main
     Private Property Version As String = "2025.4"
 
     'Private Property PreviewVersion As String = ""  ' Empty string if not a preview
-    Private Property PreviewVersion As String = "16"
+    Private Property PreviewVersion As String = "17"
 
     Private Property SearchingTVFilename As Boolean = False
 
@@ -74,6 +74,7 @@ Public Class Form_Main
     Public Property DataDirectory As String
     Public Property MaterialTable As String
     Public Property AlwaysReadExcel As Boolean
+
     Private _AutoPattern As Boolean
     Public Property AutoPattern As Boolean
         Get

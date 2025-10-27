@@ -1,5 +1,5 @@
 ﻿Option Strict On
-Imports System.IO
+'Imports System.IO
 
 Public Class HCErrorLogger
 

@@ -1,9 +1,9 @@
 ﻿Option Strict On
 
 Imports System.Net.Http
-Imports System.Security.AccessControl
+'Imports System.Security.AccessControl
 Imports Newtonsoft.Json
-Imports SolidEdgeAssembly
+'Imports SolidEdgeAssembly
 
 Public Class UtilsPreferences
 
