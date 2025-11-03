@@ -745,8 +745,22 @@ Public Class FormFastenerStack
                 NewOccurrenceList.Add(CType(Occurrences(i), SolidEdgeAssembly.Occurrence))
             Next
 
+            ' Get a unique name for the new assembly group
+            Dim AssemblyGroupNames As New List(Of String)
+            For Each AssemblyGroup As SolidEdgeAssembly.AssemblyGroup In FMain.AsmDoc.AssemblyGroups
+                AssemblyGroupNames.Add(AssemblyGroup.Name)
+            Next
+            Dim j = 1
+            Dim Stackname As String = Nothing
+            While True
+                Stackname = $"FastenerStack {CStr(j)}"
+                If Not AssemblyGroupNames.Contains(Stackname) Then Exit While
+                j += 1
+            End While
+
+            ' Create the group
             Dim NewGroup As SolidEdgeAssembly.AssemblyGroup = FMain.AsmDoc.AssemblyGroups.Add(NumFilesAdded, NewOccurrenceList.ToArray)
-            NewGroup.Name = $"FastenerStack {FMain.AsmDoc.AssemblyGroups.Count}"
+            NewGroup.Name = Stackname
 
             If FMain.AutoPattern Then
                 ' This returns False if no pattern is found.  That is not an error.

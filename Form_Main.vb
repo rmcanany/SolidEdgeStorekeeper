@@ -1293,11 +1293,11 @@ Public Class Form_Main
                         Try
                             Dim ComType = HCComObject.GetCOMObjectType(Element2)
                             If Not IsTopologyReference Then
-                                _ErrorLogger.AddMessage($"Element2 Type not TopologyReference: '{ComType.FullName}'")
+                                '_ErrorLogger.AddMessage($"Element2 Type not TopologyReference: '{ComType.FullName}'")
                                 'Exit For
                             End If
                         Catch ex2 As Exception
-                            _ErrorLogger.AddMessage($"Exception: {ex2.Message}")
+                            '_ErrorLogger.AddMessage($"Exception: {ex2.Message}")
                             'Exit For
                         End Try
 
@@ -1308,7 +1308,7 @@ Public Class Form_Main
                                 Exit For
                             End If
                         Catch ex2 As Exception
-                            _ErrorLogger.AddMessage($"Could not obtain pattern geometry.  Error was '{ex2.Message}'")
+                            '_ErrorLogger.AddMessage($"Could not obtain pattern geometry.  Error was '{ex2.Message}'")
                             'Try
                             '    Dim ComType = HCComObject.GetCOMObjectType(Element2.Object)
                             '    _ErrorLogger.AddMessage($"HCComObject.GetCOMObjectType(Element2.Object): {ComType.FullName}")
@@ -1329,11 +1329,6 @@ Public Class Form_Main
         Else
             Success = False
         End If
-
-        'Catch ex As Exception
-        '    Success = False
-        '    _ErrorLogger.AddMessage($"Exception: {ex.Message}")
-        'End Try
 
         Return Success
     End Function
