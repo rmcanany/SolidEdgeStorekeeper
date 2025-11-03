@@ -261,6 +261,8 @@ Open the file (located in the `Preferences\Data` directory) and look for entries
 
 Standard parts, especially fasteners, are frequently patterned after placement.  If this option is enabled and the feature to which a part has been assembled is a member of a pattern, the program attempts to pattern the part.  There are currently a couple of limitations.  
 
+- It works in SE2024 and SE2025.  It does not work in SE2019 or SE2021.  Other versions have not been tested.
+
 - It works with `Smart Patterns` and `User-Defined Patterns` (that's a hole with multiple hole circles in the profile).  It does not work with (the default) `Fast Patterns` unfortunately, unless you get lucky and pick the hole that was used to create the pattern.
 
 - It is sometimes unable to create a pattern when placing a fastener to a part located in a subasembly.  In some cases, it helps to save the top-level assembly and try again.
