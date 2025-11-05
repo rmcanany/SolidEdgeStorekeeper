@@ -15,7 +15,7 @@ Feel free to report bugs and/or ideas for improvement on the [<ins>**Solid Edge 
 
 ## V2025.4
 
-We'll get right to the updates, but first some exciting news -- we have a new **Contributor!**  Our very own **@TeeVar** built and donated a massive ISO-native dataset, compatible back to SE2019.  He also provided a ton of great suggestions to enhance the capabilities of the program and make it easier to use.  Can't wait for you to see his handiwork!
+We'll get right to the updates, but first some exciting news -- we have a new **Contributor!**  Our very own **@TeeVar** built and donated a massive ISO dataset, compatible back to SE2019.  He also provided a ton of great suggestions to enhance the capabilities of the program and make it easier to use.  Can't wait for you to see his handiwork!
 
 Now, about those updates...
 
@@ -101,13 +101,13 @@ See the [<ins>**Property Search Options**</ins>](https://github.com/rmcanany/Sol
 
 - Added `Scroll to selected` to the shortcut menu for **Tree Search** (Thank you **@[Francesco Arfilli]!**).  This can be handy when you need to swap out a given part with another in the same family.
 
-- Added the ability to use special characters (`/`, `*`, `@`, etc.) in Xml tag definitions  (Thank you **@Seva!**).  Normally these are not allowed.  To get around it, special characters are replaced with compatible stand-ins where necessary.  If you look in `Storekeeper.xml`, you may see text like `.XmlComma.` or `.XmlOpeningBrace.`  Those are a couple of those stand-ins.
+- Added the ability to use special characters (`/`, `*`, `@`, etc.) in Xml tag definitions  (Thank you **@Seva!**).  Normally these are not allowed.  To get around it, special characters are replaced with compatible stand-ins where necessary.  If you look in `Storekeeper.xml`, you may see text like `.XmlComma.` or `.XmlOpeningBrace.`  Those are a couple of the stand-ins just mentioned.
 
-- Temporarily disabled the `Pre-Populate` feature from the previous version (Sorry **@Seva!**).  It is not currently compatible with multiple materials per category.  In particular it had trouble when a material is valid for one selected item, but not another.  You can still use the previous version when that feature is needed.
+- Temporarily disabled the `Pre-Populate` feature from the previous version (Sorry **@Seva!**).  It is not currently compatible with multiple materials per category.  You can still use the previous version when that feature is needed.
 
 - Moved the options `Always on top` and `Auto pattern` to the main toolbar.  Previously they were on the Tree Search Options page.  The idea was to reduce distraction and save a couple of clicks for these frequently toggled settings.  
 
-- Added a timeout for the `Place Part` command.  It was needed to avoid an infinite loop in the program.  Set it, on the **Tree Search Options** page, to give you ample time to constrain the part in the assembly.
+- Added a timeout for the `Place Part` command.  It was needed to avoid an infinite loop in the program.  Set it, on the **Tree Search Options** page, to give yourself ample time to constrain the part in the assembly.
 
 ## V2025.3
 
@@ -127,7 +127,7 @@ Added the ability to replace selected parts in the assembly.
 
 Contributed by **@[Francesco Arfilli]**.  Thank you!
 
-Changed the template updating process for new parts.  The update can now occcur in the background.  Set the option on the Tree Search Options dialog.  Running in the background speeds up processing and eliminates the unexplained and confusing presence of a new part file in the interface.
+Changed the template updating process for new parts.  The update can now occur in the background.  Set the option on the Tree Search Options dialog.  Running in the background speeds up processing and eliminates the unexplained and confusing presence of a new part file in the interface.
 
 ### Pre-populate Library
 

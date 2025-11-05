@@ -84,7 +84,7 @@ Unlike web-based offerings, the program is integrated with your parts library an
 
 Finally, it has a secret weapon -- all of us.  Contributions are welcome!  Please message me on the [<ins>**Solid Edge Forum**</ins>](https://community.sw.siemens.com/s/topic/0TO4O000000MihiWAC/solid-edge), or raise an [<ins>**Issue on GitHub**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/issues), for ideas on how to get started.
 
-Uh-oh.  The Marketing guy just showed up.  He wants to *"Synergize our stake holders and leverage this cross-promotion opportunity"*.  I bet he does.
+Uh-oh.  The Marketing guy just showed up.  He wants to *"Synergize our stakeholders and leverage this cross-promotion opportunity"*.  I bet he does.
 
 >  *Hello there!! I'm Big Mike!  Do you want to do things better and faster with less work?!  Of course you do!  That's why you need [<ins>**Solid Edge Housekeeper**</ins>](https://github.com/rmcanany/SolidEdgeHousekeeper#readme)!*
 
@@ -124,7 +124,7 @@ As noted earlier, some setup is required before using the program.  If you run S
 
 ### Tree Search Toolbar
 
-Most options are set on the **Tree Search Options** page (see next), but those most frequently-used are set on the toolbar itself.
+Most options are set on the **Tree Search Options** page (see next), but those most frequently-used are located on the toolbar itself.
 
 <p align="center">
   <img src="media/tree_search_toolbar.png">
@@ -146,7 +146,7 @@ Keeps Storekeeper on top of other windows.  Click to toggle.
 Enables automatic patterning.  Click to toggle.  See separate section below for details.
 
 - ![Favorites only](media/favorites_enabled.png) `Favorites only`  
-Shows only your favorites in the tree.  Click  to toggle.  Edit the `Favorite` column in the spreadsheets (`AnsiFasteners.xls`, `ISO_Fasteners_1.xls`, etc.) to set your preferences.  Currently, the program must be restarted for the change to take effect.
+Shows only your favorites in the tree.  Click  to toggle.  See separate section below for details.
 
 - ![Matl](media/MaterialLibrary.png) `Matl`  
 Available materials for the selected part.  If an item only has one material defined, it is selected automatically.  If you go to a different item in the tree and its material list contains the currently active material, the selection is retained.  
@@ -170,7 +170,7 @@ The library is where the standard parts you create are stored.  The default is i
 - **DATA DIRECTORY**  
 The spreadsheet contains the variables required for each size of each type of part.  By default, it is stored in the `Preferences\DataSE2024` directory. 
 
-  Change the data directory to `Preferences\DataSE2019` if you want to use the alternative templates.  You will have to restart the program for the change to take effect.
+  Change the data directory to `Preferences\DataSE2019` if you want to use the alternative templates.  
 
 - **TEMPLATE DIRECTORY**  
 The templates are SE part files that have variable-table-driven geometry to create new parts of a given type.  By default they are stored in the `Preferences\TemplatesSE2024` folder.
@@ -216,7 +216,7 @@ The material table is usually your normal SE material table.  However, for a qui
 	With the same situation as above, this option tells the program to leave the constraint in the failed state.  This is my preferred setting.  The pathfinder shows a red lightning bolt, alerting me that I need to fix something.
 	
   - `Do not add files to the Recently Used list`  
-	Enable this option to keep the program from adding newly-generated standard parts to the Most Recently Used list.  Note this ability was added to Solid Edge in version 2020.  If you are running an earlier version, this option has no effect.
+	Enable this option to keep the program from adding newly-generated standard parts to the Most Recently Used list.  Note this ability was added to Solid Edge in version 2020.  If you are running an earlier version, it has no effect.
 	
   - `Include drawing of part if present`  
 	If a file in the templates directory has a drawing with the same name, the program can copy it to the library along with the part.  Enable this option to do so.
@@ -267,6 +267,24 @@ Standard parts, especially fasteners, are frequently patterned after placement. 
 
 - It is sometimes unable to create a pattern when placing a fastener to a part located in a subasembly.  In some cases, it helps to save the top-level assembly and try again.
 
+## FAVORITES
+
+As mentioned above, in the tree search panel, you can have all available parts shown, or just your favorites.
+
+Edit the `Favorites` column in the spreadsheets  (`Storekeeper.xls`, `AnsiFasteners.xls`, etc.) to do so.  For `Storekeeper.xls`, the entire node must be either `True` or `False` as shown below.  
+
+<p align="center">
+  <img src="media/favorites_storekeeper_spreadsheet.png">
+</p>
+
+For the other spreadsheets, it is a line by line choice.
+
+<p align="center">
+  <img src="media/favorites_companion_spreadsheet.png">
+</p>
+
+
+
 ## FASTENER STACK
 
 A fastener stack is a grouping that consists of a fastener and related components, such as washers and nuts.  To create one, on the `Tree Search` dialog, right-click a fastener and select the `Fastener stack` command.  The following form is shown.
@@ -315,7 +333,7 @@ To get `Thread depth` on blind holes, one way is to change selection priority fr
 
 In Storekeeper's `Preferences` directory, there are three files for each of the supplied datasets, `FlatWasher.json`,`LockWasher.json`, and `Nut.json`.  You can edit those in Notepad to point to the desired node in the `*.xml` tree.
 
-Doing it like that is not user friendly in the least.  And wait until you see the traversal syntax.  It might be easier to go with the defaults, then use `Replace selected` to fix things up after the fact.  
+Doing it like that is not user friendly in the least.  And wait until you see the tree traversal syntax.  It might be easier to go with the defaults, then use `Replace selected` to fix things up after the fact.  
 
 Some care was taken in the creation of the templates to avoid breaking constraints when replacing parts.  Hopefully it won't create extra work if you decide to give it a try.
 
@@ -350,7 +368,7 @@ You are of course free to create new templates any way you see fit.  However, if
 
 Many standard parts have a primary axis.  For consistency, consider orienting it along the Y Axis as shown.  For parts with a secondary axis like the pipe elbow, consider the Z Axis.
 
-Another thing to think about is the effect of replacing one standard part with another.  It would be nice not to break assembly relationships.  For fasteners, I started with the socket head capscrew.  When it was time to create the next one, I did a Save As on that initial part and modified it as needed.  Since the head and body now have the same faces, Replace Part works as expected.
+Another thing to think about is the effect of replacing one standard part with another.  It would be nice not to break assembly relationships.  For fasteners, I started with the socket head capscrew.  When it was time to create the next one, I did a Save As on that initial part and modified it as needed.  Since the head and body now have the exact same faces, Replace Part works as expected.
 
 <p align="center">
   <img src="media/template_variable_names.png">
@@ -384,7 +402,7 @@ In the image, the `BHCS` and `FHCS` nodes each have an entry, `Nodes` (plural). 
   <img src="media/companion_spreadsheet.png">
 </p>
 
-The rows represent different sizes, the columns represent values for a given size.  The first row holds the name for each value, the second holds its *type*.  The first column tells the program whether or not to display a given size.  It's for reducing clutter in the interface.
+The rows represent different sizes, the columns represent values for a given size.  The first row holds the name for each value, the second holds its *type*.  The first column lets you identify your favorite parts as discussed above.
 
 The types `Variable` and `LeafNodeVariable` refer to entries in the template's variable table.  One other *type* not shown in the image is `ParameterString`.  That denotes a value that is needed in the template, but does not reside in the variable table.  For those,  there must be separate code to handle it.  Currently only `ThreadDescription` is supported.  See `AnsiFasteners.xls` for an example.
 

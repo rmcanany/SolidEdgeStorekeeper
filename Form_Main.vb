@@ -8,9 +8,7 @@ Imports Microsoft.WindowsAPICodePack.Dialogs
 Public Class Form_Main
 
     Private Property Version As String = "2025.4"
-
-    'Private Property PreviewVersion As String = ""  ' Empty string if not a preview
-    Private Property PreviewVersion As String = "17"
+    Private Property PreviewVersion As String = ""  ' Empty string if not a preview
 
     Private Property SearchingTVFilename As Boolean = False
 
@@ -369,6 +367,8 @@ Public Class Form_Main
             Me.CheckNewVersion = True
             Me.AlwaysOnTop = False
             Me.SaveInLibrary = True
+            Me.SaveInAssemblyDirectory = False
+            Me.SaveInOther = False
             Me.ProcessTemplateInBackground = False
             Me.FailedConstraintSuppress = False
             Me.FailedConstraintAllow = True
@@ -377,7 +377,7 @@ Public Class Form_Main
             Me.IncludeDrawing = False
             Me.ActiveMaterial = ""
             Me.AlwaysOnTopRefreshTime = "1000"
-            Me.PartPlacementTimeout = "30000"
+            Me.PartPlacementTimeout = "60000"
             Me.FavoritesOnly = False
         End If
 
