@@ -7,8 +7,8 @@ Imports Microsoft.WindowsAPICodePack.Dialogs
 
 Public Class Form_Main
 
-    Private Property Version As String = "2025.4"
-    Private Property PreviewVersion As String = ""  ' Empty string if not a preview
+    Private Property Version As String = "2025.5"
+    Private Property PreviewVersion As String = "01"  ' Empty string if not a preview
 
     Private Property SearchingTVFilename As Boolean = False
 
@@ -2991,7 +2991,7 @@ Public Class Form_Main
         Me.ErrorLogger = New HCErrorLogger("Storekeeper")
         Me.FileLogger = Me.ErrorLogger.AddFile("Replace selected")
         Try
-            Process(PropertySearchFilename:=PropertySearchFilename)
+            Process(PropertySearchFilename:=PropertySearchFilename, Replace:=True)
         Catch ex As Exception
             Me.FileLogger.AddMessage("Error processing file")
             Me.FileLogger.AddMessage(ex.ToString)
@@ -3006,7 +3006,7 @@ Public Class Form_Main
         Me.ErrorLogger = New HCErrorLogger("Storekeeper")
         Me.FileLogger = Me.ErrorLogger.AddFile("Replace all")
         Try
-            Process(PropertySearchFilename:=PropertySearchFilename)
+            Process(PropertySearchFilename:=PropertySearchFilename, Replace:=True, ReplaceAll:=True)
         Catch ex As Exception
             Me.FileLogger.AddMessage("Error processing file")
             Me.FileLogger.AddMessage(ex.ToString)
