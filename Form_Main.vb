@@ -7,7 +7,7 @@ Imports Microsoft.WindowsAPICodePack.Dialogs
 
 Public Class Form_Main
 
-    Private Property Version As String = "2025.5"
+    Private Property Version As String = "2026.1"
     Private Property PreviewVersion As String = "01"  ' Empty string if not a preview
 
     Private Property SearchingTVFilename As Boolean = False
@@ -1933,6 +1933,8 @@ Public Class Form_Main
         ''https://www.codemag.com/Article/2312031/Process-XML-Files-Easily-Using-.NET-6-7
         ''https://stackoverflow.com/questions/54606021/how-to-populate-winforms-treeview-from-xml-file-regardless-the-number-of-childr
 
+        System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance) ' Needed by ExcelReader and extended character sets
+
         TextBoxStatus.Text = "Reading Excel file"
         Splash.UpdateStatus("Reading Excel file")
 
@@ -2120,6 +2122,7 @@ Public Class Form_Main
         Dim OutString As String = InString
 
         ' Deal with repeated doublequotes
+        'OutString = OutString.Replace("""", Chr(182))
         OutString = OutString.Replace("""", Chr(182))
 
         For Each XmlReplacementString As String In StringFromXmlDict.Keys
@@ -2192,7 +2195,7 @@ Public Class Form_Main
     End Sub
 
     Public Function ReadExcel(FileName As String) As List(Of List(Of String))
-        System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance) ' Needed by ExcelReader
+        'System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance) ' Needed by ExcelReader
 
         If Not IO.File.Exists(FileName) Then
             Dim s As String = $"File not found '{FileName}'{vbCrLf}{vbCrLf}"

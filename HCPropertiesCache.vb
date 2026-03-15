@@ -1,5 +1,5 @@
 ﻿Option Strict On
-'Imports System.Security.AccessControl
+
 Imports Newtonsoft.Json
 
 Public Class HCPropertiesCache
@@ -172,9 +172,11 @@ Public Class HCPropertiesCache
     Public Function GetPropType(Filename As String, PropName As String) As String
         Dim TypeName As String = Nothing
 
+        PropName = PropName.ToLower
+
         For Each PropertyCache As FileCache In Items
             For Each PropCache As PropCache In PropertyCache.PropCaches
-                If PropName = PropCache.EnglishName Then
+                If PropName = PropCache.EnglishName.ToLower Then
                     TypeName = PropCache.TypeName
                     Exit For
                 End If
@@ -263,8 +265,11 @@ Public Class FileCache
     Public Function GetPropCache(PropertySetName As String, EnglishName As String) As PropCache
         Dim tmpPropCache As PropCache = Nothing
 
+        PropertySetName = PropertySetName.ToLower
+        EnglishName = EnglishName.ToLower
+
         For Each PropCache As PropCache In PropCaches
-            If PropCache.PropertySetName = PropertySetName And PropCache.EnglishName = EnglishName Then
+            If PropCache.PropertySetName.ToLower = PropertySetName And PropCache.EnglishName.ToLower = EnglishName Then
                 tmpPropCache = PropCache
                 Exit For
             End If
@@ -371,8 +376,8 @@ Public Class PropCache
 
     Public Sub New(_PropertySetName As String, _EnglishName As String, _TypeName As String, _Value As Object)
 
-        Me.PropertySetName = _PropertySetName
-        Me.EnglishName = _EnglishName
+        Me.PropertySetName = _PropertySetName.ToLower
+        Me.EnglishName = _EnglishName.ToLower
 
         If _TypeName IsNot Nothing Then
             Me.TypeName = _TypeName
@@ -394,8 +399,8 @@ Public Class PropCache
 
         Dim tmpDict As New Dictionary(Of String, String)
 
-        tmpDict("PropertySetName") = Me.PropertySetName
-        tmpDict("EnglishName") = Me.EnglishName
+        tmpDict("PropertySetName") = Me.PropertySetName.ToLower
+        tmpDict("EnglishName") = Me.EnglishName.ToLower
         tmpDict("TypeName") = Me.TypeName
 
         If Me.Value IsNot Nothing Then
@@ -418,8 +423,8 @@ Public Class PropCache
         tmpDict = JsonConvert.DeserializeObject(Of Dictionary(Of String, String))(JSONString)
 
         Try
-            Me.PropertySetName = tmpDict("PropertySetName")
-            Me.EnglishName = tmpDict("EnglishName")
+            Me.PropertySetName = tmpDict("PropertySetName").ToLower
+            Me.EnglishName = tmpDict("EnglishName").ToLower
             If tmpDict("TypeName") IsNot Nothing Then
                 Me.TypeName = tmpDict("TypeName")
             Else
