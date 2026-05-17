@@ -13,6 +13,28 @@ Please note, the program has been tested on thousands of our files, but none of 
 
 Feel free to report bugs and/or ideas for improvement on the [<ins>**Solid Edge Forum**</ins>](https://community.sw.siemens.com/s/topic/0TO4O000000MihiWAC/solid-edge) or [<ins>**GitHub**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/issues).
 
+## V2026.1
+
+### Updated ISO Data and Templates
+
+Contributed by @TeeVar.  Thank you!
+
+- Added ISO 1234:1997 - Split pins
+- Fixed values, parameters and variable for some items
+- Updated all ISO DIN standards to the latest releases ( up to 2026.04)
+- Added non-preferred sizes for all standards
+
+### Other
+
+- Fixed a regression in `Property Search` where the `Replace Selected/All` function was no longer working (Thank you @TeeVar!)
+- Fixed a regression where character encoding in non-US locales caused a runtime exception (Thank you @TeeVar!)
+- Updated to the most recent OpenMcdf version.
+
+
+
+
+
+
 ## V2025.4
 
 We'll get right to the updates, but first some exciting news -- we have a new **Contributor!**  Our very own **@TeeVar** built and donated a massive ISO dataset, compatible back to SE2019.  He also provided a ton of great suggestions to enhance the capabilities of the program and make it easier to use.  Can't wait for you to see his handiwork!
