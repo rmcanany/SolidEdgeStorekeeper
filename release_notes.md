@@ -17,21 +17,22 @@ Feel free to report bugs and/or ideas for improvement on the [<ins>**Solid Edge 
 
 ### Updated ISO Data and Templates
 
-Contributed by @TeeVar.  Thank you!
+Contributed by **@TeeVar**.  Thank you!
 
-- Added ISO 1234:1997 - Split pins
-- Fixed values, parameters and variable for some items
 - Updated all ISO DIN standards to the latest releases ( up to 2026.04)
 - Added non-preferred sizes for all standards
+- Added ISO 1234:1997 - Split pins
+- Fixed values, parameters and variables for some items
+- Over 38k items now available
+
+See the [<ins>**Tree Search Options**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#tree-search-options) section of the Readme for details.
 
 ### Other
 
-- Fixed a regression in `Property Search` where the `Replace Selected/All` function was no longer working (Thank you @TeeVar!)
-- Fixed a regression where character encoding in non-US locales caused a runtime exception (Thank you @TeeVar!)
-- Updated to the most recent OpenMcdf version.
-
-
-
+- Fixed an issue in `Property Search` where the `Replace Selected/All` function was adding parts instead of replacing them (Thank you **@TeeVar**!)
+- Fixed a regression where character encoding in non-US locales caused a runtime exception at startup (Thank you again **@TeeVar**!)
+- Fixed an issue where the `Property Cache` was not properly updating if a file change was detected (Thank you one more time **@TeeVar**!)
+- Updated to the most recent OpenMcdf version
 
 
 

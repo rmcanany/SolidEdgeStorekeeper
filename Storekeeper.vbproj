@@ -142,6 +142,8 @@
   <ItemGroup>
     <Reference Include="SolidEdgeExplorerDLL">
       <HintPath>My Project\SolidEdgeExplorer\SolidEdgeExplorerDLL.dll</HintPath>
+      <Private>True</Private>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
   </ItemGroup>
 
