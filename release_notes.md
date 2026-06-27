@@ -33,7 +33,7 @@ See the [<ins>**Tree Search Options**</ins>](https://github.com/rmcanany/SolidEd
 - Fixed a regression where character encoding in non-US locales caused a runtime exception at startup (Thank you again **@TeeVar**!)
 - Fixed an issue where the `Property Cache` was not properly updating if a file change was detected (Thank you one more time **@TeeVar**!)
 - Updated to the most recent OpenMcdf version
-
+- Fixed an issue where users running preview code were not notified when the finalized version was released.
 
 
 ## V2025.4
