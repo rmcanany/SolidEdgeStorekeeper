@@ -27,6 +27,32 @@ Contributed by **@TeeVar**.  Thank you!
 
 See the [<ins>**Tree Search Options**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#tree-search-options) section of the Readme for details.
 
+### PEM Fasteners
+
+Added a selection of PEM fasteners to the database.
+
+<p align="center">
+  <img src="media/pem_fasteners.png">
+</p>
+
+The models are simplified in a way that avoids interference between the part and its mounting panel.  Note the PEM part number encodes the part's material.  The SE material should be selected automatically.
+
+### Thread Pitch Rendering
+
+Added adjustment of the thread texture image to better reflect its pitch.
+
+<p align="center">
+  <img src="media/variable_thread_pitch_example.png">
+</p>
+
+It is only meant to add a bit of realism; there is no functional purpose.
+
+It does not update files created with the previous release.  Only newly-created files are affected.
+
+See the [<ins>**Creating New Templates Help Topic**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#creating-new-templates) section of the Readme for details.
+
+
+
 ### Other
 
 - Fixed an issue in `Property Search` where the `Replace Selected/All` function was adding parts instead of replacing them (Thank you **@TeeVar**!)

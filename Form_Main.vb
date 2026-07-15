@@ -301,6 +301,7 @@ Public Class Form_Main
     Private Property StringToXmlDict As Dictionary(Of String, String)
     Private Property StringFromXmlDict As Dictionary(Of String, String)
 
+    Private Property ThreadFaceStyleName As String
 
     ' https://community.sw.siemens.com/s/question/0D5Vb00000Krsy5KAB/handling-events-how-to-use-help-example
     ' https://github.com/SolidEdgeCommunity/Samples/blob/master/General/EventHandling/vb/EventHandling/MainForm.vb
@@ -384,6 +385,8 @@ Public Class Form_Main
         UP.CreatePreferencesDirectory(Me)
         UP.GetFormMainSettings(Me)
         UP.CreateFilenameCharmap()
+        UP.CreateThreadFaceStyleNameFile()
+        Me.ThreadFaceStyleName = UP.GetThreadFaceStyleName
 
         LoadXml(Splash)
 
@@ -1021,8 +1024,10 @@ Public Class Form_Main
             HoleData.Size = ThreadDescription
 
             If Not Me.DisableFineThreadWarning And HasExternalThreads And ThreadDescription.ToLower.Contains("unf") Then
-                ErrorLogger.AddMessage("Cannot correctly create external fine threads.  See Readme for details.")
+                ErrorLogger.AddMessage("Cannot correctly create external fine threads.  See command Help for details.")
             End If
+
+            UpdateThreadTexture(SEDoc, ThreadDescription)
         End If
 
 
@@ -1108,6 +1113,193 @@ Public Class Form_Main
         End If
 
         Return Success
+    End Function
+
+
+    Private Sub UpdateThreadTexture(
+        SEDoc As SolidEdgeFramework.SolidEdgeDocument,
+        ThreadDescription As String)
+
+        Dim UC As New UtilsCommon
+
+        Dim VariableDict As Dictionary(Of String, SolidEdgeFramework.variable) = UC.GetDocVariables(SEDoc)
+
+        If Not VariableDict.Keys.Contains("ThreadTextureLength") Then Exit Sub
+
+        Dim ThreadFaceStyle As SolidEdgeFramework.FaceStyle = UC.GetFaceStyle(SEDoc, Me.ThreadFaceStyleName)
+
+        If ThreadFaceStyle Is Nothing Then Exit Sub
+
+        Dim Length As Double ' Populated (in document file units) in GetValueEx next.
+        VariableDict("ThreadTextureLength").GetValueEx(Length, SolidEdgeFramework.seUnitsTypeConstants.seUnitsType_Document)
+
+        ' The Thread FaceStyle texture image contains 7 threads
+        ' We need to compute how many threads need to be shown
+        ' Then divide 7 by the number to get the correct number for TextureScaleY
+
+        ' Thread pitch will be in document units
+        ' Not likely in a library file, but should handle mm in Ansi files and vice versa.
+        Dim Pitch As Double = -1
+
+        Dim DocDistanceUnits As String = GetSEDocDistanceUnits(SEDoc) ' "inch" or "millimeter"
+        If DocDistanceUnits = "" Then Exit Sub
+
+        If IsAnsi(ThreadDescription) And IsIso(ThreadDescription) Then Exit Sub
+        If Not (IsAnsi(ThreadDescription) Or IsIso(ThreadDescription)) Then Exit Sub
+
+        If IsAnsi(ThreadDescription) Then
+            Pitch = GetAnsiPitch(ThreadDescription)
+            If DocDistanceUnits = "millimeter" Then
+                Pitch = Pitch * 25.4
+            End If
+        End If
+        If IsIso(ThreadDescription) Then
+            Pitch = GetIsoPitch(ThreadDescription)
+            If DocDistanceUnits = "inch" Then
+                Pitch = Pitch / 25.4
+            End If
+        End If
+
+        If Pitch <= 0 Then Exit Sub
+
+        Dim NumThreads As Double = Length / Pitch
+
+        ThreadFaceStyle.TextureScaleY = CSng(7 / NumThreads)
+
+    End Sub
+
+    Private Function GetSEDocDistanceUnits(
+        SEDoc As SolidEdgeFramework.SolidEdgeDocument
+        ) As String
+        Dim DistanceUnits As String = ""
+
+        For Each UnitOfMeasure As SolidEdgeFramework.UnitOfMeasure In SEDoc.UnitsOfMeasure
+            If UnitOfMeasure.Type = SolidEdgeConstants.UnitTypeConstants.igUnitDistance Then
+                If UnitOfMeasure.Units = SolidEdgeConstants.UnitOfMeasureLengthReadoutConstants.seLengthInch Then
+                    DistanceUnits = "inch"
+                ElseIf UnitOfMeasure.Units = SolidEdgeConstants.UnitOfMeasureLengthReadoutConstants.seLengthMillimeter Then
+                    DistanceUnits = "millimeter"
+                End If
+            End If
+            If Not DistanceUnits = "" Then Exit For
+        Next
+
+        Return DistanceUnits
+    End Function
+
+    Private Function IsAnsi(ThreadDescription As String) As Boolean
+        Return ThreadDescription.Contains("-")
+    End Function
+
+    Private Function IsIso(ThreadDescription As String) As Boolean
+        Return ThreadDescription.Trim.StartsWith("M")
+    End Function
+
+    Private Function GetAnsiPitch(
+        ThreadDescription As String
+        ) As Double
+        Dim Pitch As Double = -1
+
+        '  #8-32 UNC
+        ' 1/4-28 UNF
+        If ThreadDescription.Contains("-") Then
+            Dim s As String = ThreadDescription.Split(CChar("-"))(1) ' '#8-32 UNC' -> '32 UNC'
+            s = s.Split(CChar(" "))(0) ' '32 UNC' -> '32'
+            s = s.Replace(",", ".").Trim ' ' 0,35' -> '0.35'
+            Try
+                Dim TPI As Double = CDbl(s)
+                Pitch = 1 / TPI
+            Catch ex As Exception
+                Pitch = -1
+            End Try
+        End If
+
+        Return Pitch
+    End Function
+
+    Private Function GetIsoPitch(
+        ThreadDescription As String
+        ) As Double
+        Dim Pitch As Double = -1
+
+        ' M3 x 0.35
+        ' M3 x 0,35
+        If ThreadDescription.Trim.StartsWith("M") Then
+            If ThreadDescription.ToLower.Contains("x") Then
+                Dim s As String = ThreadDescription.Split(CChar("x"))(1) ' 'M3 x 0,35' -> ' 0,35'
+                s = s.Replace(",", ".").Trim ' ' 0,35' -> '0.35'
+                Try
+                    Pitch = CDbl(s)
+                Catch ex As Exception
+                    Pitch = -1
+                End Try
+            Else
+                Pitch = GetStandardIsoPitch(ThreadDescription)
+            End If
+        End If
+
+        Return Pitch
+    End Function
+
+    Private Function GetStandardIsoPitch(
+        ThreadDescription As String
+        ) As Double
+
+        ' Needs to be a bare Mxx string.  No trailing text.
+
+        Dim StandardPitch As Double = -1
+
+        Dim ThreadDict As New Dictionary(Of String, Double)
+
+        ThreadDict("M1") = 0.25
+        ThreadDict("M1.2") = 0.25
+        ThreadDict("M1.4") = 0.3
+        ThreadDict("M1.6") = 0.35
+        ThreadDict("M1.7") = 0.35
+        ThreadDict("M1.8") = 0.35
+        ThreadDict("M2") = 0.4
+        ThreadDict("M2.2") = 0.45
+        ThreadDict("M2.3") = 0.4
+        ThreadDict("M2.5") = 0.45
+        ThreadDict("M2.6") = 0.45
+        ThreadDict("M3") = 0.5
+        ThreadDict("M3.5") = 0.6
+        ThreadDict("M4") = 0.7
+        ThreadDict("M5") = 0.8
+        ThreadDict("M6") = 1
+        ThreadDict("M7") = 1
+        ThreadDict("M8") = 1.25
+        ThreadDict("M9") = 1.25
+        ThreadDict("M10") = 1.5
+        ThreadDict("M11") = 1.5
+        ThreadDict("M12") = 1.75
+        ThreadDict("M14") = 2
+        ThreadDict("M16") = 2
+        ThreadDict("M18") = 2.5
+        ThreadDict("M20") = 2.5
+        ThreadDict("M22") = 2.5
+        ThreadDict("M24") = 3
+        ThreadDict("M27") = 3
+        ThreadDict("M30") = 3.5
+        ThreadDict("M33") = 3.5
+        ThreadDict("M36") = 4
+        ThreadDict("M39") = 4
+        ThreadDict("M42") = 4.5
+        ThreadDict("M45") = 4.5
+        ThreadDict("M48") = 5
+        ThreadDict("M52") = 5
+        ThreadDict("M56") = 5.5
+        ThreadDict("M60") = 5.5
+        ThreadDict("M64") = 6
+        ThreadDict("M68") = 6
+        ThreadDict("M72") = 6
+        ThreadDict("M80") = 6
+        ThreadDict("M90") = 6
+        ThreadDict("M100") = 6
+
+        If ThreadDict.Keys.Contains(ThreadDescription.Trim) Then StandardPitch = ThreadDict(ThreadDescription.Trim)
+
+        Return StandardPitch
     End Function
 
 

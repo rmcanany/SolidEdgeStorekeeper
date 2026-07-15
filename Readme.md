@@ -366,9 +366,15 @@ You are of course free to create new templates any way you see fit.  However, if
   <img src="media/template_axes.png">
 </p>
 
-Many standard parts have a primary axis.  For consistency, consider orienting it along the Y Axis as shown.  For parts with a secondary axis like the pipe elbow, consider the Z Axis.
+### Primary Axis
+
+Many standard parts have a primary axis.  For consistency, consider orienting it along the Y Axis as shown.  (This orientation tends to result in a more informative thumbnail image.)  For parts with a secondary axis like the pipe elbow, consider the Z Axis.
+
+### Replace Part Considerations
 
 Another thing to think about is the effect of replacing one standard part with another.  It would be nice not to break assembly relationships.  For fasteners, I started with the socket head capscrew.  When it was time to create the next one, I did a Save As on that initial part and modified it as needed.  Since the head and body now have the exact same faces, Replace Part works as expected.
+
+### Variable Names
 
 <p align="center">
   <img src="media/template_variable_names.png">
@@ -376,7 +382,23 @@ Another thing to think about is the effect of replacing one standard part with a
 
 Variable names are something else to consider.  To minimize confusion in creating and maintaining the companion spreadsheets, see if you can reuse names that have been previously established.  You can check the supplied templates or spreadsheets to see what may apply to your parts.
 
+### Drawings of Standard Parts
+
 As mentioned above, drawings of standard parts is a supported option.  If you need that, simply create a drawing with the same name as the template.  If the program finds such a drawing, and the option is enabled, it copies it to the library, renames it and updates the links.  Enable the option `Include drawing of part if present` on the **Tree Search Options** page.
+
+### Thread Pitch
+
+One last thing about creating a new template.  Storekeeper has the ability to adjust the thread texture to match the pitch.  It's just eye candy and not required.  However, if you would like that feature, there is a bit of setup to make it work.  
+
+The program assumes the existence of a FaceStyle named in a file in the Preferences directory called `ThreadFaceStyleName.txt`.  By default it contains `Thread`; change it to your own setting as needed.  
+
+Set up the FaceStyle as shown below.  Note especially the `File name`, `Units`, and `Scale X`.  The program will not work correctly if these settings do not match exactly.  The `Scale Y` parameter is what the program adjusts to match the pitch of the part being generated.  You can eyeball it to look good in the template file.
+
+<p align="center">
+  <img src="media/template_thread_texture.png">
+</p>
+
+The program needs to know the length of the thread.  Rather than trying to analyze the model for this information, you supply it explicitly in the template's variable table.  The variable must be called `ThreadTextureLength`.  You supply a formula from the other parameters to set it.  Take a look at `AnsiFastenersBHCS.par` and `AnsiFastenersNutHex.par` for a couple of examples.
 
 ## CUSTOMIZATION
 

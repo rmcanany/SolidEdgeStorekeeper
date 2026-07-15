@@ -617,6 +617,39 @@ Public Class UtilsCommon
         Return IsEqual
     End Function
 
+    Public Function GetFaceStyle(
+        SEDoc As SolidEdgeFramework.SolidEdgeDocument,
+        Name As String) As SolidEdgeFramework.FaceStyle
+
+        ' Returns Nothing if the named face style is not found.
+
+        Dim FaceStyle As SolidEdgeFramework.FaceStyle = Nothing
+
+        Dim FaceStyles As SolidEdgeFramework.FaceStyles = Nothing
+
+        Select Case GetDocType(SEDoc)
+            Case "asm"
+                Dim tmpSEDoc As SolidEdgeAssembly.AssemblyDocument = CType(SEDoc, SolidEdgeAssembly.AssemblyDocument)
+                FaceStyles = CType(tmpSEDoc.FaceStyles, SolidEdgeFramework.FaceStyles)
+            Case "par"
+                Dim tmpSEDoc As SolidEdgePart.PartDocument = CType(SEDoc, SolidEdgePart.PartDocument)
+                FaceStyles = CType(tmpSEDoc.FaceStyles, SolidEdgeFramework.FaceStyles)
+            Case "par"
+                Dim tmpSEDoc As SolidEdgePart.SheetMetalDocument = CType(SEDoc, SolidEdgePart.SheetMetalDocument)
+                FaceStyles = CType(tmpSEDoc.FaceStyles, SolidEdgeFramework.FaceStyles)
+        End Select
+
+        If FaceStyles IsNot Nothing Then
+            For Each tmpFaceStyle As SolidEdgeFramework.FaceStyle In FaceStyles
+                If tmpFaceStyle.StyleName.ToLower = Name.ToLower Then
+                    FaceStyle = tmpFaceStyle
+                    Exit For
+                End If
+            Next
+        End If
+
+        Return FaceStyle
+    End Function
 
 
     '###### PROPERTY FUNCTIONS ######
