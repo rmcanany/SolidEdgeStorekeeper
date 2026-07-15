@@ -39,13 +39,13 @@ The models are simplified in a way that avoids interference between the part and
 
 ### Thread Pitch Rendering
 
-Added adjustment of the thread texture image to better reflect its pitch.
+Added adjustment of the thread texture image to better reflect its pitch.  It is only meant to add a bit of realism; there is no functional purpose.
 
 <p align="center">
   <img src="media/variable_thread_pitch_example.png">
 </p>
 
-It is only meant to add a bit of realism; there is no functional purpose.
+
 
 It does not update files created with the previous release.  Only newly-created files are affected.
 
