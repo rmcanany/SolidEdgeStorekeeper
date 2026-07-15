@@ -7,7 +7,7 @@
 
 # Release Notes
 
-Solid Edge Storekeeper is a utility to create, organize, and share standard parts.  It is free and open source and you can find it [<ins>**Here**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#readme).  
+Solid Edge Storekeeper is a utility to create, organize, and share standard parts.  It is free and open source and you can read about it [<ins>**Here**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#readme).  
 
 Please note, the program has been tested on thousands of our files, but none of yours.  Do not run it on production work without testing on backups first.
 
@@ -47,7 +47,7 @@ Added adjustment of the thread texture image to better reflect its pitch.  It is
 
 
 
-It does not update files created with the previous release.  Only newly-created files are affected.
+It does not update files created with the previous release.  Only newly-created parts are affected.
 
 See the [<ins>**Creating New Templates Help Topic**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#creating-new-templates) section of the Readme for details.
 
