@@ -42,6 +42,7 @@ Partial Class FormStackConfiguration
         Button_F_CO_LW_N = New Button()
         Button_F_CO_FW_N = New Button()
         ToolTip1 = New ToolTip(components)
+        Button_S_N_CO_N = New Button()
         TableLayoutPanel1.SuspendLayout()
         SuspendLayout()
         ' 
@@ -78,15 +79,17 @@ Partial Class FormStackConfiguration
         TableLayoutPanel1.Controls.Add(Button_F_CO_LW_N, 2, 0)
         TableLayoutPanel1.Controls.Add(Button_F_CO_FW_N, 1, 0)
         TableLayoutPanel1.Controls.Add(Button_F_CO_N, 0, 0)
+        TableLayoutPanel1.Controls.Add(Button_S_N_CO_N, 0, 4)
         TableLayoutPanel1.Dock = DockStyle.Fill
         TableLayoutPanel1.Location = New Point(0, 0)
         TableLayoutPanel1.Name = "TableLayoutPanel1"
-        TableLayoutPanel1.RowCount = 4
+        TableLayoutPanel1.RowCount = 5
         TableLayoutPanel1.RowStyles.Add(New RowStyle())
         TableLayoutPanel1.RowStyles.Add(New RowStyle())
         TableLayoutPanel1.RowStyles.Add(New RowStyle())
         TableLayoutPanel1.RowStyles.Add(New RowStyle())
-        TableLayoutPanel1.Size = New Size(284, 376)
+        TableLayoutPanel1.RowStyles.Add(New RowStyle())
+        TableLayoutPanel1.Size = New Size(284, 471)
         TableLayoutPanel1.TabIndex = 1
         ' 
         ' Button_F_LW_FW_CO_TB
@@ -239,16 +242,25 @@ Partial Class FormStackConfiguration
         ToolTip1.SetToolTip(Button_F_CO_FW_N, "TOP: Fastener  BOTTOM: Flat Washer - Nut")
         Button_F_CO_FW_N.UseVisualStyleBackColor = True
         ' 
+        ' Button_S_N_CO_N
+        ' 
+        Button_S_N_CO_N.Image = My.Resources.Resources.Small_S_N_CO_N
+        Button_S_N_CO_N.Location = New Point(3, 379)
+        Button_S_N_CO_N.Name = "Button_S_N_CO_N"
+        Button_S_N_CO_N.Size = New Size(58, 88)
+        Button_S_N_CO_N.TabIndex = 17
+        Button_S_N_CO_N.UseVisualStyleBackColor = True
+        ' 
         ' FormStackConfiguration
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(284, 376)
+        ClientSize = New Size(284, 471)
         Controls.Add(TableLayoutPanel1)
         Icon = CType(resources.GetObject("$this.Icon"), Icon)
         MaximizeBox = False
-        MaximumSize = New Size(300, 415)
-        MinimumSize = New Size(300, 415)
+        MaximumSize = New Size(300, 510)
+        MinimumSize = New Size(300, 510)
         Name = "FormStackConfiguration"
         StartPosition = FormStartPosition.CenterParent
         Text = "Stack Configuration"
@@ -274,4 +286,5 @@ Partial Class FormStackConfiguration
     Friend WithEvents Button_F_CO_LW_N As Button
     Friend WithEvents Button_F_CO_FW_N As Button
     Friend WithEvents ToolTip1 As ToolTip
+    Friend WithEvents Button_S_N_CO_N As Button
 End Class

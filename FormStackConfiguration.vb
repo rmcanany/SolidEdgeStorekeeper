@@ -40,6 +40,7 @@
         F_FW_CO_TB
         F_LW_CO_TB
         F_LW_FW_CO_TB
+        S_N_CO_N
     End Enum
 
     Private Sub ButtonOK_Click(sender As Object, e As EventArgs)
@@ -131,6 +132,11 @@
 
     Private Sub Button_F_LW_FW_CO_TB_Click(sender As Object, e As EventArgs) Handles Button_F_LW_FW_CO_TB.Click
         Me.StackConfiguration = StackConfigurationConstants.F_LW_FW_CO_TB
+        DialogResult = DialogResult.OK
+    End Sub
+
+    Private Sub Button_S_N_CO_N_Click(sender As Object, e As EventArgs) Handles Button_S_N_CO_N.Click
+        Me.StackConfiguration = StackConfigurationConstants.S_N_CO_N
         DialogResult = DialogResult.OK
     End Sub
 End Class

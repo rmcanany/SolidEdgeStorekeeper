@@ -2,7 +2,7 @@
   <p align=center>
   <img src="media/logo.png" width=50%;>
   <p align=center>
-  <span class="description">Robert McAnany 2025</span>
+  <span class="description">Robert McAnany 2026</span>
 </div>
 
 ## CREDITS

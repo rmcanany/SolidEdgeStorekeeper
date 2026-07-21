@@ -22,7 +22,7 @@ Namespace My.Resources
     '''<summary>
     '''  A strongly-typed resource class, for looking up localized strings, etc.
     '''</summary>
-    <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0"),  _
+    <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0"),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),  _
      Global.Microsoft.VisualBasic.HideModuleNameAttribute()>  _
@@ -266,6 +266,16 @@ Namespace My.Resources
         Friend ReadOnly Property FastenerStack_F_LW_FW_CO_TT() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("FastenerStack_F-LW-FW-CO-TT", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property FastenerStack_S_N_CO_N() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("FastenerStack_S-N-CO-N", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
             End Get
         End Property
@@ -536,6 +546,16 @@ Namespace My.Resources
         Friend ReadOnly Property Small_F_LW_FW_CO_TT() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("Small_F-LW-FW-CO-TT", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property Small_S_N_CO_N() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("Small_S-N-CO-N", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
             End Get
         End Property

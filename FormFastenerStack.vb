@@ -234,10 +234,12 @@ Public Class FormFastenerStack
 
     'Private SEAppEvents As SolidEdgeFramework.DISEApplicationEvents_Event
 
+    Private Property IsAsmeStud As Boolean
 
     Public Enum StackConfigurationConstants
 
         '  F Fastener
+        '  S ASME Stud
         ' CO Clamped Object
         '  N Nut
         ' FW Flat Washer
@@ -261,6 +263,7 @@ Public Class FormFastenerStack
         F_FW_CO_TB
         F_LW_CO_TB
         F_LW_FW_CO_TB
+        S_N_CO_N
     End Enum
 
 
@@ -330,12 +333,10 @@ Public Class FormFastenerStack
 
         If Proceed AndAlso Not CheckStartConditions(Me.FileLogger.AddLogger("Check start conditions")) Then
             Proceed = False
-            'Me.FileLogger.AddMessage("Some start conditions not met")
         End If
 
         If Proceed AndAlso Not GenerateNeededFiles(Me.FileLogger.AddLogger("Generate needed files")) Then
             Proceed = False
-            'Me.FileLogger.AddMessage("Could not generate all needed files")
         End If
 
         If Proceed Then
@@ -354,11 +355,9 @@ Public Class FormFastenerStack
                     Me.BottomFilename = StackAssyFilenames(1)
                 Else
                     Proceed = False
-                    'Me.FileLogger.AddMessage("Problem preparing temporary assembly files")
                 End If
             Else
                 Proceed = False
-                'Me.FileLogger.AddMessage("Problem preparing temporary assembly files")
             End If
         End If
 
@@ -370,17 +369,14 @@ Public Class FormFastenerStack
 
         If Proceed Then
             Proceed = AddStackElementAndDisperse(Me.TopFilename, Me.FileLogger.AddLogger("Add and disperse top fastener stack"))
-            'If Not Proceed Then Me.FileLogger.AddMessage("Problem adding or dispersing top fastener stack")
         End If
 
         If Proceed And Not Me.BottomFilename = "" Then
             Proceed = AddStackElementAndDisperse(Me.BottomFilename, Me.FileLogger.AddLogger("Add and disperse top fastener stack"))
-            'If Not Proceed Then Me.FileLogger.AddMessage("Problem adding or dispersing bottom fastener stack")
         End If
 
         If Proceed Then
             Proceed = CreateFastenerStackGroup(InitialNumOccurrences, Me.FileLogger.AddLogger("Create fastener stack group and maybe pattern"))
-            'If Not Proceed Then Me.FileLogger.AddMessage("Problem creating assembly group")
         End If
 
         If FMain.SEApp IsNot Nothing Then FMain.SEApp.DisplayAlerts = True
@@ -435,13 +431,15 @@ Public Class FormFastenerStack
             End If
         End If
 
-        If ConfigString.Contains("_N") Or ConfigString.Contains("_TT") Then
-            Try
-                Dim V = CDbl(UC.FixLocaleDecimal(Me.ExtensionMin))
-            Catch ex As Exception
-                Success = False
-                _ErrorLogger.AddMessage($"Could not resolve minimum extension: '{Me.ExtensionMin}'")
-            End Try
+        If Not ConfigString.Contains("S_") Then
+            If ConfigString.Contains("_N") Or ConfigString.Contains("_TT") Then
+                Try
+                    Dim V = CDbl(UC.FixLocaleDecimal(Me.ExtensionMin))
+                Catch ex As Exception
+                    Success = False
+                    _ErrorLogger.AddMessage($"Could not resolve minimum extension: '{Me.ExtensionMin}'")
+                End Try
+            End If
         End If
 
         If ConfigString.Contains("_TB") Then
@@ -469,17 +467,20 @@ Public Class FormFastenerStack
 
         Dim tmpTreeviewFastenerFullPath As String
 
-        ' Get the correct length of fastener for the given parameters
-        LabelStatus.Text = "Getting fastener with correct length"
-        tmpTreeviewFastenerFullPath = GetCorrectLengthFastenerFullPath(
+        If Not Me.IsAsmeStud Then
+            ' Get the correct length of fastener for the given parameters
+            LabelStatus.Text = "Getting fastener with correct length"
+            tmpTreeviewFastenerFullPath = GetCorrectLengthFastenerFullPath(
             Me.TreeviewFastenerFullPath, Me.FastenerMinLength, Me.FastenerMaxLength)
 
-        If tmpTreeviewFastenerFullPath IsNot Nothing Then
-            Me.TreeviewFastenerFullPath = tmpTreeviewFastenerFullPath
-        Else
-            _ErrorLogger.AddMessage("No fastener length satisfies given parameters")
-            LabelStatus.Text = ""
-            Return False
+            If tmpTreeviewFastenerFullPath IsNot Nothing Then
+                Me.TreeviewFastenerFullPath = tmpTreeviewFastenerFullPath
+            Else
+                _ErrorLogger.AddMessage("No fastener length satisfies given parameters")
+                LabelStatus.Text = ""
+                Return False
+            End If
+
         End If
 
         Dim ConfigString As String = Me.StackConfiguration.ToString
@@ -569,7 +570,6 @@ Public Class FormFastenerStack
                 Return Nothing
             End If
 
-
             Dim tmpAssyFilename As String
             tmpAssyFilename = $"{IO.Path.GetDirectoryName(TemplateName)}"  '                                 c:\...\FastenerStackTemplates
             tmpAssyFilename = $"{tmpAssyFilename}\Temp"  '                                                   c:\...\FastenerStackTemplates\Temp
@@ -597,6 +597,17 @@ Public Class FormFastenerStack
                 Select Case IO.Path.GetFileName(OccurrenceFilename)
                     Case "F.par"
                         ReplacementFilename = Me.FastenerFilename
+                    Case "S.par"
+                        ReplacementFilename = Me.FastenerFilename
+
+                        Dim UC As New UtilsCommon
+                        Dim tmpSEDoc As SolidEdgeFramework.SolidEdgeDocument = CType(tmpAsm, SolidEdgeFramework.SolidEdgeDocument)
+                        Dim V As SolidEdgeFramework.variable = UC.GetDocVariable(tmpSEDoc, "ClampedThickness")
+                        If V IsNot Nothing Then
+                            V.Formula = Me.ClampedThickness
+                            FMain.SEApp.DoIdle()
+                        End If
+
                     Case "FW.par"
                         ReplacementFilename = Me.FlatWasherFilename
                     Case "LW.par"
@@ -693,7 +704,6 @@ Public Class FormFastenerStack
         Threading.Thread.Sleep(750)
         HighlightSet.Delete()
 
-        ' TODO Remove the occurrence ground constraint if present
         Dim Relations3d As SolidEdgeAssembly.Relations3d = CType(Occurrence.Relations3d, SolidEdgeAssembly.Relations3d)
         For i = 0 To Relations3d.Count - 1
             Dim Ground As SolidEdgeAssembly.GroundRelation3d = TryCast(Relations3d(i), SolidEdgeAssembly.GroundRelation3d)
@@ -805,217 +815,9 @@ Public Class FormFastenerStack
         Return Success
     End Function
 
-    'Private Function AddStackToAssembly() As Dictionary(Of String, Integer)
-
-    '    Dim NumAddedItems As New Dictionary(Of String, Integer)
-    '    NumAddedItems("NumOccurrencesAdded") = 0
-    '    NumAddedItems("NumTopSubOccurrencesAdded") = 0
-    '    NumAddedItems("NumBottomSubOccurrencesAdded") = 0
-    '    NumAddedItems("NumRelations3dAdded") = 0
-
-    '    Dim Success As Boolean = True
-
-    '    AddHandler FMain.SEAppEvents.AfterCommandRun, AddressOf FMain.DISEApplicationEvents_AfterCommandRun
-    '    FMain.SEApp.DoIdle()
-    '    Me.TopMost = False
-    '    System.Windows.Forms.Application.DoEvents()
-    '    FMain.AsmDoc.Activate()
-    '    FMain.SEApp.DoIdle()
-
-    '    Dim Occurrences As SolidEdgeAssembly.Occurrences = FMain.AsmDoc.Occurrences
-    '    Dim StartingNumOccurrences As Integer = Occurrences.Count
-
-    '    Dim Relations3d As SolidEdgeAssembly.Relations3d = FMain.AsmDoc.Relations3d
-    '    Dim StartingNumRelations3d As Integer = Relations3d.Count
-
-    '    Dim NumFilesAdded As Integer = 0
-
-    '    For Each Filename As String In ({Me.TopFilename, Me.BottomFilename})
-    '        If Filename = "" Then Continue For
-
-    '        Dim IsTop As Boolean = False
-    '        Dim IsBottom As Boolean = False
-
-    '        If IO.Path.GetFileName(Filename).Contains("Top") Then IsTop = True
-    '        If IO.Path.GetFileName(Filename).Contains("Bottom") Then IsBottom = True
-
-    '        If Not (IsTop Or IsBottom) Then
-    '            MsgBox($"FormFastenerStack.AddStackToAssembly: Filename error '{Filename}'", vbOKOnly, "Filename Error")
-    '            Return Nothing
-    '        End If
-
-    '        Dim PreviousOccurrencesCount As Integer = Occurrences.Count
-    '        Dim Occurrence As SolidEdgeAssembly.Occurrence = Nothing
-
-
-    '        While Not FMain.AssemblyPasteComplete
-    '            Threading.Thread.Sleep(100)
-    '        End While
-
-    '        Threading.Thread.Sleep(500)
-
-    '        If Occurrences.Count > PreviousOccurrencesCount Then
-    '            Occurrence = CType(Occurrences(Occurrences.Count - 1), SolidEdgeAssembly.Occurrence)
-    '            If IsTop Then
-    '                NumAddedItems("NumTopSubOccurrencesAdded") += Occurrence.SubOccurrences.Count
-    '            Else
-    '                NumAddedItems("NumBottomSubOccurrencesAdded") += Occurrence.SubOccurrences.Count
-    '            End If
-    '        End If
-
-    '    Next
-
-    '    RemoveHandler FMain.SEAppEvents.AfterCommandRun, AddressOf FMain.DISEApplicationEvents_AfterCommandRun
-
-    '    NumAddedItems("NumOccurrencesAdded") = Occurrences.Count - StartingNumOccurrences
-    '    NumAddedItems("NumRelations3dAdded") = Relations3d.Count - StartingNumRelations3d
-
-    '    Return NumAddedItems
-
-    'End Function
-
-    'Private Function Disperse(NumAddedItems As Dictionary(Of String, Integer)) As Boolean
-    '    Dim Success As Boolean = True
-
-    '    Dim NumOccurrencesAdded = NumAddedItems("NumOccurrencesAdded")
-    '    Dim NumTopSubOccurrencesAdded = NumAddedItems("NumTopSubOccurrencesAdded")
-    '    Dim NumBottomSubOccurrencesAdded = NumAddedItems("NumBottomSubOccurrencesAdded")
-    '    Dim NumRelations3dAdded = NumAddedItems("NumRelations3dAdded")
-
-    '    ' The stack subassemblies have not been dispersed.  When they are, 
-    '    ' the assembly relationships will be deleted.  If the first part in the
-    '    ' subassembly was grounded, it will be grounded in the assembly.
-    '    ' If not, no new relationships will be added.
-    '    ' We need to capture the relationships from the subassembly and reapply
-    '    ' to the dipersed parts in the assembly.
-
-    '    Dim Relations3d As SolidEdgeAssembly.Relations3d = FMain.AsmDoc.Relations3d
-    '    'Dim Relations3dList As New List(Of Object)
-    '    Dim AxialRelation3dNeededInfo As New List(Of Tuple(Of SolidEdgeGeometry.Face, SolidEdgeAssembly.TopologyReference, Boolean))
-    '    Dim PlanarRelation3dNeededInfo As New List(Of Tuple(Of SolidEdgeGeometry.Face, SolidEdgeAssembly.TopologyReference, Boolean))
-
-    '    For i = Relations3d.Count - NumRelations3dAdded To Relations3d.Count - 1
-
-    '        Dim AxialRelation3d As SolidEdgeAssembly.AxialRelation3d = TryCast(Relations3d(i), SolidEdgeAssembly.AxialRelation3d)
-    '        If AxialRelation3d IsNot Nothing Then
-    '            AxialRelation3dNeededInfo.Add(ExtractAxialRelation3dInfo(AxialRelation3d))
-    '        End If
-
-    '        Dim PlanarRelation3d As SolidEdgeAssembly.PlanarRelation3d = TryCast(Relations3d(i), SolidEdgeAssembly.PlanarRelation3d)
-    '        If PlanarRelation3d IsNot Nothing Then
-    '            PlanarRelation3dNeededInfo.Add(ExtractPlanarRelation3dInfo(PlanarRelation3d))
-    '        End If
-
-    '    Next
-
-    '    Dim Occurrences As SolidEdgeAssembly.Occurrences = FMain.AsmDoc.Occurrences
-
-    '    Dim IdxTopAssy As Integer = Occurrences.Count - 2
-
-    '    FMain.AsmDoc.DisperseSubassembly(Occurrences(IdxTopAssy), bAllOccurrences:=False)
-    '    FMain.AsmDoc.DisperseSubassembly(Occurrences(IdxTopAssy), bAllOccurrences:=False) ' Not a typo.  TopAssy occurence was removed.
-
-    '    Dim IdxTopFirstOccurrence = Occurrences.Count - (NumTopSubOccurrencesAdded + NumBottomSubOccurrencesAdded)
-    '    Dim IdxBottomFirstOccurrence = Occurrences.Count - NumBottomSubOccurrencesAdded
-
-    '    Dim Face1Ref As SolidEdgeAssembly.TopologyReference
-    '    Dim tmpOccurrence As SolidEdgeAssembly.Occurrence = CType(Occurrences(IdxTopFirstOccurrence), SolidEdgeAssembly.Occurrence)
-    '    Face1Ref = CType(FMain.AsmDoc.CreateReference(tmpOccurrence, AxialRelation3dNeededInfo.Item(0)), SolidEdgeAssembly.TopologyReference)
-
-    '    Relations3d.AddAxial(Face1Ref, AxialRelation3dNeededInfo.Item(1), NormalsAligned:=True)
-
-    '    Dim NumFilesAdded = NumTopSubOccurrencesAdded + NumBottomSubOccurrencesAdded
-    '    Dim NewOccurrenceList As New List(Of SolidEdgeAssembly.Occurrence)
-
-    '    ' Single files do not need to be added to a group
-    '    If NumFilesAdded > 1 Then
-    '        For i = 0 To NumFilesAdded - 1
-    '            ' Need to add in reverse order
-    '            NewOccurrenceList.Add(CType(Occurrences(Occurrences.Count - 1 - i), SolidEdgeAssembly.Occurrence))
-    '        Next
-    '        Dim NewGroup As SolidEdgeAssembly.AssemblyGroup = FMain.AsmDoc.AssemblyGroups.Add(NumFilesAdded, NewOccurrenceList.ToArray)
-    '        NewGroup.Name = $"FastenerStack {FMain.AsmDoc.AssemblyGroups.Count}"
-    '    End If
-
-    '    Return Success
-    'End Function
-
-    'Private Function ExtractAxialRelation3dInfo(
-    '    AxialRelation3d As SolidEdgeAssembly.AxialRelation3d
-    '    ) As Tuple(Of SolidEdgeGeometry.Face, SolidEdgeAssembly.TopologyReference, Boolean)
-
-    '    'https://docs.sw.siemens.com/documentation/external/PL20220830878154140/en-US/api/content/SolidEdgeAssembly~Relations3d~AddAxial.html
-    '    'Public Function AddAxial( _
-    '    '   ByVal Axis1 As Object, _
-    '    '   ByVal Axis2 As Object, _
-    '    '   ByVal NormalsAligned As Boolean _
-    '    ') As AxialRelation3d
-
-    '    Dim IsTopoRef1 As Boolean
-    '    Dim IsTopoRef2 As Boolean
-    '    Dim Element1 As SolidEdgeAssembly.TopologyReference = CType(AxialRelation3d.GetElement1(IsTopoRef1), SolidEdgeAssembly.TopologyReference)
-    '    Dim Element2 As SolidEdgeAssembly.TopologyReference = CType(AxialRelation3d.GetElement2(IsTopoRef2), SolidEdgeAssembly.TopologyReference)
-
-    '    Dim Face1 As SolidEdgeGeometry.Face = TryCast(Element1.Object, SolidEdgeGeometry.Face)
-    '    Dim Face2 As SolidEdgeGeometry.Face = TryCast(Element2.Object, SolidEdgeGeometry.Face)
-
-    '    Dim Occurrence2 As SolidEdgeAssembly.Occurrence = AxialRelation3d.Occurrence2
-
-    '    Dim FaceRef2 As SolidEdgeAssembly.TopologyReference = CType(FMain.AsmDoc.CreateReference(Occurrence2, Face2), SolidEdgeAssembly.TopologyReference)
-
-    '    Dim OutTuple As Tuple(Of SolidEdgeGeometry.Face, SolidEdgeAssembly.TopologyReference, Boolean) = Nothing
-    '    OutTuple = Tuple.Create(Face1, FaceRef2, False)
-
-    '    Return OutTuple
-    'End Function
-
-    'Private Function ExtractPlanarRelation3dInfo(
-    '    PlanarRelation3d As SolidEdgeAssembly.PlanarRelation3d
-    '    ) As Tuple(Of SolidEdgeGeometry.Face, SolidEdgeAssembly.TopologyReference, Boolean)
-
-    '    'https://docs.sw.siemens.com/documentation/external/PL20220830878154140/en-US/api/content/SolidEdgeAssembly~Relations3d~AddPlanar.html
-    '    'Public Function AddPlanar( _
-    '    '   ByVal Plane1 As Object, _
-    '    '   ByVal Plane2 As Object, _
-    '    '   ByVal NormalsAligned As Boolean, _
-    '    '   ByRef ConstrainingPoint1() As Double, _
-    '    '   ByRef ConstrainingPoint2() As Double _
-    '    ') As PlanarRelation3d
-    '    ' For a Mate, NormalsAligned = True (even if that is backwards)
-
-    '    Dim IsTopoRef1 As Boolean
-    '    Dim IsTopoRef2 As Boolean
-    '    Dim Element1 As SolidEdgeAssembly.TopologyReference = CType(PlanarRelation3d.GetElement1(IsTopoRef1), SolidEdgeAssembly.TopologyReference)
-    '    Dim Element2 As SolidEdgeAssembly.TopologyReference = CType(PlanarRelation3d.GetElement1(IsTopoRef2), SolidEdgeAssembly.TopologyReference)
-
-    '    Dim Face1 As SolidEdgeGeometry.Face = TryCast(Element1.Object, SolidEdgeGeometry.Face)
-    '    Dim Face2 As SolidEdgeGeometry.Face = TryCast(Element2.Object, SolidEdgeGeometry.Face)
-
-    '    Dim Occurrence2 As SolidEdgeAssembly.Occurrence = PlanarRelation3d.Occurrence2
-
-    '    Dim FaceRef2 As SolidEdgeAssembly.TopologyReference = CType(FMain.AsmDoc.CreateReference(Occurrence2, Face2), SolidEdgeAssembly.TopologyReference)
-
-    '    Dim OutTuple As Tuple(Of SolidEdgeGeometry.Face, SolidEdgeAssembly.TopologyReference, Boolean) = Nothing
-    '    OutTuple = Tuple.Create(Face1, FaceRef2, False)
-
-    '    Return OutTuple
-
-    'End Function
-
     Private Function GetTopAssyTemplateName() As String
 
         RemoveUnusedStackAssyFiles()
-
-        'Dim LastIdx As Integer = GetStackAssyFilesLastIdx()
-
-        'Dim Filename As String = ""
-
-        'Filename = Me.StackConfiguration.ToString.Split("_CO_")(0)
-        'Filename = Filename.Replace("_", "-")
-        'Filename = $"FastenerStackTop_{Filename}_{LastIdx + 1:0000}.asm"
-        'Filename = $"{FMain.TemplateDirectory}\FastenerStackTemplates\Temp\{Filename}"
-
-        'Return Filename
 
         Dim Filename As String = ""
 
@@ -1031,20 +833,6 @@ Public Class FormFastenerStack
     Private Function GetBottomAssyTemplateName() As String
 
         RemoveUnusedStackAssyFiles()
-        'Dim LastIdx As Integer = GetStackAssyFilesLastIdx()
-
-        'Dim Filename As String = ""
-
-        'Filename = Me.StackConfiguration.ToString.Split("_CO_")(1)
-
-        '' Thru or blind threaded holes don't have any bottom components
-        'If Filename.Contains("TB") Or Filename.Contains("TT") Then Return ""
-
-        'Filename = Filename.Replace("_", "-")
-        'Filename = $"FastenerStackBottom_{Filename}_{LastIdx + 1:0000}.asm"
-        'Filename = $"{FMain.TemplateDirectory}\FastenerStackTemplates\Temp\{Filename}"
-
-        'Return Filename
 
         Dim Filename As String = ""
 
@@ -1129,10 +917,18 @@ Public Class FormFastenerStack
         Dim Proceed As Boolean = True
         Dim ErrorMessages As New List(Of String)
 
+        Dim ErrorLogger As Logger
+        If Me.FileLogger IsNot Nothing Then
+            ErrorLogger = Me.FileLogger
+        Else
+            ErrorLogger = New Logger("Get related filenames", Nothing)
+        End If
+
         Dim SelectedNodeFullPath As String = FMain.SelectedNodeFullPath  ' Saving to reset back
 
+        Me.IsAsmeStud = SelectedNodeFullPath.Contains("For Flange NPS") Or SelectedNodeFullPath.Contains("For_Flange_NPS")
+
         Me.TreeviewFastenerFullPath = SelectedNodeFullPath
-        'Dim tmpSelectedNodeFullPath As String = FMain.SpaceToUnderscore(SelectedNodeFullPath)
         Dim FastenerNodeNameList = SelectedNodeFullPath.Split("\")
         For i = 0 To FastenerNodeNameList.Count - 1
             FastenerNodeNameList(i) = FMain.StringToXml(FastenerNodeNameList(i))
@@ -1146,7 +942,15 @@ Public Class FormFastenerStack
 
         Dim FastenerPath As String = ""
         ' The fastener size node will be one level up from the selected length node
-        For i = 0 To FastenerNodeNameList.Count - 1 - 1
+        ' Except for an ASME stud.  In that case, the fastener size will be in the bottom node.
+
+        Dim CountDecrement As Integer
+        If Not IsAsmeStud Then
+            CountDecrement = 1
+        Else
+            CountDecrement = 1
+        End If
+        For i = 0 To FastenerNodeNameList.Count - CountDecrement
             If i = 0 Then
                 FastenerPath = FastenerNodeNameList(i) '                      Solid_Edge_Storekeeper
             Else
@@ -1181,6 +985,8 @@ Public Class FormFastenerStack
         For Each FlatWasherSearchPath As String In Me.FlatWasherSearchPaths
             ' SE2024 ..\..\..\Washer_Flat
             ' SE2019 ..\..\..\..\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series
+
+            If IsAsmeStud Then FlatWasherSearchPath = $"..\{FlatWasherSearchPath}"
 
             Dim tmpPathList As List(Of String) = FlatWasherSearchPath.Split(CChar("\")).ToList
             Dim FlatWasherFullPath As String = ""
@@ -1225,8 +1031,8 @@ Public Class FormFastenerStack
                 FlatWasherFullPath = $"{FlatWasherFullPath}\{MatchingNode.Name}"
                 Me.TreeviewFlatWasherFullPath = FlatWasherFullPath
                 FMain.SelectedNodeFullPath = FlatWasherFullPath
-                Dim DefaultExtension As String = IO.Path.GetExtension(FMain.GetTemplateNameFormula(ErrorLogger:=Me.FileLogger))
-                Me.FlatWasherFilename = FMain.GetFilenameFromPropsFormula(DefaultExtension:=DefaultExtension, Me.FileLogger)
+                Dim DefaultExtension As String = IO.Path.GetExtension(FMain.GetTemplateNameFormula(ErrorLogger))
+                Me.FlatWasherFilename = FMain.GetFilenameFromPropsFormula(DefaultExtension:=DefaultExtension, ErrorLogger)
                 Exit For
             End If
 
@@ -1241,6 +1047,8 @@ Public Class FormFastenerStack
         For Each LockWasherSearchPath As String In Me.LockWasherSearchPaths
             ' SE2024 ..\..\..\Washer_Lock
             ' SE2019 NA 
+
+            If IsAsmeStud Then LockWasherSearchPath = $"..\{LockWasherSearchPath}"
 
             Dim tmpPathList As List(Of String) = LockWasherSearchPath.Split(CChar("\")).ToList
             Dim LockWasherFullPath As String = ""
@@ -1294,8 +1102,8 @@ Public Class FormFastenerStack
                 LockWasherFullPath = $"{LockWasherFullPath}\{MatchingNode.Name}"
                 Me.TreeviewLockwasherFullPath = LockWasherFullPath
                 FMain.SelectedNodeFullPath = LockWasherFullPath
-                Dim DefaultExtension As String = IO.Path.GetExtension(FMain.GetTemplateNameFormula(ErrorLogger:=Me.FileLogger))
-                LockwasherFilename = FMain.GetFilenameFromPropsFormula(DefaultExtension:=DefaultExtension, Me.FileLogger)
+                Dim DefaultExtension As String = IO.Path.GetExtension(FMain.GetTemplateNameFormula(ErrorLogger))
+                LockwasherFilename = FMain.GetFilenameFromPropsFormula(DefaultExtension:=DefaultExtension, ErrorLogger)
                 Exit For
             End If
 
@@ -1310,6 +1118,11 @@ Public Class FormFastenerStack
         For Each NutSearchPath As String In Me.NutSearchPaths
             ' SE2024 ..\..\..\Washer_Flat
             ' SE2019 ..\..\..\..\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series
+
+            If IsAsmeStud Then
+                NutSearchPath = $"..\{NutSearchPath}"
+                NutSearchPath = NutSearchPath.Replace("Nut_Hex", "Nut_Heavy_Hex")
+            End If
 
             Dim tmpPathList As List(Of String) = NutSearchPath.Split(CChar("\")).ToList
             Dim NutFullPath As String = ""
@@ -1354,8 +1167,8 @@ Public Class FormFastenerStack
                 NutFullPath = $"{NutFullPath}\{MatchingNode.Name}"
                 Me.TreeviewNutFullPath = NutFullPath
                 FMain.SelectedNodeFullPath = NutFullPath
-                Dim DefaultExtension As String = IO.Path.GetExtension(FMain.GetTemplateNameFormula(ErrorLogger:=Me.FileLogger))
-                NutFilename = FMain.GetFilenameFromPropsFormula(DefaultExtension:=DefaultExtension, Me.FileLogger)
+                Dim DefaultExtension As String = IO.Path.GetExtension(FMain.GetTemplateNameFormula(ErrorLogger))
+                NutFilename = FMain.GetFilenameFromPropsFormula(DefaultExtension:=DefaultExtension, ErrorLogger)
                 Exit For
             End If
 
@@ -1387,13 +1200,6 @@ Public Class FormFastenerStack
         If ParentNode.HasChildNodes Then
             For Each ChildNode As XmlNode In ParentNode.ChildNodes
                 If ChildNode.Name = "Thickness" Then
-                    ''https://stackoverflow.com/questions/14513468/detect-decimal-separator
-                    'Dim a As Char = CChar(Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
-                    'If a = CChar(".") Then
-                    '    Value = CDbl(ChildNode.InnerText.Replace(",", "."))
-                    'Else
-                    '    Value = CDbl(ChildNode.InnerText.Replace(".", ","))
-                    'End If
                     Value = CDbl(UC.FixLocaleDecimal(ChildNode.InnerText))
                     Exit For
                 End If
@@ -1432,12 +1238,28 @@ Public Class FormFastenerStack
 
         If SizeNode.HasChildNodes Then
             For Each LengthNode As XmlNode In SizeNode
-                If LengthNode.Name.Contains("Length_") Then
-                    tmpLength = CDbl(UC.FixLocaleDecimal(LengthNode.InnerText))
-                    If tmpLength >= LengthMin And tmpLength <= LengthMax Then
-                        Node = LengthNode
-                        Exit For
+                If Not Me.IsAsmeStud Then
+                    If LengthNode.Name.Contains("Length_") Then
+                        tmpLength = CDbl(UC.FixLocaleDecimal(LengthNode.InnerText))
+                        If tmpLength >= LengthMin And tmpLength <= LengthMax Then
+                            Node = LengthNode
+                            Exit For
+                        End If
                     End If
+                Else
+                    If LengthNode.HasChildNodes Then
+                        For Each tmpLengthNode As XmlNode In LengthNode
+                            If tmpLengthNode.Name.Contains("Length") Then
+                                tmpLength = CDbl(UC.FixLocaleDecimal(tmpLengthNode.InnerText))
+                                If tmpLength >= LengthMin And tmpLength <= LengthMax Then
+                                    'Node = tmpLengthNode
+                                    Node = LengthNode
+                                    Exit For
+                                End If
+                            End If
+                        Next
+                    End If
+                    If Node IsNot Nothing Then Exit For
                 End If
             Next
         End If
@@ -1595,6 +1417,11 @@ Public Class FormFastenerStack
             Case StackConfigurationConstants.F_LW_FW_CO_TB
                 Me.FastenerMinLength = tmpClampedThickness + Me.LockWasherThickness + Me.FlatWasherThickness + tmpThreadEngagementMin
                 Me.FastenerMaxLength = tmpClampedThickness + Me.LockWasherThickness + Me.FlatWasherThickness + tmpThreadDepth
+
+            Case StackConfigurationConstants.S_N_CO_N
+                Me.FastenerMinLength = tmpClampedThickness + 2 * Me.NutThickness
+                Me.FastenerMaxLength = 10000
+
         End Select
     End Sub
 
@@ -1618,61 +1445,33 @@ Public Class FormFastenerStack
                 PictureBox1.Image = My.Resources.FastenerStack_F_CO_N
 
                 LabelBottomNut.Visible = True
-                'ButtonPasteBottomNut.Visible = True
-                'ButtonLockBottomNut.Visible = True
-
                 LabelExtensionMin.Visible = True
                 TextBoxExtensionMin.Visible = True
-                'ButtonLockExtensionMin.Visible = True
 
             Case StackConfigurationConstants.F_CO_FW_N
                 PictureBox1.Image = My.Resources.FastenerStack_F_CO_FW_N
 
                 LabelBottomFlatWasher.Visible = True
-                'ButtonPasteBottomFlatWasher.Visible = True
-                'ButtonLockBottomFlatWasher.Visible = True
-
                 LabelBottomNut.Visible = True
-                'ButtonPasteBottomNut.Visible = True
-                'ButtonLockBottomNut.Visible = True
-
                 LabelExtensionMin.Visible = True
                 TextBoxExtensionMin.Visible = True
-                'ButtonLockExtensionMin.Visible = True
 
             Case StackConfigurationConstants.F_CO_LW_N
                 PictureBox1.Image = My.Resources.FastenerStack_F_CO_LW_N
 
                 LabelBottomLockwasher.Visible = True
-                'ButtonPasteBottomLockwasher.Visible = True
-                'ButtonLockBottomLockwasher.Visible = True
-
                 LabelBottomNut.Visible = True
-                'ButtonPasteBottomNut.Visible = True
-                'ButtonLockBottomNut.Visible = True
-
                 LabelExtensionMin.Visible = True
                 TextBoxExtensionMin.Visible = True
-                'ButtonLockExtensionMin.Visible = True
 
             Case StackConfigurationConstants.F_CO_FW_LW_N
                 PictureBox1.Image = My.Resources.FastenerStack_F_CO_FW_LW_N
 
                 LabelBottomLockwasher.Visible = True
-                'ButtonPasteBottomLockwasher.Visible = True
-                'ButtonLockBottomLockwasher.Visible = True
-
                 LabelBottomFlatWasher.Visible = True
-                'ButtonPasteBottomFlatWasher.Visible = True
-                'ButtonLockBottomFlatWasher.Visible = True
-
                 LabelBottomNut.Visible = True
-                'ButtonPasteBottomNut.Visible = True
-                'ButtonLockBottomNut.Visible = True
-
                 LabelExtensionMin.Visible = True
                 TextBoxExtensionMin.Visible = True
-                'ButtonLockExtensionMin.Visible = True
 
         ' #### Top Flat Washer ####
 
@@ -1680,77 +1479,37 @@ Public Class FormFastenerStack
                 PictureBox1.Image = My.Resources.FastenerStack_F_FW_CO_N
 
                 LabelTopFlatWasher.Visible = True
-                'ButtonPasteTopFlatWasher.Visible = True
-                'ButtonLockTopFlatWasher.Visible = True
-
                 LabelBottomNut.Visible = True
-                'ButtonPasteBottomNut.Visible = True
-                'ButtonLockBottomNut.Visible = True
-
                 LabelExtensionMin.Visible = True
                 TextBoxExtensionMin.Visible = True
-                'ButtonLockExtensionMin.Visible = True
 
             Case StackConfigurationConstants.F_FW_CO_FW_N
                 PictureBox1.Image = My.Resources.FastenerStack_F_FW_CO_FW_N
 
                 LabelTopFlatWasher.Visible = True
-                'ButtonPasteTopFlatWasher.Visible = True
-                'ButtonLockTopFlatWasher.Visible = True
-
                 LabelBottomFlatWasher.Visible = True
-                'ButtonPasteBottomFlatWasher.Visible = True
-                'ButtonLockBottomFlatWasher.Visible = True
-
                 LabelBottomNut.Visible = True
-                'ButtonPasteBottomNut.Visible = True
-                'ButtonLockBottomNut.Visible = True
-
                 LabelExtensionMin.Visible = True
                 TextBoxExtensionMin.Visible = True
-                'ButtonLockExtensionMin.Visible = True
 
             Case StackConfigurationConstants.F_FW_CO_LW_N
                 PictureBox1.Image = My.Resources.FastenerStack_F_FW_CO_LW_N
 
                 LabelTopFlatWasher.Visible = True
-                'ButtonPasteTopFlatWasher.Visible = True
-                'ButtonLockTopFlatWasher.Visible = True
-
                 LabelBottomLockwasher.Visible = True
-                'ButtonPasteBottomLockwasher.Visible = True
-                'ButtonLockBottomLockwasher.Visible = True
-
                 LabelBottomNut.Visible = True
-                'ButtonPasteBottomNut.Visible = True
-                'ButtonLockBottomNut.Visible = True
-
                 LabelExtensionMin.Visible = True
                 TextBoxExtensionMin.Visible = True
-                'ButtonLockExtensionMin.Visible = True
 
             Case StackConfigurationConstants.F_FW_CO_FW_LW_N
                 PictureBox1.Image = My.Resources.FastenerStack_F_FW_CO_FW_LW_N
 
                 LabelTopFlatWasher.Visible = True
-                'ButtonPasteTopFlatWasher.Visible = True
-                'ButtonLockTopFlatWasher.Visible = True
-
                 LabelBottomFlatWasher.Visible = True
-                'ButtonPasteBottomFlatWasher.Visible = True
-                'ButtonLockBottomFlatWasher.Visible = True
-
                 LabelBottomLockwasher.Visible = True
-                'ButtonPasteBottomLockwasher.Visible = True
-                'ButtonLockBottomLockwasher.Visible = True
-
                 LabelBottomNut.Visible = True
-                'ButtonPasteBottomNut.Visible = True
-                'ButtonLockBottomNut.Visible = True
-
                 LabelExtensionMin.Visible = True
                 TextBoxExtensionMin.Visible = True
-                'ButtonLockExtensionMin.Visible = True
 
         ' #### Thread Thru ####
 
@@ -1759,44 +1518,28 @@ Public Class FormFastenerStack
 
                 LabelExtensionMin.Visible = True
                 TextBoxExtensionMin.Visible = True
-                'ButtonLockExtensionMin.Visible = True
 
             Case StackConfigurationConstants.F_FW_CO_TT
                 PictureBox1.Image = My.Resources.FastenerStack_F_FW_CO_TT
 
                 LabelTopFlatWasher.Visible = True
-                'ButtonPasteTopFlatWasher.Visible = True
-                'ButtonLockTopFlatWasher.Visible = True
-
                 LabelExtensionMin.Visible = True
                 TextBoxExtensionMin.Visible = True
-                'ButtonLockExtensionMin.Visible = True
 
             Case StackConfigurationConstants.F_LW_CO_TT
                 PictureBox1.Image = My.Resources.FastenerStack_F_LW_CO_TT
 
                 LabelTopLockwasher.Visible = True
-                'ButtonPasteTopLockwasher.Visible = True
-                'ButtonLockTopLockwasher.Visible = True
-
                 LabelExtensionMin.Visible = True
                 TextBoxExtensionMin.Visible = True
-                'ButtonLockExtensionMin.Visible = True
 
             Case StackConfigurationConstants.F_LW_FW_CO_TT
                 PictureBox1.Image = My.Resources.FastenerStack_F_LW_FW_CO_TT
 
                 LabelTopLockwasher.Visible = True
-                'ButtonPasteTopLockwasher.Visible = True
-                'ButtonLockTopLockwasher.Visible = True
-
                 LabelTopFlatWasher.Visible = True
-                'ButtonPasteTopFlatWasher.Visible = True
-                'ButtonLockTopFlatWasher.Visible = True
-
                 LabelExtensionMin.Visible = True
                 TextBoxExtensionMin.Visible = True
-                'ButtonLockExtensionMin.Visible = True
 
 
         ' #### Thread Blind ####
@@ -1806,100 +1549,61 @@ Public Class FormFastenerStack
 
                 LabelThreadEngagementMin.Visible = True
                 TextBoxThreadEngagementMin.Visible = True
-                'ButtonLockThreadEngagementMin.Visible = True
-
                 LabelThreadDepth.Visible = True
                 TextBoxThreadDepth.Visible = True
-                'ButtonLockThreadDepth.Visible = True
 
             Case StackConfigurationConstants.F_FW_CO_TB
                 PictureBox1.Image = My.Resources.FastenerStack_F_FW_CO_TB
 
                 LabelTopFlatWasher.Visible = True
-                'ButtonPasteTopFlatWasher.Visible = True
-                'ButtonLockTopFlatWasher.Visible = True
-
                 LabelThreadEngagementMin.Visible = True
                 TextBoxThreadEngagementMin.Visible = True
-                'ButtonLockThreadEngagementMin.Visible = True
-
                 LabelThreadDepth.Visible = True
                 TextBoxThreadDepth.Visible = True
-                'ButtonLockThreadDepth.Visible = True
 
             Case StackConfigurationConstants.F_LW_CO_TB
                 PictureBox1.Image = My.Resources.FastenerStack_F_LW_CO_TB
 
                 LabelTopLockwasher.Visible = True
-                'ButtonPasteTopLockwasher.Visible = True
-                'ButtonLockTopLockwasher.Visible = True
-
                 LabelThreadEngagementMin.Visible = True
                 TextBoxThreadEngagementMin.Visible = True
-                'ButtonLockThreadEngagementMin.Visible = True
-
                 LabelThreadDepth.Visible = True
                 TextBoxThreadDepth.Visible = True
-                'ButtonLockThreadDepth.Visible = True
-
 
             Case StackConfigurationConstants.F_LW_FW_CO_TB
                 PictureBox1.Image = My.Resources.FastenerStack_F_LW_FW_CO_TB
 
                 LabelTopLockwasher.Visible = True
-                'ButtonPasteTopLockwasher.Visible = True
-                'ButtonLockTopLockwasher.Visible = True
-
                 LabelTopFlatWasher.Visible = True
-                'ButtonPasteTopFlatWasher.Visible = True
-                'ButtonLockTopFlatWasher.Visible = True
-
                 LabelThreadEngagementMin.Visible = True
                 TextBoxThreadEngagementMin.Visible = True
-                'ButtonLockThreadEngagementMin.Visible = True
-
                 LabelThreadDepth.Visible = True
                 TextBoxThreadDepth.Visible = True
-                'ButtonLockThreadDepth.Visible = True
 
 
+        ' #### ASME Stud ####
+
+            Case StackConfigurationConstants.S_N_CO_N
+                PictureBox1.Image = My.Resources.FastenerStack_S_N_CO_N
+
+                LabelClampedThickness.Visible = True
+                LabelBottomNut.Visible = True
 
         End Select
     End Sub
 
     Public Sub HideOptionControls()
         LabelTopFlatWasher.Visible = False
-        'ButtonPasteTopFlatWasher.Visible = False
-        'ButtonLockTopFlatWasher.Visible = False
-
         LabelTopLockwasher.Visible = False
-        'ButtonPasteTopLockwasher.Visible = False
-        'ButtonLockTopLockwasher.Visible = False
-
         LabelThreadEngagementMin.Visible = False
         TextBoxThreadEngagementMin.Visible = False
-        'ButtonLockThreadEngagementMin.Visible = False
-
         LabelThreadDepth.Visible = False
         TextBoxThreadDepth.Visible = False
-        'ButtonLockThreadDepth.Visible = False
-
         LabelBottomFlatWasher.Visible = False
-        'ButtonPasteBottomFlatWasher.Visible = False
-        'ButtonLockBottomFlatWasher.Visible = False
-
         LabelBottomLockwasher.Visible = False
-        'ButtonPasteBottomLockwasher.Visible = False
-        'ButtonLockBottomLockwasher.Visible = False
-
         LabelBottomNut.Visible = False
-        'ButtonPasteBottomNut.Visible = False
-        'ButtonLockBottomNut.Visible = False
-
         LabelExtensionMin.Visible = False
         TextBoxExtensionMin.Visible = False
-        'ButtonLockExtensionMin.Visible = False
-
 
     End Sub
 
@@ -1962,8 +1666,9 @@ Public Class FormFastenerStack
         Dim Config As String = Me.StackConfiguration.ToString
         Dim Filename As String = IO.Path.GetFileName("Add to assembly")
         Me.FileLogger = ErrorLogger.AddFile($"Fastener: {Filename}, Config: {Config}")
+
         Process()
-        'FMain.ReportErrors(Me.ErrorLogger)
+
         Me.ErrorLogger.ReportErrors(UseMessageBox:=True)
     End Sub
 
@@ -1972,218 +1677,6 @@ Public Class FormFastenerStack
             AssembleCommandComplete = True
         End If
     End Sub
-
-    '    Private Sub GetThreadDepthToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles GetThreadDepthToolStripMenuItem.Click
-    '        'MsgBox("Get thread depth")
-    '        'Dim Command As SolidEdgeFramework.Command
-    '        'Mouse = Nothing
-
-    '        OleMessageFilter.Register()
-
-    '        If FMain.SEApp Is Nothing Then
-
-    '            Try
-    '                FMain.SEApp = CType(MarshalHelper.GetActiveObject("SolidEdge.Application", throwOnError:=True), SolidEdgeFramework.Application)
-    '                FMain.SEApp.DoIdle()
-    '                FMain.AsmDoc = CType(FMain.SEApp.ActiveDocument, SolidEdgeAssembly.AssemblyDocument)
-    '                'FMain.AsmDoc.Activate()
-    '                FMain.SEApp.DoIdle()
-    '            Catch ex As Exception
-    '                MsgBox("Solid Edge not detected.  This command requires a running instance of Solid Edge with an assembly file active")
-    '                Exit Sub
-    '            End Try
-    '        End If
-
-    '        Command = FMain.SEApp.CreateCommand(SolidEdgeConstants.seCmdFlag.seNoDeactivate)
-    '        'Command = FMain.SEApp.CreateCommand(SolidEdgeConstants.seCmdFlag.seTerminateAfterActivation)
-
-    '        If Not Command() Is Nothing Then
-    '            Mouse = Command.Mouse
-    '        End If
-
-    '        Command.Start()
-
-    '        Command.OnEditOwnerChange = 1
-    '        Command.OnEnvironmentChange = 1
-
-    '        'Mouse.LocateMode = SolidEdgeConstants.seLocateModes.seLocateSimple
-    '        Mouse.LocateMode = SolidEdgeConstants.seLocateModes.seLocateQuickPick
-    '        Mouse.DynamicsMode = SolidEdgeConstants.seDynamicsModes.seDynamicsOff
-    '        Mouse.ClearLocateFilter()
-    '        Mouse.AddToLocateFilter(SolidEdgeConstants.seLocateFilterConstants.seLocateFace)
-
-    '    End Sub
-
-    '    Private Async Sub m_mouse_MouseClick(
-    '        ByVal sButton As Short,
-    '        ByVal sShift As Short,
-    '        ByVal dX As Double,
-    '        ByVal dY As Double,
-    '        ByVal dZ As Double,
-    '        ByVal pWindowDispatch As Object,
-    '        ByVal lKeyPointType As Integer,
-    '        ByVal pGraphicDispatch As Object
-    '        ) Handles Mouse.MouseClick
-
-    '        Dim FaceReference As SolidEdgeFramework.Reference = Nothing
-    '        'Dim ThreadDepth As Double
-
-    '        Dim tmpThreadDepthDouble As Double
-
-    '        Try
-    '            FaceReference = CType(pGraphicDispatch, SolidEdgeFramework.Reference)
-
-    '            'ReleaseComObject(CType(Command(), Object))
-    '            'ReleaseComObject(CType(Mouse, Object))
-
-    '            tmpThreadDepthDouble = Await GetThreadDepthAsync(FaceReference)
-
-    '            Command.Done = True
-
-    '        Catch ex As Exception
-    '            MsgBox($"Await exception: {ex.Message}")
-    '        End Try
-
-    '        TextBoxThreadDepth.BeginInvoke(Sub()
-    '                                           TextBoxThreadDepth.Text = CStr(tmpThreadDepthDouble)
-    '                                       End Sub)
-
-    '    End Sub
-
-    '    Private Function GetThreadDepthAsync(FaceReference As SolidEdgeFramework.Reference) As Task(Of Double)
-    '        'Return Task.Run(AddressOf GetThreadDepth)
-    '        Return Task.Run(Function() As Double
-    '                            Return GetThreadDepth(FaceReference)
-    '                        End Function)
-    '    End Function
-
-    '    Private Function GetThreadDepth(FaceReference As SolidEdgeFramework.Reference) As Double
-    '        Dim tmpThreadDepthDouble As Double = -1
-
-    '        Dim CylinderGeometryForm As Integer = 10
-    '        Dim Face As SolidEdgeGeometry.Face = Nothing
-    '        Dim FaceID As Integer = 0
-    '        Dim ImmediateParentOccurrence As SolidEdgeAssembly.Occurrence
-    '        'Dim ImmediateParentSubOccurrence As SolidEdgeAssembly.SubOccurrence
-    '        Dim OccurrenceDoc As SolidEdgeFramework.SolidEdgeDocument = Nothing
-    '        Dim Models As SolidEdgePart.Models = Nothing
-
-    '        Try
-    '            Face = CType(FaceReference.Object, SolidEdgeGeometry.Face)
-    '            FaceID = Face.ID
-    '        Catch ex As Exception
-    '            MsgBox(ex.Message)
-    '            Return -1
-    '        End Try
-
-    '        Try
-    '            Dim tmpRef As SolidEdgeFramework.Reference = CType(FaceReference.ImmediateParent, SolidEdgeFramework.Reference)
-    '            ImmediateParentOccurrence = CType(tmpRef.Object, SolidEdgeAssembly.Occurrence)
-    '            OccurrenceDoc = CType(ImmediateParentOccurrence.OccurrenceDocument, SolidEdgeFramework.SolidEdgeDocument)
-    '        Catch ex As Exception
-    '            MsgBox(ex.Message)
-    '        End Try
-
-    '        Dim Extension As String = IO.Path.GetExtension(OccurrenceDoc.FullName)
-
-    '        Select Case Extension
-    '            Case ".par"
-    '                Dim tmpSEDoc As SolidEdgePart.PartDocument = CType(OccurrenceDoc, SolidEdgePart.PartDocument)
-    '                Models = tmpSEDoc.Models
-    '            Case ".psm"
-    '                Dim tmpSEDoc As SolidEdgePart.SheetMetalDocument = CType(OccurrenceDoc, SolidEdgePart.SheetMetalDocument)
-    '                Models = tmpSEDoc.Models
-    '            Case Else
-    '                MsgBox($"Unable to process face parent file type: '{Extension}'", vbOKOnly, "Cannot Process File Type")
-    '                'Exit Sub
-    '        End Select
-
-    '        For Each Model As SolidEdgePart.Model In Models
-    '            For Each HoleGeometry As SolidEdgePart.HoleGeometry In Model.HoleGeometries
-    '                Dim HoleFaces As SolidEdgeGeometry.Faces = CType(HoleGeometry.Faces, SolidEdgeGeometry.Faces)
-
-    '                For Each tmpFace As SolidEdgeGeometry.Face In HoleFaces
-    '                    If tmpFace.ID = FaceID Then
-    '                        Dim HoleData As SolidEdgePart.HoleData = CType(HoleGeometry.HoleData, SolidEdgePart.HoleData)
-    '                        If HoleData.HoleType = SolidEdgePart.FeaturePropertyConstants.igRegularHole Then
-    '                            If HoleData.TreatmentType = SolidEdgePart.FeaturePropertyConstants.igTappedHole Then
-    '                                'If HoleData.ThreadDepthMethod = SolidEdgePart.FeaturePropertyConstants.igThroughAll Then ' 16
-    '                                'End If
-    '                                'If HoleData.ThreadDepthMethod = SolidEdgePart.FeaturePropertyConstants.igToNext Then
-    '                                'End If
-    '                                If HoleData.ThreadDepthMethod = SolidEdgePart.FeaturePropertyConstants.igFinite Then
-    '                                    tmpThreadDepthDouble = HoleData.ThreadDepth
-    '                                    If HoleData.Units = SolidEdgePart.HoleDataUnitsConstants.igHoleDataUnitsInches Then
-    '                                        tmpThreadDepthDouble = tmpThreadDepthDouble * 1000 / 25.4
-    '                                        Exit For
-    '                                    Else
-    '                                        tmpThreadDepthDouble = tmpThreadDepthDouble * 1000
-    '                                        Exit For
-    '                                    End If
-    '                                Else
-    '                                End If
-    '                            Else
-    '                            End If
-    '                        End If
-    '                    End If
-
-    '                Next
-    '                If Not tmpThreadDepthDouble = -1 Then Exit For
-    '            Next
-    '            If Not tmpThreadDepthDouble = -1 Then Exit For
-    '        Next
-
-    '        Return tmpThreadDepthDouble
-    '    End Function
-
-    '    Private Sub Command_Terminate() Handles Command.Terminate
-    '        Try
-    '            If Mouse IsNot Nothing Then Mouse = Nothing
-    '            If Command() IsNot Nothing Then Command = Nothing
-    '        Catch ex As Exception
-    '            Dim i = 0
-    '        End Try
-    '        'MsgBox("No partially-tapped hole found.  Please restart the command and try again.", vbOKOnly, "Select a Partially-Tapped Hole")
-    '    End Sub
-
-    '    ''https://stackoverflow.com/questions/70760292/how-to-implement-async-await-function
-    '    'Private Async Sub btnSubMain_Click(sender As Object, e As EventArgs) Handles btnSubMain.Click
-    '    '    Dim answer As Integer
-    '    '    Try
-    '    '        btnSubMain.Enabled = False
-    '    '        ' async call, UI continues to run
-    '    '        answer = Await SomeIntegerAsync()
-    '    '    Finally
-    '    '        btnSubMain.Enabled = True
-    '    '    End Try
-    '    '    MessageBox.Show(answer.ToString())
-
-    '    '    Try
-    '    '        btnSubMain.Enabled = False
-    '    '        ' synchronous call, UI is blocked
-    '    '        answer = SomeInteger()
-    '    '    Finally
-    '    '        btnSubMain.Enabled = True
-    '    '    End Try
-    '    '    MessageBox.Show(answer.ToString())
-    '    'End Sub
-
-    '    'Function SomeIntegerAsync() As Task(Of Integer)
-    '    '    Return Task.Run(AddressOf SomeInteger)
-    '    'End Function
-
-    '    'Function SomeInteger() As Integer
-    '    '    Thread.Sleep(5000)
-    '    '    Return 34
-    '    'End Function
-
-    '    Public Sub ReleaseComObject(ByRef obj As Object)
-    '        If obj IsNot Nothing Then
-    '            ' Call FinalReleaseComObject. This call means that this tool MUST NOT try to reference the object again, even from another variable.
-    '            System.Runtime.InteropServices.Marshal.FinalReleaseComObject(obj)
-    '            obj = Nothing
-    '        End If
-    '    End Sub
 
 End Class
 

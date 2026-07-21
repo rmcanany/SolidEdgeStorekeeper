@@ -8,7 +8,7 @@ Imports Microsoft.WindowsAPICodePack.Dialogs
 Public Class Form_Main
 
     Private Property Version As String = "2026.1"
-    Public Property PreviewVersion As String = "02"  ' Empty string if not a preview
+    Public Property PreviewVersion As String = "04"  ' Empty string if not a preview
 
     Private Property SearchingTVFilename As Boolean = False
 
@@ -1880,21 +1880,25 @@ Public Class Form_Main
                     Continue For
                 End If
 
-                For Each Attribute As Xml.XmlAttribute In tmpNode.Attributes
-                    If Attribute.Name = "Type" Then
-                        If Not (Attribute.Value = "Node" Or Attribute.Value.Contains("LeafNode")) Then
-                            Dim tmpName As String = tmpNode.Name
-                            Dim tmpType As String = Attribute.Value
-                            Dim tmpValue As String = tmpNode.InnerText
-                            Dim Prop As New Prop(tmpName, tmpType, tmpValue)
-                            Props.Items.Add(Prop)
-                            If tmpType = "TemplateFormula" And Not SearchingTVFilename Then
-                                UpdateThumbnail(tmpValue)
-                                TemplateFound = True
+                If tmpNode.Attributes IsNot Nothing Then
+                    For Each Attribute As Xml.XmlAttribute In tmpNode.Attributes
+                        If Attribute.Name = "Type" Then
+                            If Not (Attribute.Value = "Node" Or Attribute.Value.Contains("LeafNode")) Then
+                                Dim tmpName As String = tmpNode.Name
+                                Dim tmpType As String = Attribute.Value
+                                Dim tmpValue As String = tmpNode.InnerText
+                                Dim Prop As New Prop(tmpName, tmpType, tmpValue)
+                                Props.Items.Add(Prop)
+                                If tmpType = "TemplateFormula" And Not SearchingTVFilename Then
+                                    UpdateThumbnail(tmpValue)
+                                    TemplateFound = True
+                                End If
                             End If
                         End If
-                    End If
-                Next
+                    Next
+
+                End If
+
             Next
         Next
 

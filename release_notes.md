@@ -2,7 +2,7 @@
   <p align=center>
   <img src="media/logo.png" width=50%;>
   <p align=center>
-  <span class="description">Robert McAnany 2025</span>
+  <span class="description">Robert McAnany 2026</span>
 </div>
 
 # Release Notes
@@ -15,12 +15,33 @@ Feel free to report bugs and/or ideas for improvement on the [<ins>**Solid Edge 
 
 ## V2026.1
 
+We'll get right to the updates, but first some exciting news -- Storekeeper has a new **Contributor!**  Our very own **@Seva** added a new part family -- ASME Flange Studs!  Can't wait for you to see his handiwork!
+
+Now on to those updates...
+
+### ASME Flange Studs
+
+Contributed by **@Seva**.  Thank you!
+
+The new dataset covers raised and ring-joint flanges, pressure ratings from 150 to 2500 psi, and pipe sizes from 1/2" to 24" NPS.  
+
+You select your specs, and the program automatically finds the correct stud.  It even works with Fastener Stacks.  
+
+If you work with these components, this is going to save you a *ton* of time!
+
+<p align="center">
+  <img src="media/asme_flange_stud.png">
+</p>
+
+
+
+
 ### Updated ISO Data and Templates
 
 Contributed by **@TeeVar**.  Thank you!
 
-- Updated all ISO DIN standards to the latest releases ( up to 2026.04)
-- Added non-preferred sizes for all standards
+- Updated all ISO DIN standards to the latest releases (up to 2026.04)
+- Added non-preferred sizes for all standards.  These are identified as such and listed under a separate heading below the preferred sizes in each category.
 - Added ISO 1234:1997 - Split pins
 - Fixed values, parameters and variables for some items
 - Over 38k items now available
@@ -39,15 +60,13 @@ The models are simplified in a way that avoids interference between the part and
 
 ### Thread Pitch Rendering
 
-Added adjustment of the thread texture image to better reflect its pitch.  It is only meant to add a bit of realism; there is no functional purpose.
+Added adjustment of the thread texture image to better reflect its pitch.  It is only meant to add a bit of realism; there is no functional effect.
 
 <p align="center">
   <img src="media/variable_thread_pitch_example.png">
 </p>
 
-
-
-It does not update files created with the previous release.  Only newly-created parts are affected.
+Files created with previous versions are not updated.  Only newly-generated parts are affected.
 
 See the [<ins>**Creating New Templates Help Topic**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#creating-new-templates) section of the Readme for details.
 

@@ -293,6 +293,21 @@ Public Class UtilsCommon
         Return DocVariableDict
     End Function
 
+    Public Function GetDocVariable(
+        SEDoc As SolidEdgeFramework.SolidEdgeDocument,
+        Name As String
+        ) As SolidEdgeFramework.variable
+
+        Dim V As SolidEdgeFramework.variable = Nothing
+
+        Dim DocVariableDict As New Dictionary(Of String, SolidEdgeFramework.variable)
+        DocVariableDict = GetDocVariables(SEDoc)
+
+        If DocVariableDict.Keys.Contains(Name) Then V = DocVariableDict(Name)
+
+        Return V
+    End Function
+
     Public Function IsVariablePresent(SEDoc As SolidEdgeFramework.SolidEdgeDocument, VariableName As String) As Boolean
         Dim VariableFound As Boolean = False
         Dim DocVariableDict As New Dictionary(Of String, SolidEdgeFramework.variable)
