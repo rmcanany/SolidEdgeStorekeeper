@@ -228,15 +228,6 @@ Public Class Form_Main
 
                     ' Set combobox width
                     ' https://stackoverflow.com/questions/4842160/auto-width-of-comboboxs-content
-                    'int maxWidth = 0, temp = 0;
-                    '    foreach (var obj in myCombo.Items)
-                    '    {
-                    '        temp = TextRenderer.MeasureText(obj.ToString(), myCombo.Font).Width;
-                    '        if (temp > maxWidth)
-                    '        {
-                    '            maxWidth = temp;
-                    '        }
-                    '    }
                     Dim ComboboxAbsoluteMaxWidth = 150
                     Dim PreviousWidth = ComboBoxMaterials.Width
                     Dim MaxWidth = 0
@@ -513,22 +504,6 @@ Public Class Form_Main
             ErrorLogger.AddMessage("Unable to connect to Solid Edge")
         End If
 
-        'Try
-        '    SEApp = CType(MarshalHelper.GetActiveObject("SolidEdge.Application", throwOnError:=True), SolidEdgeFramework.Application)
-        'Catch ex As Exception
-        '    Success = False
-        '    ErrorLogger.AddMessage("Solid Edge not detected.  This command requires a running instance of Solid Edge with an assembly file active")
-        'End Try
-
-        'If SEApp IsNot Nothing And Not Me.PrePopulate Then
-        '    Try
-        '        AsmDoc = CType(SEApp.ActiveDocument, SolidEdgeAssembly.AssemblyDocument)
-        '    Catch ex As Exception
-        '        Success = False
-        '        ErrorLogger.AddMessage("No assembly file active.  This command requires a running instance of Solid Edge with an assembly file active")
-        '    End Try
-        'End If
-
         If SEApp IsNot Nothing Then
             Try
                 AsmDoc = CType(SEApp.ActiveDocument, SolidEdgeAssembly.AssemblyDocument)
@@ -710,18 +685,7 @@ Public Class Form_Main
                 Dim PreviousOccurrencesCount As Integer = Occurrences.Count
                 Dim Occurrence As SolidEdgeAssembly.Occurrence
 
-                'Dim Occurrence = AsmDoc.Occurrences.AddByFilename(Filename)
-                'Dim SelectSet = AsmDoc.SelectSet
-                'SelectSet.RemoveAll()
-
-                'SelectSet.Add(Occurrence)
-                'Dim Cut = SolidEdgeConstants.AssemblyCommandConstants.AssemblyEditCut
-                'SEApp.StartCommand(CType(Cut, SolidEdgeFramework.SolidEdgeCommandConstants))
-                'Dim Paste = SolidEdgeConstants.AssemblyCommandConstants.AssemblyEditPaste
-
                 Try
-                    'SEApp.StartCommand(CType(Paste, SolidEdgeFramework.SolidEdgeCommandConstants))
-
                     Clipboard.Clear()
                     Clipboard.SetText(Filename)
                     SEApp.StartCommand(CType(SolidEdgeConstants.AssemblyCommandConstants.AssemblyEditPaste, SolidEdgeFramework.SolidEdgeCommandConstants))
@@ -803,11 +767,6 @@ Public Class Form_Main
                     End If
 
                 Else
-
-                    'Clipboard.Clear()
-                    'Clipboard.SetText(Filename)
-                    'SEApp.StartCommand(CType(SolidEdgeConstants.AssemblyCommandConstants.AssemblyEditPaste, SolidEdgeFramework.SolidEdgeCommandConstants))
-
                     Proceed = False
                     ErrorLogger.AddMessage("No parts selected")
                 End If
@@ -821,7 +780,6 @@ Public Class Form_Main
                 System.Windows.Forms.Application.DoEvents()
                 Me.TopMost = False
             End If
-
 
         End If
         TextBoxStatus.Text = ""

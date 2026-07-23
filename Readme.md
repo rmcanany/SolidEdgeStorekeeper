@@ -8,7 +8,7 @@
 ## CREDITS
 
 **Contributors**  
-@[Francesco Arfilli], @TeeVar
+@[Francesco Arfilli], @TeeVar, @Seva
 
 **Beta Testers**  
 @hawcad, @rob.wolbrink7456, @[Francesco Arfilli], @pedja, @TeeVar, @Seva
@@ -30,7 +30,7 @@
 
 ## DESCRIPTION
 
-Solid Edge Storekeeper is a utility to create, organize, and share standard parts.  It is free and open source and you can find it [<ins>**Here**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#readme).  Please note the standard part templates were created with SE2024.  You will need that version or newer to use them.  (**Update:** **@TeeVar**, generously contributed a set of templates created with SE2019.)
+Solid Edge Storekeeper is a utility to create, organize, and share standard parts.  It is free and open source.  Please note the standard part templates were created with SE2024.  You will need that version or newer to use them.  (**Update 20251212:** **@TeeVar**, generously contributed a set of templates created with SE2019.)  (**Update 20260721:** Most parts have been modified with SE2025; that's the earliest version you can now use.)
 
 Fasteners, retainers, structural shapes, and more in ANSI and ISO format are included.  There are over 30k items available.  There is no database; everything is done in Excel.  It is fully customizable.  If you upgrade Solid Edge, no change to the program or its data is required.
 
@@ -317,7 +317,7 @@ After the components are placed, they are converted to an `Assembly group`.  Fin
 
 The parameters `Minimum thread engagement` and `Minimum extension` are design decisions and left up to you.  `Clamped thickness` and `Thread depth` are parameters of the model.  Adding an easy way to get those is on the roadmap, but not currently implemented.
 
-Today, for `Clamped thickness`, the quickest way may be to use the Solid Edge `Measure` command.  It is on the Inspect Tab > 3D Measure Group.
+Today, for `Clamped thickness`, the quickest way may be to use the Solid Edge `Measure Distance` command.  It is on the Inspect Tab > 3D Measure Group.
 
 <p align="center">
   <img src="media/measure_clamped_thickness.png">
@@ -368,7 +368,7 @@ You are of course free to create new templates any way you see fit.  However, if
 
 ### Primary Axis
 
-Many standard parts have a primary axis.  For consistency, consider orienting it along the Y Axis as shown.  (This orientation tends to result in a more informative thumbnail image.)  For parts with a secondary axis like the pipe elbow, consider the Z Axis.
+Many standard parts have a primary axis.  For consistency, consider orienting it along the Y Axis as shown.  (This orientation was chosen to provide a more informative thumbnail image.)  For parts with a secondary axis like the pipe elbow, consider the Z Axis.
 
 ### Replace Part Considerations
 
@@ -382,9 +382,13 @@ Another thing to think about is the effect of replacing one standard part with a
 
 Variable names are something else to consider.  To minimize confusion in creating and maintaining the companion spreadsheets, see if you can reuse names that have been previously established.  You can check the supplied templates or spreadsheets to see what may apply to your parts.
 
+While variable names for individual parts are pretty independent from each other, Fastener Stacks are a different story.  To find related files, the program looks for specific names, like `NominalDiameter` or `Length`.  If you want to use this functionality on your parts, those names must match the supplied templates.
+
 ### Drawings of Standard Parts
 
-As mentioned above, drawings of standard parts is a supported option.  If you need that, simply create a drawing with the same name as the template.  If the program finds such a drawing, and the option is enabled, it copies it to the library, renames it and updates the links.  Enable the option `Include drawing of part if present` on the **Tree Search Options** page.
+As mentioned above, drawings of standard parts is a supported option.  If you need that, simply create a drawing with the same name as the template.  
+
+If the program finds such a drawing, and the option is enabled, it copies it to the library, renames it and updates the links.  Enable the option `Include drawing of part if present` on the **Tree Search Options** page.
 
 ### Thread Pitch
 
@@ -485,7 +489,7 @@ One last thing about the `MaterialFormula`.  It can occur in multiple places in 
 
 Here we are setting up the processing of button head capscrews.  You can see we need to specify what template to use and how to name the file.  We must also provide the companion spreadsheet name and the tab in that file where the information is stored.  
 
-As mentioned previously, formulas can contain entries such as `%{Name}` and `%{MaterialFormula}`.  Variables are *populating* the part file, not *reading from it*.  That means you cannot reference a file property like `%{Custom.Engineer}` in a formula.  Variables can only come from `Storekeeper.xls` or a companion spreadsheet.
+As mentioned previously, formulas can contain entries such as `%{Name}` and `%{MaterialFormula}`.  Variables are *populating* the part file, not *reading from it*.  That means you cannot reference a property in a Solid Edge file, like `%{Custom.Engineer}`, in a formula.  Variables can only come from `Storekeeper.xls` or a companion spreadsheet.
 
 In this example, we are also updating the description property.  That isn't necessary for the program to function.  It just illustrates how to update Solid Edge file properties.  Any property in the file can be updated in this way.  
 
