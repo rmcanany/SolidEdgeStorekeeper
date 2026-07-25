@@ -15,25 +15,23 @@ Feel free to report bugs and/or ideas for improvement on the [<ins>**Solid Edge 
 
 ## V2026.1
 
-We'll get right to the updates, but first some exciting news -- Storekeeper has a new **Contributor!**  Our very own **@Seva** added a new part family -- ASME Flange Studs!  Can't wait for you to see his handiwork!
+We'll get right to the updates, but first some exciting news -- Storekeeper has a new **Contributor!**  Our very own **@Seva** added a new part family -- ASME Pipe Flanges!  Can't wait for you to see his handiwork!
 
 Now on to those updates...
 
-### ASME Flange Studs
+### ASME Pipe Flanges
 
 Contributed by **@Seva**.  Thank you!
 
-The new dataset covers raised and ring-joint flanges, pressure ratings from 150 to 2500 psi, and pipe sizes from 1/2" to 24" NPS.  
-
-You select your specs, and the program automatically finds the correct stud.  It even works with Fastener Stacks.  
-
-If you work with these components, this is going to save you a *ton* of time!
+The new dataset covers six common raised-flange types (butt-weld, threaded, etc.), pressure ratings from 150 to 2500 psi, and pipe sizes from 1/2" to 24" NPS.  
 
 <p align="center">
   <img src="media/asme_flange_stud.png">
 </p>
 
+The dataset also includes the related fastening studs.  For those, you select the pipe size and the system finds the correct stud.  They are compatible with Storekeeper's Fastener Stack and Auto-Patterning features.
 
+If you work with these components, this is going to save you a *ton* of time!
 
 
 ### Updated ISO Data and Templates
@@ -79,6 +77,7 @@ See the [<ins>**Creating New Templates Help Topic**</ins>](https://github.com/rm
 - Fixed an issue where the `Property Cache` was not properly updating if a file change was detected (Thank you one more time **@TeeVar**!)
 - Updated to the most recent OpenMcdf version
 - Fixed an issue where users running preview code were not notified when the finalized version was released.
+- Changed how fastener stack related-component tree locations are specified.  Now, the full path is used (eg. `Solid_Edge_Storekeeper\Ansi_Fasteners\Washer_Flat`).  Previously it was a relative path (eg. `..\..\Washer_Flat`).
 
 
 ## V2025.4

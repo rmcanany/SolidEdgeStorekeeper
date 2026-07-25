@@ -944,13 +944,13 @@ Public Class FormFastenerStack
         ' The fastener size node will be one level up from the selected length node
         ' Except for an ASME stud.  In that case, the fastener size will be in the bottom node.
 
-        Dim CountDecrement As Integer
+        Dim DropNodes As Integer
         If Not IsAsmeStud Then
-            CountDecrement = 1
+            DropNodes = 1
         Else
-            CountDecrement = 1
+            DropNodes = 0
         End If
-        For i = 0 To FastenerNodeNameList.Count - CountDecrement
+        For i = 0 To FastenerNodeNameList.Count - (DropNodes + 1)
             If i = 0 Then
                 FastenerPath = FastenerNodeNameList(i) '                      Solid_Edge_Storekeeper
             Else
@@ -983,40 +983,47 @@ Public Class FormFastenerStack
         Me.TreeviewFlatWasherFullPath = ""
 
         For Each FlatWasherSearchPath As String In Me.FlatWasherSearchPaths
-            ' SE2024 ..\..\..\Washer_Flat
+            ' SE2024 Solid_Edge_Storekeeper\Ansi_Fasteners\Washer_Flat
+            ' SE2024 Solid_Edge_Storekeeper\Iso_Fasteners\Washer_Flat
             ' SE2019 ..\..\..\..\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series
 
-            If IsAsmeStud Then FlatWasherSearchPath = $"..\{FlatWasherSearchPath}"
+            'If IsAsmeStud Then
+            '    FlatWasherSearchPath = $"..\..\{FlatWasherSearchPath}"
+            '    FlatWasherSearchPath = FlatWasherSearchPath.Replace("Washer_Flat", "Ansi_Fasteners\Washer_Flat")
+            'End If
 
-            Dim tmpPathList As List(Of String) = FlatWasherSearchPath.Split(CChar("\")).ToList
-            Dim FlatWasherFullPath As String = ""
 
-            ' ###### Find the number of '..' in the search path ######
-            Dim n As Integer = 0 ' the number of '..' in the path
-            For i = 0 To tmpPathList.Count - 1
-                If tmpPathList(i) = ".." Then n += 1
-            Next
+            'Dim tmpPathList As List(Of String) = FlatWasherSearchPath.Split(CChar("\")).ToList
+            'Dim FlatWasherFullPath As String = ""
 
-            ' ###### Populate the beginning from the fastener path ######
-            ' Examples
-            ' Fastener path: Solid_Edge_Storekeeper\Ansi_Fasteners_Steel\HHCS\Size_0.250-20\Length_0.500
-            ' Search path:   ..\..\..\Washer_Flat
-            ' Output:        Solid_Edge_Storekeeper\Ansi_Fasteners_Steel
-            For i = 0 To FastenerNodeNameList.Count - 1 - n
-                If i = 0 Then
-                    FlatWasherFullPath = FastenerNodeNameList(i)
-                Else
-                    FlatWasherFullPath = $"{FlatWasherFullPath}\{FastenerNodeNameList(i)}"
-                End If
-            Next
+            '' ###### Find the number of '..' in the search path ######
+            'Dim n As Integer = 0 ' the number of '..' in the path
+            'For i = 0 To tmpPathList.Count - 1
+            '    If tmpPathList(i) = ".." Then n += 1
+            'Next
 
-            ' ###### Populate the end from the search path ######
-            ' Output: Solid_Edge_Storekeeper\Ansi_Fasteners_Steel\Washer_Flat
-            For i = 0 To tmpPathList.Count - 1
-                If Not tmpPathList(i) = ".." Then
-                    FlatWasherFullPath = $"{FlatWasherFullPath}\{tmpPathList(i)}"
-                End If
-            Next
+            '' ###### Populate the beginning from the fastener path ######
+            '' Examples
+            '' Fastener path: Solid_Edge_Storekeeper\Ansi_Fasteners_Steel\HHCS\Size_0.250-20\Length_0.500
+            '' Search path:   ..\..\..\Washer_Flat
+            '' Output:        Solid_Edge_Storekeeper\Ansi_Fasteners_Steel
+            'For i = 0 To FastenerNodeNameList.Count - 1 - n
+            '    If i = 0 Then
+            '        FlatWasherFullPath = FastenerNodeNameList(i)
+            '    Else
+            '        FlatWasherFullPath = $"{FlatWasherFullPath}\{FastenerNodeNameList(i)}"
+            '    End If
+            'Next
+
+            '' ###### Populate the end from the search path ######
+            '' Output: Solid_Edge_Storekeeper\Ansi_Fasteners_Steel\Washer_Flat
+            'For i = 0 To tmpPathList.Count - 1
+            '    If Not tmpPathList(i) = ".." Then
+            '        FlatWasherFullPath = $"{FlatWasherFullPath}\{tmpPathList(i)}"
+            '    End If
+            'Next
+
+            Dim FlatWasherFullPath As String = FlatWasherSearchPath
 
             ' ###### Find the FlatWasher with the same NominalDiameter as the Fastener ######
             ParentNode = FMain.XmlNodeFromPath(FlatWasherFullPath)
@@ -1045,49 +1052,55 @@ Public Class FormFastenerStack
         Me.TreeviewLockwasherFullPath = ""
 
         For Each LockWasherSearchPath As String In Me.LockWasherSearchPaths
-            ' SE2024 ..\..\..\Washer_Lock
+            ' SE2024 Solid_Edge_Storekeeper\Ansi_Fasteners\Washer_Lock
+            ' SE2024 Solid_Edge_Storekeeper\Iso_Fasteners\Washer_Lock
             ' SE2019 NA 
 
-            If IsAsmeStud Then LockWasherSearchPath = $"..\{LockWasherSearchPath}"
+            'If IsAsmeStud Then
+            '    LockWasherSearchPath = $"..\..\{LockWasherSearchPath}"
+            '    LockWasherSearchPath = LockWasherSearchPath.Replace("Washer_Lock", "Ansi_Fasteners\Washer_Lock")
+            'End If
 
-            Dim tmpPathList As List(Of String) = LockWasherSearchPath.Split(CChar("\")).ToList
-            Dim LockWasherFullPath As String = ""
+            'Dim tmpPathList As List(Of String) = LockWasherSearchPath.Split(CChar("\")).ToList
+            'Dim LockWasherFullPath As String = ""
 
-            ' ###### Find the number of '..' in the search path ######
-            Dim n As Integer = 0 ' the number of '..' in the path
-            For i = 0 To tmpPathList.Count - 1
-                If tmpPathList(i) = ".." Then n += 1
-            Next
+            '' ###### Find the number of '..' in the search path ######
+            'Dim n As Integer = 0 ' the number of '..' in the path
+            'For i = 0 To tmpPathList.Count - 1
+            '    If tmpPathList(i) = ".." Then n += 1
+            'Next
 
-            ' ###### Populate the beginning from the FASTENER path ######
+            '' ###### Populate the beginning from the FASTENER path ######
 
-            ' Example
-            ' Fastener path: Solid_Edge_Storekeeper\Ansi_Fasteners_Steel\HHCS\Size_0.250-20\Length_0.500
-            ' Search path:   ..\..\..\Washer_Flat
-            ' Output:        Solid_Edge_Storekeeper\Ansi_Fasteners_Steel
+            '' Example
+            '' Fastener path: Solid_Edge_Storekeeper\Ansi_Fasteners_Steel\HHCS\Size_0.250-20\Length_0.500
+            '' Search path:   ..\..\..\Washer_Flat
+            '' Output:        Solid_Edge_Storekeeper\Ansi_Fasteners_Steel
 
-            ' Example
-            ' Fastener path: Solid_Edge_Storekeeper\ISO_SCREWS_-_Steel\ISO_4014_-_Hexagon_head_bolts_-_normal_pitch\Size_M5\Length_25
-            ' Search path:   ..\..\..\..\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series
-            ' Output:        Solid_Edge_Storekeeper
+            '' Example
+            '' Fastener path: Solid_Edge_Storekeeper\ISO_SCREWS_-_Steel\ISO_4014_-_Hexagon_head_bolts_-_normal_pitch\Size_M5\Length_25
+            '' Search path:   ..\..\..\..\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series
+            '' Output:        Solid_Edge_Storekeeper
 
-            For i = 0 To FastenerNodeNameList.Count - 1 - n
-                If i = 0 Then
-                    LockWasherFullPath = FastenerNodeNameList(i)
-                Else
-                    LockWasherFullPath = $"{LockWasherFullPath}\{FastenerNodeNameList(i)}"
-                End If
-            Next
+            'For i = 0 To FastenerNodeNameList.Count - 1 - n
+            '    If i = 0 Then
+            '        LockWasherFullPath = FastenerNodeNameList(i)
+            '    Else
+            '        LockWasherFullPath = $"{LockWasherFullPath}\{FastenerNodeNameList(i)}"
+            '    End If
+            'Next
 
-            ' ###### Populate the end from the SEARCH path ######
-            ' Output: Solid_Edge_Storekeeper\Ansi_Fasteners_Steel\Washer_Flat
-            ' Output: Solid_Edge_Storekeeper\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series
+            '' ###### Populate the end from the SEARCH path ######
+            '' Output: Solid_Edge_Storekeeper\Ansi_Fasteners_Steel\Washer_Flat
+            '' Output: Solid_Edge_Storekeeper\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series
 
-            For i = 0 To tmpPathList.Count - 1
-                If Not tmpPathList(i) = ".." Then
-                    LockWasherFullPath = $"{LockWasherFullPath}\{tmpPathList(i)}"
-                End If
-            Next
+            'For i = 0 To tmpPathList.Count - 1
+            '    If Not tmpPathList(i) = ".." Then
+            '        LockWasherFullPath = $"{LockWasherFullPath}\{tmpPathList(i)}"
+            '    End If
+            'Next
+
+            Dim LockWasherFullPath As String = LockWasherSearchPath
 
             ' ###### Find the LockWasher with the same NominalDiameter as the Fastener ######
             ParentNode = FMain.XmlNodeFromPath(LockWasherFullPath)
@@ -1116,43 +1129,48 @@ Public Class FormFastenerStack
         Me.TreeviewNutFullPath = ""
 
         For Each NutSearchPath As String In Me.NutSearchPaths
-            ' SE2024 ..\..\..\Washer_Flat
+            ' SE2024 Solid_Edge_Storekeeper\Ansi_Fasteners\Nut_Hex
+            ' SE2024 Solid_Edge_Storekeeper\Iso_Fasteners\Nut_Hex
             ' SE2019 ..\..\..\..\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series
 
-            If IsAsmeStud Then
-                NutSearchPath = $"..\{NutSearchPath}"
-                NutSearchPath = NutSearchPath.Replace("Nut_Hex", "Nut_Heavy_Hex")
-            End If
+            If IsAsmeStud Then NutSearchPath = NutSearchPath.Replace("Nut_Hex", "Nut_Heavy_Hex")
 
-            Dim tmpPathList As List(Of String) = NutSearchPath.Split(CChar("\")).ToList
-            Dim NutFullPath As String = ""
+            'If IsAsmeStud Then
+            '    NutSearchPath = $"..\..\{NutSearchPath}"
+            '    NutSearchPath = NutSearchPath.Replace("Nut_Hex", "Ansi_Fasteners\Nut_Heavy_Hex")
+            'End If
 
-            ' ###### Find the number of '..' in the search path ######
-            Dim n As Integer = 0 ' the number of '..' in the path
-            For i = 0 To tmpPathList.Count - 1
-                If tmpPathList(i) = ".." Then n += 1
-            Next
+            'Dim tmpPathList As List(Of String) = NutSearchPath.Split(CChar("\")).ToList
+            'Dim NutFullPath As String = ""
 
-            ' ###### Populate the beginning from the fastener path ######
-            ' Examples
-            ' Fastener path: Solid_Edge_Storekeeper\Ansi_Fasteners_Steel\HHCS\Size_0.250-20\Length_0.500
-            ' Search path:   ..\..\..\Washer_Flat
-            ' Output:        Solid_Edge_Storekeeper\Ansi_Fasteners_Steel
-            For i = 0 To FastenerNodeNameList.Count - 1 - n
-                If i = 0 Then
-                    NutFullPath = FastenerNodeNameList(i)
-                Else
-                    NutFullPath = $"{NutFullPath}\{FastenerNodeNameList(i)}"
-                End If
-            Next
+            '' ###### Find the number of '..' in the search path ######
+            'Dim n As Integer = 0 ' the number of '..' in the path
+            'For i = 0 To tmpPathList.Count - 1
+            '    If tmpPathList(i) = ".." Then n += 1
+            'Next
 
-            ' ###### Populate the end from the search path ######
-            ' Output: Solid_Edge_Storekeeper\Ansi_Fasteners_Steel\Washer_Flat
-            For i = 0 To tmpPathList.Count - 1
-                If Not tmpPathList(i) = ".." Then
-                    NutFullPath = $"{NutFullPath}\{tmpPathList(i)}"
-                End If
-            Next
+            '' ###### Populate the beginning from the fastener path ######
+            '' Examples
+            '' Fastener path: Solid_Edge_Storekeeper\Ansi_Fasteners_Steel\HHCS\Size_0.250-20\Length_0.500
+            '' Search path:   ..\..\..\Washer_Flat
+            '' Output:        Solid_Edge_Storekeeper\Ansi_Fasteners_Steel
+            'For i = 0 To FastenerNodeNameList.Count - 1 - n
+            '    If i = 0 Then
+            '        NutFullPath = FastenerNodeNameList(i)
+            '    Else
+            '        NutFullPath = $"{NutFullPath}\{FastenerNodeNameList(i)}"
+            '    End If
+            'Next
+
+            '' ###### Populate the end from the search path ######
+            '' Output: Solid_Edge_Storekeeper\Ansi_Fasteners_Steel\Washer_Flat
+            'For i = 0 To tmpPathList.Count - 1
+            '    If Not tmpPathList(i) = ".." Then
+            '        NutFullPath = $"{NutFullPath}\{tmpPathList(i)}"
+            '    End If
+            'Next
+
+            Dim NutFullPath As String = NutSearchPath
 
             ' ###### Find the Nut with the same NominalDiameter and ThreadDescription as the Fastener ######
             ParentNode = FMain.XmlNodeFromPath(NutFullPath)
@@ -1662,9 +1680,12 @@ Public Class FormFastenerStack
     End Sub
 
     Private Sub ButtonAddToAssy_Click(sender As Object, e As EventArgs) Handles ButtonAddToAssy.Click
-        Me.ErrorLogger = New HCErrorLogger("Storekeeper")
         Dim Config As String = Me.StackConfiguration.ToString
-        Dim Filename As String = IO.Path.GetFileName("Add to assembly")
+        'Dim Filename As String = IO.Path.GetFileName("Add to assembly")
+        'Me.FileLogger = ErrorLogger.AddFile($"Fastener: {Filename}, Config: {Config}")
+
+        Dim Filename As String = IO.Path.GetFileName(Me.FastenerFilename)
+        Me.ErrorLogger = New HCErrorLogger("Storekeeper")
         Me.FileLogger = ErrorLogger.AddFile($"Fastener: {Filename}, Config: {Config}")
 
         Process()

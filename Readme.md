@@ -295,7 +295,9 @@ A fastener stack is a grouping that consists of a fastener and related component
 
 ### Configuration and Use
 
-To select the stack style, click the `Configuration` button.  There are eight versions that employ nuts, and four each for thru and blind tapped holes.  Note, you only choose the fastener.  The related components are automatically selected based on the fastener diameter and thread.
+To select the stack style, click the `Configuration` button.  There are eight versions that employ nuts, and four each for thru- and blind-tapped holes.  The lone configuration on the last row is exclusively for ASME Flange studs.
+
+Note, you only choose the fastener.  The related components are automatically selected based on the fastener diameter and thread.
 
 <p align="center">
   <img src="media/fastener_stack_configuration.png">
@@ -331,11 +333,14 @@ To get `Thread depth` on blind holes, one way is to change selection priority fr
 
 ### Changing the Related Components
 
-In Storekeeper's `Preferences` directory, there are three files for each of the supplied datasets, `FlatWasher.json`,`LockWasher.json`, and `Nut.json`.  You can edit those in Notepad to point to the desired node in the `*.xml` tree.
+In Storekeeper's `Preferences` directory, there are three files for each of the supplied datasets, `FlatWasher.json`,`LockWasher.json`, and `Nut.json`.  
 
-Doing it like that is not user friendly in the least.  And wait until you see the tree traversal syntax.  It might be easier to go with the defaults, then use `Replace selected` to fix things up after the fact.  
+Here are the default contents of `FlatWasherSE2024.json`.
 
-Some care was taken in the creation of the templates to avoid breaking constraints when replacing parts.  Hopefully it won't create extra work if you decide to give it a try.
+`["Solid_Edge_Storekeeper\\Ansi_Fasteners\\Washer_Flat","Solid_Edge_Storekeeper\\Iso_Fasteners\\Washer_Flat"]`
+
+As you may recognize, it is a comma-delimited list in `JSON` format.  You can edit the files in Notepad to point to the desired node(s) in the `*.xml` tree.
+
 
 ## PRE-POPULATING THE LIBRARY
 

@@ -631,21 +631,39 @@ Public Class UtilsPreferences
                 SearchPathList.Clear()
                 BareFilename = $"{ComponentType}{DataVersion}"
 
+                'Select Case BareFilename
+                '    Case "FlatWasherSE2019"
+                '        SearchPathList.Add("..\..\..\..\..\ISO_DIN_WASHERS\ISO_7089_-_Plain_washers_-_Normal_series")
+                '    Case "LockWasherSE2019"
+                '        SearchPathList.Add("..\..\..\..\..\ISO_DIN_WASHERS\DIN_127_-_Spring_washers")
+                '    Case "NutSE2019"
+                '        SearchPathList.Add("..\..\..\..\..\ISO_DIN_NUTS\Hexagonal\ISO_4032_-_Hexagon_regular_nuts")
+                '        SearchPathList.Add("..\..\..\..\..\ISO_DIN_NUTS\Hexagonal\ISO_8673_-_Hexagon_regular_nuts_-_fine_pitch")
+                '    Case "FlatWasherSE2024"
+                '        SearchPathList.Add("..\..\..\Washer_Flat")
+                '    Case "LockWasherSE2024"
+                '        SearchPathList.Add("..\..\..\Washer_Lock")
+                '    Case "NutSE2024"
+                '        SearchPathList.Add("..\..\..\Nut_Hex")
+                'End Select
+
                 Select Case BareFilename
                     Case "FlatWasherSE2019"
-                        SearchPathList.Add("..\..\..\..\..\ISO_DIN_WASHERS\ISO_7089_-_Plain_washers_-_Normal_series")
+                        SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_WASHERS\ISO_7089_-_Plain_washers_-_Normal_series")
                     Case "LockWasherSE2019"
-                        SearchPathList.Add("..\..\..\..\..\ISO_DIN_WASHERS\DIN_127_-_Spring_washers")
+                        SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_WASHERS\DIN_127_-_Spring_washers")
                     Case "NutSE2019"
-                        SearchPathList.Add("..\..\..\..\..\ISO_DIN_NUTS\Hexagonal\ISO_4032_-_Hexagon_regular_nuts")
-                        SearchPathList.Add("..\..\..\..\..\ISO_DIN_NUTS\Hexagonal\ISO_8673_-_Hexagon_regular_nuts_-_fine_pitch")
+                        SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_NUTS\Hexagonal\ISO_4032_-_Hexagon_regular_nuts")
+                        SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_NUTS\Hexagonal\ISO_8673_-_Hexagon_regular_nuts_-_fine_pitch")
                     Case "FlatWasherSE2024"
-                        SearchPathList.Add("..\..\..\Washer_Flat")
+                        SearchPathList.Add("Solid_Edge_Storekeeper\Ansi_Fasteners\Washer_Flat")
+                        SearchPathList.Add("Solid_Edge_Storekeeper\Iso_Fasteners\Washer_Flat")
                     Case "LockWasherSE2024"
-                        SearchPathList.Add("..\..\..\Washer_Lock")
+                        SearchPathList.Add("Solid_Edge_Storekeeper\Ansi_Fasteners\Washer_Lock")
+                        SearchPathList.Add("Solid_Edge_Storekeeper\Iso_Fasteners\Washer_Lock")
                     Case "NutSE2024"
-                        SearchPathList.Add("..\..\..\Nut_Hex")
-
+                        SearchPathList.Add("Solid_Edge_Storekeeper\Ansi_Fasteners\Nut_Hex")
+                        SearchPathList.Add("Solid_Edge_Storekeeper\Iso_Fasteners\Nut_Hex")
                 End Select
 
                 Filename = $"{GetPreferencesDirectory()}\{BareFilename}.json"
