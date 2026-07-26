@@ -29,10 +29,11 @@ The new dataset covers six common raised-flange types (butt-weld, threaded, etc.
   <img src="media/asme_flange_stud.png">
 </p>
 
-The dataset also includes the related fastening studs.  For those, you select the pipe size and the system finds the correct stud.  They are compatible with Storekeeper's Fastener Stack and Auto-Patterning features.
+The dataset also includes the related fastening studs.  For those, you select the pipe size and the system finds the correct stud automatically.  They are compatible with Storekeeper's Fastener Stack and Auto-Patterning features.
 
 If you work with these components, this is going to save you a *ton* of time!
 
+See the [<ins>**ASME Flange Studs**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#asme-flange-studs) section of the Readme for details.
 
 ### Updated ISO Data and Templates
 
@@ -75,9 +76,10 @@ See the [<ins>**Creating New Templates Help Topic**</ins>](https://github.com/rm
 - Fixed an issue in `Property Search` where the `Replace Selected/All` function was adding parts instead of replacing them (Thank you **@TeeVar**!)
 - Fixed a regression where character encoding in non-US locales caused a runtime exception at startup (Thank you again **@TeeVar**!)
 - Fixed an issue where the `Property Cache` was not properly updating if a file change was detected (Thank you one more time **@TeeVar**!)
-- Updated to the most recent OpenMcdf version
+- Updated to the most recent version of OpenMcdf
 - Fixed an issue where users running preview code were not notified when the finalized version was released.
-- Changed how fastener stack related-component tree locations are specified.  Now, the full path is used (eg. `Solid_Edge_Storekeeper\Ansi_Fasteners\Washer_Flat`).  Previously it was a relative path (eg. `..\..\Washer_Flat`).
+- Changed how fastener stack related-component tree locations are specified.  Now, the full path is used (eg. `Solid_Edge_Storekeeper\Ansi_Fasteners\Washer_Flat`).  Previously it was a path relative to the chosen fastener.
+- Fixed an issue where a TooltipFormula, when used, had to be the first element in the XML node definition.  Now it can be anywhere within the scope of the node.
 
 
 ## V2025.4

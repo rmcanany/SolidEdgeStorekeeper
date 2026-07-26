@@ -1968,7 +1968,8 @@ Public Class Form_Main
                     'Dim tmpName As String = UnderscoreToSpace(xNode.Name.Replace(Me.XmlCommaIndicator, ","))
                     Dim tmpName As String = StringFromXml(xNode.Name)
                     Dim tmpTreeNode As TreeNode = New TreeNode(tmpName)
-                    Dim Tooltip As String = ExtractTooltip(xNode.InnerXml)
+                    'Dim Tooltip As String = ExtractTooltip(xNode.InnerXml)
+                    Dim Tooltip As String = ExtractTooltip(xNode)
                     If Not Tooltip = "" Then tmpTreeNode.ToolTipText = Tooltip
                     Dim n As Integer = inTreeNode.Nodes.Add(tmpTreeNode)
 
@@ -1990,18 +1991,33 @@ Public Class Form_Main
         End If
     End Sub
 
-    Private Function ExtractTooltip(InnerXml As String) As String
+    'Private Function ExtractTooltip(InnerXml As String) As String
+    '    Dim Tooltip As String = ""
+
+    '    If InnerXml.Contains("TooltipFormula") Then
+    '        ' <TooltipFormula Type="TooltipFormula">Button head capscrew</TooltipFormula><blah><blah><blah>
+    '        Dim delimiter As String = "TooltipFormula"
+    '        Dim result As List(Of String) = InnerXml.Split(New String() {delimiter}, StringSplitOptions.None).ToList
+    '        If result.Count >= 4 Then
+    '            Tooltip = result(2)
+    '            Tooltip = Tooltip.Split(CChar(">"))(1)
+    '            Tooltip = Tooltip.Split(CChar("<"))(0)
+    '        End If
+    '    End If
+
+    '    Return Tooltip
+    'End Function
+
+    Private Function ExtractTooltip(xNode As Xml.XmlNode) As String
         Dim Tooltip As String = ""
 
-        If InnerXml.Contains("TooltipFormula") Then
-            ' <TooltipFormula Type="TooltipFormula">Button head capscrew</TooltipFormula><blah><blah><blah>
-            Dim delimiter As String = "TooltipFormula"
-            Dim result As List(Of String) = InnerXml.Split(New String() {delimiter}, StringSplitOptions.None).ToList
-            If result(0).Count = 1 Then
-                Tooltip = result(2)
-                Tooltip = Tooltip.Split(CChar(">"))(1)
-                Tooltip = Tooltip.Split(CChar("<"))(0)
-            End If
+        If xNode.HasChildNodes Then
+            For Each ChildNode As Xml.XmlNode In xNode.ChildNodes
+                If ChildNode.Name = "TooltipFormula" Then
+                    Tooltip = ChildNode.InnerText
+                    Exit For
+                End If
+            Next
         End If
 
         Return Tooltip

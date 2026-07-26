@@ -175,7 +175,7 @@ The spreadsheet contains the variables required for each size of each type of pa
 - **TEMPLATE DIRECTORY**  
 The templates are SE part files that have variable-table-driven geometry to create new parts of a given type.  By default they are stored in the `Preferences\TemplatesSE2024` folder.
 
-  As noted at the outset, the original templates were created in SE2024.  They will only work if you're using that version or newer.  An alternative set of templates, created with SE2019, was generously contributed by **@TeeVar**.  To use them, change the template directory to `Preferences\TemplatesSE2019`.  
+  As noted at the outset, the original templates were created in SE2024.  They will only work if you're using that version or newer.  (**UPDATE 20260607:** It is now SE2025.)  An alternative set of templates, created with SE2019, was generously contributed by **@TeeVar**.  To use them, change the template directory to `Preferences\TemplatesSE2019`.  
 
   Even if you have a newer version of Solid Edge, you may still want to use the SE2019 templates.  Unlike me, **@TeeVar** is an ISO native speaker.  If you work with that standard, his naming conventions will probably be more familiar and useful to you.
 
@@ -190,7 +190,9 @@ The material table is usually your normal SE material table.  However, for a qui
 
 - **OPTIONS**
   - `Read the Excel file each time the program is launched`  
-	Internally, the Excel file is parsed and saved in `*.xml` format.  If you haven't changed the Excel file, this is an unnecessary step.  Clearing this option tells the program to use the `*.xml` file it created previously.
+	Internally, the Excel file is parsed and saved in `*.xml` format.  If you haven't changed the Excel file, this is an unnecessary step.  Clearing this option tells the program to use the `*.xml` file it created previously.  
+
+	Note, if you get an error about "available data for encoding" on startup, try enabling this option.  
 	 
   - `Add any property not already in file`  
 	As mentioned above, besides creating geometry, the program can also update file properties.  Enabling this option tells the program to add any (custom) property not already in the file.
@@ -295,7 +297,7 @@ A fastener stack is a grouping that consists of a fastener and related component
 
 ### Configuration and Use
 
-To select the stack style, click the `Configuration` button.  There are eight versions that employ nuts, and four each for thru- and blind-tapped holes.  The lone configuration on the last row is exclusively for ASME Flange studs.
+To select the stack style, click the `Configuration` button.  There are eight versions that employ nuts, and four each for thru- and blind-tapped holes.  (The lone configuration on the last row is exclusively for ASME Flange studs.  See below for more details on that.)
 
 Note, you only choose the fastener.  The related components are automatically selected based on the fastener diameter and thread.
 
@@ -331,6 +333,24 @@ To get `Thread depth` on blind holes, one way is to change selection priority fr
   <img src="media/measure_thread_depth.png">
 </p>
 
+### ASME Flange Studs
+
+These are a bit different than other fasteners.  They are not chosen by dimensions, but rather according to the ASME B16.5 standard, by pressure rating and pipe size.  Also, you won't find them in the Ansi Fastener section of the tree.  They are under Ansi Piping.
+
+<p align="center">
+  <img src="media/asme_flange_tree.png">
+</p>
+
+As shown in the Configuration section above, they have their own stack configuration.  Storekeeper will do weird things if it is not the one selected.  To center the stud on the flange, the program uses the clamped thickness; so it's important to enter that value correctly.
+
+Also according to the standard, heavy hex nuts are used, not the usual variety.  That is handled automatically, but means those components must be available, which they are in the SE2024 dataset.
+
+One more thing about the studs.  As delivered, Storekeeper names the files like so: 
+
+`asme_b16.5_stud_%{Name}_%{Length}_%{MaterialFormula}.par`
+
+The `Length` variable is in inches.  In the companion spreadsheet `AsmeB16.5Fasteners.xls` there is a column, `mmLength`, with the equivalent in millimeters.  The values are rounded according to the standard (eg 2.250" -> 55mm).  You can use that one for naming if desired.
+
 ### Changing the Related Components
 
 In Storekeeper's `Preferences` directory, there are three files for each of the supplied datasets, `FlatWasher.json`,`LockWasher.json`, and `Nut.json`.  
@@ -340,7 +360,6 @@ Here are the default contents of `FlatWasherSE2024.json`.
 `["Solid_Edge_Storekeeper\\Ansi_Fasteners\\Washer_Flat","Solid_Edge_Storekeeper\\Iso_Fasteners\\Washer_Flat"]`
 
 As you may recognize, it is a comma-delimited list in `JSON` format.  You can edit the files in Notepad to point to the desired node(s) in the `*.xml` tree.
-
 
 ## PRE-POPULATING THE LIBRARY
 
@@ -498,7 +517,7 @@ As mentioned previously, formulas can contain entries such as `%{Name}` and `%{M
 
 In this example, we are also updating the description property.  That isn't necessary for the program to function.  It just illustrates how to update Solid Edge file properties.  Any property in the file can be updated in this way.  
 
-One more thing about this example.  Note there is a tooltip being specified.  If you want one, it needs to be on the first line after a `Node` definition.  There is a fix coming for that restriction, but it's not in there now.
+One more thing about this example.  You'll notice there is a tooltip being specified.  That has nothing to do with a standard part *per se*; it is just a UI element.  It is not necessary, but can be handy for users in certain cases like this one, where an abbreviation is used.
 
 ## OPEN SOURCE PACKAGES
 
