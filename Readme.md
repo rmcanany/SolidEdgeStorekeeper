@@ -335,7 +335,7 @@ To get `Thread depth` on blind holes, one way is to change selection priority fr
 
 ### ASME Flange Studs
 
-These are a bit different than other fasteners.  They are not chosen by dimensions, but rather according to the ASME B16.5 standard, by pressure rating and pipe size.  Also, you won't find them in the Ansi Fastener section of the tree.  They are under Ansi Piping.
+These are a bit different than other fasteners.  They are not chosen by dimensions, but rather according to the ASME B16.5 standard, by pressure rating and pipe size.  Also, you won't find them in the Ansi Fastener section of the tree.  They are under Ansi Piping, along with the flanges that use them.
 
 <p align="center">
   <img src="media/asme_flange_tree.png">
@@ -418,15 +418,30 @@ If the program finds such a drawing, and the option is enabled, it copies it to 
 
 One last thing about creating a new template.  Storekeeper has the ability to adjust the thread texture to match the pitch.  It's just eye candy and not required.  However, if you would like that feature, there is a bit of setup to make it work.  
 
-The program assumes the existence of a FaceStyle named in a file in the Preferences directory called `ThreadFaceStyleName.txt`.  By default it contains `Thread`; change it to your own setting as needed.  
+The program gets the name of the thread face style from `ThreadFaceStyleName.txt` in the Preferences directory.  By default it contains the name `Thread`.  Change it to your own setting as needed.  
 
-Set up the FaceStyle as shown below.  Note especially the `File name`, `Units`, and `Scale X`.  The program will not work correctly if these settings do not match exactly.  The `Scale Y` parameter is what the program adjusts to match the pitch of the part being generated.  You can eyeball it to look good in the template file.
+Set up the FaceStyle as shown below.  Note especially `Units` and `Scale X`.  The program will not work correctly if these settings do not match exactly.
 
 <p align="center">
   <img src="media/template_thread_texture.png">
 </p>
 
-The program needs to know the length of the thread.  Rather than trying to analyze the model for this information, you supply it explicitly in the template's variable table.  The variable must be called `ThreadTextureLength`.  You supply a formula from the other parameters to set it.  Take a look at `AnsiFastenersBHCS.par` and `AnsiFastenersNutHex.par` for a couple of examples.
+The `Scale Y` parameter is what the program adjusts to match the pitch of the part being generated.  You can just eyeball it for the template.  If you prefer a calculation, here's how the program does it:
+
+```
+If IsAnsi(ThreadDescription) Then
+    Pitch = GetAnsiPitch(ThreadDescription) ' 1/TPI
+End If
+If IsIso(ThreadDescription) Then
+    Pitch = GetIsoPitch(ThreadDescription)
+End If
+
+Dim NumThreads As Double = Length / Pitch
+
+ThreadFaceStyle.TextureScaleY = CSng(7 / NumThreads)
+```
+
+Storekeeper needs to know the length of the thread.  Rather than making the program try to figure it out, you supply it explicitly in the template's variable table.  The variable must be called `ThreadTextureLength`.  You supply a formula from the other parameters to set it.  Take a look at `AnsiFastenersBHCS.par` and `AnsiFastenersNutHex.par` for a couple of examples.
 
 ## CUSTOMIZATION
 

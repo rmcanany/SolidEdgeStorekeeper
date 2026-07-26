@@ -67,7 +67,7 @@ Added adjustment of the thread texture image to better reflect its pitch.  It is
 
 Files created with previous versions are not updated.  Only newly-generated parts are affected.
 
-See the [<ins>**Creating New Templates Help Topic**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#creating-new-templates) section of the Readme for details.
+See the [<ins>**Creating New Templates Help Topic**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#thread-pitch) section of the Readme for details.
 
 
 
