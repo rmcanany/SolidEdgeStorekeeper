@@ -292,7 +292,7 @@ Public Class Form_Main
     Private Property StringToXmlDict As Dictionary(Of String, String)
     Private Property StringFromXmlDict As Dictionary(Of String, String)
 
-    Private Property ThreadFaceStyleName As String
+    'Private Property ThreadFaceStyleName As String
     Public Property UseXmlSchema As Boolean
 
     ' https://community.sw.siemens.com/s/question/0D5Vb00000Krsy5KAB/handling-events-how-to-use-help-example
@@ -377,8 +377,8 @@ Public Class Form_Main
         UP.CreatePreferencesDirectory(Me)
         UP.GetFormMainSettings(Me)
         UP.CreateFilenameCharmap()
-        UP.CreateThreadFaceStyleNameFile()
-        Me.ThreadFaceStyleName = UP.GetThreadFaceStyleName
+        'UP.CreateThreadFaceStyleNameFile()
+        'Me.ThreadFaceStyleName = UP.GetThreadFaceStyleName
 
         Me.UseXmlSchema = False
 
@@ -1087,7 +1087,23 @@ Public Class Form_Main
 
         If Not VariableDict.Keys.Contains("ThreadTextureLength") Then Exit Sub
 
-        Dim ThreadFaceStyle As SolidEdgeFramework.FaceStyle = UC.GetFaceStyle(SEDoc, Me.ThreadFaceStyleName)
+        Dim ThreadFaceStyle As SolidEdgeFramework.FaceStyle = Nothing
+
+        Dim DocType As String = UC.GetDocType(SEDoc)
+
+        Select Case DocType
+            Case = "asm"
+                Dim tmpSEDoc As SolidEdgeAssembly.AssemblyDocument = CType(SEDoc, SolidEdgeAssembly.AssemblyDocument)
+                tmpSEDoc.GetBaseStyle(SolidEdgeAssembly.AssemblyBaseStylesConstants.seAssemblyThreadedCylindersStyle, ThreadFaceStyle)
+            Case = "par"
+                Dim tmpSEDoc As SolidEdgePart.PartDocument = CType(SEDoc, SolidEdgePart.PartDocument)
+                tmpSEDoc.GetBaseStyle(SolidEdgePart.PartBaseStylesConstants.seThreadedCylindersBaseStyle, ThreadFaceStyle)
+            Case = "psm"
+                Dim tmpSEDoc As SolidEdgePart.SheetMetalDocument = CType(SEDoc, SolidEdgePart.SheetMetalDocument)
+                tmpSEDoc.GetBaseStyle(SolidEdgePart.PartBaseStylesConstants.seThreadedCylindersBaseStyle, ThreadFaceStyle)
+            Case Else
+                MsgBox($"{Me.Name} DocType '{DocType}' not recognized")
+        End Select
 
         If ThreadFaceStyle Is Nothing Then Exit Sub
 

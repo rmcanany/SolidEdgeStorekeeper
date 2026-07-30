@@ -256,39 +256,39 @@ Public Class UtilsPreferences
 
 
 
-    '###### THREAD FACESTYLE NAME ######
+    ''###### THREAD FACESTYLE NAME ######
 
-    Private Function GetThreadFaceStyleFilename(CheckExisting As Boolean) As String
-        Dim Filename = "ThreadFaceStyleName.txt"
-        Filename = $"{GetPreferencesDirectory()}\{Filename}"
+    'Private Function GetThreadFaceStyleFilename(CheckExisting As Boolean) As String
+    '    Dim Filename = "ThreadFaceStyleName.txt"
+    '    Filename = $"{GetPreferencesDirectory()}\{Filename}"
 
-        If CheckExisting And Not IO.File.Exists(Filename) Then
-            Filename = ""
-        End If
+    '    If CheckExisting And Not IO.File.Exists(Filename) Then
+    '        Filename = ""
+    '    End If
 
-        Return Filename
-    End Function
+    '    Return Filename
+    'End Function
 
-    Public Sub CreateThreadFaceStyleNameFile()
-        Dim Filename = GetThreadFaceStyleFilename(CheckExisting:=False)
-        If Not IO.File.Exists(Filename) Then
-            Dim ThreadFaceStyleName As New List(Of String)
-            ThreadFaceStyleName.Add("Thread")
-            IO.File.WriteAllLines(Filename, ThreadFaceStyleName)
-        End If
-    End Sub
+    'Public Sub CreateThreadFaceStyleNameFile()
+    '    Dim Filename = GetThreadFaceStyleFilename(CheckExisting:=False)
+    '    If Not IO.File.Exists(Filename) Then
+    '        Dim ThreadFaceStyleName As New List(Of String)
+    '        ThreadFaceStyleName.Add("Thread")
+    '        IO.File.WriteAllLines(Filename, ThreadFaceStyleName)
+    '    End If
+    'End Sub
 
-    Public Function GetThreadFaceStyleName() As String
-        Dim ThreadFaceStyleName As String = ""
-        Dim Filename = GetThreadFaceStyleFilename(CheckExisting:=True)
-        If Filename = "" Then
-            ThreadFaceStyleName = ""
-        Else
-            Dim InList As List(Of String) = IO.File.ReadAllLines(Filename).ToList
-            ThreadFaceStyleName = InList(0)
-        End If
-        Return ThreadFaceStyleName
-    End Function
+    'Public Function GetThreadFaceStyleName() As String
+    '    Dim ThreadFaceStyleName As String = ""
+    '    Dim Filename = GetThreadFaceStyleFilename(CheckExisting:=True)
+    '    If Filename = "" Then
+    '        ThreadFaceStyleName = ""
+    '    Else
+    '        Dim InList As List(Of String) = IO.File.ReadAllLines(Filename).ToList
+    '        ThreadFaceStyleName = InList(0)
+    '    End If
+    '    Return ThreadFaceStyleName
+    'End Function
 
 
     '###### PROPERTIES DATA ######

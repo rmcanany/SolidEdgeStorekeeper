@@ -418,8 +418,6 @@ If the program finds such a drawing, and the option is enabled, it copies it to 
 
 One last thing about creating a new template.  Storekeeper has the ability to adjust the thread texture to match the pitch.  It's just eye candy and not required.  However, if you would like that feature, there is a bit of setup to make it work.  
 
-The program gets the name of the thread face style from `ThreadFaceStyleName.txt` in the Preferences directory.  By default, it contains the English name `Thread`.  Change it to your own setting as needed.  
-
 In your standard parts templates, set up the FaceStyle as shown below.  Note especially `Units` and `Scale X`.  The program will not work correctly if these settings do not match.  If the part has internal threads, you can enable `Mirror X` to avoid left-hand looking threads.
 
 <p align="center">
