@@ -293,6 +293,7 @@ Public Class Form_Main
     Private Property StringFromXmlDict As Dictionary(Of String, String)
 
     Private Property ThreadFaceStyleName As String
+    Public Property UseXmlSchema As Boolean
 
     ' https://community.sw.siemens.com/s/question/0D5Vb00000Krsy5KAB/handling-events-how-to-use-help-example
     ' https://github.com/SolidEdgeCommunity/Samples/blob/master/General/EventHandling/vb/EventHandling/MainForm.vb
@@ -378,6 +379,8 @@ Public Class Form_Main
         UP.CreateFilenameCharmap()
         UP.CreateThreadFaceStyleNameFile()
         Me.ThreadFaceStyleName = UP.GetThreadFaceStyleName
+
+        Me.UseXmlSchema = False
 
         LoadXml(Splash)
 
@@ -1939,6 +1942,7 @@ Public Class Form_Main
     End Sub
 
     Private Sub AddNode(ByVal inXmlNode As Xml.XmlNode, ByVal inTreeNode As TreeNode, Splash As FormSplash, NodeMultiplier As Integer)
+
         Dim xNode As Xml.XmlNode
         Dim tNode As TreeNode
         Dim childNodes As Xml.XmlNodeList
@@ -1962,23 +1966,20 @@ Public Class Form_Main
                     NodeMultiplier = xNode.InnerText.Split(CChar(",")).Count
                 End If
                 If IsTreenode(xNode) Then
-                    Splash.UpdateStatus(StatusMessage)
+                    If NodeCount Mod 10 = 0 Then Splash.UpdateStatus(StatusMessage)
+                    'Splash.UpdateStatus(StatusMessage)
 
-                    'Dim n As Integer = inTreeNode.Nodes.Add(New TreeNode(UnderscoreToSpace(xNode.Name)))
-                    'Dim tmpName As String = UnderscoreToSpace(xNode.Name.Replace(Me.XmlCommaIndicator, ","))
                     Dim tmpName As String = StringFromXml(xNode.Name)
                     Dim tmpTreeNode As TreeNode = New TreeNode(tmpName)
-                    'Dim Tooltip As String = ExtractTooltip(xNode.InnerXml)
                     Dim Tooltip As String = ExtractTooltip(xNode)
                     If Not Tooltip = "" Then tmpTreeNode.ToolTipText = Tooltip
                     Dim n As Integer = inTreeNode.Nodes.Add(tmpTreeNode)
-
                     tNode = inTreeNode.Nodes(n)
                     AddNode(xNode, tNode, Splash, NodeMultiplier)
+
                 End If
             Next
 
-            'inTreeNode.Text = UnderscoreToSpace(inXmlNode.Name.Replace(Me.XmlCommaIndicator, ","))
             inTreeNode.Text = StringFromXml(inXmlNode.Name)
 
             ' Add the xml node type as a tag to the tree node
@@ -2098,6 +2099,64 @@ Public Class Form_Main
 
     ' ###### EXCEL AND XML ######
 
+    Private Function BuildXmlFromSchema(
+        SchemaFilename As String,
+        Splash As FormSplash
+        ) As List(Of String)
+
+
+        Dim XmlList As New List(Of String)
+
+        Dim Schema As List(Of String) = IO.File.ReadAllLines(SchemaFilename).ToList
+
+        Dim ExcelDataReaderCache As New Dictionary(Of String, List(Of List(Of String)))
+
+        Dim Indent = "  "
+        Dim Indents As New List(Of String)
+        For tmpLevel As Integer = 0 To 30
+            If tmpLevel = 0 Then
+                Indents.Add("")
+            Else
+                Indents.Add(String.Format("{0}{1}", Indents(tmpLevel - 1), Indent))
+            End If
+        Next
+
+        For Each Line As String In Schema
+
+            If Not Line.Contains("Nodes Type=""Nodes""") Then
+                XmlList.Add(Line)
+            Else
+                '        <Nodes Type="Nodes">AnsiFasteners.xls:BHCS</Nodes>
+                Dim tmpList As List(Of String) = Line.Split(CChar("<")).ToList ' '         ', 'Nodes Type="Nodes">AnsiFasteners.xls:BHCS', '/Nodes>'
+
+                Dim tmpStartLevel As Integer = CInt(tmpList(0).Count / 2) + 1
+                Dim tmpS As String = tmpList(1).Split(CChar(">"))(1) ' 'Nodes Type="Nodes">AnsiFasteners.xls:BHCS' -> 'AnsiFasteners.xls:BHCS'
+                Dim tmpDataSource = tmpS.Split(CChar(":"))(0) ' 'AnsiFasteners.xls:BHCS' -> 'AnsiFasteners.xls'
+                Dim tmpSheetName As String = tmpS.Split(CChar(":"))(1) ' 'AnsiFasteners.xls:BHCS' -> 'BHCS'
+
+                tmpDataSource = $"{Me.DataDirectory}\{tmpDataSource}"
+
+                If Not ExcelDataReaderCache.Keys.Contains(tmpDataSource) Then
+                    ExcelDataReaderCache(tmpDataSource) = ReadExcel(tmpDataSource)
+                    If ExcelDataReaderCache(tmpDataSource) Is Nothing Then Return Nothing
+                End If
+
+                Splash.UpdateStatus($"Building XML {tmpSheetName}")
+
+                Dim tmpXmlList As List(Of String) = ExcelDetailSheetToXml(ExcelDataReaderCache(tmpDataSource), tmpSheetName, tmpStartLevel, Indents)
+
+                For Each tmpLine As String In tmpXmlList
+                    XmlList.Add(tmpLine)
+                Next
+            End If
+
+        Next
+
+        Splash.UpdateStatus("")
+
+        Return XmlList
+    End Function
+
     Public Sub LoadXml(Splash As FormSplash)
 
         ''https://www.codemag.com/Article/2312031/Process-XML-Files-Easily-Using-.NET-6-7
@@ -2110,18 +2169,29 @@ Public Class Form_Main
 
         Dim ExcelFilename As String = String.Format("{0}\Storekeeper.xls", Me.DataDirectory)
         Dim XmlFilename As String = IO.Path.ChangeExtension(ExcelFilename, "xml")
+        Dim XmlList As List(Of String) = Nothing
 
         If Me.AlwaysReadExcel Or Not IO.File.Exists(XmlFilename) Then
-            Dim ExcelAll As List(Of List(Of String)) = ReadExcel(ExcelFilename)
-            If ExcelAll Is Nothing Then Exit Sub  ' ReadExcel provides error feedback
 
-            Splash.UpdateStatus("Converting to XML")
+            If Not Me.UseXmlSchema Then
+                Dim ExcelAll As List(Of List(Of String)) = ReadExcel(ExcelFilename)
+                If ExcelAll Is Nothing Then Exit Sub  ' ReadExcel provides error feedback
 
-            Dim ExcelTopLevel = ExcelCleanup(ExcelAll, "TopLevel")
-            Dim XmlList = ExcelToXml(ExcelTopLevel, ExcelAll, Splash)
+                Splash.UpdateStatus("Converting to XML")
 
+                Dim ExcelTopLevel = ExcelCleanup(ExcelAll, "TopLevel")
+                XmlList = ExcelToXml(ExcelTopLevel, ExcelAll, Splash)
+            Else
+                Dim SchemaFilename As String = $"{Me.DataDirectory}\StorekeeperSchema.xml"
+
+                XmlList = BuildXmlFromSchema(SchemaFilename, Splash)
+
+            End If
+
+            Splash.UpdateStatus("Checking XML")
             XmlList = SanitizeXMLTags(XmlList)
 
+            Splash.UpdateStatus("Saving XML file")
             IO.File.WriteAllLines(XmlFilename, XmlList)
         End If
 
@@ -2677,6 +2747,9 @@ Public Class Form_Main
                     Dim tmpType As String = TypeList(ColIdx)
                     Dim tmpValue As String = Row(ColIdx)
 
+                    If Me.UseXmlSchema And tmpName = "Favorite" Then
+                        tmpName = "FavoritesFormula"
+                    End If
                     XmlList.Add(String.Format("{0}<{1} Type=""{2}"">{3}</{1}>", Indents(StartLevel + 1), tmpName, tmpType, tmpValue))
                 Else
                     ' For LeafNodes, open and close on different lines, housing the data within

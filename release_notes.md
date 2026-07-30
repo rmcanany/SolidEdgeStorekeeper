@@ -55,7 +55,7 @@ Added a selection of PEM fasteners to the database.
   <img src="media/pem_fasteners.png">
 </p>
 
-The models are simplified in a way that avoids interference between the part and its mounting panel.  Note the PEM part number encodes the part's material.  The SE material should be selected automatically.
+The models are simplified in a way that avoids interference between the part and its mounting panel.  Note the PEM part number encodes the material.  The SE material should be selected automatically.
 
 ### Thread Pitch Rendering
 
@@ -80,6 +80,7 @@ See the [<ins>**Creating New Templates Help Topic**</ins>](https://github.com/rm
 - Fixed an issue where users running preview code were not notified when the finalized version was released.
 - Changed how fastener stack related-component tree locations are specified.  Now, the full path is used (eg. `Solid_Edge_Storekeeper\Ansi_Fasteners\Washer_Flat`).  Previously it was a path relative to the chosen fastener.
 - Fixed an issue where a TooltipFormula, when used, had to be the first element in the XML node definition.  Now it can be anywhere within the scope of the node.
+- Updated the Readme to note the "SE2024" templates have been modified in SE2025.  That is now the earliest SE version that can be used with those files.
 
 
 ## V2025.4
