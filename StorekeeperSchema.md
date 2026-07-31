@@ -1,7 +1,7 @@
 ﻿
 ## Schema Mode
 
-This a new way of defining the structure of the Storekeeper dataset.  Right now that is done in `Storekeeper.xls`, using indenting to represent heirarchy.  It is horrible.
+This a possible new way of defining the structure of the Storekeeper dataset.  Right now that is done in `Storekeeper.xls`, using indenting to represent heirarchy.  It is horrible.
 
 This method uses XML, but only for the structure.  The part data is still kept in companion spreadsheets, where the tablular format is a natural fit.
 
