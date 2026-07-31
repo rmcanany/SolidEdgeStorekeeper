@@ -293,7 +293,18 @@ Public Class Form_Main
     Private Property StringFromXmlDict As Dictionary(Of String, String)
 
     'Private Property ThreadFaceStyleName As String
+    Private _UseXmlSchema As Boolean
     Public Property UseXmlSchema As Boolean
+        Get
+            Return _UseXmlSchema
+        End Get
+        Set(value As Boolean)
+            _UseXmlSchema = value
+            If Me.LabelSchema IsNot Nothing Then
+                Me.LabelSchema.Visible = _UseXmlSchema
+            End If
+        End Set
+    End Property
 
     ' https://community.sw.siemens.com/s/question/0D5Vb00000Krsy5KAB/handling-events-how-to-use-help-example
     ' https://github.com/SolidEdgeCommunity/Samples/blob/master/General/EventHandling/vb/EventHandling/MainForm.vb
@@ -380,7 +391,7 @@ Public Class Form_Main
         'UP.CreateThreadFaceStyleNameFile()
         'Me.ThreadFaceStyleName = UP.GetThreadFaceStyleName
 
-        Me.UseXmlSchema = False
+        'Me.UseXmlSchema = True
 
         LoadXml(Splash)
 
@@ -1936,6 +1947,27 @@ Public Class Form_Main
         Return False
     End Function
 
+    Private Function IsFavoriteNode(XmlNode As Xml.XmlNode) As Boolean
+        Dim IsFavorite As Boolean = False
+
+        Dim HasFavorite As Boolean = False
+
+        If XmlNode.HasChildNodes Then
+            For Each ChildNode As Xml.XmlNode In XmlNode.ChildNodes
+                If ChildNode.Name = "FavoritesFormula" Then
+                    HasFavorite = True
+                    IsFavorite = ChildNode.InnerText.ToLower = "true"
+                    Exit For
+                End If
+            Next
+        End If
+
+        If HasFavorite Then
+            Return IsFavorite
+        Else
+            Return True
+        End If
+    End Function
     Private Sub PopulateTreeView(XmlDoc As System.Xml.XmlDocument, Splash As FormSplash)
 
         TreeView1.BeginUpdate()
@@ -1982,6 +2014,11 @@ Public Class Form_Main
                     NodeMultiplier = xNode.InnerText.Split(CChar(",")).Count
                 End If
                 If IsTreenode(xNode) Then
+
+                    If Me.UseXmlSchema And Me.FavoritesOnly And Not IsFavoriteNode(xNode) Then
+                        Continue For
+                    End If
+
                     If NodeCount Mod 10 = 0 Then Splash.UpdateStatus(StatusMessage)
                     'Splash.UpdateStatus(StatusMessage)
 
@@ -3626,9 +3663,14 @@ Public Class Form_Main
     End Sub
 
     Private Sub ButtonFavoritesOnly_Click(sender As Object, e As EventArgs) Handles ButtonFavoritesOnly.Click
-        Me.FavoritesOnly = Not Me.FavoritesOnly
 
-        ReloadXml()
+        If ModifierKeys = Keys.Shift Then
+            Me.UseXmlSchema = Not Me.UseXmlSchema
+        Else
+            Me.FavoritesOnly = Not Me.FavoritesOnly
+            ReloadXml()
+        End If
+
     End Sub
 
 End Class

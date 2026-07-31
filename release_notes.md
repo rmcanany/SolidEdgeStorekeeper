@@ -15,7 +15,7 @@ Feel free to report bugs and/or ideas for improvement on the [<ins>**Solid Edge 
 
 ## V2026.1
 
-We'll get right to the updates, but first some exciting news -- Storekeeper has a new **Contributor!**  Our very own **@Seva** added a new part family -- ASME Pipe Flanges!  Can't wait for you to see his handiwork!
+We'll get right to the updates, but first some exciting news -- Storekeeper has a new **Contributor!**  Our very own **@Seva** added a new part family -- ASME Pipe Flanges.  Can't wait for you to see his handiwork!
 
 Now on to those updates...
 

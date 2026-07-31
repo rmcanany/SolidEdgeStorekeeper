@@ -84,6 +84,7 @@ Partial Class Form_Main
         TableLayoutPanel3 = New TableLayoutPanel()
         ButtonHelp = New Button()
         TextBoxStatus = New TextBox()
+        LabelSchema = New ToolStripLabel()
         ToolStrip1.SuspendLayout()
         ContextMenuStrip1.SuspendLayout()
         CType(DataGridViewDataInspector, ComponentModel.ISupportInitialize).BeginInit()
@@ -103,7 +104,7 @@ Partial Class Form_Main
         ' 
         ' ToolStrip1
         ' 
-        ToolStrip1.Items.AddRange(New ToolStripItem() {ButtonCollapse, ToolStripSeparator1, LabelSaveIn, ComboBoxSaveIn, ToolStripSeparator2, ButtonAlwaysOnTop, ButtonAutoPattern, ButtonFavoritesOnly, ToolStripSeparator3, ButtonOptions, ComboBoxMaterials, LabelMaterials})
+        ToolStrip1.Items.AddRange(New ToolStripItem() {ButtonCollapse, ToolStripSeparator1, LabelSaveIn, ComboBoxSaveIn, ToolStripSeparator2, ButtonAlwaysOnTop, ButtonAutoPattern, ButtonFavoritesOnly, ToolStripSeparator3, ButtonOptions, ComboBoxMaterials, LabelMaterials, LabelSchema})
         ToolStrip1.Location = New Point(0, 0)
         ToolStrip1.Name = "ToolStrip1"
         ToolStrip1.RenderMode = ToolStripRenderMode.System
@@ -591,6 +592,13 @@ Partial Class Form_Main
         TextBoxStatus.TabIndex = 3
         TextBoxStatus.Text = "Status"
         ' 
+        ' LabelSchema
+        ' 
+        LabelSchema.Name = "LabelSchema"
+        LabelSchema.Size = New Size(65, 22)
+        LabelSchema.Text = "<Schema>"
+        LabelSchema.Visible = False
+        ' 
         ' Form_Main
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -676,5 +684,6 @@ Partial Class Form_Main
     Friend WithEvents ToolStripSeparator6 As ToolStripSeparator
     Friend WithEvents ToolStripSeparator7 As ToolStripSeparator
     Friend WithEvents ButtonFavoritesOnly As ToolStripButton
+    Friend WithEvents LabelSchema As ToolStripLabel
 
 End Class
