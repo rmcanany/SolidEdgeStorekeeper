@@ -8,7 +8,7 @@ Imports Microsoft.WindowsAPICodePack.Dialogs
 Public Class Form_Main
 
     Private Property Version As String = "2026.1"
-    Public Property PreviewVersion As String = "04"  ' Empty string if not a preview
+    Public Property PreviewVersion As String = "05"  ' Empty string if not a preview
 
     Private Property SearchingTVFilename As Boolean = False
 
@@ -2224,7 +2224,7 @@ Public Class Form_Main
         Dim XmlFilename As String = IO.Path.ChangeExtension(ExcelFilename, "xml")
         Dim XmlList As List(Of String) = Nothing
 
-        If Me.AlwaysReadExcel Or Not IO.File.Exists(XmlFilename) Then
+        If Me.AlwaysReadExcel Or Not IO.File.Exists(XmlFilename) Or Me.UseXmlSchema Then
 
             If Not Me.UseXmlSchema Then
                 Dim ExcelAll As List(Of List(Of String)) = ReadExcel(ExcelFilename)
@@ -2237,8 +2237,12 @@ Public Class Form_Main
             Else
                 Dim SchemaFilename As String = $"{Me.DataDirectory}\StorekeeperSchema.xml"
 
-                XmlList = BuildXmlFromSchema(SchemaFilename, Splash)
+                If Not IO.File.Exists(SchemaFilename) Then
+                    MsgBox($"Schema file not found: '{SchemaFilename}'")
+                    End
+                End If
 
+                XmlList = BuildXmlFromSchema(SchemaFilename, Splash)
             End If
 
             Splash.UpdateStatus("Checking XML")

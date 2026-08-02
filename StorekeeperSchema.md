@@ -5,6 +5,14 @@ This a possible new way of defining the structure of the Storekeeper dataset.  R
 
 This method uses XML, but only for the structure.  The part data is still kept in companion spreadsheets, where the tablular format is a natural fit.
 
+### Creating the XML from Storekeeper.xls
+
+If you have customized your dataset, this is a way to save your setup in the new format.  
+
+Open the spreadsheet `Storekeeper.xls` and go to `Edit > Find and Replace`.   Set the `Find` text to `Nodes` and the `Replace` text to `Nodes Type="Nodes"`.  XML is very picky, so double-check your typing.  I won't think less of you if you copy/paste the `Replace` text from this write-up.  Once you're satisfied, click `Replace All`, then save and exit.
+
+Delete (or rename) the old XML file, `Storekeeper.xml`.  Start Storekeeper and a new one will be created.  Rename it `StorekeeperSchema.xml`.
+
 ### Entering Schema Mode
 
 Being experimental, this is being kept optional for now.  To toggle, \<SHIFT>-click the Favorites button, ![](media/favorites_enabled.png), on the toolbar.  When enabled, the text "\<Schema>" appears next to it.
@@ -17,13 +25,11 @@ Enabling it doesn't immediately do anything.  It means that the next time the da
 
 ### Editing the File
 
-The file is called `StorekeeperSchema.xml`.  The program looks for it in `Preferences\DataSE2019` or `Preferences\DataSE2024`.
+As noted, the file is called `StorekeeperSchema.xml`.  The program looks for it in `Preferences\DataSE2019` or `Preferences\DataSE2024`.
 
 It is just a text file and you can edit it in Notepad.  However for anything except the most minor change, you will most likely want to use an XML editing program.
 
 I use the free and open source XMLNotepad.  It was created and is actively maintined by Microsoft.  Here are a couple of links if you want to check it out.
-
-
 
 [<ins>**Home Page**</ins>](https://microsoft.github.io/XmlNotepad/), 
 [<ins>**Download**</ins>](https://microsoft.github.io/XmlNotepad/#install/), 
@@ -36,7 +42,7 @@ The program looks like this.
   <img src="media/xmlnotepad_overview.png">
 </p>
 
-It is easy to add new items to the dataset using copy/paste.  Right click the item and select Copy.
+It is easy to add new items to the dataset using copy/paste.  Right click an item and select Copy.
 
 <p align="center">
   <img src="media/xmlnotepad_copy.png">
@@ -68,13 +74,13 @@ XML is very picky about syntax in the tag definitions.  A tag is anything that a
 
 It is not at all picky about text associated with the tag, like the file name and other information shown above.
 
-A valid tag name can only have letters, numbers, `_` (underscore), `.` (period), and `-` (minus).  It can't start with a number, or have space characters in it.
+A valid tag name can only have letters, numbers, `_` (underscore), `.` (period), and `-` (minus).  It can't start with a number, or have space characters in it.  (Not sure about other alphabets.)
 
 That means "good luck" with things like this: `1/4-20 x 1.000`.
 
 Since I *want* things like that, we developed a workaround.  For illegal characters, we made "stand-ins" that are translated by Storekeeper when building the tree view of the library.  (The tree view is a Control in WinForms, not the underlying XML itself.  It is not picky about such things.)
 
-You can't start with a number.  To get around that, prepend it with some text.  In the companion spreadsheets that is done automatically by adding the Node name to the entry.  Keeping with the example, that gets us this far: `Size 1/4-20 x 1.000`.
+You can't start with a number.  To get around that, prepend it with some text.  In the companion spreadsheets, that is done automatically by adding the Node name to the entry.  Keeping with the example, that gets us this far: `Size 1/4-20 x 1.000`.
 
 For the space character, use `_` which is allowed.  Replace all other punctuation using the lookup table (below).  Instead of `/`, enter `.XmlForwardSlash.`.  Note the `.` before and after the name are part of the stand-in text.  You have to use them.
 
@@ -86,7 +92,7 @@ The code that builds the lookup table is below.  First, a couple of things to no
 
 - Any line preceeded by `'` (single quote) in the code is ignored.  Either because the character is already allowed, or you can't use it for other reasons.
 
-- Any character not in the lookup table, for example the Euro symbol, will not be translated.  It has to be on the list.  Let me know if you need one and I'll add it.
+- Any character not in the lookup table, for example `€` (Euro symbol), will not be translated.  It has to be on the list.  Let me know if you need one and I'll add it.
 
 - You might be wondering why we haven't had to worry about all this before.  That is because previously Excel was used for everything.  When the program parses those, it does all the replacements in the process.  Since this new method *starts* with XML, we have to deal with it.  (Except the companion spreadsheets, which remain in Excel format.)
 

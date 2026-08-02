@@ -21,7 +21,7 @@ Now on to those updates...
 
 ### ASME Pipe Flanges
 
-Contributed by **@Seva**.  Thank you!
+Contributed by **@Seva.**  Thank you!
 
 The new dataset covers six common raised-flange types (butt-weld, threaded, etc.), pressure ratings from 150 to 2500 psi, and pipe sizes from 1/2" to 24" NPS.  
 
@@ -37,7 +37,7 @@ See the [<ins>**ASME Flange Studs**</ins>](https://github.com/rmcanany/SolidEdge
 
 ### Updated ISO Data and Templates
 
-Contributed by **@TeeVar**.  Thank you!
+Contributed by **@TeeVar.**  Thank you!
 
 - Updated all ISO DIN standards to the latest releases (up to 2026.04)
 - Added non-preferred sizes for all standards.  These are identified as such and listed under a separate heading below the preferred sizes in each category.
