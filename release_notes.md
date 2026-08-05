@@ -69,6 +69,19 @@ Files created with previous versions are not updated.  Only newly-generated part
 
 See the [<ins>**Creating New Templates Help Topic**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#thread-pitch) section of the Readme for details.
 
+### Dataset Tree Definition File
+
+Changed format from Excel to Xml.  The new format is a lot easier to work with.  The file only defines the organization of the tree.  All part data remains in the companion spreadsheets, where the tabular format is a natural fit.
+
+<p align="center">
+  <img src="media/schema_top_level.png">
+</p>
+
+Provided a mechanism to convert from the old format to the new for those who have customized their data.
+
+See the [<ins>**Editing the Schema File Help Topic**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#editing-the-schema-file) section of the Readme for details.
+
+
 
 
 ### Other
