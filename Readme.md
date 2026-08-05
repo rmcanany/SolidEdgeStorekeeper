@@ -30,9 +30,9 @@
 
 ## DESCRIPTION
 
-Solid Edge Storekeeper is a utility to create, organize, and share standard parts.  It is free and open source.  Please note the standard part templates were created with SE2024.  You will need that version or newer to use them.  (**Update 20251212:** **@TeeVar**, generously contributed a set of templates created with SE2019.)  (**Update 20260721:** Most parts have been modified with SE2025; that's the earliest version you can now use.)
+Solid Edge Storekeeper is a utility to create, organize, and share standard parts.  It is free and open source.  Please note the standard part templates were created with SE2024.  You will need that version or newer to use them.  (**Update 20251212:** **@TeeVar**, generously contributed a set of templates created with SE2019.)  (**Update 20260721:** Most parts have been modified with SE2025; that's the earliest version you can now use for the SE2024 dataset.)
 
-Fasteners, retainers, structural shapes, and more in ANSI and ISO format are included.  There are over 30k items available.  There is no database; everything is done in Excel.  It is fully customizable.  If you upgrade Solid Edge, no change to the program or its data is required.
+Fasteners, retainers, structural shapes, and more in ANSI and ISO format are included.  There are over 30k items available.  There is no database; all the data is in Excel.  It is fully customizable.  If you upgrade Solid Edge, no change to the program or its data is required.
 
 The program handles two types of standard parts.  One consists of items like fasteners.  These are defined in dimension tables and created as needed.  The other consists of vendor-type items like pneumatic fittings.  Each of these has its own model file.  Both types are eligible for the handy automatic patterning option (see separate section below for details).
 
@@ -72,7 +72,7 @@ You can set the file names according to your preference.  You can specify the ma
   <img src="media/filename_formula.png">
 </p>
 
-Structural shapes are not quite the same as fasteners.  While the cross section is standard, the length and likelihood of additional features is not.  Usually the part doesn't even belong in the library.  For these, you can change the `Save in` option from `Library` to `Assy Dir` or `Other`.  The program prompts for a filename, and for `Other`, a location.
+Structural shapes are not quite the same as fasteners.  While the cross section is standard, the length and likelihood of additional features is not.  Usually the part doesn't even *belong* in the library.  For these, you can change the `Save in` option from `Library` to `Assy Dir` or `Other`.  The program prompts for a filename, and for `Other`, a location.
 
 ### Who Needs This Program?
 
@@ -189,11 +189,19 @@ The material table is usually your normal SE material table.  However, for a qui
   If you decide to continue using the program, you would eventually want to utilize your own material table, updating material names in the spreadsheet and templates as needed. 
 
 - **OPTIONS**
-  - `Read the Excel file each time the program is launched`  
-	Internally, the Excel file is parsed and saved in `*.xml` format.  If you haven't changed the Excel file, this is an unnecessary step.  Clearing this option tells the program to use the `*.xml` file it created previously.  
 
-	Note, if you get an error about "available data for encoding" on startup, try enabling this option.  
+  - `Reload Xml`  
+	Rebuilds the tree from the dataset.
 	 
+  - `Use StorekeeperSchema.xml`  
+	This tells the program the format of file to process when building the tree.  The only reason to disable it is if you are converting an old `Storekeeper.xls` to the new format.
+	 
+  - `Edit schema`  
+	Opens `StorekeeperSchema.xml` in the Xml editor.  See [<ins>**Editing the Schema File**</ins>](#editing-the-schema-file) for details.
+	 
+  - `Read the Excel file each time the program is launched`  
+	For datasets using the previous tree-structure definition file, `Storekeeper.xls`.  Now, only used when converting an old file to the new format.
+
   - `Add any property not already in file`  
 	As mentioned above, besides creating geometry, the program can also update file properties.  Enabling this option tells the program to add any (custom) property not already in the file.
 	
@@ -255,9 +263,70 @@ These are your normal template files, not the ones used by the program to create
 
 ### Localized SE Installations
 
-You may have more work to do if you're not using English in Solid Edge.  In the spreadsheet `Storekeeper.xls`, there are some property names that probably need to be changed.
+You may have more work to do if you're not using English in Solid Edge.  In the tree data file `StorekeeperSchema.xml`, there are some property names that probably need to be changed.  See **Editing the Schema File** (next).
 
-Open the file (located in the `Preferences\Data` directory) and look for entries like `%{System.Title}` and update as required.
+Open the file and look for entries like `%{System.Title}` and update as required.
+
+### Editing the Schema File
+
+`StorekeeperSchema.xml` is just a text file, you can edit it in Notepad.  A easier way is to use an XML editor.  I use the free and open source `XMLNotepad`.  It was created and is actively maintained by Microsoft.  Here are a couple of links if you want to check it out.
+
+[<ins>**Home Page**</ins>](https://microsoft.github.io/XmlNotepad/), 
+[<ins>**Download**</ins>](https://microsoft.github.io/XmlNotepad/#install/), 
+[<ins>**Tutorial**</ins>](https://www.youtube.com/watch?v=bmchxiu_oV0) (from the package author), and 
+[<ins>**Help Documentation.**</ins>](https://microsoft.github.io/XmlNotepad/#help/overview/)
+
+Note, this is a quick overview of how to work with the `schema` file.  For details, see the [<ins>**Customization**</ins>](#customization) section below.
+
+#### Setting up the Editor
+
+You can launch your Xml editor from Storekeeper.  On the **Tree Options Page**, click the `Edit schema` button.  The first time you do, it will ask you to navigate to the executable.
+
+The location was probably chosen by the installer, not you.  The program tries to help.  It first looks for `XMLNotepad`; if found, it opens the location of `XmlNotepad.exe`.  If not, the dialog provides a search box; you could try that.  By the way, for (regular) Notepad, try looking here: `C:\Windows\notepad.exe`.
+
+If you change the file, make sure to save before closing.  Then to update, click the `Reload Xml` button.
+
+To change your choice of editor, \<SHIFT>-click the `Edit schema` button.
+
+#### Find/Replace
+
+To update text across the whole file, use `Edit > Replace`.  To keep from messing up Xml metadata, set the `Search Filter` to `Text`.
+
+<p align="center">
+  <img src="media/xmlnotepad_find_replace.png">
+</p>
+
+#### Add Items
+
+Add new items to the dataset using copy/paste.  Right click an item and select Copy.
+
+<p align="center">
+  <img src="media/xmlnotepad_copy.png">
+</p>
+
+Then scroll up to the category header, right click it and select Paste.
+
+<p align="center">
+  <img src="media/xmlnotepad_paste.png">
+</p>
+
+Change the name and enter the relevant information.  To move it to a new location, drag it up or down the tree.
+
+<p align="center">
+  <img src="media/xmlnotepad_edited.png">
+</p>
+
+#### Remove Items
+
+To delete an item, select it and hit the Delete key.
+
+<p align="center">
+  <img src="media/xmlnotepad_deleted.png">
+</p>
+
+#### Creating a New Category
+
+You can copy/paste entire categories.  The provided dataset has one, `Custom_Demo`, meant for that purpose.  Recall for the paste step, you choose the node under which the copied item is to appear.  In this case that would probably be the root, `Solid_Edge_Storekeeper`.
 
 ## AUTOMATIC PATTERNING
 
@@ -273,13 +342,13 @@ Standard parts, especially fasteners, are frequently patterned after placement. 
 
 As mentioned above, in the tree search panel, you can have all available parts shown, or just your favorites.
 
-Edit the `Favorites` column in the spreadsheets  (`Storekeeper.xls`, `AnsiFasteners.xls`, etc.) to do so.  For `Storekeeper.xls`, the entire node must be either `True` or `False` as shown below.  
+For entire categories, edit	`StorekeeperSchema.xml`.  (To learn an easy way to edit the file, see [<ins>**Editing the Schema File**</ins>](#editing-the-schema-file).)  Set the `FavoritesFormula` `#text` as needed.
 
 <p align="center">
-  <img src="media/favorites_storekeeper_spreadsheet.png">
+  <img src="media/xmlnotepad_favorites_formula.png">
 </p>
 
-For the other spreadsheets, it is a line by line choice.
+For the `companion spreadsheets`, it is a line by line choice.
 
 <p align="center">
   <img src="media/favorites_companion_spreadsheet.png">
@@ -445,92 +514,200 @@ Storekeeper needs to know the length of the thread.  Rather than making the prog
 
 The following is for those who want to customize the program.  You may want to do that eventually, but you can safely skip this section if you're just getting started.
 
-### Organization
+Storekeeper stores data in two different ways.  One of these defines the tree structure used to navigate the standard parts.  This is called the `schema`.  The other holds the data for those parts.  This is called `companion data`, or usually, `companion spreadsheets`.
 
-Earlier I referred to "a spreadsheet."  In reality there are multiple spreadsheets.  One, `Storekeeper.xls`, is the place where the overall layout of the data is handled.  The others are companion files that hold detailed information about a given category of parts.  These have names like `AnsiFasteners.xls`, `IsoStructural.xls`, etc.
+Neither are difficult, but there's more to say about the `schema`, so let's get the `companion spreadsheets` out of the way first.
 
-While the use of Excel is handy, it's not all roses.  Representing an arbitrary-depth heirarchical tree is awkward, for one thing.  Here is how `Storekeeper.xls` is organized.
+### Companion Spreadsheets
 
-<p align="center">
-  <img src="media/excel_top_level.png">
-</p>
-
-You'll see that the tree structure is represented by indenting.  The top node is `Solid_Edge_Storekeeper` and in this example its first child node is `Ansi_Fasteners_Steel`.  The first two child nodes under that are `BHCS` and `FHCS`.
-
-In addition to child nodes under any given node, you'll notice other entries.  Those are some program attributes being set, and various properties being assigned.  More about properties in a bit.
-
-In the image, the `BHCS` and `FHCS` nodes each have an entry, `Nodes` (plural).  That is one of those program attributes just mentioned.  It is the mechanism that tells the program to consult a companion spreadsheet tab for further information.  Here is a small portion of the companion data for Dowel Pins.
+Here is the companion spreadsheet `AnsiFasteners.xls`.  You'll notice tabs across the bottom.  Each of those holds information for a specific type of fastener.  The one currently showing is for hex head capscrews.  
 
 <p align="center">
-  <img src="media/companion_spreadsheet.png">
+  <img src="media/companion_spreadsheet_hhcs.png">
 </p>
 
 The rows represent different sizes, the columns represent values for a given size.  The first row holds the name for each value, the second holds its *type*.  The first column lets you identify your favorite parts as discussed above.
 
-The types `Variable` and `LeafNodeVariable` refer to entries in the template's variable table.  One other *type* not shown in the image is `ParameterString`.  That denotes a value that is needed in the template, but does not reside in the variable table.  For those,  there must be separate code to handle it.  Currently only `ThreadDescription` is supported.  See `AnsiFasteners.xls` for an example.
+The different *types* tell the program how they are to be used.
 
-### Properties and Spreadsheet Variables
+- `Node`  This defines an entry in the tree, and provides the text to be displayed.
+- `Variable`  This refers to entries in the template's variable table.  The column and variable names must match.
+- `LeafNodeVariable`  This also refers to a variable name in the file.  It is a kind of "secondary" variable.  In this case, it says there are multiple lengths available for a given size.  Each of those appears as a separate node in the tree.
+- `ParameterString`  This denotes a value that is needed in the template, but does not reside in the variable table.  For those,  there must be separate code to handle it.  Currently only `ThreadDescription` is supported.  
+- `String`  This is free-form text that can be referenced in the schema file for file name and other formulas.
+- `Boolean`  This is only used for `Favorites`.  It is more or less redundant.
 
-Now, let's look at the other entries in `Storekeeper.xls`, starting at the top.  
+### Schema
 
-#### Top Level of the Tree
+Unlike the `companion spreadsheets`, the tree structure is defined in an XML file.  Previously a spreadsheet was used for this purpose; it was horrible.  If you have a customized spreadsheet from previous versions, you can convert it to the new format.  See the separate section below.
+
+The `schema` file is called `StorekeeperSchema.xml`.  The program looks for it in `Preferences\DataSE2019` or `Preferences\DataSE2024`.  
+
+Here's a view of the tree in XMLNotepad.
 
 <p align="center">
-  <img src="media/properties_top_level.png">
+  <img src="media/schema_top_level.png">
 </p>
 
-Here at the top level of the tree, we are defining spreadsheet variables for property names and the corresponding name in the Solid Edge file.  The location of the definition in the tree defines its scope.  Since these statements are at the top of the tree, they apply everywhere.
+The top node is `Solid_Edge_Storekeeper` and in this example its first child node is `Ansi_Fasteners`.  The first two child nodes under that are `BHCS` and `FHCS`.
 
-The syntax is horrible; that's how Xml likes it.  While Xml is a very flexible data-representation format, it is quite rigid in this regard.
+In addition to child nodes under any given node, you'll notice other entries.  Those are some program attributes being set, and various properties being assigned.  More about that next.
 
-#### Next Level Down
+In the image, the `HHCS` node has an entry, `Nodes` (plural).  That is one of those program attributes just mentioned.  It is the mechanism that links the tree to the `companion spreadsheets`.
+
+#### Properties and Program Attributes
+
+Now, let's look at the other entries in `StorekeeperSchema.xml`, starting at the top.  
 
 <p align="center">
-  <img src="media/properties_ansi_fasteners_steel.png">
+  <img src="media/schema_properties_top_level.png">
 </p>
 
-In this image, we are looking at a tree node one level below the top.  You'll see we are setting values for the part number, hardware status and material.  
+Here, we are defining property names and the corresponding name in the Solid Edge file.  The location of the definition in the tree defines its scope.  Since these statements are at the top of the tree, they apply everywhere.
 
-The name of the spreadsheet variable has rules.  `XyzProperty` looks for `XyzFormula` to know how to proceed.  The prefix, `Xyz` in this case, can be anything you want (except for some reserved names shown below).  The suffix, `Property` and `Formula`, are the only valid choices.  
+Now, the next level down.
 
-**Reserved Spreadsheet Variables**
-- TemplateProperty
+<p align="center">
+  <img src="media/schema_properties_ansi_fasteners.png">
+</p>
+
+You can see we are setting values for the part number, hardware status and material.  
+
+The name of the property has rules.  `XyzProperty` looks for `XyzFormula` to know how to proceed.  The prefix, `Xyz` in this case, can be anything you want (except for some reserved names shown below).  The suffix, `Property` and `Formula`, are the only valid choices.  
+
+**Reserved Property Names**
 - TemplateFormula
-- FilenameProperty
 - FilenameFormula
 - MaterialProperty
 - MaterialFormula
 - Node
 - Nodes
 - TooltipFormula
+- FavoritesFormula
 
 So, for example to update the part number in the file, the program will use the information in `PartNumberFormula` to update the property defined in `PartNumberProperty`.  In this example that tells the program to make this assignment.
 
 `%{System.Document Number} = "NA"`
 
-##### Material Formula
-
-The `MaterialFormula` spreadsheet variable is slightly different than the others.  Its value can be a comma-delimited list.  For example,
+The `MaterialFormula` property is slightly different from the others.  Its value can be a comma-delimited list.  For example,
 
 `STEEL`,`STAINLESS`,`STAINLESS\, PASSIVATED`,`BRASS`
 
-If the material name itself contains a comma, preceed it with a backslash as shown.  A comma-delimited list requires special handling.  This is currently the only variable that supports it.  
+If the material name itself contains a comma, preceed it with a backslash as shown.  A comma-delimited list requires special handling.  This is currently the only property that supports it.  
 
 One last thing about the `MaterialFormula`.  It can occur in multiple places in the tree.  The bottom-most definition is the one that is used.  That allows you to set a default definition, say for all fasteners, then redefine it lower in the tree for any item with different options.
 
-#### One More Level Down
+Getting back to our example, let's look at the lowest level in this branch of the `schema`.
 
 <p align="center">
-  <img src="media/properties_bhcs.png">
+  <img src="media/schema_properties_hhcs.png">
 </p>
 
-Here we are setting up the processing of button head capscrews.  You can see we need to specify what template to use and how to name the file.  We must also provide the companion spreadsheet name and the tab in that file where the information is stored.  
+Here we are setting up the processing of hex head capscrews.  You can see we need to specify what template to use and how to name the file.  As mentioned, we must also provide the companion spreadsheet name and the tab in that file where the information is stored.  
 
-As mentioned previously, formulas can contain entries such as `%{Name}` and `%{MaterialFormula}`.  Variables are *populating* the part file, not *reading from it*.  That means you cannot reference a property in a Solid Edge file, like `%{Custom.Engineer}`, in a formula.  Variables can only come from `Storekeeper.xls` or a companion spreadsheet.
+Formulas can contain entries such as `%{Name}` and `%{MaterialFormula}`.  Variables are *populating* the part file, not *reading from it*.  That means you cannot retrieve a property from a Solid Edge file like `%{Custom.Engineer}`.  Variables can only come from `StorekeeperSchema.xml` or a `companion spreadsheet`.
 
 In this example, we are also updating the description property.  That isn't necessary for the program to function.  It just illustrates how to update Solid Edge file properties.  Any property in the file can be updated in this way.  
 
-One more thing about this example.  You'll notice there is a tooltip being specified.  That has nothing to do with a standard part *per se*; it is just a UI element.  It is not necessary, but can be handy for users in certain cases like this one, where an abbreviation is used.
+#### Syntax
+
+XML is very picky about syntax in the tag definitions.  A tag is anything that appears on the left pane of the interface, like `Ansi_Fasteners` or `PartNumberFormula` for example.
+
+It is not at all picky about text associated with the tag, like the file name and other information shown above.
+
+A valid tag name can only have letters, numbers, `_` (underscore), `.` (period), and `-` (minus).  It can't start with a number, or have space characters in it.  (Not sure about other alphabets.)
+
+That means "good luck" with things like this: `1/4-20 x 1.000`.
+
+Since I *want* things like that, we developed a workaround.  For illegal characters, we made "stand-ins" that are translated by Storekeeper when building the tree view of the library.  (The tree view is a Control in WinForms, not the underlying XML itself.  It is not picky about such things.)
+
+You can't start with a number.  To get around that, prepend it with some text.  In the companion spreadsheets, that is done automatically by adding the Node name to the entry.  Keeping with the example, that gets us this far: `Size 1/4-20 x 1.000`.
+
+For the space character, use `_` which is allowed.  Replace all other punctuation using the lookup table (below).  Instead of `/`, enter `.XmlForwardSlash.`.  Note the `.` before and after the name are part of the stand-in text.  You have to use them.
+
+In this example to get `Size 1/4-20 x 1.000` in the tree, the XML would be `Size_1.XmlForwardSlash.4-20_x_1.000`.
+
+It's kind of a pain and there may be a better way.  That's how it works for now, though.
+
+The code that builds the lookup table is below.  First, a couple of things to note.  
+
+- Any line preceeded by `'` (single quote) in the code is ignored.  Either because the character is already allowed, or you can't use it for other reasons.
+
+- Any character not in the lookup table, for example `€` (Euro symbol), will not be translated.  It has to be on the list.  Let me know if you need one and I'll add it.
+
+- You might be wondering why we haven't had to worry about all this before.  That is because previously Excel was used for everything.  When the program parses spreadsheets, it makes the necessary replacements automatically.  Since this new method *starts* with XML, we have to deal with it.  (Except the companion spreadsheets, which remain in Excel format.)
+
+- One nice thing about XMLNotepad is that it won't *let* you enter an illegal character.  It complains right away.
+
+Anyway, here's the code.
+
+```
+Me.StringToXmlDict = New Dictionary(Of String, String)
+Me.StringFromXmlDict = New Dictionary(Of String, String)
+
+Me.StringToXmlDict(" ") = "_"
+
+Me.StringToXmlDict("!") = ".XmlExclamationMark."
+
+'Me.StringToXmlDict(""")=".XmlDouble quotes (or speech marks)."
+
+Me.StringToXmlDict("#") = ".XmlNumberSign."
+Me.StringToXmlDict("$") = ".XmlDollarSign."
+Me.StringToXmlDict("%") = ".XmlPercentSign."
+Me.StringToXmlDict("&") = ".XmlAmpersand."
+Me.StringToXmlDict("'") = ".XmlSingleQuote."
+Me.StringToXmlDict("(") = ".XmlOpenParenthesis."
+Me.StringToXmlDict(")") = ".XmlCloseParenthesis."
+Me.StringToXmlDict("*") = ".XmlAsterisk."
+Me.StringToXmlDict("+") = ".XmlPlus."
+Me.StringToXmlDict(",") = ".XmlComma."
+
+'Me.StringToXmlDict("-") = ".XmlMinus."
+'Me.StringToXmlDict(".") = ".XmlPeriod."
+
+Me.StringToXmlDict("/") = ".XmlForwardSlash."
+Me.StringToXmlDict(":") = ".XmlColon."
+Me.StringToXmlDict(";") = ".XmlSemicolon."
+
+'Me.StringToXmlDict("<")=".XmlLess than (or open angled bracket)."
+'Me.StringToXmlDict("=")=".XmlEquals."
+'Me.StringToXmlDict(">")=".XmlGreater than (or close angled bracket)."
+
+Me.StringToXmlDict("?") = ".XmlQuestionMark."
+
+Me.StringToXmlDict("@") = ".XmlAtSign."
+Me.StringToXmlDict("[") = ".XmlOpeningBracket."
+Me.StringToXmlDict("\") = ".XmlBackslash."
+Me.StringToXmlDict("]") = ".XmlClosingBracket."
+Me.StringToXmlDict("^") = ".XmlCaret."
+
+'Me.StringToXmlDict("_") = ".XmlUnderscore."
+
+Me.StringToXmlDict("`") = ".XmlGraveAccent."
+Me.StringToXmlDict("{") = ".XmlOpeningBrace."
+Me.StringToXmlDict("|") = ".XmlVerticalBar."
+Me.StringToXmlDict("}") = ".XmlClosingBrace."
+Me.StringToXmlDict("~") = ".XmlTilde."
+
+For Each Key In Me.StringToXmlDict.Keys
+    Dim Value As String = Me.StringToXmlDict(Key)
+    Me.StringFromXmlDict(Value) = Key
+Next
+```
+
+### Converting Storekeeper.xls to StorekeeperSchema.xml
+
+If you have customized your `Storekeeper.xls` in a previous release, this is a way to convert it to the new format.  To be on the safe side, it wouldn't hurt to make a backup of it before starting.
+
+First, on the **Tree View Options Page**, *disable* `Use StorekeeperSchema.xml` and *enable* `Read the Excel file each time the program is launched`.
+
+Now, in Excel open `Storekeeper.xls` and go to `Edit > Find and Replace`.   Set the `Find` text to `Nodes` and the `Replace` text to `Nodes Type="Nodes"`.  XML is very picky, so double-check your typing.  I won't think less of you if you copy/paste the `Replace` text from this write-up.  Once you're satisfied, click `Replace All`, then save and exit.
+
+Next, start Storekeeper and the file `Storekeeper.xml` will be created.  Rename it `StorekeeperSchema.xml`.
+
+Back on **Tree View Options Page**, *enable* `Use StorekeeperSchema.xml` and *disable* `Read the Excel file each time the program is launched`.
+
+Finally, restart Storekeeper to verify the spreadsheet was converted correctly.
 
 ## OPEN SOURCE PACKAGES
 
@@ -541,3 +718,14 @@ This project uses these awesome open source packages.
 - Icons [<ins>**Icons8**</ins>](https://icons8.com)
 - JSON Converter [<ins>**Newtonsoft.Json**</ins>](https://github.com/JamesNK/Newtonsoft.Json)
 - Structured storage editor [<ins>**OpenMCDF**</ins>](https://github.com/ironfede/openmcdf)
+
+## BECOME A SPONSOR
+
+If Storekeeper is saving you lots of time and money, we'd love to have you as a sponsor!
+
+One way is through PayPal's Donate feature.
+
+[![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://paypal.me/rmcanany)
+
+Otherwise, for electronic funds transfer or other means, please email me at rmcanany@gmail.com.
+

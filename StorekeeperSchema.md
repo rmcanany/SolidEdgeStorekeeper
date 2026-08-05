@@ -94,7 +94,7 @@ The code that builds the lookup table is below.  First, a couple of things to no
 
 - Any character not in the lookup table, for example `€` (Euro symbol), will not be translated.  It has to be on the list.  Let me know if you need one and I'll add it.
 
-- You might be wondering why we haven't had to worry about all this before.  That is because previously Excel was used for everything.  When the program parses those, it does all the replacements in the process.  Since this new method *starts* with XML, we have to deal with it.  (Except the companion spreadsheets, which remain in Excel format.)
+- You might be wondering why we haven't had to worry about all this before.  That is because previously Excel was used for everything.  When the program parses spreadsheets, it makes the necessary replacements automatically.  Since this new method *starts* with XML, we have to deal with it.  (Except the companion spreadsheets, which remain in Excel format.)
 
 - One nice thing about XMLNotepad is that it won't *let* you enter an illegal character.  It complains right away.
 

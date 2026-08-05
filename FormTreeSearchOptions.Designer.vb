@@ -25,7 +25,6 @@ Partial Class FormTreeSearchOptions
         components = New ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FormTreeSearchOptions))
         TableLayoutPanel1 = New TableLayoutPanel()
-        CheckBoxAlwaysReadExcel = New CheckBox()
         Label4 = New Label()
         ButtonMaterialLibrary = New Button()
         LabelMaterialLibrary = New Label()
@@ -51,6 +50,12 @@ Partial Class FormTreeSearchOptions
         CheckBoxCheckNewVersion = New CheckBox()
         TextBoxPartPlacementTimeout = New TextBox()
         LabelPartPlacementTimeout = New Label()
+        CheckBoxUseXmlSchema = New CheckBox()
+        CheckBoxAlwaysReadExcel = New CheckBox()
+        ButtonEditSchema = New Button()
+        LabelEditSchema = New Label()
+        ButtonReloadXml = New Button()
+        LabelReloadXml = New Label()
         ToolTip1 = New ToolTip(components)
         TableLayoutPanel1.SuspendLayout()
         TableLayoutPanel2.SuspendLayout()
@@ -62,39 +67,47 @@ Partial Class FormTreeSearchOptions
         TableLayoutPanel1.ColumnCount = 2
         TableLayoutPanel1.ColumnStyles.Add(New ColumnStyle())
         TableLayoutPanel1.ColumnStyles.Add(New ColumnStyle(SizeType.Percent, 100F))
-        TableLayoutPanel1.Controls.Add(CheckBoxAlwaysReadExcel, 0, 5)
         TableLayoutPanel1.Controls.Add(Label4, 0, 4)
         TableLayoutPanel1.Controls.Add(ButtonMaterialLibrary, 0, 3)
         TableLayoutPanel1.Controls.Add(LabelMaterialLibrary, 1, 3)
         TableLayoutPanel1.Controls.Add(ButtonLibraryDirectory, 0, 0)
         TableLayoutPanel1.Controls.Add(LabelLibraryDirectory, 1, 0)
-        TableLayoutPanel1.Controls.Add(TableLayoutPanel2, 1, 20)
-        TableLayoutPanel1.Controls.Add(CheckBoxAddProp, 0, 6)
-        TableLayoutPanel1.Controls.Add(CheckBoxDisableFineThreadWarning, 0, 7)
-        TableLayoutPanel1.Controls.Add(CheckBoxProcessTemplateInBackground, 0, 8)
-        TableLayoutPanel1.Controls.Add(CheckBoxFailedConstraintSuppress, 0, 9)
-        TableLayoutPanel1.Controls.Add(CheckBoxFailedConstraintAllow, 0, 10)
-        TableLayoutPanel1.Controls.Add(CheckBoxSuspendMRU, 0, 11)
-        TableLayoutPanel1.Controls.Add(CheckBoxIncludeDrawing, 0, 12)
-        TableLayoutPanel1.Controls.Add(LabelAlwaysOnTopRefreshTime, 1, 13)
-        TableLayoutPanel1.Controls.Add(TextBoxAlwaysOnTopRefreshTime, 0, 13)
+        TableLayoutPanel1.Controls.Add(TableLayoutPanel2, 1, 23)
+        TableLayoutPanel1.Controls.Add(CheckBoxAddProp, 0, 9)
+        TableLayoutPanel1.Controls.Add(CheckBoxDisableFineThreadWarning, 0, 10)
+        TableLayoutPanel1.Controls.Add(CheckBoxProcessTemplateInBackground, 0, 11)
+        TableLayoutPanel1.Controls.Add(CheckBoxFailedConstraintSuppress, 0, 12)
+        TableLayoutPanel1.Controls.Add(CheckBoxFailedConstraintAllow, 0, 13)
+        TableLayoutPanel1.Controls.Add(CheckBoxSuspendMRU, 0, 14)
+        TableLayoutPanel1.Controls.Add(CheckBoxIncludeDrawing, 0, 15)
+        TableLayoutPanel1.Controls.Add(LabelAlwaysOnTopRefreshTime, 1, 16)
+        TableLayoutPanel1.Controls.Add(TextBoxAlwaysOnTopRefreshTime, 0, 16)
         TableLayoutPanel1.Controls.Add(ButtonDataDirectory, 0, 1)
         TableLayoutPanel1.Controls.Add(LabelDataDirectory, 1, 1)
         TableLayoutPanel1.Controls.Add(ButtonTemplateDirectory, 0, 2)
         TableLayoutPanel1.Controls.Add(LabelTemplateDirectory, 1, 2)
-        TableLayoutPanel1.Controls.Add(CheckBoxCheckNewVersion, 0, 15)
-        TableLayoutPanel1.Controls.Add(TextBoxPartPlacementTimeout, 0, 14)
-        TableLayoutPanel1.Controls.Add(LabelPartPlacementTimeout, 1, 14)
+        TableLayoutPanel1.Controls.Add(CheckBoxCheckNewVersion, 0, 18)
+        TableLayoutPanel1.Controls.Add(TextBoxPartPlacementTimeout, 0, 17)
+        TableLayoutPanel1.Controls.Add(LabelPartPlacementTimeout, 1, 17)
+        TableLayoutPanel1.Controls.Add(CheckBoxUseXmlSchema, 0, 6)
+        TableLayoutPanel1.Controls.Add(CheckBoxAlwaysReadExcel, 0, 8)
+        TableLayoutPanel1.Controls.Add(ButtonEditSchema, 0, 7)
+        TableLayoutPanel1.Controls.Add(LabelEditSchema, 1, 7)
+        TableLayoutPanel1.Controls.Add(ButtonReloadXml, 0, 5)
+        TableLayoutPanel1.Controls.Add(LabelReloadXml, 1, 5)
         TableLayoutPanel1.Dock = DockStyle.Fill
         TableLayoutPanel1.Location = New Point(0, 0)
         TableLayoutPanel1.Name = "TableLayoutPanel1"
-        TableLayoutPanel1.RowCount = 21
+        TableLayoutPanel1.RowCount = 24
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
+        TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
+        TableLayoutPanel1.RowStyles.Add(New RowStyle())
+        TableLayoutPanel1.RowStyles.Add(New RowStyle())
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Absolute, 30F))
@@ -110,21 +123,8 @@ Partial Class FormTreeSearchOptions
         TableLayoutPanel1.RowStyles.Add(New RowStyle())
         TableLayoutPanel1.RowStyles.Add(New RowStyle())
         TableLayoutPanel1.RowStyles.Add(New RowStyle(SizeType.Percent, 100F))
-        TableLayoutPanel1.Size = New Size(472, 560)
+        TableLayoutPanel1.Size = New Size(472, 617)
         TableLayoutPanel1.TabIndex = 0
-        ' 
-        ' CheckBoxAlwaysReadExcel
-        ' 
-        CheckBoxAlwaysReadExcel.Anchor = AnchorStyles.Left
-        CheckBoxAlwaysReadExcel.AutoSize = True
-        TableLayoutPanel1.SetColumnSpan(CheckBoxAlwaysReadExcel, 2)
-        CheckBoxAlwaysReadExcel.Location = New Point(3, 155)
-        CheckBoxAlwaysReadExcel.Name = "CheckBoxAlwaysReadExcel"
-        CheckBoxAlwaysReadExcel.Padding = New Padding(5, 0, 0, 0)
-        CheckBoxAlwaysReadExcel.Size = New Size(312, 19)
-        CheckBoxAlwaysReadExcel.TabIndex = 12
-        CheckBoxAlwaysReadExcel.Text = "Read the Excel file each time the program is launched"
-        CheckBoxAlwaysReadExcel.UseVisualStyleBackColor = True
         ' 
         ' Label4
         ' 
@@ -190,19 +190,19 @@ Partial Class FormTreeSearchOptions
         TableLayoutPanel2.Controls.Add(ButtonCancel, 1, 0)
         TableLayoutPanel2.Controls.Add(ButtonHelp, 2, 0)
         TableLayoutPanel2.Dock = DockStyle.Fill
-        TableLayoutPanel2.Location = New Point(109, 483)
+        TableLayoutPanel2.Location = New Point(109, 567)
         TableLayoutPanel2.Name = "TableLayoutPanel2"
         TableLayoutPanel2.RowCount = 1
         TableLayoutPanel2.RowStyles.Add(New RowStyle(SizeType.Percent, 100F))
-        TableLayoutPanel2.Size = New Size(360, 74)
+        TableLayoutPanel2.Size = New Size(360, 47)
         TableLayoutPanel2.TabIndex = 5
         ' 
         ' ButtonOK
         ' 
         ButtonOK.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        ButtonOK.Location = New Point(120, 48)
+        ButtonOK.Location = New Point(120, 19)
         ButtonOK.Name = "ButtonOK"
-        ButtonOK.Size = New Size(75, 23)
+        ButtonOK.Size = New Size(75, 25)
         ButtonOK.TabIndex = 1
         ButtonOK.Text = "OK"
         ButtonOK.UseVisualStyleBackColor = True
@@ -210,9 +210,9 @@ Partial Class FormTreeSearchOptions
         ' ButtonCancel
         ' 
         ButtonCancel.Anchor = AnchorStyles.Bottom
-        ButtonCancel.Location = New Point(201, 48)
+        ButtonCancel.Location = New Point(201, 19)
         ButtonCancel.Name = "ButtonCancel"
-        ButtonCancel.Size = New Size(75, 23)
+        ButtonCancel.Size = New Size(75, 25)
         ButtonCancel.TabIndex = 0
         ButtonCancel.Text = "Cancel"
         ButtonCancel.UseVisualStyleBackColor = True
@@ -220,9 +220,9 @@ Partial Class FormTreeSearchOptions
         ' ButtonHelp
         ' 
         ButtonHelp.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        ButtonHelp.Location = New Point(282, 48)
+        ButtonHelp.Location = New Point(282, 19)
         ButtonHelp.Name = "ButtonHelp"
-        ButtonHelp.Size = New Size(75, 23)
+        ButtonHelp.Size = New Size(75, 25)
         ButtonHelp.TabIndex = 2
         ButtonHelp.Text = "Help"
         ButtonHelp.UseVisualStyleBackColor = True
@@ -232,7 +232,7 @@ Partial Class FormTreeSearchOptions
         CheckBoxAddProp.Anchor = AnchorStyles.Left
         CheckBoxAddProp.AutoSize = True
         TableLayoutPanel1.SetColumnSpan(CheckBoxAddProp, 2)
-        CheckBoxAddProp.Location = New Point(3, 185)
+        CheckBoxAddProp.Location = New Point(3, 269)
         CheckBoxAddProp.Name = "CheckBoxAddProp"
         CheckBoxAddProp.Padding = New Padding(5, 0, 0, 0)
         CheckBoxAddProp.Size = New Size(217, 19)
@@ -246,7 +246,7 @@ Partial Class FormTreeSearchOptions
         CheckBoxDisableFineThreadWarning.Anchor = AnchorStyles.Left
         CheckBoxDisableFineThreadWarning.AutoSize = True
         TableLayoutPanel1.SetColumnSpan(CheckBoxDisableFineThreadWarning, 2)
-        CheckBoxDisableFineThreadWarning.Location = New Point(3, 215)
+        CheckBoxDisableFineThreadWarning.Location = New Point(3, 299)
         CheckBoxDisableFineThreadWarning.Name = "CheckBoxDisableFineThreadWarning"
         CheckBoxDisableFineThreadWarning.Padding = New Padding(5, 0, 0, 0)
         CheckBoxDisableFineThreadWarning.Size = New Size(175, 19)
@@ -259,7 +259,7 @@ Partial Class FormTreeSearchOptions
         CheckBoxProcessTemplateInBackground.Anchor = AnchorStyles.Left
         CheckBoxProcessTemplateInBackground.AutoSize = True
         TableLayoutPanel1.SetColumnSpan(CheckBoxProcessTemplateInBackground, 2)
-        CheckBoxProcessTemplateInBackground.Location = New Point(3, 245)
+        CheckBoxProcessTemplateInBackground.Location = New Point(3, 329)
         CheckBoxProcessTemplateInBackground.Name = "CheckBoxProcessTemplateInBackground"
         CheckBoxProcessTemplateInBackground.Padding = New Padding(5, 0, 0, 0)
         CheckBoxProcessTemplateInBackground.Size = New Size(206, 19)
@@ -272,7 +272,7 @@ Partial Class FormTreeSearchOptions
         CheckBoxFailedConstraintSuppress.Anchor = AnchorStyles.Left
         CheckBoxFailedConstraintSuppress.AutoSize = True
         TableLayoutPanel1.SetColumnSpan(CheckBoxFailedConstraintSuppress, 2)
-        CheckBoxFailedConstraintSuppress.Location = New Point(3, 275)
+        CheckBoxFailedConstraintSuppress.Location = New Point(3, 359)
         CheckBoxFailedConstraintSuppress.Name = "CheckBoxFailedConstraintSuppress"
         CheckBoxFailedConstraintSuppress.Padding = New Padding(5, 0, 0, 0)
         CheckBoxFailedConstraintSuppress.Size = New Size(237, 19)
@@ -287,7 +287,7 @@ Partial Class FormTreeSearchOptions
         CheckBoxFailedConstraintAllow.Checked = True
         CheckBoxFailedConstraintAllow.CheckState = CheckState.Checked
         TableLayoutPanel1.SetColumnSpan(CheckBoxFailedConstraintAllow, 2)
-        CheckBoxFailedConstraintAllow.Location = New Point(3, 305)
+        CheckBoxFailedConstraintAllow.Location = New Point(3, 389)
         CheckBoxFailedConstraintAllow.Name = "CheckBoxFailedConstraintAllow"
         CheckBoxFailedConstraintAllow.Padding = New Padding(5, 0, 0, 0)
         CheckBoxFailedConstraintAllow.Size = New Size(220, 19)
@@ -300,7 +300,7 @@ Partial Class FormTreeSearchOptions
         CheckBoxSuspendMRU.Anchor = AnchorStyles.Left
         CheckBoxSuspendMRU.AutoSize = True
         TableLayoutPanel1.SetColumnSpan(CheckBoxSuspendMRU, 2)
-        CheckBoxSuspendMRU.Location = New Point(3, 335)
+        CheckBoxSuspendMRU.Location = New Point(3, 419)
         CheckBoxSuspendMRU.Name = "CheckBoxSuspendMRU"
         CheckBoxSuspendMRU.Padding = New Padding(5, 0, 0, 0)
         CheckBoxSuspendMRU.Size = New Size(330, 19)
@@ -313,7 +313,7 @@ Partial Class FormTreeSearchOptions
         CheckBoxIncludeDrawing.Anchor = AnchorStyles.Left
         CheckBoxIncludeDrawing.AutoSize = True
         TableLayoutPanel1.SetColumnSpan(CheckBoxIncludeDrawing, 2)
-        CheckBoxIncludeDrawing.Location = New Point(3, 365)
+        CheckBoxIncludeDrawing.Location = New Point(3, 449)
         CheckBoxIncludeDrawing.Name = "CheckBoxIncludeDrawing"
         CheckBoxIncludeDrawing.Padding = New Padding(5, 0, 0, 0)
         CheckBoxIncludeDrawing.Size = New Size(206, 19)
@@ -325,7 +325,7 @@ Partial Class FormTreeSearchOptions
         ' 
         LabelAlwaysOnTopRefreshTime.Anchor = AnchorStyles.Left
         LabelAlwaysOnTopRefreshTime.AutoSize = True
-        LabelAlwaysOnTopRefreshTime.Location = New Point(109, 397)
+        LabelAlwaysOnTopRefreshTime.Location = New Point(109, 481)
         LabelAlwaysOnTopRefreshTime.Name = "LabelAlwaysOnTopRefreshTime"
         LabelAlwaysOnTopRefreshTime.Padding = New Padding(5, 0, 0, 0)
         LabelAlwaysOnTopRefreshTime.Size = New Size(192, 15)
@@ -335,7 +335,7 @@ Partial Class FormTreeSearchOptions
         ' TextBoxAlwaysOnTopRefreshTime
         ' 
         TextBoxAlwaysOnTopRefreshTime.Dock = DockStyle.Fill
-        TextBoxAlwaysOnTopRefreshTime.Location = New Point(3, 393)
+        TextBoxAlwaysOnTopRefreshTime.Location = New Point(3, 477)
         TextBoxAlwaysOnTopRefreshTime.Name = "TextBoxAlwaysOnTopRefreshTime"
         TextBoxAlwaysOnTopRefreshTime.Size = New Size(100, 23)
         TextBoxAlwaysOnTopRefreshTime.TabIndex = 27
@@ -394,7 +394,7 @@ Partial Class FormTreeSearchOptions
         CheckBoxCheckNewVersion.Checked = True
         CheckBoxCheckNewVersion.CheckState = CheckState.Checked
         TableLayoutPanel1.SetColumnSpan(CheckBoxCheckNewVersion, 2)
-        CheckBoxCheckNewVersion.Location = New Point(3, 455)
+        CheckBoxCheckNewVersion.Location = New Point(3, 539)
         CheckBoxCheckNewVersion.Name = "CheckBoxCheckNewVersion"
         CheckBoxCheckNewVersion.Padding = New Padding(5, 0, 0, 0)
         CheckBoxCheckNewVersion.Size = New Size(197, 19)
@@ -405,7 +405,7 @@ Partial Class FormTreeSearchOptions
         ' TextBoxPartPlacementTimeout
         ' 
         TextBoxPartPlacementTimeout.Dock = DockStyle.Fill
-        TextBoxPartPlacementTimeout.Location = New Point(3, 423)
+        TextBoxPartPlacementTimeout.Location = New Point(3, 507)
         TextBoxPartPlacementTimeout.Name = "TextBoxPartPlacementTimeout"
         TextBoxPartPlacementTimeout.Size = New Size(100, 23)
         TextBoxPartPlacementTimeout.TabIndex = 29
@@ -415,18 +415,84 @@ Partial Class FormTreeSearchOptions
         ' 
         LabelPartPlacementTimeout.Anchor = AnchorStyles.Left
         LabelPartPlacementTimeout.AutoSize = True
-        LabelPartPlacementTimeout.Location = New Point(109, 427)
+        LabelPartPlacementTimeout.Location = New Point(109, 511)
         LabelPartPlacementTimeout.Name = "LabelPartPlacementTimeout"
         LabelPartPlacementTimeout.Padding = New Padding(5, 0, 0, 0)
         LabelPartPlacementTimeout.Size = New Size(238, 15)
         LabelPartPlacementTimeout.TabIndex = 30
         LabelPartPlacementTimeout.Text = "Time out for part placement (milliseconds)"
         ' 
+        ' CheckBoxUseXmlSchema
+        ' 
+        CheckBoxUseXmlSchema.Anchor = AnchorStyles.Left
+        CheckBoxUseXmlSchema.AutoSize = True
+        TableLayoutPanel1.SetColumnSpan(CheckBoxUseXmlSchema, 2)
+        CheckBoxUseXmlSchema.Location = New Point(3, 185)
+        CheckBoxUseXmlSchema.Name = "CheckBoxUseXmlSchema"
+        CheckBoxUseXmlSchema.Padding = New Padding(5, 0, 0, 0)
+        CheckBoxUseXmlSchema.Size = New Size(179, 19)
+        CheckBoxUseXmlSchema.TabIndex = 31
+        CheckBoxUseXmlSchema.Text = "Use StorekeeperSchema.xml"
+        CheckBoxUseXmlSchema.UseVisualStyleBackColor = True
+        ' 
+        ' CheckBoxAlwaysReadExcel
+        ' 
+        CheckBoxAlwaysReadExcel.Anchor = AnchorStyles.Left
+        CheckBoxAlwaysReadExcel.AutoSize = True
+        TableLayoutPanel1.SetColumnSpan(CheckBoxAlwaysReadExcel, 2)
+        CheckBoxAlwaysReadExcel.Location = New Point(3, 242)
+        CheckBoxAlwaysReadExcel.Name = "CheckBoxAlwaysReadExcel"
+        CheckBoxAlwaysReadExcel.Padding = New Padding(5, 0, 0, 0)
+        CheckBoxAlwaysReadExcel.Size = New Size(312, 19)
+        CheckBoxAlwaysReadExcel.TabIndex = 12
+        CheckBoxAlwaysReadExcel.Text = "Read the Excel file each time the program is launched"
+        CheckBoxAlwaysReadExcel.UseVisualStyleBackColor = True
+        ' 
+        ' ButtonEditSchema
+        ' 
+        ButtonEditSchema.Anchor = AnchorStyles.Left
+        ButtonEditSchema.Location = New Point(3, 213)
+        ButtonEditSchema.Name = "ButtonEditSchema"
+        ButtonEditSchema.Size = New Size(90, 23)
+        ButtonEditSchema.TabIndex = 32
+        ButtonEditSchema.Text = "Edit Schema"
+        ButtonEditSchema.UseVisualStyleBackColor = True
+        ' 
+        ' LabelEditSchema
+        ' 
+        LabelEditSchema.Anchor = AnchorStyles.Left
+        LabelEditSchema.AutoSize = True
+        LabelEditSchema.Location = New Point(109, 217)
+        LabelEditSchema.Name = "LabelEditSchema"
+        LabelEditSchema.Size = New Size(212, 15)
+        LabelEditSchema.TabIndex = 33
+        LabelEditSchema.Text = "Open StorekeeperSchema.xml in editor"
+        ' 
+        ' ButtonReloadXml
+        ' 
+        ButtonReloadXml.Anchor = AnchorStyles.Left
+        ButtonReloadXml.Location = New Point(3, 153)
+        ButtonReloadXml.Name = "ButtonReloadXml"
+        ButtonReloadXml.Size = New Size(90, 23)
+        ButtonReloadXml.TabIndex = 34
+        ButtonReloadXml.Text = "Reload Xml"
+        ButtonReloadXml.UseVisualStyleBackColor = True
+        ' 
+        ' LabelReloadXml
+        ' 
+        LabelReloadXml.Anchor = AnchorStyles.Left
+        LabelReloadXml.AutoSize = True
+        LabelReloadXml.Location = New Point(109, 157)
+        LabelReloadXml.Name = "LabelReloadXml"
+        LabelReloadXml.Size = New Size(155, 15)
+        LabelReloadXml.TabIndex = 35
+        LabelReloadXml.Text = "Rebuild dataset after editing"
+        ' 
         ' FormTreeSearchOptions
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(472, 560)
+        ClientSize = New Size(472, 617)
         Controls.Add(TableLayoutPanel1)
         Icon = CType(resources.GetObject("$this.Icon"), Icon)
         Name = "FormTreeSearchOptions"
@@ -466,4 +532,9 @@ Partial Class FormTreeSearchOptions
     Friend WithEvents LabelAlwaysOnTopRefreshTime As Label
     Friend WithEvents TextBoxPartPlacementTimeout As TextBox
     Friend WithEvents LabelPartPlacementTimeout As Label
+    Friend WithEvents CheckBoxUseXmlSchema As CheckBox
+    Friend WithEvents ButtonEditSchema As Button
+    Friend WithEvents LabelEditSchema As Label
+    Friend WithEvents ButtonReloadXml As Button
+    Friend WithEvents LabelReloadXml As Label
 End Class

@@ -306,6 +306,9 @@ Public Class Form_Main
         End Set
     End Property
 
+    Public Property XmlEditorFilename As String
+
+
     ' https://community.sw.siemens.com/s/question/0D5Vb00000Krsy5KAB/handling-events-how-to-use-help-example
     ' https://github.com/SolidEdgeCommunity/Samples/blob/master/General/EventHandling/vb/EventHandling/MainForm.vb
     Public SEAppEvents As SolidEdgeFramework.DISEApplicationEvents_Event
@@ -383,6 +386,7 @@ Public Class Form_Main
             Me.AlwaysOnTopRefreshTime = "1000"
             Me.PartPlacementTimeout = "60000"
             Me.FavoritesOnly = False
+            Me.UseXmlSchema = True
         End If
 
         UP.CreatePreferencesDirectory(Me)
@@ -3668,12 +3672,15 @@ Public Class Form_Main
 
     Private Sub ButtonFavoritesOnly_Click(sender As Object, e As EventArgs) Handles ButtonFavoritesOnly.Click
 
-        If ModifierKeys = Keys.Shift Then
-            Me.UseXmlSchema = Not Me.UseXmlSchema
-        Else
-            Me.FavoritesOnly = Not Me.FavoritesOnly
-            ReloadXml()
-        End If
+        'If ModifierKeys = Keys.Shift Then
+        '    Me.UseXmlSchema = Not Me.UseXmlSchema
+        'Else
+        '    Me.FavoritesOnly = Not Me.FavoritesOnly
+        '    ReloadXml()
+        'End If
+
+        Me.FavoritesOnly = Not Me.FavoritesOnly
+        ReloadXml()
 
     End Sub
 

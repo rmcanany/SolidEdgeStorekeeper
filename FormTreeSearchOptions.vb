@@ -231,7 +231,23 @@ Public Class FormTreeSearchOptions
         End Set
     End Property
 
+    Private _UseXmlSchema As Boolean
+    Public Property UseXmlSchema As Boolean
+        Get
+            Return _UseXmlSchema
+        End Get
+        Set(value As Boolean)
+            _UseXmlSchema = value
+            If Me.IsHandleCreated Then
+                CheckBoxUseXmlSchema.Checked = _UseXmlSchema
+                ButtonEditSchema.Visible = _UseXmlSchema
+                LabelEditSchema.Visible = _UseXmlSchema
+                CheckBoxAlwaysReadExcel.Visible = Not _UseXmlSchema
+            End If
+        End Set
+    End Property
 
+    Public Property XmlEditorFilename As String
 
     Private _CheckNewVersion As Boolean
     Public Property CheckNewVersion As Boolean
@@ -295,6 +311,8 @@ Public Class FormTreeSearchOptions
         Me.AlwaysOnTopRefreshTime = FMain.AlwaysOnTopRefreshTime
         Me.PartPlacementTimeout = FMain.PartPlacementTimeout
         Me.CheckNewVersion = FMain.CheckNewVersion
+        Me.UseXmlSchema = FMain.UseXmlSchema
+        Me.XmlEditorFilename = FMain.XmlEditorFilename
 
     End Sub
 
@@ -405,6 +423,8 @@ Public Class FormTreeSearchOptions
         FMain.PartPlacementTimeout = Me.PartPlacementTimeout
 
         FMain.CheckNewVersion = Me.CheckNewVersion
+        FMain.UseXmlSchema = Me.UseXmlSchema
+        FMain.XmlEditorFilename = Me.XmlEditorFilename
 
         If Not PreviousDataDirectory = Me.DataDirectory Then
             FMain.ReloadXml()
@@ -481,5 +501,61 @@ Public Class FormTreeSearchOptions
 
     Private Sub TextBoxPartPlacementTimeout_TextChanged(sender As Object, e As EventArgs) Handles TextBoxPartPlacementTimeout.TextChanged
         Me.PartPlacementTimeout = TextBoxPartPlacementTimeout.Text
+    End Sub
+
+    Private Sub CheckBoxUseXmlSchema_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBoxUseXmlSchema.CheckedChanged
+        Me.UseXmlSchema = CheckBoxUseXmlSchema.Checked
+    End Sub
+
+    Private Sub ButtonEditSchema_Click(sender As Object, e As EventArgs) Handles ButtonEditSchema.Click
+
+        If ModifierKeys = Keys.Shift Then
+            Me.XmlEditorFilename = ""
+        End If
+
+        Dim ErrorMessages As New List(Of String)
+
+        Dim SchemaFilename As String = $"{Me.DataDirectory}\StorekeeperSchema.xml"
+        Dim Path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86)
+        Dim XmlNotepadDirectory As String = $"{Path}\LovettSoftware\XmlNotepad"
+
+        If Not IO.Directory.Exists(Me.DataDirectory) Then
+            ErrorMessages.Add($"Data directory not found '{Me.DataDirectory}'")
+        End If
+        If Not IO.File.Exists(SchemaFilename) Then
+            ErrorMessages.Add($"Schema file not found '{SchemaFilename}'")
+        End If
+
+        If Not IO.File.Exists(Me.XmlEditorFilename) Then
+            Dim s As String = "Xml Editor not found.  Select the executable."
+            MsgBox(s)
+
+            Dim tmpFileDialog As New CommonOpenFileDialog
+
+            If IO.Directory.Exists(XmlNotepadDirectory) Then
+                tmpFileDialog.InitialDirectory = XmlNotepadDirectory
+            End If
+
+            If tmpFileDialog.ShowDialog = DialogResult.OK Then
+                Me.XmlEditorFilename = tmpFileDialog.FileName
+            Else
+                ErrorMessages.Add("XML Editor not found")
+            End If
+        End If
+
+        If ErrorMessages.Count = 0 Then
+            Diagnostics.Process.Start(Me.XmlEditorFilename, SchemaFilename)
+        Else
+            Dim s As String = ""
+            For Each s1 As String In ErrorMessages
+                s = $"{s1}{vbCrLf}"
+            Next
+            MsgBox(s)
+        End If
+
+    End Sub
+
+    Private Sub ButtonReloadXml_Click(sender As Object, e As EventArgs) Handles ButtonReloadXml.Click
+        FMain.ReloadXml()
     End Sub
 End Class
