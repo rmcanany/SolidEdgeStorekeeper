@@ -1,5 +1,5 @@
 ﻿Option Strict On
-Imports System.Xml
+'Imports System.Xml
 
 Public Class FormFastenerStack
 
@@ -236,6 +236,7 @@ Public Class FormFastenerStack
         ' LW Lock Washer
         ' TT Thread Thru
         ' TB Thread Blind
+        ' S Stud
 
         F_CO_N
         F_CO_FW_N
@@ -925,7 +926,7 @@ Public Class FormFastenerStack
         Next
 
         Dim XmlDoc As System.Xml.XmlDocument = FMain.XmlDoc
-        Dim ParentNode As XmlNode
+        Dim ParentNode As Xml.XmlNode
 
 
         ' ###### FASTENER SIZE NODE ######
@@ -950,7 +951,7 @@ Public Class FormFastenerStack
 
         Dim NominalDiameter As Double
         Dim ThreadDescription As String
-        Dim MatchingNode As XmlNode
+        Dim MatchingNode As Xml.XmlNode
 
         ' ###### FASTENER NOMINAL DIAMETER AND THREAD DESCRIPTION ######
 
@@ -973,45 +974,6 @@ Public Class FormFastenerStack
         Me.TreeviewFlatWasherFullPath = ""
 
         For Each FlatWasherSearchPath As String In Me.FlatWasherSearchPaths
-            ' SE2025 Solid_Edge_Storekeeper\Ansi_Fasteners\Washer_Flat
-            ' SE2025 Solid_Edge_Storekeeper\Iso_Fasteners\Washer_Flat
-            ' SE2019 ..\..\..\..\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series
-
-            'If IsAsmeStud Then
-            '    FlatWasherSearchPath = $"..\..\{FlatWasherSearchPath}"
-            '    FlatWasherSearchPath = FlatWasherSearchPath.Replace("Washer_Flat", "Ansi_Fasteners\Washer_Flat")
-            'End If
-
-
-            'Dim tmpPathList As List(Of String) = FlatWasherSearchPath.Split(CChar("\")).ToList
-            'Dim FlatWasherFullPath As String = ""
-
-            '' ###### Find the number of '..' in the search path ######
-            'Dim n As Integer = 0 ' the number of '..' in the path
-            'For i = 0 To tmpPathList.Count - 1
-            '    If tmpPathList(i) = ".." Then n += 1
-            'Next
-
-            '' ###### Populate the beginning from the fastener path ######
-            '' Examples
-            '' Fastener path: Solid_Edge_Storekeeper\Ansi_Fasteners_Steel\HHCS\Size_0.250-20\Length_0.500
-            '' Search path:   ..\..\..\Washer_Flat
-            '' Output:        Solid_Edge_Storekeeper\Ansi_Fasteners_Steel
-            'For i = 0 To FastenerNodeNameList.Count - 1 - n
-            '    If i = 0 Then
-            '        FlatWasherFullPath = FastenerNodeNameList(i)
-            '    Else
-            '        FlatWasherFullPath = $"{FlatWasherFullPath}\{FastenerNodeNameList(i)}"
-            '    End If
-            'Next
-
-            '' ###### Populate the end from the search path ######
-            '' Output: Solid_Edge_Storekeeper\Ansi_Fasteners_Steel\Washer_Flat
-            'For i = 0 To tmpPathList.Count - 1
-            '    If Not tmpPathList(i) = ".." Then
-            '        FlatWasherFullPath = $"{FlatWasherFullPath}\{tmpPathList(i)}"
-            '    End If
-            'Next
 
             Dim FlatWasherFullPath As String = FlatWasherSearchPath
 
@@ -1042,53 +1004,6 @@ Public Class FormFastenerStack
         Me.TreeviewLockwasherFullPath = ""
 
         For Each LockWasherSearchPath As String In Me.LockWasherSearchPaths
-            ' SE2025 Solid_Edge_Storekeeper\Ansi_Fasteners\Washer_Lock
-            ' SE2025 Solid_Edge_Storekeeper\Iso_Fasteners\Washer_Lock
-            ' SE2019 NA 
-
-            'If IsAsmeStud Then
-            '    LockWasherSearchPath = $"..\..\{LockWasherSearchPath}"
-            '    LockWasherSearchPath = LockWasherSearchPath.Replace("Washer_Lock", "Ansi_Fasteners\Washer_Lock")
-            'End If
-
-            'Dim tmpPathList As List(Of String) = LockWasherSearchPath.Split(CChar("\")).ToList
-            'Dim LockWasherFullPath As String = ""
-
-            '' ###### Find the number of '..' in the search path ######
-            'Dim n As Integer = 0 ' the number of '..' in the path
-            'For i = 0 To tmpPathList.Count - 1
-            '    If tmpPathList(i) = ".." Then n += 1
-            'Next
-
-            '' ###### Populate the beginning from the FASTENER path ######
-
-            '' Example
-            '' Fastener path: Solid_Edge_Storekeeper\Ansi_Fasteners_Steel\HHCS\Size_0.250-20\Length_0.500
-            '' Search path:   ..\..\..\Washer_Flat
-            '' Output:        Solid_Edge_Storekeeper\Ansi_Fasteners_Steel
-
-            '' Example
-            '' Fastener path: Solid_Edge_Storekeeper\ISO_SCREWS_-_Steel\ISO_4014_-_Hexagon_head_bolts_-_normal_pitch\Size_M5\Length_25
-            '' Search path:   ..\..\..\..\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series
-            '' Output:        Solid_Edge_Storekeeper
-
-            'For i = 0 To FastenerNodeNameList.Count - 1 - n
-            '    If i = 0 Then
-            '        LockWasherFullPath = FastenerNodeNameList(i)
-            '    Else
-            '        LockWasherFullPath = $"{LockWasherFullPath}\{FastenerNodeNameList(i)}"
-            '    End If
-            'Next
-
-            '' ###### Populate the end from the SEARCH path ######
-            '' Output: Solid_Edge_Storekeeper\Ansi_Fasteners_Steel\Washer_Flat
-            '' Output: Solid_Edge_Storekeeper\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series
-
-            'For i = 0 To tmpPathList.Count - 1
-            '    If Not tmpPathList(i) = ".." Then
-            '        LockWasherFullPath = $"{LockWasherFullPath}\{tmpPathList(i)}"
-            '    End If
-            'Next
 
             Dim LockWasherFullPath As String = LockWasherSearchPath
 
@@ -1119,46 +1034,8 @@ Public Class FormFastenerStack
         Me.TreeviewNutFullPath = ""
 
         For Each NutSearchPath As String In Me.NutSearchPaths
-            ' SE2025 Solid_Edge_Storekeeper\Ansi_Fasteners\Nut_Hex
-            ' SE2025 Solid_Edge_Storekeeper\Iso_Fasteners\Nut_Hex
-            ' SE2019 ..\..\..\..\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series
 
             If IsAsmeStud Then NutSearchPath = NutSearchPath.Replace("Nut_Hex", "Nut_Heavy_Hex")
-
-            'If IsAsmeStud Then
-            '    NutSearchPath = $"..\..\{NutSearchPath}"
-            '    NutSearchPath = NutSearchPath.Replace("Nut_Hex", "Ansi_Fasteners\Nut_Heavy_Hex")
-            'End If
-
-            'Dim tmpPathList As List(Of String) = NutSearchPath.Split(CChar("\")).ToList
-            'Dim NutFullPath As String = ""
-
-            '' ###### Find the number of '..' in the search path ######
-            'Dim n As Integer = 0 ' the number of '..' in the path
-            'For i = 0 To tmpPathList.Count - 1
-            '    If tmpPathList(i) = ".." Then n += 1
-            'Next
-
-            '' ###### Populate the beginning from the fastener path ######
-            '' Examples
-            '' Fastener path: Solid_Edge_Storekeeper\Ansi_Fasteners_Steel\HHCS\Size_0.250-20\Length_0.500
-            '' Search path:   ..\..\..\Washer_Flat
-            '' Output:        Solid_Edge_Storekeeper\Ansi_Fasteners_Steel
-            'For i = 0 To FastenerNodeNameList.Count - 1 - n
-            '    If i = 0 Then
-            '        NutFullPath = FastenerNodeNameList(i)
-            '    Else
-            '        NutFullPath = $"{NutFullPath}\{FastenerNodeNameList(i)}"
-            '    End If
-            'Next
-
-            '' ###### Populate the end from the search path ######
-            '' Output: Solid_Edge_Storekeeper\Ansi_Fasteners_Steel\Washer_Flat
-            'For i = 0 To tmpPathList.Count - 1
-            '    If Not tmpPathList(i) = ".." Then
-            '        NutFullPath = $"{NutFullPath}\{tmpPathList(i)}"
-            '    End If
-            'Next
 
             Dim NutFullPath As String = NutSearchPath
 
@@ -1200,13 +1077,13 @@ Public Class FormFastenerStack
 
     End Function
 
-    Private Function GetThickness(ParentNode As XmlNode) As Double
+    Private Function GetThickness(ParentNode As Xml.XmlNode) As Double
         Dim Value As Double = -1
 
         Dim UC As New UtilsCommon
 
         If ParentNode.HasChildNodes Then
-            For Each ChildNode As XmlNode In ParentNode.ChildNodes
+            For Each ChildNode As Xml.XmlNode In ParentNode.ChildNodes
                 If ChildNode.Name = "Thickness" Then
                     Value = CDbl(UC.FixLocaleDecimal(ChildNode.InnerText))
                     Exit For
@@ -1237,15 +1114,15 @@ Public Class FormFastenerStack
             End If
         Next
 
-        Dim SizeNode As XmlNode = FMain.XmlNodeFromPath(tmpXmlNodePath)
+        Dim SizeNode As Xml.XmlNode = FMain.XmlNodeFromPath(tmpXmlNodePath)
 
         SizeNode = SizeNode.ParentNode
 
-        Dim Node As XmlNode = Nothing
+        Dim Node As Xml.XmlNode = Nothing
         Dim tmpLength As Double = 0
 
         If SizeNode.HasChildNodes Then
-            For Each LengthNode As XmlNode In SizeNode
+            For Each LengthNode As Xml.XmlNode In SizeNode
                 If Not Me.IsAsmeStud Then
                     If LengthNode.Name.Contains("Length_") Then
                         tmpLength = CDbl(UC.FixLocaleDecimal(LengthNode.InnerText))
@@ -1256,7 +1133,7 @@ Public Class FormFastenerStack
                     End If
                 Else
                     If LengthNode.HasChildNodes Then
-                        For Each tmpLengthNode As XmlNode In LengthNode
+                        For Each tmpLengthNode As Xml.XmlNode In LengthNode
                             If tmpLengthNode.Name.Contains("Length") Then
                                 tmpLength = CDbl(UC.FixLocaleDecimal(tmpLengthNode.InnerText))
                                 If tmpLength >= LengthMin And tmpLength <= LengthMax Then
@@ -1278,25 +1155,25 @@ Public Class FormFastenerStack
     End Function
 
     Private Function GetMatchingNode(
-        CategoryNode As XmlNode,
+        CategoryNode As Xml.XmlNode,
         NominalDiameter As Double,
         ThreadDescription As String
-        ) As XmlNode
+        ) As Xml.XmlNode
 
         ' CategoryNode is the parent of the size nodes for the item in question
 
         ' Set ThreadDescription to Nothing for washers
 
-        Dim Node As XmlNode = Nothing
+        Dim Node As Xml.XmlNode = Nothing
         Dim tmpNominalDiameter As Double = -1
         Dim tmpThreadDescription As String = ""
 
         Dim UC As New UtilsCommon
 
         If CategoryNode.HasChildNodes Then
-            For Each SizeNode As XmlNode In CategoryNode.ChildNodes
+            For Each SizeNode As Xml.XmlNode In CategoryNode.ChildNodes
                 If SizeNode.HasChildNodes Then
-                    For Each ChildNode As XmlNode In SizeNode.ChildNodes
+                    For Each ChildNode As Xml.XmlNode In SizeNode.ChildNodes
                         If ChildNode.Name = "NominalDiameter" Then
                             tmpNominalDiameter = CDbl(UC.FixLocaleDecimal(ChildNode.InnerText))
                         End If
@@ -1324,13 +1201,13 @@ Public Class FormFastenerStack
         Return Node
     End Function
 
-    Private Function GetNominalDiameter(ParentNode As XmlNode) As Double
+    Private Function GetNominalDiameter(ParentNode As Xml.XmlNode) As Double
         Dim Value As Double = -1
 
         Dim UC As New UtilsCommon
 
         If ParentNode.HasChildNodes Then
-            For Each ChildNode As XmlNode In ParentNode.ChildNodes
+            For Each ChildNode As Xml.XmlNode In ParentNode.ChildNodes
                 If ChildNode.Name = "NominalDiameter" Then
                     Value = CDbl(UC.FixLocaleDecimal(ChildNode.InnerText))
                     Exit For
@@ -1341,11 +1218,11 @@ Public Class FormFastenerStack
         Return Value
     End Function
 
-    Private Function GetThreadDescription(ParentNode As XmlNode) As String
+    Private Function GetThreadDescription(ParentNode As Xml.XmlNode) As String
         Dim ThreadDescription As String = Nothing
 
         If ParentNode.HasChildNodes Then
-            For Each ChildNode As XmlNode In ParentNode.ChildNodes
+            For Each ChildNode As Xml.XmlNode In ParentNode.ChildNodes
                 If ChildNode.Name = "ThreadDescription" Then
                     ThreadDescription = ChildNode.InnerText
                     Exit For

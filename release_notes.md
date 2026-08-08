@@ -65,7 +65,7 @@ Added adjustment of the thread texture image to better reflect its pitch.  It is
   <img src="media/variable_thread_pitch_example.png">
 </p>
 
-Files created with previous versions are not updated.  Only newly-generated parts are affected.  If you have customized standard part templates, see the help topic to apply the change to your files.
+Files created with previous versions are not updated.  Only newly-generated parts are affected.  If you have customized standard part templates, see the referenced help topic to apply the change to your files.
 
 See the [<ins>**Creating New Templates Help Topic**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#thread-pitch) for details.
 
@@ -79,7 +79,7 @@ The file only defines the organization of the tree.  All part data remains in th
   <img src="media/schema_top_level.png">
 </p>
 
-For those who have previously customized their data, instructions are provided to convert from the old format to the new.
+For those who have previously customized their data, refer to the referenced help topic for instructions to convert from the old format to the new.
 
 See the [<ins>**Editing the Schema File Help Topic**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#editing-the-schema-file) for details.
 

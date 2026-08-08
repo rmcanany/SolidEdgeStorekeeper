@@ -182,7 +182,7 @@ Public Class UtilsPreferences
 
     Public Function GetStartupDirectory() As String
 
-        ' Returns the location of Housekeeper.exe
+        ' Returns the location of Storekeeper.exe
 
         Dim StartupDirectory As String = System.Windows.Forms.Application.StartupPath()
 
@@ -253,42 +253,6 @@ Public Class UtilsPreferences
         Dim UFC As New UtilsFilenameCharmap()  ' Creates the file filename_charmap.txt if it does not exist.
     End Sub
 
-
-
-
-    ''###### THREAD FACESTYLE NAME ######
-
-    'Private Function GetThreadFaceStyleFilename(CheckExisting As Boolean) As String
-    '    Dim Filename = "ThreadFaceStyleName.txt"
-    '    Filename = $"{GetPreferencesDirectory()}\{Filename}"
-
-    '    If CheckExisting And Not IO.File.Exists(Filename) Then
-    '        Filename = ""
-    '    End If
-
-    '    Return Filename
-    'End Function
-
-    'Public Sub CreateThreadFaceStyleNameFile()
-    '    Dim Filename = GetThreadFaceStyleFilename(CheckExisting:=False)
-    '    If Not IO.File.Exists(Filename) Then
-    '        Dim ThreadFaceStyleName As New List(Of String)
-    '        ThreadFaceStyleName.Add("Thread")
-    '        IO.File.WriteAllLines(Filename, ThreadFaceStyleName)
-    '    End If
-    'End Sub
-
-    'Public Function GetThreadFaceStyleName() As String
-    '    Dim ThreadFaceStyleName As String = ""
-    '    Dim Filename = GetThreadFaceStyleFilename(CheckExisting:=True)
-    '    If Filename = "" Then
-    '        ThreadFaceStyleName = ""
-    '    Else
-    '        Dim InList As List(Of String) = IO.File.ReadAllLines(Filename).ToList
-    '        ThreadFaceStyleName = InList(0)
-    '    End If
-    '    Return ThreadFaceStyleName
-    'End Function
 
 
     '###### PROPERTIES DATA ######
@@ -552,11 +516,6 @@ Public Class UtilsPreferences
 
             For Each PropInfo As System.Reflection.PropertyInfo In PropInfos
 
-                'If PropInfo.Name = "Width" Then
-                '    MsgBox($"{tmpJSONDict(PropInfo.Name)} {FFS.Width}")
-                'End If
-
-
                 If tmpJSONDict.Keys.Contains(PropInfo.Name) Then
                     Dim PropTypestring = PropInfo.PropertyType.Name
 
@@ -586,32 +545,6 @@ Public Class UtilsPreferences
 
     '###### FASTENER STACK XML SEARCH PATHS ######
 
-    'Private Function GetSearchPathFilename(ComponentType As String, DataVersion As String) As String
-    '    Dim Filename As String = Nothing
-
-    '    Select Case ComponentType
-    '        Case "FlatWasher", "LockWasher", "Nut"
-    '            Filename = $"{GetPreferencesDirectory()}\{ComponentType}"
-    '        Case Else
-    '            MsgBox($"UP.GetSearchPathFilename: Unrecognized ComponentType '{ComponentType}'")
-    '            Filename = Nothing
-    '    End Select
-
-    '    Select Case DataVersion
-    '        Case "SE2019", "SE2024"
-    '            If Filename IsNot Nothing Then Filename = $"{Filename}{DataVersion}.json"
-    '        Case Else
-    '            MsgBox($"UP.GetSearchPathFilename: Unrecognized DataVersion '{DataVersion}'")
-    '    End Select
-
-    '    If Filename IsNot Nothing AndAlso Not IO.File.Exists(Filename) Then
-    '        Dim Success As Boolean = CreateSearchPathFiles()
-    '        If Not Success Then Filename = Nothing
-    '    End If
-
-    '    Return Filename
-    'End Function
-
     Public Function CreateSearchPathFiles() As Boolean
         Dim Success As Boolean = True
 
@@ -630,22 +563,6 @@ Public Class UtilsPreferences
 
                 SearchPathList.Clear()
                 BareFilename = $"{ComponentType}{DataVersion}"
-
-                'Select Case BareFilename
-                '    Case "FlatWasherSE2019"
-                '        SearchPathList.Add("..\..\..\..\..\ISO_DIN_WASHERS\ISO_7089_-_Plain_washers_-_Normal_series")
-                '    Case "LockWasherSE2019"
-                '        SearchPathList.Add("..\..\..\..\..\ISO_DIN_WASHERS\DIN_127_-_Spring_washers")
-                '    Case "NutSE2019"
-                '        SearchPathList.Add("..\..\..\..\..\ISO_DIN_NUTS\Hexagonal\ISO_4032_-_Hexagon_regular_nuts")
-                '        SearchPathList.Add("..\..\..\..\..\ISO_DIN_NUTS\Hexagonal\ISO_8673_-_Hexagon_regular_nuts_-_fine_pitch")
-                '    Case "FlatWasherSE2024"
-                '        SearchPathList.Add("..\..\..\Washer_Flat")
-                '    Case "LockWasherSE2024"
-                '        SearchPathList.Add("..\..\..\Washer_Lock")
-                '    Case "NutSE2024"
-                '        SearchPathList.Add("..\..\..\Nut_Hex")
-                'End Select
 
                 Select Case BareFilename
                     Case "FlatWasherSE2019"
