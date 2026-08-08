@@ -33,7 +33,7 @@ The dataset also includes the related fastening studs.  For those, you select th
 
 If you work with these components, this is going to save you a *ton* of time!
 
-See the [<ins>**ASME Flange Studs**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#asme-flange-studs) section of the Readme for details.
+See the [<ins>**ASME Flange Studs Help Topic**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#asme-flange-studs) for details.
 
 ### Updated ISO Data and Templates
 
@@ -45,7 +45,7 @@ Contributed by **@TeeVar.**  Thank you!
 - Fixed values, parameters and variables for some items
 - Over 38k items now available
 
-See the [<ins>**Tree Search Options**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#tree-search-options) section of the Readme for details.
+See the [<ins>**Tree Search Options Help Topic**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#tree-search-options) for details.
 
 ### PEM Fasteners
 
@@ -65,24 +65,23 @@ Added adjustment of the thread texture image to better reflect its pitch.  It is
   <img src="media/variable_thread_pitch_example.png">
 </p>
 
-Files created with previous versions are not updated.  Only newly-generated parts are affected.
+Files created with previous versions are not updated.  Only newly-generated parts are affected.  If you have customized standard part templates, see the help topic to apply the change to your files.
 
-See the [<ins>**Creating New Templates Help Topic**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#thread-pitch) section of the Readme for details.
+See the [<ins>**Creating New Templates Help Topic**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#thread-pitch) for details.
 
 ### Dataset Tree Definition File
 
-Changed format from Excel to Xml.  The new format is a lot easier to work with.  The file only defines the organization of the tree.  All part data remains in the companion spreadsheets, where the tabular format is a natural fit.
+Changed format from Excel to Xml (Thank you **@SatyenB!**)  The new format is much easier to work with.  
+
+The file only defines the organization of the tree.  All part data remains in the companion spreadsheets, where the tabular format is a natural fit.
 
 <p align="center">
   <img src="media/schema_top_level.png">
 </p>
 
-Provided a mechanism to convert from the old format to the new for those who have customized their data.
+For those who have previously customized their data, instructions are provided to convert from the old format to the new.
 
-See the [<ins>**Editing the Schema File Help Topic**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#editing-the-schema-file) section of the Readme for details.
-
-
-
+See the [<ins>**Editing the Schema File Help Topic**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#editing-the-schema-file) for details.
 
 ### Other
 
@@ -93,7 +92,7 @@ See the [<ins>**Editing the Schema File Help Topic**</ins>](https://github.com/r
 - Fixed an issue where users running preview code were not notified when the finalized version was released.
 - Changed how fastener stack related-component tree locations are specified.  Now, the full path is used (eg. `Solid_Edge_Storekeeper\Ansi_Fasteners\Washer_Flat`).  Previously it was a path relative to the chosen fastener.
 - Fixed an issue where a TooltipFormula, when used, had to be the first element in the XML node definition.  Now it can be anywhere within the scope of the node.
-- Updated the Readme to note the "SE2024" templates have been modified in SE2025.  That is now the earliest SE version that can be used with those files.
+- Updated the Readme to note the "SE2024" templates have been modified in SE2025.  That is now the earliest SE version that can be used with that dataset.
 
 
 ## V2025.4

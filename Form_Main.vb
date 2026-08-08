@@ -345,7 +345,7 @@ Public Class Form_Main
         End Try
 
         Dim ErrorMessage As String = ""
-        Dim Suffix As String = "SE2024"
+        Dim Suffix As String = "SE2025"
 
         Dim tmpDirList As New List(Of String) From {UP.GetDefaultDataDirectory(Suffix), UP.GetDefaultTemplatesDirectory(Suffix)}
         For Each d As String In tmpDirList

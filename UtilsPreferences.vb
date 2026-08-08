@@ -208,18 +208,18 @@ Public Class UtilsPreferences
 
                 Dim tmpDir As String
                 Dim SuffixList As New List(Of String)
-                SuffixList.AddRange({"SE2019", "SE2024"})
+                SuffixList.AddRange({"SE2019", "SE2025"})
 
                 For Each Suffix As String In SuffixList
                     tmpDir = $"{PreferencesDirectory}\Data{Suffix}"
                     FileIO.FileSystem.CreateDirectory(tmpDir)
                     FileIO.FileSystem.CopyDirectory(GetDefaultDataDirectory(Suffix), tmpDir)
-                    If Suffix = "SE2024" Then FMain.DataDirectory = tmpDir
+                    If Suffix = "SE2025" Then FMain.DataDirectory = tmpDir
 
                     tmpDir = $"{PreferencesDirectory}\Templates{Suffix}"
                     FileIO.FileSystem.CreateDirectory(tmpDir)
                     FileIO.FileSystem.CopyDirectory(GetDefaultTemplatesDirectory(Suffix), tmpDir)
-                    If Suffix = "SE2024" Then FMain.TemplateDirectory = tmpDir
+                    If Suffix = "SE2025" Then FMain.TemplateDirectory = tmpDir
                 Next
 
                 tmpDir = $"{PreferencesDirectory}\Library"
@@ -619,7 +619,7 @@ Public Class UtilsPreferences
         ComponentTypes.AddRange({"FlatWasher", "LockWasher", "Nut"})
 
         Dim DataVersions As New List(Of String)
-        DataVersions.AddRange({"SE2019", "SE2024"})
+        DataVersions.AddRange({"SE2019", "SE2025"})
 
         Dim SearchPathList As New List(Of String)
         Dim BareFilename As String
@@ -655,13 +655,13 @@ Public Class UtilsPreferences
                     Case "NutSE2019"
                         SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_NUTS\Hexagonal\ISO_4032_-_Hexagon_regular_nuts")
                         SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_NUTS\Hexagonal\ISO_8673_-_Hexagon_regular_nuts_-_fine_pitch")
-                    Case "FlatWasherSE2024"
+                    Case "FlatWasherSE2025"
                         SearchPathList.Add("Solid_Edge_Storekeeper\Ansi_Fasteners\Washer_Flat")
                         SearchPathList.Add("Solid_Edge_Storekeeper\Iso_Fasteners\Washer_Flat")
-                    Case "LockWasherSE2024"
+                    Case "LockWasherSE2025"
                         SearchPathList.Add("Solid_Edge_Storekeeper\Ansi_Fasteners\Washer_Lock")
                         SearchPathList.Add("Solid_Edge_Storekeeper\Iso_Fasteners\Washer_Lock")
-                    Case "NutSE2024"
+                    Case "NutSE2025"
                         SearchPathList.Add("Solid_Edge_Storekeeper\Ansi_Fasteners\Nut_Hex")
                         SearchPathList.Add("Solid_Edge_Storekeeper\Iso_Fasteners\Nut_Hex")
                 End Select

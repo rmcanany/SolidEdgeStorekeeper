@@ -213,18 +213,8 @@ Public Class FormFastenerStack
     Public Property TreeviewNutFullPath As String
 
 
-    ' Xml relative search paths starting from a fastener
-
-    ' SE2024 ..\..\..\Washer_Flat
-    ' SE2019 ..\..\..\..\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series
     Public Property FlatWasherSearchPaths As List(Of String)
-
-    ' SE2024 ..\..\..\Washer_Lock
-    ' SE2019 NA
     Public Property LockWasherSearchPaths As List(Of String)
-
-    ' SE2024 ..\..\Nut_Hex
-    ' SE2019 ..\..\..\..\ISO_NUTS_-_Steel\ISO_4032_-_Hexagon_regular_nuts, ..\..\..\ISO_NUTS_-_Steel\ISO_8673_-_Hexagon_regular_nuts_-_fine_pitch
     Public Property NutSearchPaths As List(Of String)
 
     Private Property ErrorLogger As HCErrorLogger
@@ -299,8 +289,8 @@ Public Class FormFastenerStack
             Dim DataVersion As String = Nothing
             If FMain.DataDirectory.Contains("SE2019") Then
                 DataVersion = "SE2019"
-            ElseIf FMain.DataDirectory.Contains("SE2024") Then
-                DataVersion = "SE2024"
+            ElseIf FMain.DataDirectory.Contains("SE2025") Then
+                DataVersion = "SE2025"
             Else
                 MsgBox($"FFS.Load: Unrecognzied data directory '{FMain.DataDirectory}'")
                 Me.Dispose()
@@ -908,7 +898,7 @@ Public Class FormFastenerStack
 
         ' Traverses the Xml tree to find a flat washer, lock washer and nut
         ' The SelectedNodeFullPath will be a fastener length node
-        ' Examples for SE2024
+        ' Examples for SE2025
         ' Solid_Edge_Storekeeper\Ansi_Fasteners_Steel\HHCS\Size_0.250-20\Length_0.500
         ' Solid_Edge_Storekeeper\Ansi_Fasteners_Stainless\HHCS\Size_0.250-20\Length_0.500
         ' Examples for SE2019
@@ -983,8 +973,8 @@ Public Class FormFastenerStack
         Me.TreeviewFlatWasherFullPath = ""
 
         For Each FlatWasherSearchPath As String In Me.FlatWasherSearchPaths
-            ' SE2024 Solid_Edge_Storekeeper\Ansi_Fasteners\Washer_Flat
-            ' SE2024 Solid_Edge_Storekeeper\Iso_Fasteners\Washer_Flat
+            ' SE2025 Solid_Edge_Storekeeper\Ansi_Fasteners\Washer_Flat
+            ' SE2025 Solid_Edge_Storekeeper\Iso_Fasteners\Washer_Flat
             ' SE2019 ..\..\..\..\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series
 
             'If IsAsmeStud Then
@@ -1052,8 +1042,8 @@ Public Class FormFastenerStack
         Me.TreeviewLockwasherFullPath = ""
 
         For Each LockWasherSearchPath As String In Me.LockWasherSearchPaths
-            ' SE2024 Solid_Edge_Storekeeper\Ansi_Fasteners\Washer_Lock
-            ' SE2024 Solid_Edge_Storekeeper\Iso_Fasteners\Washer_Lock
+            ' SE2025 Solid_Edge_Storekeeper\Ansi_Fasteners\Washer_Lock
+            ' SE2025 Solid_Edge_Storekeeper\Iso_Fasteners\Washer_Lock
             ' SE2019 NA 
 
             'If IsAsmeStud Then
@@ -1129,8 +1119,8 @@ Public Class FormFastenerStack
         Me.TreeviewNutFullPath = ""
 
         For Each NutSearchPath As String In Me.NutSearchPaths
-            ' SE2024 Solid_Edge_Storekeeper\Ansi_Fasteners\Nut_Hex
-            ' SE2024 Solid_Edge_Storekeeper\Iso_Fasteners\Nut_Hex
+            ' SE2025 Solid_Edge_Storekeeper\Ansi_Fasteners\Nut_Hex
+            ' SE2025 Solid_Edge_Storekeeper\Iso_Fasteners\Nut_Hex
             ' SE2019 ..\..\..\..\ISO_WASHERS_-_Steel\ISO_7089_-_Plain_washers_-_Normal_series
 
             If IsAsmeStud Then NutSearchPath = NutSearchPath.Replace("Nut_Hex", "Nut_Heavy_Hex")
@@ -1676,8 +1666,44 @@ Public Class FormFastenerStack
     End Sub
 
     Private Sub ComboBoxUnits_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBoxUnits.SelectedIndexChanged
+        Dim PreviousUnits As String = Me.Units
         Me.Units = ComboBoxUnits.Text
+
+        If Not Me.Units = PreviousUnits Then
+            Dim Factor As Double
+            If Me.Units = "in" Then
+                Factor = 1 / 25.4 ' Convert previous mm to in
+            Else
+                Factor = 25.4
+            End If
+
+            Try
+                Me.ClampedThickness = CStr(RemoveCruft(CDbl(Me.ClampedThickness) * Factor))
+            Catch ex As Exception
+            End Try
+            Try
+                Me.ThreadEngagementMin = CStr(RemoveCruft(CDbl(Me.ThreadEngagementMin) * Factor))
+            Catch ex As Exception
+            End Try
+            Try
+                Me.ThreadDepth = CStr(RemoveCruft(CDbl(Me.ThreadDepth) * Factor))
+            Catch ex As Exception
+            End Try
+            Try
+                Me.ExtensionMin = CStr(RemoveCruft(CDbl(Me.ExtensionMin) * Factor))
+            Catch ex As Exception
+            End Try
+        End If
     End Sub
+
+    Private Function RemoveCruft(X As Double) As Double
+        Dim RX As Double = Math.Round(X, 6)
+        If Math.Abs(RX - X) < 0.000000000001 Then
+            Return RX
+        Else
+            Return X
+        End If
+    End Function
 
     Private Sub ButtonAddToAssy_Click(sender As Object, e As EventArgs) Handles ButtonAddToAssy.Click
         Dim Config As String = Me.StackConfiguration.ToString

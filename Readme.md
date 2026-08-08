@@ -10,10 +10,7 @@
 **Contributors**  
 @[Francesco Arfilli], @TeeVar, @Seva
 
-**Beta Testers**  
-@hawcad, @rob.wolbrink7456, @[Francesco Arfilli], @pedja, @TeeVar, @Seva
-
-**Helpful feedback and bug reports**  
+**Beta Testing, Bug Reports, and Helpful Feedback**  
 @SeanCresswell, @[Francesco Arfilli], @arekkul, @[Imre Szucs], @64Pacific, @Seva, @hawcad, @rob.wolbrink7456, @pedja, @TeeVar, @jpoat-seesai
 
 *Feedback from users*
@@ -30,9 +27,11 @@
 
 ## DESCRIPTION
 
-Solid Edge Storekeeper is a utility to create, organize, and share standard parts.  It is free and open source.  Please note the standard part templates were created with SE2024.  You will need that version or newer to use them.  (**Update 20251212:** **@TeeVar**, generously contributed a set of templates created with SE2019.)  (**Update 20260721:** Most parts have been modified with SE2025; that's the earliest version you can now use for the SE2024 dataset.)
+Solid Edge Storekeeper is a utility to create, organize, and share standard parts.  It is free and open source.   
 
-Fasteners, retainers, structural shapes, and more in ANSI and ISO format are included.  There are over 30k items available.  There is no database; all the data is in Excel.  It is fully customizable.  If you upgrade Solid Edge, no change to the program or its data is required.
+Fasteners, retainers, structural shapes, and more in ANSI and ISO format are included.  There are over 30k items available.  There is no database; all the part data is in Excel.  It is fully customizable.  If you upgrade Solid Edge, no change to the program or its data is required.
+
+Before we get too far, note that two datasets are included.  One was created in SE2019, the other in SE2025.  You will need those respective versions or newer to use them. 
 
 The program handles two types of standard parts.  One consists of items like fasteners.  These are defined in dimension tables and created as needed.  The other consists of vendor-type items like pneumatic fittings.  Each of these has its own model file.  Both types are eligible for the handy automatic patterning option (see separate section below for details).
 
@@ -122,6 +121,26 @@ On my machine, the executable resides in two places: `bin\Debug\net8.0-windows\`
 
 As noted earlier, some setup is required before using the program.  If you run Solid Edge in a localized language please be sure to see the information at the end of this section.
 
+### Select a Material Table
+
+The first time the program is started, it prompts you to select a material table.  On the **Tree View** toolbar, click ![Options](media/Support_16.png) to open the options page.    
+
+Normally you would use your own materials, but they likely won't match those used in the datasets.  Rather than fixing that right away, an alternative is to use `StorekeeperSE2019.mtl` or `StorekeeperSE2025.mtl` found in their respective `Templates` directory.  
+
+Copy one or both to your Solid Edge Materials directory to make them available.  On my machine, that location is `C:\Program Files\Siemens\Solid Edge 2025\Preferences\Materials`.  
+
+### Data and Templates
+
+The program defaults to the SE2025 dataset, which is geared towards Ansi users.  If use Iso, you can change the Data and Templates directories to SE2019.  That is also done on the options page.
+
+### Localized SE Installations
+
+You may have more work to do if you're not using English in Solid Edge.  Open the tree data file `StorekeeperSchema.xml` and look for entries like `%{System.Title}` and update as required.  See [<ins>**Editing the Schema File**</ins>](#editing-the-schema-file) for tips on working with that file.
+
+## USING THE PROGRAM
+
+This section covers the details and options for getting the most out of Storekeeper.
+
 ### Tree Search Toolbar
 
 Most options are set on the **Tree Search Options** page (see next), but those most frequently-used are located on the toolbar itself.
@@ -168,14 +187,14 @@ The library is where the standard parts you create are stored.  The default is i
   Note the directory is created the first time you run the program; it won't be there before that.  As noted above, if you want to access your vendor-type standard parts, they must be in the library.  You can place them in one or more subdirectories if desired.
 
 - **DATA DIRECTORY**  
-The spreadsheet contains the variables required for each size of each type of part.  By default, it is stored in the `Preferences\DataSE2024` directory. 
+The spreadsheet contains the variables required for each size of each type of part.  By default, it is stored in the `Preferences\DataSE2025` directory. 
 
   Change the data directory to `Preferences\DataSE2019` if you want to use the alternative templates.  
 
 - **TEMPLATE DIRECTORY**  
-The templates are SE part files that have variable-table-driven geometry to create new parts of a given type.  By default they are stored in the `Preferences\TemplatesSE2024` folder.
+The templates are SE part files that have variable-table-driven geometry to create new parts of a given type.  By default they are stored in the `Preferences\TemplatesSE2025` folder.
 
-  As noted at the outset, the original templates were created in SE2024.  They will only work if you're using that version or newer.  (**UPDATE 20260607:** It is now SE2025.)  An alternative set of templates, created with SE2019, was generously contributed by **@TeeVar**.  To use them, change the template directory to `Preferences\TemplatesSE2019`.  
+  As noted at the outset, the original templates were updated in SE2025.  They will only work if you're using that version or newer.  An alternative set of templates, created with SE2019, was generously contributed by **@TeeVar**.  To use them, change the template directory to `Preferences\TemplatesSE2019`.  
 
   Even if you have a newer version of Solid Edge, you may still want to use the SE2019 templates.  Unlike me, **@TeeVar** is an ISO native speaker.  If you work with that standard, his naming conventions will probably be more familiar and useful to you.
 
@@ -184,9 +203,9 @@ The templates are SE part files that have variable-table-driven geometry to crea
   You don't have to stick with your first choice, by the way.  You can switch between the original and alternative templates at any time.
 
 - **MATERIAL TABLE**  
-The material table is usually your normal SE material table.  However, for a quick test of the program, an alternative is to use `StorekeeperSE2019.mtl` or `StorekeeperSE2024.mtl` found in their respective `Templates` directory.  Copy one or both to your Solid Edge Materials directory to make it available.  On my machine, that location is `C:\Program Files\Siemens\Solid Edge 2024\Preferences\Materials`.  
+The material table is usually your normal SE material table.  However, for a quick test of the program, an alternative is to use `StorekeeperSE2019.mtl` or `StorekeeperSE2025.mtl` found in their respective `Preferences\Templates` directory.  Copy one or both to your Solid Edge Materials directory to make it available.  On my machine, that location is `C:\Program Files\Siemens\Solid Edge 2025\Preferences\Materials`.  
 
-  If you decide to continue using the program, you would eventually want to utilize your own material table, updating material names in the spreadsheet and templates as needed. 
+  If you decide to continue using the program, you would eventually want to utilize your own material table, updating material names in `StorekeeperSchema.xml` as needed.  See [<ins>**Editing the Schema File**</ins>](#editing-the-schema-file) for details on working with that file.
 
 - **OPTIONS**
 
@@ -194,7 +213,7 @@ The material table is usually your normal SE material table.  However, for a qui
 	Rebuilds the tree from the dataset.
 	 
   - `Use StorekeeperSchema.xml`  
-	This tells the program the format of file to process when building the tree.  The only reason to disable it is if you are converting an old `Storekeeper.xls` to the new format.
+	This tells the program the format of file to process when building the tree.  The only reason to disable it is if you are converting an old `Storekeeper.xls` to the new format.  See [<ins>**Converting Storekeeper.xls to StorekeeperSchema.xml**</ins>](#converting-storekeeper.xls-to-storekeeperschema.xml) for details.
 	 
   - `Edit schema`  
 	Opens `StorekeeperSchema.xml` in the Xml editor.  See [<ins>**Editing the Schema File**</ins>](#editing-the-schema-file) for details.
@@ -217,16 +236,16 @@ The material table is usually your normal SE material table.  However, for a qui
   - `Process templates in background`  
 	A new part must be opened in Solid Edge to update its parameters.  This setting tells the program to not display it in the user interface.
 
-	Note, processing in background does not support `Fit View`.  If you need usable thumbnail images, this option is probably not for you.  Also, there is an issue when creating a part whose units do not match the default units of your Solid Edge installation.  Processing in background appears to ignore the file's unit setting.
+	Note, processing in background does not support `Fit View`.  If you need usable thumbnail images, this option is probably not for you.  Also, there is an issue with template units that don't match your Solid Edge installation.  If you ask for a normal bolt and get one made for a bulldozer (or Swiss watch), that's likely the culprit.
 	
   - `Replace part: Suppress failed constraint`  
 	When using the `Replace` command, some constraints may fail to get resolved.  If this occurs, this option tells the program to suppress the constraint.
 	
   - `Replace part: Allow failed constraint`  
-	With the same situation as above, this option tells the program to leave the constraint in the failed state.  This is my preferred setting.  The pathfinder shows a red lightning bolt, alerting me that I need to fix something.
+	With the same situation as above, this option tells the program to leave the constraint in the failed state.  This is my preferred setting.  The pathfinder shows a red lightning bolt, alerting me I need to fix something.
 	
   - `Do not add files to the Recently Used list`  
-	Enable this option to keep the program from adding newly-generated standard parts to the Most Recently Used list.  Note this ability was added to Solid Edge in version 2020.  If you are running an earlier version, it has no effect.
+	Enable this option to avoid clogging up the Most Recently Used List with standard parts.  Note this ability was added in SE2020.  If you are running an earlier version, it has no effect.
 	
   - `Include drawing of part if present`  
 	If a file in the templates directory has a drawing with the same name, the program can copy it to the library along with the part.  Enable this option to do so.
@@ -261,15 +280,11 @@ These are your normal template files, not the ones used by the program to create
 - `Cache library file properties for faster search`  
   Reads all file properties and saves them in a separate file.  This can speed up searches for large libraries.  It takes some time to load the file initially; the status bar informs you of the progress.
 
-### Localized SE Installations
-
-You may have more work to do if you're not using English in Solid Edge.  In the tree data file `StorekeeperSchema.xml`, there are some property names that probably need to be changed.  See **Editing the Schema File** (next).
-
-Open the file and look for entries like `%{System.Title}` and update as required.
-
 ### Editing the Schema File
 
-`StorekeeperSchema.xml` is just a text file, you can edit it in Notepad.  A easier way is to use an XML editor.  I use the free and open source `XMLNotepad`.  It was created and is actively maintained by Microsoft.  Here are a couple of links if you want to check it out.
+The `schema` is where the tree structure for standard parts is defined.  The file is called `StorekeeperSchema.xml`.  Each dataset has one.  They can be found in the `Preferences\DataSE2019` and `Preferences\DataSE2025` directories.
+
+It is just a text file, you can edit it in Notepad.  A easier way is to use an XML editor.  I use the free and open source `XMLNotepad`.  It was created and is actively maintained by Microsoft.  Here are a couple of links if you want to check it out.
 
 [<ins>**Home Page**</ins>](https://microsoft.github.io/XmlNotepad/), 
 [<ins>**Download**</ins>](https://microsoft.github.io/XmlNotepad/#install/), 
@@ -286,7 +301,9 @@ The location was probably chosen by the installer, not you.  The program tries t
 
 If you change the file, make sure to save before closing.  Then to update, click the `Reload Xml` button.
 
-To change your choice of editor, \<SHIFT>-click the `Edit schema` button.
+To change your choice of editor, \<SHIFT>-click the `Edit schema` button.  
+
+Following are a few examples of working with the `schema` file.  They were done in `XMLNotepad`.
 
 #### Find/Replace
 
@@ -304,7 +321,7 @@ Add new items to the dataset using copy/paste.  Right click an item and select C
   <img src="media/xmlnotepad_copy.png">
 </p>
 
-Then scroll up to the category header, right click it and select Paste.
+Scroll up to the category header, right click it and select Paste.
 
 <p align="center">
   <img src="media/xmlnotepad_paste.png">
@@ -342,7 +359,7 @@ Standard parts, especially fasteners, are frequently patterned after placement. 
 
 As mentioned above, in the tree search panel, you can have all available parts shown, or just your favorites.
 
-For entire categories, edit	`StorekeeperSchema.xml`.  (To learn an easy way to edit the file, see [<ins>**Editing the Schema File**</ins>](#editing-the-schema-file).)  Set the `FavoritesFormula` `#text` as needed.
+To set favorites for entire categories, edit	`StorekeeperSchema.xml`.  (See [<ins>**Editing the Schema File**</ins>](#editing-the-schema-file).)  Set the `FavoritesFormula` `#text` as needed.
 
 <p align="center">
   <img src="media/xmlnotepad_favorites_formula.png">
@@ -353,8 +370,6 @@ For the `companion spreadsheets`, it is a line by line choice.
 <p align="center">
   <img src="media/favorites_companion_spreadsheet.png">
 </p>
-
-
 
 ## FASTENER STACK
 
@@ -396,7 +411,7 @@ Today, for `Clamped thickness`, the quickest way may be to use the Solid Edge `M
   <img src="media/measure_clamped_thickness.png">
 </p>
 
-To get `Thread depth` on blind holes, one way is to change selection priority from `Part` to `Face` with `CTRL+SpaceBar`, then select the threaded hole.  On the shortcut menu, select `Edit Definition` and check the setting on the Options page of the Hole dialog that appears.
+To get `Thread depth` on blind holes, one way is to change selection priority (in the assembly) from `Part` to `Face` with `CTRL+SpaceBar`, then select the threaded hole.  On the shortcut menu, select `Edit Definition` and check the setting on the Options page of the Hole dialog that appears.
 
 <p align="center">
   <img src="media/measure_thread_depth.png">
@@ -410,9 +425,11 @@ These are a bit different than other fasteners.  They are not chosen by dimensio
   <img src="media/asme_flange_tree.png">
 </p>
 
-As shown in the Configuration section above, they have their own stack configuration.  Storekeeper will do weird things if it is not the one selected.  To center the stud on the flange, the program uses the clamped thickness; so it's important to enter that value correctly.
+As shown above, they have their own stack configuration.  Storekeeper will do weird things if it is not the one selected.  
 
-Also according to the standard, heavy hex nuts are used, not the usual variety.  That is handled automatically, but means those components must be available, which they are in the SE2024 dataset.
+To center the stud on the flange, the program uses the clamped thickness; so it's important to enter that value correctly.  The studs are modeled in inches.  That's the unit you have to use.  If you don't use them every day, you can set the units (on the toolbar) to `mm`, enter the value, then switch back to `in`.  It will do the conversion for you.
+
+Also according to the standard, heavy hex nuts are used, not the usual variety.  That is handled automatically, but means those components must be available, which they are in the SE2025 dataset.
 
 One more thing about the studs.  As delivered, Storekeeper names the files like so: 
 
@@ -424,13 +441,13 @@ The `Length` variable is in inches.  In the companion spreadsheet `AsmeB16.5Fast
 
 In Storekeeper's `Preferences` directory, there are three files for each of the supplied datasets, `FlatWasher.json`,`LockWasher.json`, and `Nut.json`.  
 
-Here are the default contents of `FlatWasherSE2024.json`.
+Here are the default contents of `FlatWasherSE2025.json`.
 
 `["Solid_Edge_Storekeeper\\Ansi_Fasteners\\Washer_Flat","Solid_Edge_Storekeeper\\Iso_Fasteners\\Washer_Flat"]`
 
 As you may recognize, it is a comma-delimited list in `JSON` format.  You can edit the files in Notepad to point to the desired node(s) in the `*.xml` tree.
 
-## PRE-POPULATING THE LIBRARY
+<details><summary><h2 style="margin:0px; display:inline-block">PRE-POPULATING THE LIBRARY</h2></summary>
 
 **Note, this feature is temporarily disabled.  It does not yet support multiple materials per category.**
 
@@ -450,6 +467,7 @@ To avoid confusion, the `Add to assembly` shortcut is disabled in this mode.  Un
 
 One handy feature missing in the `TreeView` control is `Multiselect`.  That means you cannot select a range with click followed by SHIFT-click.  It may be possible to add code to implement it, but it's not available now.
 
+</details>
 
 ## CREATING NEW TEMPLATES
 
@@ -532,16 +550,19 @@ The different *types* tell the program how they are to be used.
 
 - `Node`  This defines an entry in the tree, and provides the text to be displayed.
 - `Variable`  This refers to entries in the template's variable table.  The column and variable names must match.
-- `LeafNodeVariable`  This also refers to a variable name in the file.  It is a kind of "secondary" variable.  In this case, it says there are multiple lengths available for a given size.  Each of those appears as a separate node in the tree.
+- `LeafNodeVariable`  This also refers to a variable name in the file.  It is a kind of "secondary" variable.  In this case, it says there are multiple lengths available for a given size.  Each of those appears as a separate node in the tree.  
+
+  Not all standard parts have a "secondary" variable.  Take a look at the `NutHex` tab in the spreadsheet referenced above to see an example.
+
 - `ParameterString`  This denotes a value that is needed in the template, but does not reside in the variable table.  For those,  there must be separate code to handle it.  Currently only `ThreadDescription` is supported.  
 - `String`  This is free-form text that can be referenced in the schema file for file name and other formulas.
-- `Boolean`  This is only used for `Favorites`.  It is more or less redundant.
+- `Boolean`  This is similar to `String`, except for `True`/`False` values.  Technically, `Favorites` is one, however when parsing the file the program looks for those by name, not type.
 
 ### Schema
 
 Unlike the `companion spreadsheets`, the tree structure is defined in an XML file.  Previously a spreadsheet was used for this purpose; it was horrible.  If you have a customized spreadsheet from previous versions, you can convert it to the new format.  See the separate section below.
 
-The `schema` file is called `StorekeeperSchema.xml`.  The program looks for it in `Preferences\DataSE2019` or `Preferences\DataSE2024`.  
+The `schema` file is called `StorekeeperSchema.xml`.  The program looks for it in `Preferences\DataSE2019` or `Preferences\DataSE2025`.  
 
 Here's a view of the tree in XMLNotepad.
 
@@ -619,7 +640,7 @@ A valid tag name can only have letters, numbers, `_` (underscore), `.` (period),
 
 That means "good luck" with things like this: `1/4-20 x 1.000`.
 
-Since I *want* things like that, we developed a workaround.  For illegal characters, we made "stand-ins" that are translated by Storekeeper when building the tree view of the library.  (The tree view is a Control in WinForms, not the underlying XML itself.  It is not picky about such things.)
+Since I *need* things like that, we developed a workaround.  For illegal characters, we made "stand-ins" that are translated by Storekeeper when building the tree view of the library.  (The tree view is a Control in WinForms, not the underlying XML itself.  It is not picky about such things.)
 
 You can't start with a number.  To get around that, prepend it with some text.  In the companion spreadsheets, that is done automatically by adding the Node name to the entry.  Keeping with the example, that gets us this far: `Size 1/4-20 x 1.000`.
 
@@ -633,13 +654,15 @@ The code that builds the lookup table is below.  First, a couple of things to no
 
 - Any line preceeded by `'` (single quote) in the code is ignored.  Either because the character is already allowed, or you can't use it for other reasons.
 
-- Any character not in the lookup table, for example `€` (Euro symbol), will not be translated.  It has to be on the list.  Let me know if you need one and I'll add it.
+- Any character not in the lookup table, for example `€` (Euro symbol), will not be translated.  It has to be on the list.  Let me know if you need one and I can add it.
 
 - You might be wondering why we haven't had to worry about all this before.  That is because previously Excel was used for everything.  When the program parses spreadsheets, it makes the necessary replacements automatically.  Since this new method *starts* with XML, we have to deal with it.  (Except the companion spreadsheets, which remain in Excel format.)
 
 - One nice thing about XMLNotepad is that it won't *let* you enter an illegal character.  It complains right away.
 
-Anyway, here's the code.
+Anyway, click the following header to view the code.
+
+<details><summary><h4 style="margin:0px; display:inline-block">XML Stand-in Code</h4></summary>
 
 ```
 Me.StringToXmlDict = New Dictionary(Of String, String)
@@ -694,6 +717,7 @@ For Each Key In Me.StringToXmlDict.Keys
     Me.StringFromXmlDict(Value) = Key
 Next
 ```
+</details>
 
 ### Converting Storekeeper.xls to StorekeeperSchema.xml
 
@@ -701,13 +725,20 @@ If you have customized your `Storekeeper.xls` in a previous release, this is a w
 
 First, on the **Tree View Options Page**, *disable* `Use StorekeeperSchema.xml` and *enable* `Read the Excel file each time the program is launched`.
 
-Now, in Excel open `Storekeeper.xls` and go to `Edit > Find and Replace`.   Set the `Find` text to `Nodes` and the `Replace` text to `Nodes Type="Nodes"`.  XML is very picky, so double-check your typing.  I won't think less of you if you copy/paste the `Replace` text from this write-up.  Once you're satisfied, click `Replace All`, then save and exit.
+Now, in Excel open `Storekeeper.xls`, in the `Preferences\DataSE2019` or `Preferences\DataSE2025`, depending on which dataset is active.  Start the command `Edit > Find and Replace`.  On the dialog, set the following as shown:
 
-Next, start Storekeeper and the file `Storekeeper.xml` will be created.  Rename it `StorekeeperSchema.xml`.
+- **Find:** `Nodes`
+- **Replace:** `Nodes Type="Nodes"`
 
-Back on **Tree View Options Page**, *enable* `Use StorekeeperSchema.xml` and *disable* `Read the Excel file each time the program is launched`.
+XML is very picky, so double-check your typing.  I won't think less of you if you copy/paste the replacement text from above.  
 
-Finally, restart Storekeeper to verify the spreadsheet was converted correctly.
+Once you're satisfied, click `Replace All`, then save and close Excel.
+
+Back on the options page, click `Reload Xml`.  The file `Storekeeper.xml` will be created.  Rename it `StorekeeperSchema.xml`.
+
+Still on the options page, *disable* `Read the Excel file each time the program is launched` and *enable* `Use StorekeeperSchema.xml`.  (You have to do it in that order -- enabling the latter option hides the former.)
+
+Finally, click `Reload Xml` once again.  Close the options dialog, and verify the tree was built correctly.
 
 ## OPEN SOURCE PACKAGES
 
