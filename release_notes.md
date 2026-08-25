@@ -90,11 +90,19 @@ For you have customized data in an earlier release, refer to the referenced help
 
 See the [<ins>**Editing the Schema File Help Topic**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#editing-the-schema-file) for details.
 
+### Property Search
+
+Improved usability and fixed some bugs (Thank you **@TeeVar**!)
+
+- Added return-to-accept to the search input text box.  
+- Fixed an issue in where the `Replace Selected/All` function was adding parts instead of replacing them.  
+- Fixed an issue where the `Property Cache` was not properly updating if a file change was detected
+
+See the [<ins>**Property Search Help Topic**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#property-search) for details.
+
 ### Other
 
-- Fixed an issue in `Property Search` where the `Replace Selected/All` function was adding parts instead of replacing them (Thank you **@TeeVar**!)
-- Fixed a regression where character encoding in non-US locales caused a runtime exception at startup (Thank you again **@TeeVar**!)
-- Fixed an issue where the `Property Cache` was not properly updating if a file change was detected (Thank you one more time **@TeeVar**!)
+- Fixed a regression where character encoding in non-US locales caused a runtime exception at startup (Thank you **@TeeVar**!)
 - Updated to the most recent version of OpenMcdf
 - Fixed an issue where users running preview code were not notified when the finalized version was released.
 - Changed how fastener stack related-component tree locations are specified.  Now, the full path is used (eg. `Solid_Edge_Storekeeper\Ansi_Fasteners\Washer_Flat`).  Previously it was a path relative to the chosen fastener.
