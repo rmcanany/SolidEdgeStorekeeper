@@ -39,9 +39,16 @@ See the [<ins>**ASME Flange Studs Help Topic**</ins>](https://github.com/rmcanan
 
 Contributed by **@TeeVar.**  Thank you!
 
-- Updated all ISO DIN standards to the latest releases (up to 2026.04)
+Made several improvements, including the addition of a new Polish language dataset, `SE2019_PL`.  Note the Polish and English datasets are otherwise identical and both use the `SE2019` templates.
+
+<p align="center">
+  <img src="media/release_notes_2026.1_tree_view_PL.png">
+</p>
+
 - Added non-preferred sizes for all standards.  These are identified as such and listed under a separate heading below the preferred sizes in each category.
 - Added ISO 1234:1997 - Split pins
+- Changed the image background to black for better component visibility.
+- Updated all ISO DIN standards to the latest releases (up to 2026.04)
 - Fixed values, parameters and variables for some items
 - Over 38k items now available
 
@@ -71,7 +78,7 @@ See the [<ins>**Creating New Templates Help Topic**</ins>](https://github.com/rm
 
 ### Dataset Tree Definition File
 
-Changed format from Excel to Xml (Thank you **@SatyenB!**)  The new format is much easier to work with.  
+Changed format from Excel to Xml (Thank you **@SatyenB!**)  The new format is much easier to work with.  Note this change only affects those who need to customize the datasets.  Normal use of the program and its interface have not changed.
 
 The file only defines the organization of the tree.  All part data remains in the companion spreadsheets, where the tabular format is a natural fit.
 
@@ -79,7 +86,7 @@ The file only defines the organization of the tree.  All part data remains in th
   <img src="media/schema_top_level.png">
 </p>
 
-For those who have previously customized their data, refer to the referenced help topic for instructions to convert from the old format to the new.
+For you have customized data in an earlier release, refer to the referenced help topic for instructions to convert from the old format to the new.
 
 See the [<ins>**Editing the Schema File Help Topic**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#editing-the-schema-file) for details.
 

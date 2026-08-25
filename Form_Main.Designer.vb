@@ -43,6 +43,7 @@ Partial Class Form_Main
         ButtonOptions = New ToolStripButton()
         ComboBoxMaterials = New ToolStripComboBox()
         LabelMaterials = New ToolStripLabel()
+        LabelSchema = New ToolStripLabel()
         TreeView1 = New TreeView()
         ContextMenuStrip1 = New ContextMenuStrip(components)
         AddToAssemblyMenuItem = New ToolStripMenuItem()
@@ -84,7 +85,6 @@ Partial Class Form_Main
         TableLayoutPanel3 = New TableLayoutPanel()
         ButtonHelp = New Button()
         TextBoxStatus = New TextBox()
-        LabelSchema = New ToolStripLabel()
         ToolStrip1.SuspendLayout()
         ContextMenuStrip1.SuspendLayout()
         CType(DataGridViewDataInspector, ComponentModel.ISupportInitialize).BeginInit()
@@ -209,6 +209,13 @@ Partial Class Form_Main
         LabelMaterials.Name = "LabelMaterials"
         LabelMaterials.Size = New Size(47, 22)
         LabelMaterials.Text = "Matl"
+        ' 
+        ' LabelSchema
+        ' 
+        LabelSchema.Name = "LabelSchema"
+        LabelSchema.Size = New Size(65, 22)
+        LabelSchema.Text = "<Schema>"
+        LabelSchema.Visible = False
         ' 
         ' TreeView1
         ' 
@@ -591,13 +598,6 @@ Partial Class Form_Main
         TextBoxStatus.Size = New Size(492, 23)
         TextBoxStatus.TabIndex = 3
         TextBoxStatus.Text = "Status"
-        ' 
-        ' LabelSchema
-        ' 
-        LabelSchema.Name = "LabelSchema"
-        LabelSchema.Size = New Size(65, 22)
-        LabelSchema.Text = "<Schema>"
-        LabelSchema.Visible = False
         ' 
         ' Form_Main
         ' 

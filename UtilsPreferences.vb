@@ -208,13 +208,15 @@ Public Class UtilsPreferences
 
                 Dim tmpDir As String
                 Dim SuffixList As New List(Of String)
-                SuffixList.AddRange({"SE2019", "SE2025"})
+                SuffixList.AddRange({"SE2019", "SE2019_PL", "SE2025"})
 
                 For Each Suffix As String In SuffixList
                     tmpDir = $"{PreferencesDirectory}\Data{Suffix}"
                     FileIO.FileSystem.CreateDirectory(tmpDir)
                     FileIO.FileSystem.CopyDirectory(GetDefaultDataDirectory(Suffix), tmpDir)
                     If Suffix = "SE2025" Then FMain.DataDirectory = tmpDir
+
+                    If Suffix = "SE2019_PL" Then Continue For
 
                     tmpDir = $"{PreferencesDirectory}\Templates{Suffix}"
                     FileIO.FileSystem.CreateDirectory(tmpDir)
@@ -565,13 +567,26 @@ Public Class UtilsPreferences
                 BareFilename = $"{ComponentType}{DataVersion}"
 
                 Select Case BareFilename
+                    'Case "FlatWasherSE2019"
+                    '    SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_WASHERS\ISO_7089_-_Plain_washers_-_Normal_series")
+                    'Case "LockWasherSE2019"
+                    '    SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_WASHERS\DIN_127_-_Spring_washers")
+                    'Case "NutSE2019"
+                    '    SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_NUTS\Hexagonal\ISO_4032_-_Hexagon_regular_nuts")
+                    '    SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_NUTS\Hexagonal\ISO_8673_-_Hexagon_regular_nuts_-_fine_pitch")
+
                     Case "FlatWasherSE2019"
                         SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_WASHERS\ISO_7089_-_Plain_washers_-_Normal_series")
+                        SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_-_PODKŁADKI\ISO_7089_-_Podkładki_okrągłe_-_szereg_normalny")
                     Case "LockWasherSE2019"
                         SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_WASHERS\DIN_127_-_Spring_washers")
+                        SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_-_PODKŁADKI\DIN_127_-_Podkładki_sprężyste")
                     Case "NutSE2019"
                         SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_NUTS\Hexagonal\ISO_4032_-_Hexagon_regular_nuts")
+                        SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_-_NAKRĘTKI\Sześciokątne\ISO_4032_-_Nakrętki_sześciokątne")
                         SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_NUTS\Hexagonal\ISO_8673_-_Hexagon_regular_nuts_-_fine_pitch")
+                        SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_-_NAKRĘTKI\Sześciokątne\ISO_8673_-_Nakrętki_sześciokątne_-_gwint_drobnozwojny")
+
                     Case "FlatWasherSE2025"
                         SearchPathList.Add("Solid_Edge_Storekeeper\Ansi_Fasteners\Washer_Flat")
                         SearchPathList.Add("Solid_Edge_Storekeeper\Iso_Fasteners\Washer_Flat")

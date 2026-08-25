@@ -8,7 +8,7 @@ Imports Microsoft.WindowsAPICodePack.Dialogs
 Public Class Form_Main
 
     Private Property Version As String = "2026.1"
-    Public Property PreviewVersion As String = "05"  ' Empty string if not a preview
+    Public Property PreviewVersion As String = "06"  ' Empty string if not a preview
 
     Private Property SearchingTVFilename As Boolean = False
 
@@ -3684,6 +3684,11 @@ Public Class Form_Main
 
     End Sub
 
+    Private Sub TextBoxSearchTerms_KeyUp(sender As Object, e As KeyEventArgs) Handles TextBoxSearchTerms.KeyUp
+        If e.KeyCode = Keys.Enter Then
+            ButtonSearchProperties.PerformClick()
+        End If
+    End Sub
 End Class
 
 Public Class Props
