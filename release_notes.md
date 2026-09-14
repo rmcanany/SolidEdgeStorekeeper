@@ -9,13 +9,15 @@
 
 Solid Edge Storekeeper is a utility to create, organize, and share standard parts.  It is free and open source and you can read about it [<ins>**Here**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#readme).  
 
-Please note, the program has been tested on thousands of our files, but none of yours.  Do not run it on production work without testing on backups first.
+Please note, the program has been used on thousands of our files, but none of yours.  Do not run it on production work without testing on backups first.
 
 Feel free to report bugs and/or ideas for improvement on the [<ins>**Solid Edge Forum**</ins>](https://community.sw.siemens.com/s/topic/0TO4O000000MihiWAC/solid-edge) or [<ins>**GitHub**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper/issues).
 
 ## V2026.1
 
 We'll get right to the updates, but first some exciting news -- Storekeeper has a new **Contributor!**  Our very own **@Seva** added a new part family -- ASME Pipe Flanges.  Can't wait for you to see his handiwork!
+
+Oh, and one more thing.  This release features a few changes and additions to the template and data files.  You'll need those for the program to function correctly.  Any previously-generated models in your `Library` should work fine.  Simply copy those to the `Preferences\Library` folder of the new version.
 
 Now on to those updates...
 
@@ -86,7 +88,7 @@ The file only defines the organization of the tree.  All part data remains in th
   <img src="media/schema_top_level.png">
 </p>
 
-For you have customized data in an earlier release, refer to the referenced help topic for instructions to convert from the old format to the new.
+If you have customized your dataset in an earlier release, refer to the referenced help topic for instructions to convert from the old format to the new.
 
 See the [<ins>**Editing the Schema File Help Topic**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#editing-the-schema-file) for details.
 
@@ -96,7 +98,7 @@ Improved usability and fixed some bugs (Thank you **@TeeVar**!)
 
 - Added return-to-accept to the search input text box.  
 - Fixed an issue in where the `Replace Selected/All` function was adding parts instead of replacing them.  
-- Fixed an issue where the `Property Cache` was not properly updating if a file change was detected
+- Fixed an issue where the `Property Cache` was not properly updating if a file change was detected.
 
 See the [<ins>**Property Search Help Topic**</ins>](https://github.com/rmcanany/SolidEdgeStorekeeper#property-search) for details.
 
@@ -107,7 +109,7 @@ See the [<ins>**Property Search Help Topic**</ins>](https://github.com/rmcanany/
 - Fixed an issue where users running preview code were not notified when the finalized version was released.
 - Changed how fastener stack related-component tree locations are specified.  Now, the full path is used (eg. `Solid_Edge_Storekeeper\Ansi_Fasteners\Washer_Flat`).  Previously it was a path relative to the chosen fastener.
 - Fixed an issue where a TooltipFormula, when used, had to be the first element in the XML node definition.  Now it can be anywhere within the scope of the node.
-- Updated the Readme to note the "SE2024" templates have been modified in SE2025.  That is now the earliest SE version that can be used with that dataset.
+- Updated the Readme to note the SE2024 templates have been modified in SE2025.  That is now the earliest SE version that can be used with that dataset.
 
 
 ## V2025.4

@@ -8,7 +8,7 @@ Imports Microsoft.WindowsAPICodePack.Dialogs
 Public Class Form_Main
 
     Private Property Version As String = "2026.1"
-    Public Property PreviewVersion As String = "06"  ' Empty string if not a preview
+    Public Property PreviewVersion As String = ""  ' Empty string if not a preview
 
     Private Property SearchingTVFilename As Boolean = False
 
