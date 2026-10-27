@@ -576,15 +576,15 @@ Public Class UtilsPreferences
                     '    SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_NUTS\Hexagonal\ISO_8673_-_Hexagon_regular_nuts_-_fine_pitch")
 
                     Case "FlatWasherSE2019"
-                        SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_WASHERS\ISO_7089_-_Plain_washers_-_Normal_series")
+                        SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_-_WASHERS\ISO_7089_-_Plain_washers_-_Normal_series")
                         SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_-_PODKŁADKI\ISO_7089_-_Podkładki_okrągłe_-_szereg_normalny")
                     Case "LockWasherSE2019"
-                        SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_WASHERS\DIN_127_-_Spring_washers")
+                        SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_-_WASHERS\DIN_127_-_Spring_washers")
                         SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_-_PODKŁADKI\DIN_127_-_Podkładki_sprężyste")
                     Case "NutSE2019"
-                        SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_NUTS\Hexagonal\ISO_4032_-_Hexagon_regular_nuts")
+                        SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_-_NUTS\Hexagonal\ISO_4032_-_Hexagon_regular_nuts")
                         SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_-_NAKRĘTKI\Sześciokątne\ISO_4032_-_Nakrętki_sześciokątne")
-                        SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_NUTS\Hexagonal\ISO_8673_-_Hexagon_regular_nuts_-_fine_pitch")
+                        SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_-_NUTS\Hexagonal\ISO_8673_-_Hexagon_regular_nuts_-_fine_pitch")
                         SearchPathList.Add("Solid_Edge_Storekeeper\ISO_DIN_-_NAKRĘTKI\Sześciokątne\ISO_8673_-_Nakrętki_sześciokątne_-_gwint_drobnozwojny")
 
                     Case "FlatWasherSE2025"
